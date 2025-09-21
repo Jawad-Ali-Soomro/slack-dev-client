@@ -40,15 +40,27 @@ const About = () => {
             className="text-6xl font-bold text-gray-900 dark:text-white  mb-6"
             style={{ fontWeight: 900 }}
           >
-            About Us
+            Know Us!
           </motion.h1>
           <motion.p 
             variants={itemVariants}
-            className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto "
+            className="text-xl text-gray-500 dark:text-gray-300 max-w-3xl mx-auto "
             style={{ fontWeight: 800 }}
           >
-            We are passionate developers Building Tools for the developer community!
+            Yes we are passionate developers building tools for the developer community!
           </motion.p>
+          
+          {/* Team Hero Image */}
+          <motion.div 
+            variants={itemVariants}
+            className="mt-12 relative"
+          >
+            <img 
+              src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1800&h=900&fit=crop" 
+              alt="Our team working together"
+              className="rounded-2xl shadow-lg mx-auto max-w-4xl w-full h-64 object-cover"
+            />
+          </motion.div>
         </div>
 
         {/* Stats Section */}
@@ -106,29 +118,40 @@ const About = () => {
               {
                 icon: <Users />,
                 title: "Community First",
-                description: "We prioritize our developer community and build features based on real feedback."
+                description: "We prioritize our developer community and build features based on real feedback.",
+                image: "https://images.unsplash.com/photo-1517486808906-6ca8b3f04846?w=1800&h=900&fit=crop"
               },
               {
                 icon: <Target />,
                 title: "Innovation Driven",
-                description: "We constantly push the boundaries of what's possible in developer tools."
+                description: "We constantly push the boundaries of what's possible in developer tools.",
+                image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=1800&h=900&fit=crop"
               },
               {
                 icon: <Award />,
                 title: "Quality Focused",
-                description: "We maintain the highest standards in code quality, security, and performance."
+                description: "We maintain the highest standards in code quality, security, and performance.",
+                image: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=1800&h=900&fit=crop"
               },
               {
                 icon: <Globe />,
                 title: "Globally Accessible",
-                description: "We ensure our platform is accessible to developers worldwide, regardless of location."
+                description: "We ensure our platform is accessible to developers worldwide, regardless of location.",
+                image: "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1800&h=900&fit=crop"
               }
             ].map((value, index) => (
               <motion.div
                 key={index}
-                className="glass-card p-8 rounded-2xl"
+                className="glass-card p-8 rounded-2xl overflow-hidden"
                 whileHover={{ y: -5 }}
               >
+                <div className="w-full h-48 mb-6 rounded-lg overflow-hidden">
+                  <img 
+                    src={value.image} 
+                    alt={value.title}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
                 <div className="w-[80px] h-[80px] bg-orange-500 rounded-full flex items-center justify-center mb-6">
                   <div className="w-12 h-12 text-white flex items-center justify-center">
                     {value.icon}

@@ -29,6 +29,7 @@ const Pricing = () => {
       price: "$0",
       period: "Forever",
       popular: false,
+      bgImage: "https://images.unsplash.com/photo-1557804506-669a67965ba0?w=1800&h=900&fit=crop",
       features: [
         { name: "Up to 3 projects", included: true },
         { name: "Basic collaboration", included: true },
@@ -44,6 +45,7 @@ const Pricing = () => {
       price: "$29",
       period: "Per Month",
       popular: true,
+      bgImage: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=1800&h=900&fit=crop",
       features: [
         { name: "Unlimited projects", included: true },
         { name: "Advanced collaboration", included: true },
@@ -59,6 +61,7 @@ const Pricing = () => {
       price: "$99",
       period: "Per Month",
       popular: false,
+      bgImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1800&h=900&fit=crop",
       features: [
         { name: "Unlimited everything", included: true },
         { name: "Enterprise collaboration", included: true },
@@ -97,6 +100,18 @@ const Pricing = () => {
           >
             Choose the perfect plan for your development needs
           </motion.p>
+          
+          {/* Pricing Hero Image */}
+          <motion.div 
+            variants={itemVariants}
+            className="mt-12 relative"
+          >
+            <img 
+              src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=1800&h=900&fit=crop" 
+              alt="Pricing and plans"
+              className="rounded-2xl shadow-lg mx-auto max-w-4xl w-full h-64 object-cover"
+            />
+          </motion.div>
         </div>
 
         {/* Pricing Cards */}
@@ -107,18 +122,27 @@ const Pricing = () => {
           {plans.map((plan, index) => (
             <motion.div
               key={index}
-              className={`glass-card p-8 rounded-2xl relative ${plan.popular ? 'gradient-border' : ''}`}
+              className={`glass-card p-8 rounded-2xl relative overflow-hidden ${plan.popular ? 'gradient-border' : ''}`}
               whileHover={{ y: -5 }}
             >
+              {/* Background Image */}
+              <div className="absolute top-0 left-0 w-full h-32 overflow-hidden rounded-t-2xl">
+                <img 
+                  src={plan.bgImage} 
+                  alt={`${plan.name} plan`}
+                  className="w-full h-full object-cover opacity-20 dark:opacity-10"
+                />
+              </div>
+              
               {plan.popular && (
-                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
                   <span className="bg-orange-500 text-white px-6 py-2 rounded-full text-sm font-bold ">
                     Most Popular
                   </span>
                 </div>
               )}
               
-              <div className="text-center mb-8">
+              <div className="text-center mb-8 relative z-10 pt-16">
                 <h3 className="text-2xl font-bold text-gray-900 dark:text-white  mb-4" style={{ fontWeight: 900 }}>
                   {plan.name}
                 </h3>

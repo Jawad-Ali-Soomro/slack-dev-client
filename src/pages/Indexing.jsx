@@ -60,7 +60,8 @@ const Indexing = () => {
           initial="visible"
           animate="visible"
         >
-
+          {/* Hero Background Image */}
+        
 {floatingIcons.map(({ Icon, color, top, left, right, delay }, index) => (
           <motion.div
             key={index}
@@ -192,43 +193,56 @@ const Indexing = () => {
               {
               icon: <RocketIcon />,
                 title: "Fast Deployment",
-                description: "Deploy your projects in seconds with one-click deployment and automated CI/CD pipelines."
+                description: "Deploy your projects in seconds with one-click deployment and automated CI/CD pipelines.",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop"
               },
               {
                 icon: <Users />,
                 title: "Team Collaboration",
-                description: "Work seamlessly with your team using real-time collaboration tools and shared workspaces."
+                description: "Work seamlessly with your team using real-time collaboration tools and shared workspaces.",
+                image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop"
               },
               {
                 icon: <LayoutDashboard />,
                 title: "Analytics & Insights",
-                description: "Get detailed insights into your project performance with comprehensive analytics dashboard."
+                description: "Get detailed insights into your project performance with comprehensive analytics dashboard.",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop"
               },
               {
                 icon: <Lock />,
                 title: "Enterprise Security",
-                description: "Keep your code secure with enterprise-grade security features and compliance standards."
+                description: "Keep your code secure with enterprise-grade security features and compliance standards.",
+                image: "https://images.unsplash.com/photo-1563013544-824ae1b704d3?w=400&h=300&fit=crop"
               },
               {
                 icon: <Lightbulb />,
                 title: "Lightning Fast",
-                description: "Optimized for speed with advanced caching and CDN integration for maximum performance."
+                description: "Optimized for speed with advanced caching and CDN integration for maximum performance.",
+                image: "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=400&h=300&fit=crop"
               },
               {
                 icon:<ToolCase />,
                 title: "Developer Tools",
-                description: "Access a comprehensive suite of development tools and integrations with popular services."
+                description: "Access a comprehensive suite of development tools and integrations with popular services.",
+                image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=300&fit=crop"
               }
             ].map((feature, index) => (
               <motion.div
                 key={index}
-                className="p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700"
+                className="p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
                 // whileHover={{ y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
                 viewport={{ once: true }}
               >
+                <div className="w-full h-48 mb-6 rounded-lg overflow-hidden">
+                  <img 
+                    src={feature.image} 
+                    alt={feature.title}
+                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
                 <div className="w-[80px] h-[80px] bg-orange-500 rounded-full flex items-center justify-center mb-4">
                   <div className="w-12 h-12 text-white flex items-center justify-center ">
                     {feature.icon}
@@ -319,17 +333,20 @@ const Indexing = () => {
               {
                 quote: "This platform transformed how we manage our projects. The deployment process is so smooth!",
                 author: "Sarah Chen",
-                role: "Senior Developer at TechCorp"
+                role: "Senior Developer at TechCorp",
+                avatar: "https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTZ8fHVzZXJ8ZW58MHx8MHx8fDA%3D"
               },
               {
                 quote: "Incredible tool for team collaboration. Our productivity increased by 300% since switching.",
                 author: "Mike Rodriguez",
-                role: "Lead Engineer at Startup"
+                role: "Lead Engineer at Startup",
+                avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop&crop=face"
               },
               {
                 quote: "The best developer experience I've ever had. Everything just works out of the box.",
                 author: "Alex Johnson",
-                role: "Freelance Developer"
+                role: "Freelance Developer",
+                avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop&crop=face"
               }
             ].map((testimonial, index) => (
               <motion.div
@@ -345,12 +362,19 @@ const Indexing = () => {
                 <p className="text-gray-700 dark:text-gray-300 mb-6 text-sm  leading-relaxed">
                   {testimonial.quote}
                 </p>
-                <div>
-                  <div className="font-bold text-gray-900 dark:text-white text-sm ">
-                    {testimonial.author}
-                  </div>
-                  <div className="text-gray-500 dark:text-gray-400 text-xs ">
-                    {testimonial.role}
+                <div className="flex items-center">
+                  <img 
+                    src={testimonial.avatar} 
+                    alt={testimonial.author}
+                    className="w-12 h-12 rounded-full mr-4 object-cover"
+                  />
+                  <div>
+                    <div className="font-bold text-gray-900 dark:text-white text-sm ">
+                      {testimonial.author}
+                    </div>
+                    <div className="text-gray-500 dark:text-gray-400 text-xs ">
+                      {testimonial.role}
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -431,7 +455,7 @@ How It Works
 
         {/* Final CTA Section */}
         <motion.section 
-          className="w-full bg-black py-20 relative z-10"
+          className="w-full bg-black dark:bg-black py-20 relative z-10"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}

@@ -134,10 +134,18 @@ const Teams = () => {
                 className="glass-card p-8 rounded-2xl text-center"
                 whileHover={{ y: -5 }}
               >
-                <div className="text-3xl font-bold text-orange-500 mb-4 ">
+                <div className="text-3xl font-bold text-orange-500 mb-4 "
+                style={{
+                  fontWeight: 900
+                }}
+                >
                   {team.size}
                 </div>
-                <div className="text-xl font-bold text-gray-600 dark:text-white mb-4 ">
+                <div className="text-xl font-bold text-gray-600 dark:text-white mb-4 "
+                style={{
+                  fontWeight: 900
+                }}
+                >
                   {team.range}
                 </div>
                 <p className="text-sm font-bold text-gray-600 dark:text-gray-300  leading-relaxed">
