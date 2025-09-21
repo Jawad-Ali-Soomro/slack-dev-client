@@ -1,4 +1,5 @@
 import Header from "../components/Header"
+import Footer from "../components/Footer"
 import { motion } from "framer-motion"
 import { Code, Database, GitBranch, Zap, Users, Shield, Rocket, Terminal, Settings, Cpu, RocketIcon, LayoutDashboard, Lock, Flashlight, Lightbulb, ToolCase, ArrowRight } from "lucide-react"
 
@@ -272,10 +273,16 @@ const Indexing = () => {
                   transition={{ delay: index * 0.1, duration: 0.6 }}
                   viewport={{ once: true }}
                 >
-                  <div className="text-4xl font-bold text-white mb-2 ">
+                  <div className="text-4xl font-bold text-white mb-2 "
+                    style={{
+                      fontWeight: 900
+                    }}>
                     {stat.number}
                   </div>
-                  <div className="text-orange-100 font-semibold text-sm ">
+                  <div className="text-orange-100 font-semibold text-sm "
+                    style={{
+                      fontWeight: 800
+                    }}>
                     {stat.label}
                   </div>
                 </motion.div>
@@ -299,6 +306,9 @@ const Indexing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
               viewport={{ once: true }}
+              style={{
+                fontWeight: 900
+              }}
             >
               What Developers Say
             </motion.h2>
@@ -355,6 +365,7 @@ const Indexing = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
+        
         >
           <div className="text-center mb-16">
             <motion.h2 
@@ -363,6 +374,9 @@ const Indexing = () => {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
               viewport={{ once: true }}
+              style={{
+                fontWeight: 900
+              }}
             >
 How It Works
             </motion.h2>
@@ -372,7 +386,7 @@ How It Works
             {[
               {
                 step: "01",
-                title: "Sign Up",
+                title: "Register",
                 description: "Create your account in seconds and get instant access to all features."
               },
               {
@@ -394,13 +408,20 @@ How It Works
                 transition={{ delay: index * 0.2, duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <div className="text-6xl font-bold text-orange-500 mb-4 ">
+                <div className="text-6xl font-bold text-orange-500 mb-4 "   style={{
+            fontWeight: 900
+          }}>
                   {step.step}
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 ">
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 "   style={{
+            fontWeight: 900
+          }}>
                   {step.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300  text-sm leading-relaxed">
+                <p className="text-gray-600 dark:text-gray-300  text-sm leading-relaxed" 
+                  style={{
+                    fontWeight: 800
+                  }}>
                   {step.description}
                 </p>
               </motion.div>
@@ -447,6 +468,8 @@ How It Works
             </motion.button>
           </div>
         </motion.section>
+        
+        <Footer />
     </div>
   )
 }

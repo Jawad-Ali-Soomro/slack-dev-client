@@ -1,4 +1,5 @@
 import Header from "../components/Header"
+import Footer from "../components/Footer"
 import { motion } from "framer-motion"
 import { Mail, Phone, MapPin, Send } from "lucide-react"
 
@@ -144,6 +145,8 @@ const Contact = () => {
           </motion.div>
         </div>
       </motion.main>
+      
+      <Footer />
     </div>
   )
 }

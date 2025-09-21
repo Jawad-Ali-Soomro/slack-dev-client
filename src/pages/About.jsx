@@ -1,4 +1,5 @@
 import Header from "../components/Header"
+import Footer from "../components/Footer"
 import { motion } from "framer-motion"
 import { Users, Target, Award, Globe } from "lucide-react"
 
@@ -56,20 +57,25 @@ const About = () => {
           className="grid md:grid-cols-4 gap-8 mb-20"
         >
           {[
-            { number: "2019", label: "Founded" },
-            { number: "50K+", label: "Developers" },
-            { number: "100+", label: "Countries" },
-            { number: "99.9%", label: "Uptime" }
+            { number: "2025", label: "Founded Incredibly" },
+            { number: "50K+", label: "Developers Wordwide" },
+            { number: "100+", label: "Countries Included" },
+            { number: "99.9%", label: "Uptime Guaranteed" }
           ].map((stat, index) => (
             <motion.div
               key={index}
               className="text-center glass-card p-8 rounded-2xl"
               whileHover={{ y: -5 }}
             >
-              <div className="text-4xl font-bold text-orange-500 mb-2 ">
+              <div className="text-4xl font-bold text-orange-500 mb-2 "
+                style={{
+                  fontWeight: 900
+                }}>
                 {stat.number}
               </div>
-              <div className="text-gray-600 dark:text-gray-300 font-bold text-sm ">
+              <div className="text-gray-600 dark:text-gray-300 font-bold text-[15px] "   style={{
+            fontWeight: 800
+          }}>
                 {stat.label}
               </div>
             </motion.div>
@@ -100,12 +106,12 @@ const About = () => {
               {
                 icon: <Users />,
                 title: "Community First",
-                description: "We prioritize our developer community and build features based on real feedback and needs."
+                description: "We prioritize our developer community and build features based on real feedback."
               },
               {
                 icon: <Target />,
                 title: "Innovation Driven",
-                description: "We constantly push the boundaries of what's possible in developer tooling and productivity."
+                description: "We constantly push the boundaries of what's possible in developer tools."
               },
               {
                 icon: <Award />,
@@ -115,7 +121,7 @@ const About = () => {
               {
                 icon: <Globe />,
                 title: "Globally Accessible",
-                description: "We ensure our platform is accessible to developers worldwide, regardless of location or background."
+                description: "We ensure our platform is accessible to developers worldwide, regardless of location."
               }
             ].map((value, index) => (
               <motion.div
@@ -128,10 +134,10 @@ const About = () => {
                     {value.icon}
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-600 dark:text-white mb-4 " style={{ fontWeight: 900 }}>
+                <h3 className="text-xl font-bold dark:text-white mb-4 " style={{ fontWeight: 900 }}>
                   {value.title}
                 </h3>
-                <p className="text-sm font-bold text-gray-600 dark:text-gray-300  leading-relaxed">
+                <p className="text-[15px] font-bold text-gray-600 dark:text-gray-300  leading-relaxed">
                   {value.description}
                 </p>
               </motion.div>
@@ -139,6 +145,8 @@ const About = () => {
           </div>
         </motion.section>
       </motion.main>
+      
+      <Footer />
     </div>
   )
 }

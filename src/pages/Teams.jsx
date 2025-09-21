@@ -1,4 +1,5 @@
 import Header from "../components/Header"
+import Footer from "../components/Footer"
 import { motion } from "framer-motion"
 import { Users, Shield, Zap, Settings } from "lucide-react"
 
@@ -167,6 +168,8 @@ const Teams = () => {
           </motion.button>
         </motion.section>
       </motion.main>
+      
+      <Footer />
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import Header from "../components/Header"
+import Footer from "../components/Footer"
 import { motion } from "framer-motion"
 import { Check, X } from "lucide-react"
 
@@ -71,7 +72,7 @@ const Pricing = () => {
   ]
 
   return (
-    <div className="flex flex-col items-center justify-center relative pt-30 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950 min-h-screen">
+    <div className="flex flex-col items-center justify-center relative pt-20 overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950 min-h-screen">
       <Header />
       
       <motion.main 
@@ -165,49 +166,10 @@ const Pricing = () => {
           ))}
         </motion.section>
 
-        {/* FAQ Section */}
-        <motion.section 
-          variants={itemVariants}
-          className="text-center"
-        >
-          <h2 className="text-4xl text-gray-900 dark:text-white  mb-8" style={{ fontWeight: 900 }}>
-            Frequently Asked Questions
-          </h2>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {[
-              {
-                question: "Can I change plans anytime?",
-                answer: "Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately."
-              },
-              {
-                question: "Is there a free trial?",
-                answer: "All paid plans come with a 14-day free trial. No credit card required to start."
-              },
-              {
-                question: "What payment methods do you accept?",
-                answer: "We accept all major credit cards, PayPal, and bank transfers for enterprise plans."
-              },
-              {
-                question: "Do you offer discounts for students?",
-                answer: "Yes, we offer 50% discount for students and educational institutions with valid ID."
-              }
-            ].map((faq, index) => (
-              <motion.div
-                key={index}
-                className="glass-card p-6 rounded-2xl text-left"
-                whileHover={{ y: -3 }}
-              >
-                <h4 className="text-lg font-bold text-gray-900 dark:text-white  mb-3" style={{ fontWeight: 900 }}>
-                  {faq.question}
-                </h4>
-                <p className="text-sm font-bold text-gray-600 dark:text-gray-300  leading-relaxed">
-                  {faq.answer}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </motion.section>
+   
       </motion.main>
+      
+      <Footer />
     </div>
   )
 }

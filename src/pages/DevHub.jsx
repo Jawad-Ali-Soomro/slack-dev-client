@@ -1,4 +1,5 @@
 import Header from "../components/Header"
+import Footer from "../components/Footer"
 import { motion } from "framer-motion"
 import { Code, Book, Users, Zap, ArrowRight } from "lucide-react"
 
@@ -211,6 +212,8 @@ const DevHub = () => {
           </motion.button>
         </motion.section>
       </motion.main>
+      
+      <Footer />
     </div>
   )
 }
