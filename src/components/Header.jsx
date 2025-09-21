@@ -1,9 +1,13 @@
 import { Menu, Github, Linkedin, Instagram } from "lucide-react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
+import { useSidebar } from "../contexts/SidebarContext"
+import { useAuth } from "../contexts/AuthContext"
 
 const Header = () => {
   const navigate = useNavigate()
   const location = useLocation()
+  const { toggleSidebar } = useSidebar()
+  const { user, isAuthenticated } = useAuth()
   
   const isActive = (path) => location.pathname === path
   
@@ -21,6 +25,9 @@ const Header = () => {
     }}>
 
       <div className="flex items-center gap-8 uppercase">
+        {/* Menu button for authenticated users - only on mobile */}
+     
+        
         <div className="p-3 bg-gray-200 dark:bg-gray-800 rounded-full">
           <img src="/logo.png" alt="logo" className="w-8 h-8 cursor-pointer" onClick={() => navigate("/")} />
         </div>
@@ -29,9 +36,9 @@ const Header = () => {
             <Link className={getLinkClasses("/contact")} style={{fontWeight: 700}} to="/contact">Contact</Link>
             <Link className={getLinkClasses("/teams")} style={{fontWeight: 700}} to="/teams">Teams</Link>
       </div>
-        <div className="flex items-center gap-4">
-          {/* Social Media Icons */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-4">
+          {/* Social Media Icons - Hidden on mobile */}
+          <div className="hidden md:flex items-center gap-3">
             <a 
               href="https://github.com" 
               target="_blank" 
@@ -58,10 +65,10 @@ const Header = () => {
             </a>
           </div>
           
-          {/* Login Button */}
+          {/* Login Button - Responsive sizing */}
           <button 
             onClick={() => navigate("/login")}
-            className="font-bold text-sm w-[160px] py-4 rounded-full cursor-pointer bg-black text-white uppercase hover:bg-gray-800 transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
+            className="font-bold text-xs md:text-sm w-[150px] md:w-[160px] py-5 md:py-4 rounded-full cursor-pointer bg-black text-white uppercase hover:bg-gray-800 transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
           >
             Login
           </button>

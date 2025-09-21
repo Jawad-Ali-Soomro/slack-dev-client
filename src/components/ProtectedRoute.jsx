@@ -1,9 +1,12 @@
 import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { motion } from 'framer-motion'
+import Sidebar from './Sidebar'
+import { useSidebar } from '../contexts/SidebarContext'
 
 const ProtectedRoute = ({ children, requireAuth = true }) => {
   const { isAuthenticated, loading } = useAuth()
+  const { isOpen } = useSidebar()
   const location = useLocation()
 
   // Show loading spinner while checking auth status
@@ -35,7 +38,11 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
     return <Navigate to="/dashboard" replace />
   }
 
-  return children
+  return <div className='flex'><Sidebar />
+  <div className={`flex-1 ${isOpen ? 'pl-25 pr-25 pt-10' : 'ml-0'}`}>
+  {children}
+  </div>
+  </div>
 }
 
 export default ProtectedRoute
