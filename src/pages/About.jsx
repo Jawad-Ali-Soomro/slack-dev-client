@@ -44,8 +44,8 @@ const About = () => {
           </motion.h1>
           <motion.p 
             variants={itemVariants}
-            className="text-xl text-gray-500 dark:text-gray-300 max-w-3xl mx-auto "
-            style={{ fontWeight: 800 }}
+            className="text-xl  max-w-3xl mx-auto "
+            // style={{ fontWeight: 800 }}
           >
             Yes we are passionate developers building tools for the developer community!
           </motion.p>
@@ -79,7 +79,7 @@ const About = () => {
               className="text-center glass-card p-8 rounded-2xl"
               whileHover={{ y: -5 }}
             >
-              <div className="text-4xl font-bold text-orange-500 mb-2 "
+              <div className="text-4xl font-bold text-black mb-2 dark:text-white"
                 style={{
                   fontWeight: 900
                 }}>
@@ -102,7 +102,7 @@ const About = () => {
           <h2 className="text-4xl text-gray-900 dark:text-white  mb-8" style={{ fontWeight: 900 }}>
             Our Mission
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-4xl mx-auto  leading-relaxed" style={{ fontWeight: 800 }}>
+          <p className="text-lg max-w-4xl mx-auto  leading-relaxed" >
             To empower developers worldwide with cutting-edge tools and platforms that streamline 
             the development process, enhance collaboration, and accelerate innovation in the tech industry.
           </p>
@@ -110,9 +110,9 @@ const About = () => {
 
         {/* Values Section */}
         <motion.section variants={itemVariants}>
-          <h2 className="text-4xl text-gray-900 dark:text-white  text-center mb-16" style={{ fontWeight: 900 }}>
+          {/* <h2 className="text-4xl text-gray-900 dark:text-white  text-center mb-16" style={{ fontWeight: 900 }}>
             Our Values
-          </h2>
+          </h2> */}
           <div className="grid md:grid-cols-2 gap-8">
             {[
               {
@@ -152,15 +152,15 @@ const About = () => {
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
-                <div className="w-[80px] h-[80px] bg-orange-500 rounded-full flex items-center justify-center mb-6">
+                <div className="w-[80px] h-[80px] bg-black rounded-full flex items-center justify-center mb-6 dark:bg-white">
                   <div className="w-12 h-12 text-white flex items-center justify-center">
                     {value.icon}
                   </div>
                 </div>
-                <h3 className="text-xl font-bold dark:text-white mb-4 " style={{ fontWeight: 900 }}>
+                <h3 className="text-xl font-bold dark:text-white mb-4 " >
                   {value.title}
                 </h3>
-                <p className="text-[15px] font-bold text-gray-600 dark:text-gray-300  leading-relaxed">
+                <p className="text-[15px] font-semibold  leading-relaxed">
                   {value.description}
                 </p>
               </motion.div>

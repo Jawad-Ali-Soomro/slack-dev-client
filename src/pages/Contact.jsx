@@ -44,8 +44,8 @@ const Contact = () => {
           </motion.h1>
           <motion.p 
             variants={itemVariants}
-            className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto "
-            style={{ fontWeight: 800 }}
+            className="text-xl max-w-3xl mx-auto "
+            // style={{ fontWeight: 800 }}
           >
             Get in touch with our team for support, partnerships, or questions
           </motion.p>
@@ -54,7 +54,7 @@ const Contact = () => {
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Contact Info */}
           <motion.div variants={itemVariants}>
-            <h2 className="text-3xl text-gray-900 dark:text-white  mb-8" style={{ fontWeight: 900 }}>
+            <h2 className="text-3xl text-gray-900 dark:text-white  mb-8" style={{ fontWeight: 600 }}>
               Get in Touch
             </h2>
             <div className="space-y-6">
@@ -80,13 +80,13 @@ const Contact = () => {
                   className="glass-card p-6 rounded-2xl flex items-center space-x-4"
                   whileHover={{ y: -5 }}
                 >
-                  <div className="w-[60px] h-[60px] bg-orange-500 rounded-full flex items-center justify-center">
+                  <div className="w-[60px] h-[60px] bg-black rounded-full flex items-center justify-center dark:bg-white">
                     <div className="w-8 h-8 text-white flex items-center justify-center">
                       {contact.icon}
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-600 dark:text-white " style={{ fontWeight: 900 }}>
+                    <h3 className="text-lg font-bold text-gray-600 dark:text-white " style={{ fontWeight: 700 }}>
                       {contact.title}
                     </h3>
                     <p className="text-sm font-bold text-gray-600 dark:text-gray-300 ">
@@ -100,7 +100,7 @@ const Contact = () => {
 
           {/* Contact Form */}
           <motion.div variants={itemVariants}>
-            <h2 className="text-3xl text-gray-900 dark:text-white  mb-8" style={{ fontWeight: 900 }}>
+            <h2 className="text-3xl text-gray-900 dark:text-white  mb-8" style={{ fontWeight: 600 }}>
               Send Message
             </h2>
             <form className="space-y-6">
@@ -134,7 +134,7 @@ const Contact = () => {
               </div>
               <motion.button
                 type="submit"
-                className="w-full p-4 bg-orange-500 text-white rounded-lg font-bold text-sm  hover:bg-orange-600 transition-colors flex items-center justify-center space-x-2"
+                className="w-full p-4 bg-black text-white rounded-lg font-bold text-sm  hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2 dark:bg-white dark:text-black dark:hover:bg-gray-200"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >

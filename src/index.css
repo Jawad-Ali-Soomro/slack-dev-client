@@ -17,7 +17,7 @@
 
 .gradient-border {
   position: relative;
-  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57);
+  background: linear-gradient(45deg, #000000, #333333, #666666, #999999, #cccccc);
   background-size: 300% 300%;
   animation: gradientShift 3s ease infinite;
 }
@@ -43,7 +43,7 @@
 .floating-orb {
   position: absolute;
   border-radius: 50%;
-  background: linear-gradient(45deg, rgba(255, 107, 107, 0.3), rgba(78, 205, 196, 0.3));
+  background: linear-gradient(45deg, rgba(0, 0, 0, 0.3), rgba(128, 128, 128, 0.3));
   filter: blur(40px);
   animation: float 6s ease-in-out infinite;
 }
@@ -54,7 +54,7 @@
 }
 
 .text-gradient {
-  background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+  background: linear-gradient(45deg, #000000, #333333, #666666);
   background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -63,7 +63,7 @@
 }
 
 .neon-glow {
-  box-shadow: 0 0 20px rgba(249, 115, 22, 0.5), 0 0 40px rgba(249, 115, 22, 0.3), 0 0 60px rgba(249, 115, 22, 0.1);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 0, 0, 0.3), 0 0 60px rgba(0, 0, 0, 0.1);
 }
 
 .morphing-blob {

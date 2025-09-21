@@ -87,12 +87,12 @@ const DevHub = () => {
               className="glass-card p-8 rounded-2xl text-center"
               whileHover={{ y: -5 }}
             >
-              <div className="w-[80px] h-[80px] bg-orange-500 rounded-full flex items-center justify-center mb-6 mx-auto">
+              <div className="w-[80px] h-[80px] bg-black rounded-full flex items-center justify-center mb-6 mx-auto dark:bg-white">
                 <div className="w-12 h-12 text-white flex items-center justify-center">
                   {category.icon}
                 </div>
               </div>
-              <div className="text-2xl font-bold text-orange-500 mb-2 ">
+              <div className="text-2xl font-bold text-black mb-2 dark:text-white">
                 {category.count}
               </div>
               <h3 className="text-xl font-bold text-gray-600 dark:text-white mb-4 " style={{ fontWeight: 900 }}>
@@ -139,7 +139,7 @@ const DevHub = () => {
                 className="glass-card p-8 rounded-2xl"
                 whileHover={{ y: -5 }}
               >
-                <div className="text-sm font-bold text-orange-500  mb-2">
+                <div className="text-sm font-bold text-black  mb-2 dark:text-white">
                   {resource.category}
                 </div>
                 <h3 className="text-xl font-bold text-gray-600 dark:text-white mb-4 " style={{ fontWeight: 900 }}>
@@ -152,7 +152,7 @@ const DevHub = () => {
                   <span className="text-xs font-bold text-gray-500 dark:text-gray-400 ">
                     {resource.readTime}
                   </span>
-                  <button className="text-xs font-bold text-white  w-[40px] h-10 bg-orange-500 rounded-full flex items-center justify-center">
+                  <button className="text-xs font-bold text-white  w-[40px] h-10 bg-black rounded-full flex items-center justify-center dark:bg-white dark:text-black">
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -181,7 +181,7 @@ const DevHub = () => {
                 className="glass-card p-8 rounded-2xl"
                 whileHover={{ y: -5 }}
               >
-                <div className="text-4xl font-bold text-orange-500 mb-2 ">
+                <div className="text-4xl font-bold text-black mb-2 dark:text-white">
                   {stat.number}
                 </div>
                 <div className="text-sm font-bold text-gray-600 dark:text-gray-300 ">
@@ -204,7 +204,7 @@ const DevHub = () => {
             Start learning, sharing, and building with thousands of developers worldwide
           </p>
           <motion.button 
-            className="px-12 py-4 bg-orange-500 text-white rounded-full font-bold text-lg  hover:bg-orange-600 transition-colors"
+            className="px-12 py-4 bg-black text-white rounded-full font-bold text-lg  hover:bg-gray-800 transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

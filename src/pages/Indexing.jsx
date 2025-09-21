@@ -14,7 +14,7 @@ const Indexing = () => {
     { Icon: Rocket, color: "text-indigo-500", top: "80%", left: "15%", delay: 3 },
     { Icon: Terminal, color: "text-cyan-500", top: "20%", right: "25%", delay: 3.5 },
     { Icon: Settings, color: "text-gray-500", top: "65%", right: "20%", delay: 4 },
-    { Icon: Cpu, color: "text-orange-500", top: "35%", left: "20%", delay: 4.5 }
+    { Icon: Cpu, color: "text-black dark:text-white", top: "35%", left: "20%", delay: 4.5 }
   ]
 
   const containerVariants = {
@@ -116,7 +116,7 @@ const Indexing = () => {
               className="flex gap-6 mt-10"
             >
                 <motion.button 
-                  className="w-[300px] font-bold py-4 bg-orange-500 text-white rounded-full text-sm cursor-pointer hover:bg-orange-600 transition-colors shadow-lg "
+                  className="w-[300px] font-bold py-4 bg-black text-white rounded-full text-sm cursor-pointer hover:bg-gray-800 transition-colors shadow-lg dark:bg-white dark:text-black dark:hover:bg-gray-200"
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
@@ -175,13 +175,13 @@ const Indexing = () => {
               Powerful Features
             </motion.h2>
             <motion.p 
-              className="text-lg text-gray-400 dark:text-gray-300 "
+              className="text-lg"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
               viewport={{ once: true }}
               style={{
-                fontWeight: 800
+                fontWeight: 600
               }}
             >
               Everything you need to manage projects efficiently
@@ -243,20 +243,18 @@ const Indexing = () => {
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
-                <div className="w-[80px] h-[80px] bg-orange-500 rounded-full flex items-center justify-center mb-4">
-                  <div className="w-12 h-12 text-white flex items-center justify-center ">
+                <div className="w-[80px] h-[80px] bg-[rgba(0,0,0,0.1)] rounded-full flex items-center justify-center mb-4 dark:bg-[rgba(255,255,255,0.1)]">
+                  <div className="w-12 h-12 text-black dark:text-white flex items-center justify-center ">
                     {feature.icon}
                   </div>
                 </div>
-                <h3 className="text-[20px] font-bold text-gray-600 dark:text-white mb-4 " style={{
-                    fontWeight: 900
-                }}>
+                <h3 className="text-[20px] font-bold  dark:text-white mb-4 " >
                   {feature.title}
                 </h3>
                 <p className="text-[10px] font-bold text-gray-600 dark:text-gray-300  leading-relaxed">
                   {feature.description}
                 </p>
-                <button className="text-[10px] font-bold text-white  leading-relaxed w-[50px] h-12 bg-orange-500 border-orange-500 dark:border-white rounded-full mt-4 flex items-center justify-center" style={{
+                <button className="text-[10px] font-bold text-white  leading-relaxed w-[50px] h-12 bg-black border-black dark:border-white rounded-full mt-4 flex items-center justify-center dark:bg-white dark:text-black" style={{
                     marginLeft: 'calc(100% - 50px)'
                 }}><ArrowRight /></button>
               </motion.div>
@@ -266,7 +264,7 @@ const Indexing = () => {
 
         {/* Stats Section */}
         <motion.section 
-          className="w-full bg-orange-500 py-16 relative"
+          className="w-full bg-black py-16 relative dark:bg-white"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
@@ -287,16 +285,14 @@ const Indexing = () => {
                   transition={{ delay: index * 0.1, duration: 0.6 }}
                   viewport={{ once: true }}
                 >
-                  <div className="text-4xl font-bold text-white mb-2 "
+                  <div className="text-4xl font-bold text-white dark:text-black mb-2 "
                     style={{
                       fontWeight: 900
                     }}>
                     {stat.number}
                   </div>
-                  <div className="text-orange-100 font-semibold text-sm "
-                    style={{
-                      fontWeight: 800
-                    }}>
+                  <div className="text-gray-300 font-semibold text-sm dark:text-gray-700"
+                    >
                     {stat.label}
                   </div>
                 </motion.div>
@@ -358,7 +354,7 @@ const Indexing = () => {
                 whileHover={{ y: -8, scale: 1.02 }}
                 viewport={{ once: true }}
               >
-                <div className="text-2xl text-orange-500 mb-4">"</div>
+                <div className="text-2xl text-black mb-4 dark:text-white">"</div>
                 <p className="text-gray-700 dark:text-gray-300 mb-6 text-sm  leading-relaxed">
                   {testimonial.quote}
                 </p>
@@ -432,14 +428,12 @@ How It Works
                 transition={{ delay: index * 0.2, duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <div className="text-6xl font-bold text-orange-500 mb-4 "   style={{
+                <div className="text-6xl font-bold text-black mb-4 dark:text-white"   style={{
             fontWeight: 900
           }}>
                   {step.step}
                 </div>
-                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 "   style={{
-            fontWeight: 900
-          }}>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 " >
                   {step.title}
                 </h3>
                 <p className="text-gray-600 dark:text-gray-300  text-sm leading-relaxed" 
@@ -481,7 +475,7 @@ How It Works
               Join thousands of developers who trust our platform
             </motion.p>
             <motion.button 
-              className="w-[400px] font-bold py-4 bg-orange-500 text-white rounded-full text-lg hover:bg-orange-600 transition-colors shadow-lg "
+              className="w-[400px] font-bold py-4 bg-white text-black rounded-full text-lg  transition-colors shadow-lg dark:bg-white dark:text-black "
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.6 }}

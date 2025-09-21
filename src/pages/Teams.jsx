@@ -44,8 +44,8 @@ const Teams = () => {
           </motion.h1>
           <motion.p 
             variants={itemVariants}
-            className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto "
-            style={{ fontWeight: 800 }}
+            className="text-xl max-w-3xl mx-auto "
+            style={{ fontWeight: 600 }}
           >
             Collaborate seamlessly with your development team using our powerful tools
           </motion.p>
@@ -87,12 +87,12 @@ const Teams = () => {
                 className="glass-card p-8 rounded-2xl text-center"
                 whileHover={{ y: -5 }}
               >
-                <div className="w-[80px] h-[80px] bg-orange-500 rounded-full flex items-center justify-center mb-6 mx-auto">
+                <div className="w-[80px] h-[80px] bg-black rounded-full flex items-center justify-center mb-6 mx-auto dark:bg-white">
                   <div className="w-12 h-12 text-white flex items-center justify-center">
                     {feature.icon}
                   </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-600 dark:text-white mb-4 " style={{ fontWeight: 900 }}>
+                <h3 className="text-xl font-bold  dark:text-white mb-4 " style={{ fontWeight: 800 }}>
                   {feature.title}
                 </h3>
                 <p className="text-sm font-bold text-gray-600 dark:text-gray-300  leading-relaxed">
@@ -134,7 +134,7 @@ const Teams = () => {
                 className="glass-card p-8 rounded-2xl text-center"
                 whileHover={{ y: -5 }}
               >
-                <div className="text-3xl font-bold text-orange-500 mb-4 "
+                <div className="text-3xl font-bold text-black mb-4 dark:text-white"
                 style={{
                   fontWeight: 900
                 }}
@@ -164,11 +164,11 @@ const Teams = () => {
           <h2 className="text-4xl text-gray-900 dark:text-white  mb-8" style={{ fontWeight: 900 }}>
             Start Collaborating Today
           </h2>
-          <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto  mb-10" style={{ fontWeight: 800 }}>
+          <p className="text-lg max-w-3xl mx-auto  mb-10" style={{ fontWeight: 600 }}>
             Invite your team members and start building amazing projects together
           </p>
           <motion.button 
-            className="px-12 py-4 bg-orange-500 text-white rounded-full font-bold text-lg  hover:bg-orange-600 transition-colors"
+            className="px-12 py-4 bg-black text-white rounded-full font-bold text-lg  hover:bg-gray-800 transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
