@@ -160,7 +160,7 @@ const Sidebar = () => {
             initial="closed"
             animate="open"
             exit="closed"
-            className="fixed left-0 top-0 h-full w-20 bg-white dark:bg-[#030712] z-50 border-r border-gray-200 dark:border-gray-700 lg:z-30"
+            className="fixed left-0 top-0 h-full w-20 bg-white dark:bg-gray-900 z-100000 border-r border-gray-200 dark:border-gray-700 lg:z-10000"
           >
             {/* Header */}
             <div className="flex items-center justify-center p-4 border-b border-gray-200 dark:border-gray-700">

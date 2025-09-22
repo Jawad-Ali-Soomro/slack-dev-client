@@ -14,6 +14,8 @@ import Signup from './pages/Signup'
 import ForgotPassword from './pages/ForgotPassword'
 import VerifyEmail from './pages/VerifyEmail'
 import Dashboard from './pages/Dashboard'
+import Tasks from './pages/Tasks'
+import Meetings from './pages/Meetings'
 import { Toaster } from 'sonner'
 
 function App() {
@@ -87,6 +89,22 @@ function App() {
                 </ProtectedRoute>
               } 
             />
+                <Route 
+                  path="/dashboard/tasks" 
+                  element={
+                    <ProtectedRoute requireAuth={true}>
+                      <Tasks />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/dashboard/meetings" 
+                  element={
+                    <ProtectedRoute requireAuth={true}>
+                      <Meetings />
+                    </ProtectedRoute>
+                  } 
+                />
             </Routes>
           </div>
         </SidebarProvider>

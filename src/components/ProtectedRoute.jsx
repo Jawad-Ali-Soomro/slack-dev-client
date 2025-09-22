@@ -2,6 +2,7 @@ import { Navigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 import { motion } from 'framer-motion'
 import Sidebar from './Sidebar'
+import DashboardHeader from './DashboardHeader'
 import { useSidebar } from '../contexts/SidebarContext'
 import { ChevronLeft, ChevronRight, SidebarOpen } from 'lucide-react'
 
@@ -39,16 +40,22 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
     return <Navigate to="/dashboard" replace />
   }
 
-  return <div className='flex'><Sidebar />
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <DashboardHeader />
+      <div className="flex">
+        <Sidebar />
+        
+        <div className={`flex absolute left-2 top-20 p-3 hover:bg-gray-100 cursor-pointer rounded-full hover:text-black z-10`} onClick={() => toggleSidebar()}>
+          <ChevronRight />
+        </div>
 
-<div className={`flex absolute left-2 top-2 p-3 hover:bg-gray-100 cursor-pointer rounded-full hover:text-black`} onClick={() => toggleSidebar()}>
- <ChevronRight />
-</div>
-
-  <div className={`flex-1 ${isOpen ? 'md:pl-25 md:pr-15 md:pt-10 p-10' : 'md:pl-25 md:pr-15 md:pt-10 p-10'}`}>
-  {children}
-  </div>
-  </div>
+        <div className={`flex-1 ${isOpen ? 'md:pl-25 md:pr-15 md:pt-20 p-20' : 'md:pl-25 md:pr-15 md:pt-20 p-20'}`}>
+          {children}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export default ProtectedRoute

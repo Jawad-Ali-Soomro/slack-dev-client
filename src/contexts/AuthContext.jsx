@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import { createContext, useContext, useState, useEffect, useMemo } from 'react'
 import { authService } from '../services/authService'
 
 const AuthContext = createContext()
@@ -13,7 +13,7 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
@@ -22,18 +22,26 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuthStatus = async () => {
     try {
+      setLoading(true)
       const token = localStorage.getItem('authToken')
       const userData = localStorage.getItem('userData')
-      console.log(token, userData)
+      console.log('Checking auth status:', { token: !!token, userData: !!userData })
       
       if (token && userData) {
         setIsAuthenticated(true)
         setUser(JSON.parse(userData))
+        console.log('User authenticated from localStorage')
+      } else {
+        console.log('No valid auth data found')
+        setIsAuthenticated(false)
+        setUser(null)
       }
     } catch (error) {
       console.error('Auth check failed:', error)
       localStorage.removeItem('authToken')
       localStorage.removeItem('userData')
+      setIsAuthenticated(false)
+      setUser(null)
     } finally {
       setLoading(false)
     }
@@ -121,7 +129,7 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     isAuthenticated,
     loading,
@@ -129,7 +137,12 @@ export const AuthProvider = ({ children }) => {
     logout,
     forgotPassword,
     verifyOTP
-  }
+  }), [user, isAuthenticated, loading])
+
+  // Debug: Log when user object changes
+  useEffect(() => {
+    console.log('AuthContext user changed:', { user: user?.id, isAuthenticated })
+  }, [user, isAuthenticated])
 
   return (
     <AuthContext.Provider value={value}>
