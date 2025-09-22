@@ -96,7 +96,7 @@ const Indexing = () => {
             
             <motion.h1 
               variants={itemVariants}
-              className="text-[50px] mt-10 font-bold text-gray-900 dark:text-white " 
+              className="text-[30px] md:text-[50px] p-5 md:p-0 mt-10 font-bold text-gray-900 dark:text-white " 
               style={{ fontWeight: 900 }}
             >
               Manage Your Projects Like a Pro!
@@ -104,7 +104,7 @@ const Indexing = () => {
             
             <motion.p 
               variants={itemVariants}
-              className="text-sm text-gray-600 dark:text-gray-300 mt-8 max-w-4xl leading-relaxed "
+              className="text-[10px] p-10 text-gray-600 dark:text-gray-300 md:text-sm max-w-4xl leading-relaxed"
             >
                 Streamline your development workflow with our powerful project management toolkit. 
                 Built by developers, for developers - manage tasks, collaborate with your team, 
@@ -116,7 +116,7 @@ const Indexing = () => {
               className="flex gap-6 mt-10"
             >
                 <motion.button 
-                  className="w-[300px] font-bold py-4 bg-black text-white rounded-full text-sm cursor-pointer hover:bg-gray-800 transition-colors shadow-lg dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                  className="w-[300px] font-bold py-4 bg-black text-white z-50 rounded-full text-sm cursor-pointer hover:bg-gray-800 transition-colors shadow-lg dark:bg-white dark:text-black dark:hover:bg-gray-200"
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
@@ -129,7 +129,7 @@ const Indexing = () => {
               className="flex items-center gap-8 mt-12 text-sm text-gray-500 dark:text-gray-400 "
             >
                 <motion.div 
-                  className="flex items-center gap-2 font-bold"
+                  className="flex items-center gap-2 font-bold hidden md:flex"
                   whileHover={{ scale: 1.05 }}
                 >
                     <span className="w-2 h-2 bg-green-500 rounded-full"></span>

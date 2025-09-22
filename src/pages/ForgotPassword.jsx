@@ -103,7 +103,8 @@ const ForgotPassword = () => {
         {/* Forgot Password Card */}
         <motion.div
           variants={itemVariants}
-          className="glass-card p-8 rounded-2xl shadow-2xl border border-black dark:border-white"
+
+          className="p-5 md:p-8 md:shadow-2xl md:border dark:border-gray-orange-500 border rounded-2xl dark:border-gray-700"
         >
           {/* Back Button */}
           <motion.div variants={itemVariants} className="mb-6">

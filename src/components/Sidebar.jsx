@@ -160,7 +160,7 @@ const Sidebar = () => {
             initial="closed"
             animate="open"
             exit="closed"
-            className="fixed left-0 top-0 h-full w-20 bg-white dark:bg-gray-900 shadow-2xl z-50 border-r border-gray-200 dark:border-gray-700 lg:z-30"
+            className="fixed left-0 top-0 h-full w-20 bg-white dark:bg-[#030712] z-50 border-r border-gray-200 dark:border-gray-700 lg:z-30"
           >
             {/* Header */}
             <div className="flex items-center justify-center p-4 border-b border-gray-200 dark:border-gray-700">
@@ -192,7 +192,7 @@ const Sidebar = () => {
                         className={`relative flex items-center justify-center w-[50px] h-[50px] rounded-lg transition-all duration-200 group ${
                           active
                             ? 'shadow-none border border-gray-200 dark:border-gray-700 text-black  dark:text-black shadow-lg scale-105'
-                            : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300 hover:scale-105'
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
                         }`}
                       >
                         <Icon className={`w-5 h-5 transition-transform ${active ? 'text-black dark:text-white' : item.color}`} />
@@ -209,7 +209,7 @@ const Sidebar = () => {
                     </motion.div>
                   )
                 })}
-                <div className="flex items-center justify-center bg-red-500 w-[50px] h-[50px] rounded-lg transition-all duration-200 group absolute bottom-5 text-white" onClick={() => {
+                <div className="flex items-center justify-center text-red-500 w-[50px] h-[50px] rounded-lg transition-all duration-200 group absolute bottom-5 border border-red-500 cursor-pointer" onClick={() => {
                   logout()
                 }}>
                   <LogOut className="w-5 h-5 transition-transform" />

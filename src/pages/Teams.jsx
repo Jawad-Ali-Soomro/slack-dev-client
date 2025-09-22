@@ -87,8 +87,8 @@ const Teams = () => {
                 className="glass-card p-8 rounded-2xl text-center"
                 whileHover={{ y: -5 }}
               >
-                <div className="w-[80px] h-[80px] bg-black rounded-full flex items-center justify-center mb-6 mx-auto dark:bg-white">
-                  <div className="w-12 h-12 text-white flex items-center justify-center">
+                <div className="w-[80px] h-[80px] bg-black rounded-full flex items-center justify-center mb-6 mx-auto  dark:bg-white">
+                  <div className="w-12 h-12 text-white flex items-center justify-center dark:text-black">
                     {feature.icon}
                   </div>
                 </div>

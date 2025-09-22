@@ -3,10 +3,11 @@ import { useAuth } from '../contexts/AuthContext'
 import { motion } from 'framer-motion'
 import Sidebar from './Sidebar'
 import { useSidebar } from '../contexts/SidebarContext'
+import { ChevronLeft, ChevronRight, SidebarOpen } from 'lucide-react'
 
 const ProtectedRoute = ({ children, requireAuth = true }) => {
   const { isAuthenticated, loading } = useAuth()
-  const { isOpen } = useSidebar()
+  const { isOpen, toggleSidebar } = useSidebar()
   const location = useLocation()
 
   // Show loading spinner while checking auth status
@@ -14,7 +15,7 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950 flex items-center justify-center">
         <motion.div
-          className="glass-card p-8 rounded-2xl shadow-2xl border border-black dark:border-white"
+          className="glass-card p-5 md:p-8 shadow-none border-none rounded-2xl md:shadow-2xl md:border md:border-black md:dark:border-white"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
@@ -39,7 +40,12 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
   }
 
   return <div className='flex'><Sidebar />
-  <div className={`flex-1 ${isOpen ? 'pl-25 pr-25 pt-10' : 'ml-0'}`}>
+
+<div className={`flex absolute left-2 top-2 p-2 hover:bg-gray-200 rounded-full`} onClick={() => toggleSidebar()}>
+ <SidebarOpen />
+</div>
+
+  <div className={`flex-1 ${isOpen ? 'md:pl-25 md:pr-15 md:pt-10 p-10' : 'md:pl-25 md:pr-25 md:pt-10 p-10'}`}>
   {children}
   </div>
   </div>

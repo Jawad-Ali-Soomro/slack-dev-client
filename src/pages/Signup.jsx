@@ -74,7 +74,7 @@ const Signup = () => {
         {/* Signup Card */}
         <motion.div
           variants={itemVariants}
-          className="glass-card p-8 rounded-2xl shadow-2xl border border-black dark:border-white"
+          className="p-5 md:p-8 md:shadow-2xl md:border md:border-none md:rounded-2xl dark:border-white"
         >
           {/* Header */}
           <div className="text-center mb-8">
