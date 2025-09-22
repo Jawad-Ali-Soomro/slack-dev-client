@@ -1,8 +1,9 @@
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Eye, EyeOff, Mail, Lock, ArrowLeft } from "lucide-react"
+import { Eye, EyeOff, Mail, Lock, ArrowLeft, X } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
+import { toast } from "sonner"
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -23,17 +24,61 @@ const Login = () => {
     setError("")
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+  const handleSubmit = async () => {
     setError("")
     
-    const result = await login(formData)
+    console.log('=== LOGIN DEBUG START ===')
+    console.log('Form submitted with data:', formData)
+    console.log('Loading state:', loading)
     
-    if (result.success) {
-      navigate('/dashboard')
-    } else {
-      setError(result.error || 'Login failed')
+    try {
+      const result = await login(formData)
+      console.log('Login result received:', result);
+      
+      if (result && result.success) {
+        console.log('Login successful, checking email verification')
+        
+        // Check if email is verified
+        if (result.user && result.user.emailVerified) {
+          console.log('Email verified, navigating to dashboard')
+          toast.success("Login successful!", {
+            description: "Welcome back to your dashboard",
+          })
+          navigate('/dashboard')
+        } else {
+          console.log('Email not verified, redirecting to verification page')
+          // Store email for verification
+          localStorage.setItem('verificationEmail', formData.email)
+          
+          // Check if email was sent
+          if (result.emailSent) {
+            toast.info("Verification email sent!", {
+              description: "Please check your email and verify to continue",
+            })
+          } else {
+            toast.info("Email verification required", {
+              description: "Please verify your email to continue",
+            })
+          }
+          
+          navigate('/verify-email')
+        }
+      } else {
+        console.log('Login failed:', result?.error)
+        setError(result?.error || 'Login failed')
+        toast.error("Login failed", {
+          description: result?.error || 'Please check your credentials',
+        })
+      }
+    } catch (error) {
+      console.error('Login error caught:', error)
+      setError(error.message || 'Login failed')
+      toast.error("Login failed", {
+        description: error.message || 'Please check your credentials',
+      })
     }
+    
+    console.log('=== LOGIN DEBUG END ===')
   }
 
   const containerVariants = {
@@ -73,8 +118,7 @@ const Login = () => {
         {/* Login Card */}
         <motion.div
           variants={itemVariants}
-
-          className="p-5 md:p-8 md:shadow-2xl md:border md:border-none md:rounded-2xl dark:border-white"
+          className="p-5 md:p-8 md:shadow-2xl md:border-gray-300 md:rounded-2xl md:dark:border-gray-700 md:border"
         >
 
 <motion.div variants={itemVariants} className="mb-6">
@@ -124,18 +168,9 @@ const Login = () => {
           {/* Divider */}
         
 
-          {/* Error Message */}
-          {error && (
-            <motion.div 
-              variants={itemVariants}
-              className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 mb-4"
-            >
-              <p className="text-red-600 dark:text-red-400 text-sm font-bold">{error}</p>
-            </motion.div>
-          )}
 
           {/* Login Form */}
-          <motion.form variants={itemVariants} onSubmit={handleSubmit} className="space-y-4">
+          <motion.div variants={itemVariants} className="space-y-4">
             {/* Email Input */}
             <div>
               <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
@@ -148,7 +183,7 @@ const Login = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-black focus:border-black dark:focus:outline-white dark:focus:border-white dark:bg-gray-800 dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-gray-800 dark:text-white"
                   placeholder="Enter your email"
                   required
                 />
@@ -167,7 +202,7 @@ const Login = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-black focus:border-black dark:focus:outline-white dark:focus:border-white dark:bg-gray-800 dark:text-white"
+                  className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-gray-800 dark:text-white"
                   placeholder="Enter your password"
                   required
                 />
@@ -189,9 +224,11 @@ const Login = () => {
               </Link>
             </div>
 
+
             {/* Login Button */}
             <motion.button
-              type="submit"
+              type="button"
+              onClick={handleSubmit}
               disabled={loading}
               className="w-full py-3 bg-black text-white rounded-lg font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
               whileHover={{ scale: loading ? 1 : 1.02 }}
@@ -199,7 +236,7 @@ const Login = () => {
             >
               {loading ? "Signing In..." : "Sign In"}
             </motion.button>
-          </motion.form>
+          </motion.div>
           <motion.div variants={itemVariants} className="relative mb-6 mt-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>

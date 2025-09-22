@@ -2,7 +2,8 @@ import { useState } from "react"
 import { motion } from "framer-motion"
 import { Eye, EyeOff, Mail, Lock, User } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
-import { useAuth } from "../contexts/AuthContext"
+import { toast } from "sonner"
+import { authService } from "../services/authService"
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -12,8 +13,7 @@ const Signup = () => {
     password: ""
   })
   const [error, setError] = useState("")
-  
-  const { register, loading } = useAuth()
+  const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
   const handleInputChange = (e) => {
@@ -28,12 +28,30 @@ const Signup = () => {
     e.preventDefault()
     setError("")
     
-    const result = await register(formData)
-    
-    if (result.success) {
-      navigate('/dashboard')
-    } else {
-      setError(result.error || 'Registration failed')
+    try {
+      setLoading(true)
+      const result = await authService.register(formData)
+      console.log('Registration result:', result)
+      
+      if (result.message === 'user registered successfully') {
+        localStorage.setItem('verificationEmail', formData.email)
+        toast.info('Account created successfully!', {
+          description: 'Please check your email for verification code',
+        })
+        navigate('/verify-email')
+      } else {
+        setError(result.message || 'Registration failed')
+        toast.error('Registration failed', {
+          description: result.message || 'Please try again',
+        })
+      }
+    } catch (error) {
+      setError(error.message || 'Registration failed')
+      toast.error('Registration failed', {
+        description: error.message || 'Please try again',
+      })
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -74,7 +92,7 @@ const Signup = () => {
         {/* Signup Card */}
         <motion.div
           variants={itemVariants}
-          className="p-5 md:p-8 md:shadow-2xl md:border md:border-none md:rounded-2xl dark:border-white"
+          className="p-5 md:p-8 md:shadow-2xl md:border-gray-300 md:rounded-2xl md:dark:border-gray-700 md:border"
         >
           {/* Header */}
           <div className="text-center mb-8">
@@ -98,14 +116,7 @@ const Signup = () => {
           </div>
 
           {/* Error Message */}
-          {error && (
-            <motion.div 
-              variants={itemVariants}
-              className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 mb-4"
-            >
-              <p className="text-red-600 dark:text-red-400 text-sm font-bold">{error}</p>
-            </motion.div>
-          )}
+        
 
           {/* Signup Form */}
           <motion.form variants={itemVariants} onSubmit={handleSubmit} className="space-y-4">
@@ -121,7 +132,7 @@ const Signup = () => {
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-black focus:border-black dark:focus:outline-white dark:focus:border-white dark:bg-gray-800 dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-gray-800 dark:text-white"
                   placeholder="Enter your username"
                   required
                 />
@@ -140,7 +151,7 @@ const Signup = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-black focus:border-black dark:focus:outline-white dark:focus:border-white dark:bg-gray-800 dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-gray-800 dark:text-white"
                   placeholder="Enter your email"
                   required
                 />
@@ -159,7 +170,7 @@ const Signup = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-black focus:border-black dark:focus:outline-white dark:focus:border-white dark:bg-gray-800 dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-gray-800 dark:text-white"
                   placeholder="Create a password"
                   required
                 />

@@ -41,11 +41,11 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
 
   return <div className='flex'><Sidebar />
 
-<div className={`flex absolute left-2 top-2 p-2 hover:bg-gray-200 rounded-full`} onClick={() => toggleSidebar()}>
- <SidebarOpen />
+<div className={`flex absolute left-2 top-2 p-3 hover:bg-gray-100 cursor-pointer rounded-full hover:text-black`} onClick={() => toggleSidebar()}>
+ <ChevronRight />
 </div>
 
-  <div className={`flex-1 ${isOpen ? 'md:pl-25 md:pr-15 md:pt-10 p-10' : 'md:pl-25 md:pr-25 md:pt-10 p-10'}`}>
+  <div className={`flex-1 ${isOpen ? 'md:pl-25 md:pr-15 md:pt-10 p-10' : 'md:pl-25 md:pr-15 md:pt-10 p-10'}`}>
   {children}
   </div>
   </div>

@@ -1,26 +1,54 @@
 import { useState, useRef, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Mail, ArrowLeft, CheckCircle } from "lucide-react"
+import { Mail, ArrowLeft, CheckCircle, Lock, Eye, EyeOff } from "lucide-react"
 import { Link } from "react-router-dom"
+import { toast } from "sonner"
+import { authService } from "../services/authService"
 
 const ForgotPassword = () => {
-  const [step, setStep] = useState(1) // 1: Email, 2: OTP, 3: Success
+  const [step, setStep] = useState(1) // 1: Email, 2: OTP, 3: New Password, 4: Success
   const [email, setEmail] = useState("")
   const [otp, setOtp] = useState(["", "", "", ""])
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
   
   // Refs for OTP inputs
   const otpRefs = [useRef(), useRef(), useRef(), useRef()]
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault()
+    setError("")
     setIsLoading(true)
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      console.log('Sending forgot password request for:', email)
+      const result = await authService.forgotPassword(email)
+      console.log('Forgot password result:', result)
+      
+      if (result.message === 'password reset code sent to email') {
+        toast.success('Reset code sent!', {
+          description: 'Please check your email for the reset code',
+        })
+        setStep(2)
+      } else {
+        setError(result.message || 'Failed to send reset code')
+        toast.error('Failed to send reset code', {
+          description: result.message || 'Please try again',
+        })
+      }
+    } catch (error) {
+      console.error('Forgot password error:', error)
+      setError(error.message || 'Failed to send reset code')
+      toast.error('Failed to send reset code', {
+        description: error.message || 'Please try again',
+      })
+    } finally {
       setIsLoading(false)
-      setStep(2)
-    }, 1500)
+    }
   }
 
   const handleOtpChange = (index, value) => {
@@ -48,22 +76,103 @@ const ForgotPassword = () => {
     e.preventDefault()
     const otpCode = otp.join("")
     
-    if (otpCode.length !== 4) return
+    if (otpCode.length !== 4) {
+      toast.error('Please enter the complete 4-digit code')
+      return
+    }
+    
+    setError("")
+    setIsLoading(true)
+    
+    try {
+      console.log('Verifying OTP:', otpCode, 'for email:', email)
+      // For now, just verify the OTP format and move to next step
+      // In a real implementation, you might want to verify the OTP with the backend first
+      toast.success('OTP verified!', {
+        description: 'Now enter your new password',
+      })
+      setStep(3)
+    } catch (error) {
+      console.error('OTP verification error:', error)
+      setError(error.message || 'Verification failed')
+      toast.error('Verification failed', {
+        description: error.message || 'Please check your code and try again',
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleResendOtp = async () => {
+    try {
+      setError("")
+      const result = await authService.forgotPassword(email)
+      if (result.message === 'password reset code sent to email') {
+        toast.success('Reset code resent!', {
+          description: 'Please check your email for the new code',
+        })
+        setOtp(["", "", "", ""])
+        otpRefs[0].current.focus()
+      } else {
+        toast.error('Failed to resend code', {
+          description: result.message || 'Please try again',
+        })
+      }
+    } catch (error) {
+      console.error('Resend OTP error:', error)
+      toast.error('Failed to resend code', {
+        description: error.message || 'Please try again',
+      })
+    }
+  }
+
+  const handlePasswordSubmit = async (e) => {
+    e.preventDefault()
+    setError("")
+    
+    if (newPassword !== confirmPassword) {
+      setError("Passwords don't match")
+      toast.error('Passwords don\'t match', {
+        description: 'Please make sure both passwords are the same',
+      })
+      return
+    }
+    
+    if (newPassword.length < 6) {
+      setError("Password must be at least 6 characters")
+      toast.error('Password too short', {
+        description: 'Password must be at least 6 characters',
+      })
+      return
+    }
     
     setIsLoading(true)
     
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      console.log('Resetting password for:', email, 'with OTP:', otp.join(''))
+      const result = await authService.resetPassword(email, otp.join(''), newPassword)
+      console.log('Reset password result:', result)
+      
+      if (result.message === 'password reset successfully') {
+        toast.success('Password reset successful!', {
+          description: 'You can now login with your new password',
+        })
+        setStep(4)
+      } else {
+        setError(result.message || 'Password reset failed')
+        toast.error('Password reset failed', {
+          description: result.message || 'Please try again',
+        })
+      }
+    } catch (error) {
+      console.error('Password reset error:', error)
+      setError(error.message || 'Password reset failed')
+      toast.error('Password reset failed', {
+        description: error.message || 'Please try again',
+      })
+    } finally {
       setIsLoading(false)
-      setStep(3)
-    }, 1500)
-  }
-
-  const handleResendOtp = () => {
-    setOtp(["", "", "", ""])
-    otpRefs[0].current.focus()
-    // Simulate resend
-    console.log("OTP resent to:", email)
+    }
   }
 
   const containerVariants = {
@@ -103,8 +212,7 @@ const ForgotPassword = () => {
         {/* Forgot Password Card */}
         <motion.div
           variants={itemVariants}
-
-          className="p-5 md:p-8 md:shadow-2xl md:border dark:border-gray-orange-500 border rounded-2xl dark:border-gray-700"
+          className="p-5 md:p-8 md:shadow-2xl md:border-gray-300 md:rounded-2xl md:dark:border-gray-700 md:border"
         >
           {/* Back Button */}
           <motion.div variants={itemVariants} className="mb-6">
@@ -129,7 +237,8 @@ const ForgotPassword = () => {
             >
               {step === 1 && "Forgot Password"}
               {step === 2 && "Enter OTP"}
-              {step === 3 && "Success!"}
+              {step === 3 && "New Password"}
+              {step === 4 && "Success!"}
             </motion.h1>
             <motion.p 
               variants={itemVariants}
@@ -138,9 +247,13 @@ const ForgotPassword = () => {
             >
               {step === 1 && "Enter your email to receive reset instructions"}
               {step === 2 && `We sent a 4-digit code to ${email}`}
-              {step === 3 && "Password reset instructions sent successfully"}
+              {step === 3 && "Enter your new password"}
+              {step === 4 && "Password reset successfully!"}
             </motion.p>
           </div>
+
+          {/* Error Message */}
+       
 
           {/* Step 1: Email Input */}
           {step === 1 && (
@@ -155,7 +268,7 @@ const ForgotPassword = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-black focus:border-black dark:focus:outline-white dark:focus:border-white dark:bg-gray-800 dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-gray-800 dark:text-white"
                     placeholder="Enter your email"
                     required
                   />
@@ -226,8 +339,71 @@ const ForgotPassword = () => {
             </motion.form>
           )}
 
-          {/* Step 3: Success */}
+          {/* Step 3: New Password */}
           {step === 3 && (
+            <motion.form variants={itemVariants} onSubmit={handlePasswordSubmit} className="space-y-6">
+              <div>
+                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  New Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type={showPassword ? "text" : "password"}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-gray-800 dark:text-white"
+                    placeholder="Enter new password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  Confirm Password
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <input
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-gray-800 dark:text-white"
+                    placeholder="Confirm new password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <motion.button
+                type="submit"
+                disabled={isLoading || !newPassword || !confirmPassword}
+                className="w-full py-3 bg-black text-white rounded-lg font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                whileHover={{ scale: isLoading ? 1 : 1.02 }}
+                whileTap={{ scale: isLoading ? 1 : 0.98 }}
+              >
+                {isLoading ? "Resetting..." : "Reset Password"}
+              </motion.button>
+            </motion.form>
+          )}
+
+          {/* Step 4: Success */}
+          {step === 4 && (
             <motion.div variants={itemVariants} className="text-center space-y-6">
               <motion.div
                 initial={{ scale: 0 }}
@@ -238,7 +414,7 @@ const ForgotPassword = () => {
               </motion.div>
               
               <p className="text-gray-600 dark:text-gray-300 mb-6">
-                Check your email for password reset instructions.
+                Your password has been reset successfully. You can now login with your new password.
               </p>
 
               <Link

@@ -12,11 +12,35 @@ import Teams from './pages/Teams'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import ForgotPassword from './pages/ForgotPassword'
+import VerifyEmail from './pages/VerifyEmail'
 import Dashboard from './pages/Dashboard'
+import { Toaster } from 'sonner'
 
 function App() {
   return (
     <Router>
+      <Toaster 
+        position="top-right"
+        richColors
+        closeButton
+        toastOptions={{
+          style: {
+            borderRadius: '20px',
+            fontSize: '14px',
+            fontWeight: '500',
+            position: 'relative'
+          },
+          className: 'relative',
+          closeButton: {
+            position: 'absolute',
+            top: '8px',
+            left: '12px',
+            right: 'auto',
+            padding: '10px',
+            border: '1px solid black',
+          }
+        }}
+      />
       <AuthProvider>
         <SidebarProvider>
           <ThemeToggle className="fixed bottom-10 right-10 z-50" />
@@ -45,6 +69,12 @@ function App() {
               path="/forgot-password" 
               element={
                   <ForgotPassword />
+              } 
+            />
+            <Route 
+              path="/verify-email" 
+              element={
+                  <VerifyEmail />
               } 
             />
             

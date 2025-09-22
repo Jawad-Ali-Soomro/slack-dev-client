@@ -81,7 +81,7 @@ const Contact = () => {
                   whileHover={{ y: -5 }}
                 >
                   <div className="w-[60px] h-[60px] bg-black rounded-full flex items-center justify-center dark:bg-white">
-                    <div className="w-8 h-8 text-black flex items-center justify-center">
+                    <div className="w-8 h-8 text-white dark:text-black flex items-center justify-center">
                       {contact.icon}
                     </div>
                   </div>

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react'
+import { authService } from '../services/authService'
 
 const AuthContext = createContext()
 
@@ -12,11 +13,10 @@ export const useAuth = () => {
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
 
   useEffect(() => {
-    // Check if user is logged in on app start
     checkAuthStatus()
   }, [])
 
@@ -42,65 +42,40 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       setLoading(true)
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      console.log('Login attempt with credentials:', credentials);
       
-      const mockUser = {
-        id: 1,
-        username: credentials.username || 'user',
-        email: credentials.email,
-        name: credentials.name || 'User'
+      const result = await authService.login(credentials)
+      console.log('Login result:', result);
+      
+      if (result.success) {
+        // Store in localStorage only if we have a token (successful login)
+        if (result.token) {
+          localStorage.setItem('authToken', result.token)
+          localStorage.setItem('userData', JSON.stringify(result.user))
+          
+          setUser(result.user)
+          setIsAuthenticated(true)
+        }
+        
+        // Return the full result including emailSent flag
+        return { 
+          success: true, 
+          user: result.user, 
+          emailSent: result.emailSent,
+          message: result.message 
+        }
+      } else {
+        return { success: false, error: result.message || 'Login failed' }
       }
       
-      const mockToken = 'mock-jwt-token-' + Date.now()
-      
-      // Store in localStorage
-      localStorage.setItem('authToken', mockToken)
-      localStorage.setItem('userData', JSON.stringify(mockUser))
-      
-      setUser(mockUser)
-      setIsAuthenticated(true)
-      
-      return { success: true, user: mockUser }
     } catch (error) {
       console.error('Login failed:', error)
-      return { success: false, error: 'Login failed' }
+      return { success: false, error: error.message || 'Login failed' }
     } finally {
       setLoading(false)
     }
   }
 
-  const register = async (userData) => {
-    try {
-      setLoading(true)
-      
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Mock successful registration
-      const mockUser = {
-        id: Date.now(),
-        username: userData.username,
-        email: userData.email,
-        name: userData.username
-      }
-      
-      const mockToken = 'mock-jwt-token-' + Date.now()
-      
-      // Store in localStorage
-      localStorage.setItem('authToken', mockToken)
-      localStorage.setItem('userData', JSON.stringify(mockUser))
-      
-      setUser(mockUser)
-      setIsAuthenticated(true)
-      
-      return { success: true, user: mockUser }
-    } catch (error) {
-      console.error('Registration failed:', error)
-      return { success: false, error: 'Registration failed' }
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const logout = () => {
     localStorage.removeItem('authToken')
@@ -151,7 +126,6 @@ export const AuthProvider = ({ children }) => {
     isAuthenticated,
     loading,
     login,
-    register,
     logout,
     forgotPassword,
     verifyOTP
