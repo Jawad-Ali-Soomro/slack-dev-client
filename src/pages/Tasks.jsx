@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
-import { Search, Plus, Edit, Trash2, Calendar, User, Clock, CheckCircle, AlertCircle, MoreVertical, Filter, ChevronDown } from "lucide-react"
+import { Search, Plus, Edit, Trash2, Calendar, User, Clock, CheckCircle, AlertCircle, MoreVertical, Filter, ChevronDown, RefreshCw } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
@@ -12,11 +12,14 @@ import taskService from "../services/taskService"
 import userService from "../services/userService"
 import { useAuth } from "../contexts/AuthContext"
 import { getAvatarProps } from "../utils/avatarUtils"
+import TaskEditModal from "../components/TaskEditModal"
 
 const Tasks = () => {
   const { user } = useAuth()
   const [searchTerm, setSearchTerm] = useState("")
   const [showNewTaskPopup, setShowNewTaskPopup] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editingTask, setEditingTask] = useState(null)
   const [selectedTasks, setSelectedTasks] = useState([])
   const [filterStatus, setFilterStatus] = useState("all")
   const [filterPriority, setFilterPriority] = useState("all")
@@ -250,6 +253,13 @@ const Tasks = () => {
 
       const response = await taskService.createTask(taskData)
       
+      // Clear caches to ensure fresh data
+      try {
+        await taskService.clearTaskCaches()
+      } catch (cacheError) {
+        console.warn('Cache clear failed:', cacheError)
+      }
+      
       // Reload tasks to get the updated list
       await loadTasks()
       
@@ -292,6 +302,27 @@ const Tasks = () => {
     }
   }
 
+  // Edit task functions
+  const handleEditTask = (task) => {
+    setEditingTask(task)
+    setShowEditModal(true)
+  }
+
+  const handleTaskUpdated = (updatedTask) => {
+    setTasks(prevTasks => 
+      prevTasks.map(task => 
+        task.id === updatedTask.id ? updatedTask : task
+      )
+    )
+    setShowEditModal(false)
+    setEditingTask(null)
+  }
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false)
+    setEditingTask(null)
+  }
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -312,9 +343,9 @@ const Tasks = () => {
   }
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="overflow-hidden pt-6 pl-6">
       <motion.div
-        className="max-w-7xl mx-auto"
+        className="mx-auto"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -349,6 +380,21 @@ const Tasks = () => {
               >
                 <Plus className="w-5 h-5" />
                 New Task
+              </Button>
+              <Button
+                onClick={async () => {
+                  try {
+                    await taskService.clearTaskCaches()
+                    await loadTasks()
+                    toast.success("Cache cleared and data refreshed!")
+                  } catch (error) {
+                    toast.error("Failed to clear cache")
+                  }
+                }}
+                className="flex items-center gap-2 px-4 py-3 bg-gray-500 text-white hover:bg-gray-600"
+              >
+                <RefreshCw className="w-4 h-4" />
+                Refresh
               </Button>
             </div>
           </div>
@@ -397,9 +443,9 @@ const Tasks = () => {
 
         {/* Tasks Table */}
         <motion.div variants={itemVariants} className="bg-white dark:bg-gray-900 rounded-lg shadow-xl border-2 border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
-              <thead className="bg-gray-100 dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700">
+              <thead className="bg-gray-100 dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 sticky top-0 z-10">
                 <tr>
                       <th className="px-6 py-4 text-left">
                         <Checkbox
@@ -419,6 +465,9 @@ const Tasks = () => {
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     Assigned To
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Assigned BY
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     Due Date
@@ -540,6 +589,20 @@ const Tasks = () => {
                         </div>
                       </div>
                     </td>
+                    <td className="px-6 py-4 w-[200px]">
+                      <div className="flex items-center gap-3">
+                        <img 
+                          {...getAvatarProps(task.assignedBy?.avatar, task.assignedBy?.username)}
+                          alt={task.assignedBy?.username || "User"}
+                          className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                        />
+                        <div>
+                          <div className="text-sm font-medium text-gray-900 dark:text-white">
+                            {task.assignedBy?.username || "Unknown User"}
+                          </div>
+                        </div>
+                      </div>
+                    </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Calendar className="w-4 h-4 text-gray-400" />
@@ -554,6 +617,7 @@ const Tasks = () => {
                           <Button
                             variant="ghost"
                             size="sm"
+                            onClick={() => handleEditTask(task)}
                             className="p-2 text-gray-400 hover:text-black dark:hover:text-white"
                           >
                             <Edit className="w-4 h-4" />
@@ -669,9 +733,9 @@ const Tasks = () => {
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                     Task Title
-                  </label>
+                  </label> */}
                   <Input
                     type="text"
                     value={newTask.title}
@@ -682,9 +746,9 @@ const Tasks = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                     Description
-                  </label>
+                  </label> */}
                   <Textarea
                     value={newTask.description}
                     onChange={(e) => setNewTask({...newTask, description: e.target.value})}
@@ -696,9 +760,9 @@ const Tasks = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                       Priority
-                    </label>
+                    </label> */}
                     <Select value={newTask.priority} onValueChange={(value) => setNewTask({...newTask, priority: value})}>
                       <SelectTrigger className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white">
                         <SelectValue placeholder="Select priority" />
@@ -712,9 +776,9 @@ const Tasks = () => {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                       Due Date
-                    </label>
+                    </label> */}
                     <Input
                       type="date"
                       value={newTask.dueDate}
@@ -725,9 +789,9 @@ const Tasks = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                     Assign To Person
-                  </label>
+                  </label> */}
                   <div className="relative">
                     <Input
                       type="text"
@@ -787,6 +851,15 @@ const Tasks = () => {
             </motion.div>
           </motion.div>
         )}
+
+        {/* Task Edit Modal */}
+        <TaskEditModal
+          task={editingTask}
+          isOpen={showEditModal}
+          onClose={handleCloseEditModal}
+          onTaskUpdated={handleTaskUpdated}
+          users={users}
+        />
       </motion.div>
     </div>
   )

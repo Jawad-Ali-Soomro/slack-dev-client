@@ -209,7 +209,7 @@ const Sidebar = () => {
                     </motion.div>
                   )
                 })}
-                <div className="flex items-center justify-center text-red-500 w-[50px] h-[50px] rounded-lg transition-all duration-200 group absolute bottom-5 border border-red-500 cursor-pointer" onClick={() => {
+                <div className="flex items-center justify-center text-white w-[50px] h-[50px] rounded-lg transition-all duration-200 group absolute bottom-5 border bg-red-500 cursor-pointer" onClick={() => {
                   logout()
                 }}>
                   <LogOut className="w-5 h-5 transition-transform" />

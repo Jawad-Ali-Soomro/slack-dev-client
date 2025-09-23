@@ -1,6 +1,16 @@
 import axios from '../lib/axios'
 
 const profileService = {
+  // Get user profile
+  getProfile: async () => {
+    try {
+      const response = await axios.get('/api/user/profile')
+      return response.data
+    } catch (error) {
+      throw error.response?.data || error.message
+    }
+  },
+
   // Update user profile
   updateProfile: async (profileData) => {
     try {

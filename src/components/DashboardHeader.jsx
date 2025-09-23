@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { User, Settings, LogOut, Camera, X, Bell } from 'lucide-react'
+import { User, Settings, LogOut, Camera, X, RefreshCw } from 'lucide-react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
@@ -8,6 +8,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { toast } from 'sonner'
 import profileService from '../services/profileService'
 import { getAvatarProps } from '../utils/avatarUtils'
+import NotificationDropdown from './NotificationDropdown'
 
 const DashboardHeader = () => {
   const { user, logout } = useAuth()
@@ -37,6 +38,35 @@ const DashboardHeader = () => {
       setAvatarPreview(user.avatar || '')
     }
   }, [user])
+
+  // Fetch real-time profile data when modal opens
+  const fetchProfileData = async () => {
+    try {
+      setLoading(true)
+      const response = await profileService.getProfile()
+      const profileUser = response.user
+      
+      setProfileData({
+        username: profileUser.username || '',
+        bio: profileUser.bio || '',
+        userLocation: profileUser.userLocation || '',
+        website: profileUser.website || '',
+        phone: profileUser.phone || ''
+      })
+      setAvatarPreview(profileUser.avatar || '')
+    } catch (error) {
+      console.error('Failed to fetch profile:', error)
+      toast.error('Failed to load profile data')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Handle modal open
+  const handleOpenProfileModal = () => {
+    setShowProfileModal(true)
+    fetchProfileData()
+  }
 
   const handleProfileUpdate = async () => {
     try {
@@ -120,16 +150,7 @@ const DashboardHeader = () => {
           
           <div className="flex items-center gap-4">
             {/* Notifications */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="relative p-2 text-gray-500 hover:text-black dark:hover:text-white"
-            >
-              <Bell className="w-5 h-5" />
-              <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full text-xs text-white flex items-center justify-center">
-                3
-              </span>
-            </Button>
+            <NotificationDropdown />
 
             {/* User Info */}
             <div className="flex items-center gap-3">
@@ -144,7 +165,7 @@ const DashboardHeader = () => {
               
               {/* Avatar Button */}
               <button
-                onClick={() => setShowProfileModal(true)}
+                onClick={handleOpenProfileModal}
                 className="relative group"
               >
                 <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
@@ -183,15 +204,30 @@ const DashboardHeader = () => {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-black dark:text-white">
-                Profile Settings
-              </h2>
-              <button
-                onClick={() => setShowProfileModal(false)}
-                className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-              >
-                <X className="w-6 h-6" />
-              </button>
+              <div>
+                <h2 className="text-2xl font-bold text-black dark:text-white">
+                  Profile Settings
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                  {user?.email} • {user?.role}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={fetchProfileData}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 p-1"
+                  disabled={loading}
+                  title="Refresh profile data"
+                >
+                  <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+                </button>
+                <button
+                  onClick={() => setShowProfileModal(false)}
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                >
+                  <X className="w-6 h-6" />
+                </button>
+              </div>
             </div>
 
             {/* Avatar Section */}
@@ -218,21 +254,37 @@ const DashboardHeader = () => {
               <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
                 {loading ? 'Uploading...' : 'Click the camera icon to upload a new avatar'}
               </p>
+              
+              {/* User Stats */}
+              <div className="flex gap-4 mt-4 text-center">
+                
+                <div className="px-5 py-2 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <div className="text-sm font-medium text-green-600 dark:text-green-400">
+                    {user?.emailVerified ? 'Verified' : 'Pending'}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Profile Form */}
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Username
-                </label>
-                <Input
-                  value={profileData.username}
-                  onChange={(e) => setProfileData({...profileData, username: e.target.value})}
-                  disabled={!isEditing}
-                  className="w-full"
-                />
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+                <span className="ml-2 text-gray-500">Loading profile...</span>
               </div>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Username
+                  </label>
+                  <Input
+                    value={profileData.username}
+                    onChange={(e) => setProfileData({...profileData, username: e.target.value})}
+                    disabled={!isEditing}
+                    className="w-full"
+                  />
+                </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -287,6 +339,7 @@ const DashboardHeader = () => {
                 />
               </div>
             </div>
+            )}
 
             {/* Action Buttons */}
             <div className="flex gap-3 mt-6">

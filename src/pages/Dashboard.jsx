@@ -176,16 +176,16 @@ const Dashboard = () => {
 
   // Chart data
   const statusData = [
-    { name: 'Completed', value: stats.completedTasks, color: '#10B981' },
-    { name: 'In Progress', value: stats.inProgressTasks, color: '#3B82F6' },
+    { name: 'Deployed', value: stats.completedTasks, color: '#10B981' },
+    { name: 'In Development', value: stats.inProgressTasks, color: '#3B82F6' },
     { name: 'Backlog', value: stats.pendingTasks, color: '#F59E0B' },
     { name: 'Blocked', value: stats.overdueTasks, color: '#EF4444' }
   ]
 
   const priorityData = [
     { name: 'Critical', value: tasks.filter(task => task.priority === 'high').length, color: '#EF4444' },
-    { name: 'High', value: tasks.filter(task => task.priority === 'medium').length, color: '#F59E0B' },
-    { name: 'Normal', value: tasks.filter(task => task.priority === 'low').length, color: '#10B981' }
+    { name: 'High Priority', value: tasks.filter(task => task.priority === 'medium').length, color: '#F59E0B' },
+    { name: 'Low Priority', value: tasks.filter(task => task.priority === 'low').length, color: '#10B981' }
   ]
 
   // Weekly combined data (last 7 days)
@@ -220,14 +220,14 @@ const Dashboard = () => {
   // Meeting chart data
   const meetingStatusData = [
     { name: 'Scheduled', value: stats.scheduledMeetings, color: '#3B82F6' },
-    { name: 'Completed', value: stats.completedMeetings, color: '#10B981' },
+    { name: 'Concluded', value: stats.completedMeetings, color: '#10B981' },
     { name: 'Draft', value: stats.pendingMeetings, color: '#F59E0B' },
     { name: 'Cancelled', value: stats.cancelledMeetings, color: '#EF4444' }
   ]
 
   const meetingTypeData = [
-    { name: 'Online', value: meetings.filter(meeting => meeting.type === 'online').length, color: '#3B82F6' },
-    { name: 'Physical', value: meetings.filter(meeting => meeting.type === 'i').length, color: '#10B981' },
+    { name: 'Remote', value: meetings.filter(meeting => meeting.type === 'online').length, color: '#3B82F6' },
+    { name: 'Physical', value: meetings.filter(meeting => meeting.type === 'physical').length, color: '#10B981' },
     { name: 'Hybrid', value: meetings.filter(meeting => meeting.type === 'hybrid').length, color: '#F59E0B' }
   ]
 
@@ -235,39 +235,34 @@ const Dashboard = () => {
   // Recent tasks (last 5)
   const recentTasks = tasks
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 5)
+    .slice(0, 4)
 
   // Recent meetings (last 5)
   const recentMeetings = meetings
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-    .slice(0, 5)
+    .slice(0, 4)
 
   const StatCard = ({ title, value, icon: Icon, color, trend, trendValue }) => (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white dark:bg-gray-900 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 p-6 hover:shadow-xl transition-shadow duration-300"
+      className="bg-white dark:bg-gray-900 rounded-lg shadow-lg border-2 border-gray-200 dark:border-gray-700 p-6"
     >
       <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <p className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{title}</p>
-          <p className="text-3xl font-bold text-gray-900 dark:text-white mb-2">{value}</p>
+        <div>
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</p>
+          <p className="text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
           {trend && (
-            <div className="flex items-center">
-              {trend === 'up' ? <ArrowUp className="w-4 h-4 text-green-500 mr-1" /> : <ArrowDown className="w-4 h-4 text-red-500 mr-1" />}
-              <span className={`text-sm font-semibold ${
-                trend === 'up' ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'
-              }`}>
-                {trendValue}%
-              </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400 ml-1">
-                vs last period
-              </span>
+            <div className={`flex items-center mt-2 text-sm ${
+              trend === 'up' ? 'text-green-600' : 'text-red-600'
+            }`}>
+              {trend === 'up' ? <ArrowUp className="w-4 h-4 mr-1" /> : <ArrowDown className="w-4 h-4 mr-1" />}
+              {trendValue}%
             </div>
           )}
         </div>
-        <div className={`p-4 rounded-xl ${color} shadow-lg`}>
-          <Icon className="w-7 h-7 text-white" />
+        <div className={`p-3 rounded-full ${color}`}>
+          <Icon className="w-6 h-6 text-white" />
         </div>
       </div>
     </motion.div>
@@ -287,7 +282,7 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
       <motion.div
-        className="max-w-7xl mx-auto"
+        className="mx-auto"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
@@ -311,7 +306,7 @@ const Dashboard = () => {
             color="bg-blue-500"
           />
           <StatCard
-            title="Delivered"
+            title="Deployed"
             value={stats.completedTasks}
             icon={CheckCircle}
             color="bg-green-500"
@@ -367,7 +362,7 @@ const Dashboard = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
-          className="bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-8 mb-8"
+          className="bg-white dark:bg-gray-900 rounded-lg shadow-lg border-2 border-gray-200 dark:border-gray-700 p-6 mb-8"
         >
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -578,7 +573,7 @@ const Dashboard = () => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.3 }}
-          className="bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-8 mb-8"
+          className="bg-white dark:bg-gray-900 rounded-lg shadow-lg border-2 border-gray-200 dark:border-gray-700 p-6 mb-8"
         >
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -611,7 +606,7 @@ const Dashboard = () => {
                   recentTasks.map((task) => (
                     <div
                       key={task.id}
-                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-blue-500"
+                      className="flex items-center justify-between p-1 px-4 bg-gray-50 border border-blue-300 dark:bg-gray-800 rounded-lg border-l-4 border-blue-500"
                     >
                       <div className="flex-1">
                         <h4 className="font-medium text-gray-900 dark:text-white">
@@ -659,7 +654,7 @@ const Dashboard = () => {
                   recentMeetings.map((meeting) => (
                     <div
                       key={meeting.id}
-                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-purple-500"
+                      className="flex items-center justify-between  p-1 px-4 border border-purple-300 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-purple-500"
                     >
                       <div className="flex-1">
                         <h4 className="font-medium text-gray-900 dark:text-white">
@@ -699,7 +694,7 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="bg-white dark:bg-gray-900 rounded-xl shadow-xl border border-gray-200 dark:border-gray-700 p-8"
+          className="bg-white dark:bg-gray-900 rounded-lg shadow-lg border-2 border-gray-200 dark:border-gray-700 p-6"
         >
           <div className="flex items-center justify-between mb-8">
             <div>

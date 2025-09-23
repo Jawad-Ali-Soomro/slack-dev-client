@@ -3,8 +3,8 @@ import './App.css'
 import { ThemeToggle } from './components/ThemeToggle'
 import { AuthProvider } from './contexts/AuthContext'
 import { SidebarProvider } from './contexts/SidebarContext'
+import { NotificationProvider } from './contexts/NotificationContext'
 import ProtectedRoute from './components/ProtectedRoute'
-import Sidebar from './components/Sidebar'
 import Indexing from './pages/Indexing'
 import About from './pages/About'
 import Contact from './pages/Contact'
@@ -20,32 +20,27 @@ import { Toaster } from 'sonner'
 
 function App() {
   return (
-    <Router>
+   <div className="bg-white dark:bg-gray-900">
+     <Router>
       <Toaster 
         position="top-right"
         richColors
         closeButton
         toastOptions={{
           style: {
-            borderRadius: '20px',
+            borderRadius: '12px',
             fontSize: '14px',
             fontWeight: '500',
-            position: 'relative'
+            margin: '4px 0',
+            padding: '12px 16px'
           },
-          className: 'relative',
-          closeButton: {
-            position: 'absolute',
-            top: '8px',
-            left: '12px',
-            right: 'auto',
-            padding: '10px',
-            border: '1px solid black',
-          }
+          className: 'toast-custom'
         }}
       />
       <AuthProvider>
-        <SidebarProvider>
-          <ThemeToggle className="fixed bottom-10 right-10 z-50" />
+        <NotificationProvider>
+          <SidebarProvider>
+          <ThemeToggle className="fixed bottom-5 right-10 z-50" />
           <div className="relative">
             <Routes>
             {/* Public Routes */}
@@ -108,8 +103,10 @@ function App() {
             </Routes>
           </div>
         </SidebarProvider>
+        </NotificationProvider>
       </AuthProvider>
     </Router>
+   </div>
   )
 }
 

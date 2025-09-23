@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react"
 import { motion } from "framer-motion"
-import { Search, Plus, Edit, Trash2, Calendar, User, Clock, CheckCircle, AlertCircle, MoreVertical, Filter, Video, MapPin, ChevronDown } from "lucide-react"
+import { Search, Plus, Edit, Trash2, Calendar, User, Clock, CheckCircle, AlertCircle, MoreVertical, Filter, Video, MapPin, ChevronDown, X } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
@@ -12,11 +12,14 @@ import userService from "../services/userService"
 import meetingService from "../services/meetingService"
 import { useAuth } from "../contexts/AuthContext"
 import { getAvatarProps } from "../utils/avatarUtils"
+import MeetingEditModal from "../components/MeetingEditModal"
 
 const Meetings = () => {
   const { user } = useAuth()
   const [searchTerm, setSearchTerm] = useState("")
   const [showNewMeetingPopup, setShowNewMeetingPopup] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editingMeeting, setEditingMeeting] = useState(null)
   const [selectedMeetings, setSelectedMeetings] = useState([])
   const [filterStatus, setFilterStatus] = useState("all")
   const [filterType, setFilterType] = useState("all")
@@ -29,10 +32,15 @@ const Meetings = () => {
     startDate: "",
     endDate: "",
     location: "",
-    meetingLink: ""
+    meetingLink: "",
+    attendees: [],
+    tags: []
   })
   const [assignedToSuggestions, setAssignedToSuggestions] = useState([])
   const [showAssignedToSuggestions, setShowAssignedToSuggestions] = useState(false)
+  const [attendeeSuggestions, setAttendeeSuggestions] = useState([])
+  const [showAttendeeSuggestions, setShowAttendeeSuggestions] = useState(false)
+  const [newTag, setNewTag] = useState("")
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false)
   const [meetings, setMeetings] = useState([])
@@ -196,7 +204,8 @@ const Meetings = () => {
   const getTypeColor = (type) => {
     switch (type) {
       case "online": return "text-white bg-blue-500 border border-blue-500 px-4 py-2 min-w-[80px]"
-      case "physical": return "text-white bg-green-500 border border-green-500 px-4 py-2 min-w-[80px]"
+      case "in-person": return "text-white bg-green-500 border border-green-500 px-4 py-2 min-w-[80px]"
+      case "hybrid": return "text-white bg-yellow-500 border border-yellow-500 px-4 py-2 min-w-[80px]"
       default: return "text-white bg-yellow-500 border border-yellow-500 px-4 py-2 min-w-[80px]"
     }
   }
@@ -243,7 +252,9 @@ const Meetings = () => {
         startDate: newMeeting.startDate,
         endDate: newMeeting.endDate,
         location: newMeeting.location,
-        meetingLink: newMeeting.meetingLink
+        meetingLink: newMeeting.meetingLink,
+        attendees: newMeeting.attendees.map(attendee => attendee.id),
+        tags: newMeeting.tags
       }
 
       const response = await meetingService.createMeeting(meetingData)
@@ -260,7 +271,9 @@ const Meetings = () => {
         startDate: "", 
         endDate: "",
         location: "",
-        meetingLink: ""
+        meetingLink: "",
+        attendees: [],
+        tags: []
       })
       setShowNewMeetingPopup(false)
       toast.success("Meeting created successfully!")
@@ -300,6 +313,78 @@ const Meetings = () => {
     }
   }
 
+  // Handle attendee selection
+  const handleAttendeeSearch = (value) => {
+    if (value.length > 0) {
+      const filtered = users.filter(user => 
+        user.username.toLowerCase().includes(value.toLowerCase()) &&
+        !newMeeting.attendees.some(attendee => attendee.id === user.id)
+      )
+      setAttendeeSuggestions(filtered)
+      setShowAttendeeSuggestions(true)
+    } else {
+      setAttendeeSuggestions([])
+      setShowAttendeeSuggestions(false)
+    }
+  }
+
+  const handleAddAttendee = (user) => {
+    if (!newMeeting.attendees.some(attendee => attendee.id === user.id)) {
+      setNewMeeting({
+        ...newMeeting,
+        attendees: [...newMeeting.attendees, user]
+      })
+    }
+    setShowAttendeeSuggestions(false)
+    setAttendeeSuggestions([])
+  }
+
+  const handleRemoveAttendee = (userId) => {
+    setNewMeeting({
+      ...newMeeting,
+      attendees: newMeeting.attendees.filter(attendee => attendee.id !== userId)
+    })
+  }
+
+  // Handle tag management
+  const handleAddTag = () => {
+    if (newTag.trim() && !newMeeting.tags.includes(newTag.trim())) {
+      setNewMeeting({
+        ...newMeeting,
+        tags: [...newMeeting.tags, newTag.trim()]
+      })
+      setNewTag("")
+    }
+  }
+
+  const handleRemoveTag = (tagToRemove) => {
+    setNewMeeting({
+      ...newMeeting,
+      tags: newMeeting.tags.filter(tag => tag !== tagToRemove)
+    })
+  }
+
+  // Edit meeting functions
+  const handleEditMeeting = (meeting) => {
+    setEditingMeeting(meeting)
+    setShowEditModal(true)
+  }
+
+  const handleMeetingUpdated = (updatedMeeting) => {
+    setMeetings(prevMeetings => 
+      prevMeetings.map(meeting => 
+        meeting.id === updatedMeeting.id ? updatedMeeting : meeting
+      )
+    )
+    setShowEditModal(false)
+    setEditingMeeting(null)
+  }
+
+  const handleCloseEditModal = () => {
+    setShowEditModal(false)
+    setEditingMeeting(null)
+  }
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -320,9 +405,9 @@ const Meetings = () => {
   }
 
   return (
-    <div className="min-h-screen p-6">
+    <div className="overflow-hidden pt-6 pl-6">
       <motion.div
-        className="max-w-7xl mx-auto"
+        className="mx-auto"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -394,7 +479,8 @@ const Meetings = () => {
                 <SelectContent className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700">
                   <SelectItem value="all">All Types</SelectItem>
                   <SelectItem value="online">Online</SelectItem>
-                  <SelectItem value="physical">physical</SelectItem>
+                  <SelectItem value="in-person">in-person</SelectItem>
+                  <SelectItem value="hybrid">Hybrid</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -403,9 +489,9 @@ const Meetings = () => {
 
         {/* Meetings Table */}
         <motion.div variants={itemVariants} className="bg-white dark:bg-gray-900 rounded-lg shadow-xl border-2 border-gray-200 dark:border-gray-700 overflow-hidden">
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
-              <thead className="bg-gray-100 dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700">
+              <thead className="bg-gray-100 dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 sticky top-0 z-10">
                 <tr>
                       <th className="px-6 py-4 text-left">
                         <Checkbox
@@ -425,6 +511,9 @@ const Meetings = () => {
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     Assigned To
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Attendees
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     Date & Time
@@ -477,12 +566,25 @@ const Meetings = () => {
                         <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                           {meeting.description}
                         </div>
+                        {meeting.tags && meeting.tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {meeting.tags.map((tag, index) => (
+                              <span
+                                key={index}
+                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200"
+                              >
+                                {tag}
+                              </span>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center rounded-full text-xs font-bold ${getTypeColor(meeting.type)}`}>
                         {meeting.type === 'online' && <Video className="w-3 h-3 mr-1" />}
-                        {meeting.type === 'physical' && <MapPin className="w-3 h-3 mr-1" />}
+                        {meeting.type === 'in-person' && <MapPin className="w-3 h-3 mr-1" />}
+                        {meeting.type === 'hybrid' && <Calendar className="w-3 h-3 mr-1" />}
                         {meeting.type}
                       </span>
                     </td>
@@ -510,6 +612,31 @@ const Meetings = () => {
                             Team Member
                           </div>
                         </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 w-[200px]">
+                      <div className="flex flex-wrap gap-1">
+                        {meeting.attendees && meeting.attendees.length > 0 ? (
+                          meeting.attendees.slice(0, 3).map((attendee, index) => (
+                            <div key={index} className="flex items-center gap-1">
+                              <img 
+                                {...getAvatarProps(attendee.avatar, attendee.username)}
+                                alt={attendee.username || "User"}
+                                className="w-6 h-6 rounded-full object-cover border border-gray-200 dark:border-gray-700"
+                                title={attendee.username}
+                              />
+                            </div>
+                          ))
+                        ) : (
+                          <span className="text-xs text-gray-500 dark:text-gray-400">No attendees</span>
+                        )}
+                        {meeting.attendees && meeting.attendees.length > 3 && (
+                          <div className="w-6 h-6 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                            <span className="text-xs text-gray-600 dark:text-gray-300">
+                              +{meeting.attendees.length - 3}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -541,22 +668,27 @@ const Meetings = () => {
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="flex items-center gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="p-2 text-gray-400 hover:text-black dark:hover:text-white"
-                        >
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleDeleteMeeting(meeting.id)}
-                          className="p-2 text-gray-400 hover:text-red-600"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                      <div className="flex items-center justify-end gap-2">
+                        {user && user.id && meeting.assignedBy?.id === user.id && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditMeeting(meeting)}
+                            className="p-2 text-gray-400 hover:text-black dark:hover:text-white"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        )}
+                        {user && user.id && meeting.assignedBy?.id === user.id && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteMeeting(meeting.id)}
+                            className="p-2 text-gray-400 hover:text-red-600"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        )}
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -568,25 +700,37 @@ const Meetings = () => {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700">
-                            <DropdownMenuItem className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
-                              <Edit className="w-4 h-4 mr-2" />
-                              Edit Meeting
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
-                              <Calendar className="w-4 h-4 mr-2" />
-                              Reschedule
-                            </DropdownMenuItem>
+                            {user && user.id && meeting.assignedBy?.id === user.id && (
+                              <DropdownMenuItem 
+                                onClick={() => handleEditMeeting(meeting)}
+                                className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                              >
+                                <Edit className="w-4 h-4 mr-2" />
+                                Edit Meeting
+                              </DropdownMenuItem>
+                            )}
+                            {user && user.id && meeting.assignedBy?.id === user.id && (
+                              <DropdownMenuItem 
+                                onClick={() => handleEditMeeting(meeting)}
+                                className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                              >
+                                <Calendar className="w-4 h-4 mr-2" />
+                                Reschedule
+                              </DropdownMenuItem>
+                            )}
                             <DropdownMenuItem className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800">
                               <Video className="w-4 h-4 mr-2" />
                               Join Meeting
                             </DropdownMenuItem>
-                            <DropdownMenuItem 
-                              onClick={() => handleDeleteMeeting(meeting.id)}
-                              className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
-                            >
-                              <Trash2 className="w-4 h-4 mr-2" />
-                              Delete Meeting
-                            </DropdownMenuItem>
+                            {user && user.id && meeting.assignedBy?.id === user.id && (
+                              <DropdownMenuItem 
+                                onClick={() => handleDeleteMeeting(meeting.id)}
+                                className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                              >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete Meeting
+                              </DropdownMenuItem>
+                            )}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </div>
@@ -616,14 +760,14 @@ const Meetings = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-3xl font-bold text-black dark:text-white mb-6">
-                Create New Meeting
+                New Meeting
               </h2>
               
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                     Meeting Title
-                  </label>
+                  </label> */}
                   <Input
                     type="text"
                     value={newMeeting.title}
@@ -634,9 +778,9 @@ const Meetings = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                     Description
-                  </label>
+                  </label> */}
                   <Textarea
                     value={newMeeting.description}
                     onChange={(e) => setNewMeeting({...newMeeting, description: e.target.value})}
@@ -648,24 +792,25 @@ const Meetings = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                       Meeting Type
-                    </label>
+                    </label> */}
                     <Select value={newMeeting.type} onValueChange={(value) => setNewMeeting({...newMeeting, type: value})}>
                       <SelectTrigger className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white">
                         <SelectValue placeholder="Select meeting type" />
                       </SelectTrigger>
                       <SelectContent className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700">
                         <SelectItem value="online">Online</SelectItem>
-                        <SelectItem value="physical">physical</SelectItem>
+                        <SelectItem value="in-person">in-person</SelectItem>
+                        <SelectItem value="hybrid">Hybrid</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                       Location
-                    </label>
+                    </label> */}
                     <Input
                       type="text"
                       value={newMeeting.location}
@@ -677,9 +822,9 @@ const Meetings = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                     Assign To Person
-                  </label>
+                  </label> */}
                   <div className="relative">
                     <Input
                       type="text"
@@ -691,7 +836,7 @@ const Meetings = () => {
                         }
                       }}
                       className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
-                      placeholder="Type to search users..."
+                      placeholder="Assign To Person"
                     />
                     {showAssignedToSuggestions && assignedToSuggestions.length > 0 && (
                       <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
@@ -747,9 +892,9 @@ const Meetings = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
                     Meeting Link (Optional)
-                  </label>
+                  </label> */}
                   <Input
                     type="url"
                     value={newMeeting.meetingLink}
@@ -757,6 +902,122 @@ const Meetings = () => {
                     className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
                     placeholder="Enter meeting link"
                   />
+                </div>
+
+                {/* Attendees Section */}
+                <div>
+                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    Additional Attendees
+                  </label> */}
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      placeholder="Search and add attendees..."
+                      onChange={(e) => handleAttendeeSearch(e.target.value)}
+                      onFocus={() => {
+                        if (attendeeSuggestions.length > 0) {
+                          setShowAttendeeSuggestions(true)
+                        }
+                      }}
+                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
+                    />
+                    {showAttendeeSuggestions && attendeeSuggestions.length > 0 && (
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                        {attendeeSuggestions.map((user) => (
+                          <div
+                            key={user.id}
+                            onClick={() => handleAddAttendee(user)}
+                            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                          >
+                            <div className="flex items-center gap-3">
+                              <img 
+                                {...getAvatarProps(user.avatar, user.username || user.name)}
+                                alt={user.name}
+                                className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                              />
+                              <div>
+                                <div className="font-medium text-gray-900 dark:text-white">{user.name}</div>
+                                <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Selected Attendees */}
+                  {newMeeting.attendees.length > 0 && (
+                    <div className="mt-3">
+                      <div className="flex flex-wrap gap-2">
+                        {newMeeting.attendees.map((attendee) => (
+                          <div
+                            key={attendee.id}
+                            className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg"
+                          >
+                            <img 
+                              {...getAvatarProps(attendee.avatar, attendee.username || attendee.name)}
+                              alt={attendee.name}
+                              className="w-6 h-6 rounded-full object-cover"
+                            />
+                            <span className="text-sm text-gray-900 dark:text-white">{attendee.name}</span>
+                            <button
+                              onClick={() => handleRemoveAttendee(attendee.id)}
+                              className="text-gray-500 hover:text-red-500"
+                            >
+                              <X className="w-4 h-4" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Tags Section */}
+                <div>
+                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    Tags
+                  </label> */}
+                  <div className="flex gap-2">
+                    <Input
+                      type="text"
+                      value={newTag}
+                      onChange={(e) => setNewTag(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
+                      className="flex-1 border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
+                      placeholder="Add a tag and press Enter"
+                    />
+                    <Button
+                      type="button"
+                      onClick={handleAddTag}
+                      className="px-4 py-2 bg-gray-500 text-white hover:bg-gray-600"
+                    >
+                      Add
+                    </Button>
+                  </div>
+                  
+                  {/* Selected Tags */}
+                  {newMeeting.tags.length > 0 && (
+                    <div className="mt-3">
+                      <div className="flex flex-wrap gap-2">
+                        {newMeeting.tags.map((tag, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center gap-2 bg-blue-100 dark:bg-blue-900 px-3 py-1 rounded-lg"
+                          >
+                            <span className="text-sm text-blue-900 dark:text-blue-100">{tag}</span>
+                            <button
+                              onClick={() => handleRemoveTag(tag)}
+                              className="text-blue-500 hover:text-red-500"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -778,6 +1039,15 @@ const Meetings = () => {
             </motion.div>
           </motion.div>
         )}
+
+        {/* Meeting Edit Modal */}
+        <MeetingEditModal
+          meeting={editingMeeting}
+          isOpen={showEditModal}
+          onClose={handleCloseEditModal}
+          onMeetingUpdated={handleMeetingUpdated}
+          users={users}
+        />
       </motion.div>
     </div>
   )
