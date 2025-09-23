@@ -36,10 +36,11 @@ import { Textarea } from '../components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/ui/dropdown-menu'
 import projectService from '../services/projectService'
-import userService from '../services/userService'
+import friendService from '../services/friendService'
 import teamService from '../services/teamService'
 import { useAuth } from '../contexts/AuthContext'
 import { getAvatarProps } from '../utils/avatarUtils'
+import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
 
 const Projects = () => {
   const { user } = useAuth()
@@ -110,15 +111,31 @@ const Projects = () => {
     }
   }, [filterStatus, filterPriority, searchTerm, pagination.page, pagination.limit])
 
-  // Load users
+  // Load friends for member selection
   const loadUsers = useCallback(async () => {
     try {
-      const response = await userService.getUsers()
-      setUsers(response.users || [])
+      const response = await friendService.getFriends()
+      const friends = response.friends || []
+      
+      // Transform friends data to match the expected format and filter out current user
+      const transformedUsers = friends
+        .map(friendship => ({
+          id: friendship.friend.id,
+          name: friendship.friend.username,
+          username: friendship.friend.username,
+          email: friendship.friend.email,
+          role: "Friend",
+          avatar: friendship.friend.avatar
+        }))
+        .filter(friend => friend.id !== user?.id) // Exclude current user
+      
+      setUsers(transformedUsers)
     } catch (error) {
-      console.error('Failed to load users:', error)
+      console.error('Failed to load friends:', error)
+      toast.error('Failed to load friends')
+      setUsers([])
     }
-  }, [])
+  }, [user])
 
   // Load teams
   const loadTeams = useCallback(async () => {
@@ -537,20 +554,12 @@ const Projects = () => {
             <p className="text-gray-600 dark:text-gray-400">Manage your projects and collaborate with your team</p>
           </div>
           <div className="flex items-center gap-4">
-            <Button
-              onClick={loadStats}
-              variant="outline"
-              size="sm"
-              className="flex items-center gap-2"
-            >
-              <RefreshCw className="w-4 h-4" />
-              Refresh Stats
-            </Button>
+            
             <Button
               onClick={() => setShowNewProjectPopup(true)}
-              className="flex items-center gap-2 "
+              className={getButtonClasses('primary', 'md', 'flex items-center gap-2')}
             >
-              <Plus className="w-4 h-4" />
+              <Plus className={ICON_SIZES.sm} />
               New Project
             </Button>
           </div>
@@ -565,8 +574,8 @@ const Projects = () => {
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Projects</p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalProjects}</p>
                 </div>
-                <div className="p-3 bg-blue-100 dark:bg-blue-900 rounded-full">
-                  <CheckCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <CheckCircle className="w-6 h-6 text-gray-600 dark:text-gray-400" />
                 </div>
               </div>
             </div>
@@ -619,7 +628,7 @@ const Projects = () => {
                 placeholder="Search projects..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-[350px] bg-white dark:bg-gray-900 w-[350px]"
+                className={getInputClasses('default', 'md', 'pl-10 w-[350px]')}
               />
             </div>
           </div>
@@ -792,7 +801,7 @@ const Projects = () => {
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div 
-                      className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                      className="bg-black dark:bg-white h-2 rounded-full transition-all duration-300"
                       style={{ width: `${project.progress}%` }}
                     ></div>
                   </div>
@@ -1077,7 +1086,7 @@ const Projects = () => {
                       {newProject.members.map((member) => (
                         <span
                           key={member.id}
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full text-sm"
+                          className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full text-sm"
                         >
                           <img
                             {...getAvatarProps(member.avatar, member.username)}
@@ -1088,7 +1097,7 @@ const Projects = () => {
                           <button
                             type="button"
                             onClick={() => handleRemoveMember(member.id)}
-                            className="ml-1 hover:text-blue-600 dark:hover:text-blue-300"
+                            className="ml-1 hover:text-gray-600 dark:hover:text-gray-300"
                           >
                             <X className="w-3 h-3" />
                           </button>
@@ -1195,7 +1204,7 @@ const Projects = () => {
                     id="isPublic"
                     checked={newProject.isPublic}
                     onChange={(e) => setNewProject({...newProject, isPublic: e.target.checked})}
-                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    className="w-4 h-4 text-gray-600 bg-gray-100 border-gray-300 rounded focus:ring-gray-500 dark:focus:ring-gray-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
                   <label htmlFor="isPublic" className="text-sm text-gray-700 dark:text-gray-300">
                     Make this project public
@@ -1364,7 +1373,7 @@ const Projects = () => {
                               href={link.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-500 hover:text-blue-600 text-sm"
+                              className="text-gray-500 hover:text-gray-600 text-sm"
                             >
                               Open
                             </a>
@@ -1390,7 +1399,7 @@ const Projects = () => {
                             <div className="flex items-center gap-3">
                               <div className={`w-3 h-3 rounded-full ${
                                 task.status === 'completed' ? 'bg-green-500' :
-                                task.status === 'in_progress' ? 'bg-blue-500' :
+                                task.status === 'in_progress' ? 'bg-gray-500' :
                                 task.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
                               }`}></div>
                               <div>
@@ -1404,7 +1413,7 @@ const Projects = () => {
                             </div>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                               task.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                              task.status === 'in_progress' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                              task.status === 'in_progress' ? 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200' :
                               task.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
                               'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
                             }`}>
@@ -1434,7 +1443,7 @@ const Projects = () => {
                             <div className="flex items-center gap-3">
                               <div className={`w-3 h-3 rounded-full ${
                                 meeting.status === 'completed' ? 'bg-green-500' :
-                                meeting.status === 'scheduled' ? 'bg-blue-500' :
+                                meeting.status === 'scheduled' ? 'bg-gray-500' :
                                 meeting.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
                               }`}></div>
                               <div>
@@ -1448,7 +1457,7 @@ const Projects = () => {
                             </div>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                               meeting.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                              meeting.status === 'scheduled' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                              meeting.status === 'scheduled' ? 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200' :
                               meeting.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
                               'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
                             }`}>
@@ -1786,7 +1795,7 @@ const Projects = () => {
                               href={link.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-500 hover:text-blue-600 text-sm"
+                              className="text-gray-500 hover:text-gray-600 text-sm"
                             >
                               Open
                             </a>

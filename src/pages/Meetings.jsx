@@ -12,9 +12,11 @@ import userService from "../services/userService"
 import meetingService from "../services/meetingService"
 import projectService from "../services/projectService"
 import teamService from "../services/teamService"
+import friendService from "../services/friendService"
 import { useAuth } from "../contexts/AuthContext"
 import { getAvatarProps } from "../utils/avatarUtils"
 import MeetingEditModal from "../components/MeetingEditModal"
+import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from "../utils/uiConstants"
 
 const Meetings = () => {
   const { user } = useAuth()
@@ -99,26 +101,28 @@ const Meetings = () => {
     }
   }, [filterStatus, filterType, user])
 
-  // Load users from API
+  // Load friends from API
   const loadUsers = async () => {
     try {
-      const response = await userService.getUsers({ limit: 50 })
-      const apiUsers = response.users || []
+      const response = await friendService.getFriends()
+      const friends = response.friends || []
       
-      // Transform API data to match the expected format
-      const transformedUsers = apiUsers.map(user => ({
-        id: user.id,
-        name: user.username,
-        username: user.username,
-        email: user.email,
-        role: user.role || "Team Member",
-        avatar: user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random&color=fff&size=128`
-      }))
+      // Transform friends data to match the expected format and filter out current user
+      const transformedUsers = friends
+        .map(friendship => ({
+          id: friendship.friend.id,
+          name: friendship.friend.username,
+          username: friendship.friend.username,
+          email: friendship.friend.email,
+          role: "Friend",
+          avatar: friendship.friend.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(friendship.friend.username)}&background=random&color=fff&size=128`
+        }))
+        .filter(friend => friend.id !== user?.id) // Exclude current user
       
       setUsers(transformedUsers)
     } catch (error) {
-      console.error('Error loading users:', error)
-      toast.error('Failed to load users')
+      console.error('Error loading friends:', error)
+      toast.error('Failed to load friends')
       setUsers([])
     }
   }
@@ -256,7 +260,7 @@ const Meetings = () => {
 
   const getTypeColor = (type) => {
     switch (type) {
-      case "online": return "text-white bg-blue-500 border border-blue-500 px-4 py-2 min-w-[80px]"
+      case "online": return "text-white bg-gray-500 border border-gray-500 px-4 py-2 min-w-[80px]"
       case "in-person": return "text-white bg-green-500 border border-green-500 px-4 py-2 min-w-[80px]"
       case "hybrid": return "text-white bg-yellow-500 border border-yellow-500 px-4 py-2 min-w-[80px]"
       default: return "text-white bg-yellow-500 border border-yellow-500 px-4 py-2 min-w-[80px]"
@@ -266,7 +270,7 @@ const Meetings = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "completed": return "text-white bg-green-500 border border-green-500 px-4 py-2 min-w-[100px]"
-      case "pregress": return "text-white bg-blue-500 border border-blue-500 px-4 py-2 min-w-[100px]"
+      case "pregress": return "text-white bg-gray-500 border border-gray-500 px-4 py-2 min-w-[100px]"
       case "scheduled": return "text-white bg-yellow-500 border border-yellow-500 px-4 py-2 min-w-[100px]"
       case "cancelled": return "text-white bg-red-500 border border-red-500 px-4 py-2 min-w-[100px]"
       default: return "text-white bg-yellow-500 border border-yellow-500 px-4 py-2 min-w-[100px]"
@@ -496,9 +500,9 @@ const Meetings = () => {
               )}
               <Button
                 onClick={() => setShowNewMeetingPopup(true)}
-                className="flex items-center gap-2 px-6 py-3 bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className={getButtonClasses('primary', 'md', 'flex items-center gap-2')}
               >
-                <Plus className="w-5 h-5" />
+                <Plus className={ICON_SIZES.sm} />
                 New Meeting
               </Button>
             </div>
@@ -591,7 +595,7 @@ const Meetings = () => {
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {loading ? (
                   <tr>
-                    <td colSpan="8" className="px-6 py-8 text-center">
+                    <td colSpan="10" className="px-6 py-8 text-center">
                       <div className="flex items-center justify-center">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
                         <span className="ml-2 text-gray-600 dark:text-gray-400">Loading meetings...</span>
@@ -600,7 +604,7 @@ const Meetings = () => {
                   </tr>
                 ) : filteredMeetings.length === 0 ? (
                   <tr>
-                    <td colSpan="8" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                    <td colSpan="10" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                       No meetings found
                     </td>
                   </tr>
@@ -633,7 +637,7 @@ const Meetings = () => {
                             {meeting.tags.map((tag, index) => (
                               <span
                                 key={index}
-                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200"
+                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
                               >
                                 {tag}
                               </span>
@@ -741,7 +745,7 @@ const Meetings = () => {
                           href={meeting.meetingLink} 
                           target="_blank" 
                           rel="noopener noreferrer"
-                          className="text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300"
+                          className="text-xs text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
                         >
                           Join Meeting
                         </a>
@@ -1071,7 +1075,7 @@ const Meetings = () => {
                     <Button
                       type="button"
                       onClick={handleAddTag}
-                      className="px-4 py-2 bg-gray-500 text-white hover:bg-gray-600"
+                      className={getButtonClasses('secondary', 'sm', '')}
                     >
                       Add
                     </Button>
@@ -1084,12 +1088,12 @@ const Meetings = () => {
                         {newMeeting.tags.map((tag, index) => (
                           <div
                             key={index}
-                            className="flex items-center gap-2 bg-blue-100 dark:bg-blue-900 px-3 py-1 rounded-lg"
+                            className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-lg"
                           >
-                            <span className="text-sm text-blue-900 dark:text-blue-100">{tag}</span>
+                            <span className="text-sm text-gray-900 dark:text-gray-100">{tag}</span>
                             <button
                               onClick={() => handleRemoveTag(tag)}
-                              className="text-blue-500 hover:text-red-500"
+                              className="text-gray-500 hover:text-red-500"
                             >
                               <X className="w-3 h-3" />
                             </button>
@@ -1120,15 +1124,14 @@ const Meetings = () => {
 
               <div className="flex gap-3 mt-6">
                 <Button
-                  variant="outline"
                   onClick={() => setShowNewMeetingPopup(false)}
-                  className="flex-1 px-4 py-3 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+                  className={getButtonClasses('outline', 'md', 'flex-1')}
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleNewMeeting}
-                  className="flex-1 px-4 py-3 bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                  className={getButtonClasses('primary', 'md', 'flex-1')}
                 >
                   Create Meeting
                 </Button>

@@ -12,9 +12,11 @@ import taskService from "../services/taskService"
 import userService from "../services/userService"
 import projectService from "../services/projectService"
 import teamService from "../services/teamService"
+import friendService from "../services/friendService"
 import { useAuth } from "../contexts/AuthContext"
 import { getAvatarProps } from "../utils/avatarUtils"
 import TaskEditModal from "../components/TaskEditModal"
+import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from "../utils/uiConstants"
 
 const Tasks = () => {
   const { user } = useAuth()
@@ -94,26 +96,28 @@ const Tasks = () => {
     }
   }, [filterStatus, filterPriority, user])
 
-  // Load users from API
+  // Load friends from API
   const loadUsers = async () => {
     try {
-      const response = await userService.getUsers({ limit: 50 }) // Get more users for assignment
-      const apiUsers = response.users || []
+      const response = await friendService.getFriends()
+      const friends = response.friends || []
       
-      // Transform API data to match the expected format
-      const transformedUsers = apiUsers.map(user => ({
-        id: user.id,
-        name: user.username, // Use username as name for display
-        username: user.username,
-        email: user.email,
-        role: user.role || "Team Member",
-        avatar: user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random&color=fff&size=128`
-      }))
+      // Transform friends data to match the expected format and filter out current user
+      const transformedUsers = friends
+        .map(friendship => ({
+          id: friendship.friend.id,
+          name: friendship.friend.username,
+          username: friendship.friend.username,
+          email: friendship.friend.email,
+          role: "Friend",
+          avatar: friendship.friend.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(friendship.friend.username)}&background=random&color=fff&size=128`
+        }))
+        .filter(friend => friend.id !== user?.id) // Exclude current user
       
       setUsers(transformedUsers)
     } catch (error) {
-      console.error('Error loading users:', error)
-      toast.error('Failed to load users')
+      console.error('Error loading friends:', error)
+      toast.error('Failed to load friends')
       setUsers([])
     }
   }
@@ -263,7 +267,7 @@ const Tasks = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "completed": return "text-white bg-green-500 border border-green-500 px-4 py-2 min-w-[100px]"
-      case "in_progress": return "text-white bg-blue-500 border border-blue-500 px-4 py-2 min-w-[100px]"
+      case "in_progress": return "text-white bg-gray-500 border border-gray-500 px-4 py-2 min-w-[100px]"
       case "pending": return "text-white bg-yellow-500 border border-yellow-500 px-4 py-2 min-w-[100px]"
       case "cancelled": return "text-white bg-red-500 border border-red-500 px-4 py-2 min-w-[100px]"
       default: return "text-white bg-yellow-500 border border-yellow-500 px-4 py-2 min-w-[100px]"
@@ -434,9 +438,9 @@ const Tasks = () => {
               )}
               <Button
                 onClick={() => setShowNewTaskPopup(true)}
-                className="flex items-center gap-2 px-6 py-3 bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className={getButtonClasses('primary', 'md', 'flex items-center gap-2')}
               >
-                <Plus className="w-5 h-5" />
+                <Plus className={ICON_SIZES.sm} />
                 New Task
               </Button>
               <Button
@@ -449,9 +453,9 @@ const Tasks = () => {
                     toast.error("Failed to clear cache")
                   }
                 }}
-                className="flex items-center gap-2 px-4 py-3 bg-gray-500 text-white hover:bg-gray-600"
+                className={getButtonClasses('secondary', 'md', 'flex items-center gap-2')}
               >
-                <RefreshCw className="w-4 h-4" />
+                <RefreshCw className={ICON_SIZES.sm} />
                 Refresh
               </Button>
             </div>
@@ -468,7 +472,7 @@ const Tasks = () => {
                 placeholder="Search tasks..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-900 text-black dark:text-white"
+                className={getInputClasses('default', 'md', 'w-full pl-10 pr-4')}
               />
             </div>
             <div className="flex gap-3">
@@ -550,7 +554,7 @@ const Tasks = () => {
                       </tr>
                     ) : filteredTasks.length === 0 ? (
                       <tr>
-                        <td colSpan="7" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+                        <td colSpan="10" className="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
                           No tasks found
                         </td>
                       </tr>

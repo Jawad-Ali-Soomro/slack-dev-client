@@ -175,7 +175,7 @@ const DashboardHeader = () => {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center">
                   <Camera className="w-2.5 h-2.5 text-white" />
                 </div>
               </button>
@@ -240,7 +240,7 @@ const DashboardHeader = () => {
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <label className="absolute -bottom-1 -right-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-600 transition-colors">
+                <label className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer transition-colors">
                   <Camera className="w-3 h-3 text-white" />
                   <input
                     type="file"

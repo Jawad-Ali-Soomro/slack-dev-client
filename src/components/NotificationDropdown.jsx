@@ -27,12 +27,8 @@ const NotificationDropdown = () => {
     addNotification(testNotification)
   }
 
-  // Load notifications when dropdown opens
-  useEffect(() => {
-    if (isOpen) {
-      loadNotifications()
-    }
-  }, [isOpen, loadNotifications])
+  // Notifications are now loaded automatically by the context
+  // No need to load when dropdown opens
 
   // Get notification icon based on type
   const getNotificationIcon = (type) => {

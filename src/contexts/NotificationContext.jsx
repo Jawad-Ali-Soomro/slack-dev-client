@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { toast } from 'sonner'
 import notificationService from '../services/notificationService'
+import { useAuth } from './AuthContext'
 
 const NotificationContext = createContext()
 
@@ -13,6 +14,7 @@ export const useNotifications = () => {
 }
 
 export const NotificationProvider = ({ children }) => {
+  const { user } = useAuth()
   const [notifications, setNotifications] = useState([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [loading, setLoading] = useState(false)
@@ -123,8 +125,27 @@ export const NotificationProvider = ({ children }) => {
     }
   }
 
-  // Load notifications only when explicitly called (e.g., when dropdown opens)
-  // No automatic loading to prevent infinite requests
+  // Load notifications automatically when user is authenticated
+  useEffect(() => {
+    if (user) {
+      loadNotifications()
+    } else {
+      // Clear notifications when user logs out
+      setNotifications([])
+      setUnreadCount(0)
+    }
+  }, [user, loadNotifications])
+
+  // Set up periodic refresh of notifications every 30 seconds when user is authenticated
+  useEffect(() => {
+    if (!user) return
+
+    const interval = setInterval(() => {
+      loadNotifications()
+    }, 30000) // 30 seconds
+
+    return () => clearInterval(interval)
+  }, [user, loadNotifications])
 
   const value = {
     notifications,

@@ -10,7 +10,8 @@ import {
   LayoutDashboard,
   MessageCircle,
   LogOut,
-  Users
+  Users,
+  UserCheck
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSidebar } from '../contexts/SidebarContext'
@@ -56,6 +57,12 @@ const Sidebar = () => {
       title: 'Teams',
       icon: Users,
       path: '/dashboard/teams',
+      color: 'text-black dark:text-white'
+    },
+    {
+      title: 'Friends',
+      icon: UserCheck,
+      path: '/dashboard/friends',
       color: 'text-black dark:text-white'
     },
     {
@@ -216,7 +223,7 @@ const Sidebar = () => {
                     </motion.div>
                   )
                 })}
-                <div className="flex items-center justify-center text-white w-[50px] h-[50px] rounded-lg transition-all duration-200 group absolute bottom-5 border bg-red-500 cursor-pointer" onClick={() => {
+                <div className="flex items-center justify-center text-white w-[50px] h-[50px] rounded-lg transition-all duration-200 group absolute bottom-5  bg-red-500 cursor-pointer" onClick={() => {
                   logout()
                 }}>
                   <LogOut className="w-5 h-5 transition-transform" />

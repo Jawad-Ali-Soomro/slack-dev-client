@@ -27,9 +27,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu'
 import { toast } from 'sonner'
 import teamService from '../services/teamService'
-import userService from '../services/userService'
+import friendService from '../services/friendService'
+import { getAvatarProps } from '../utils/avatarUtils'
+import { useAuth } from '../contexts/AuthContext'
 
 const TeamsManage = () => {
+  const { user } = useAuth()
   const [teams, setTeams] = useState([])
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false)
@@ -80,13 +83,29 @@ const TeamsManage = () => {
     }
   }, [pagination.page, pagination.limit, searchTerm, filterStatus])
 
-  // Load users for member selection
+  // Load friends for member selection
   const loadUsers = useCallback(async () => {
     try {
-      const response = await userService.getUsers({ page: 1, limit: 100 })
-      setUsers(response.users || [])
+      const response = await friendService.getFriends()
+      const friends = response.friends || []
+      
+      // Transform friends data to match the expected format and filter out current user
+      const transformedUsers = friends
+        .map(friendship => ({
+          id: friendship.friend.id,
+          name: friendship.friend.username,
+          username: friendship.friend.username,
+          email: friendship.friend.email,
+          role: "Friend",
+          avatar: friendship.friend.avatar
+        }))
+        .filter(friend => friend.id !== user?.id) // Exclude current user
+      
+      setUsers(transformedUsers)
     } catch (error) {
-      console.error('Error loading users:', error)
+      console.error('Error loading friends:', error)
+      toast.error('Failed to load friends')
+      setUsers([])
     }
   }, [])
 
@@ -412,17 +431,11 @@ const TeamsManage = () => {
                 <div className="flex -space-x-2">
                         {team.members?.slice(0, 3).map((member, index) => (
                           <div key={index} className="relative">
-                            {member.user?.avatar ? (
-                              <img
-                                src={member.user.avatar.startsWith('http') ? member.user.avatar : `http://localhost:4000${member.user.avatar}`}
-                                alt={member.user.username}
-                                className="w-8 h-8 rounded-full object-cover border-2 border-white dark:border-gray-900"
-                              />
-                            ) : (
-                              <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-700 dark:text-gray-300 border-2 border-white dark:border-gray-900">
-                                {member.user?.username?.charAt(0).toUpperCase()}
-                              </div>
-                            )}
+                            <img
+                              {...getAvatarProps(member.user?.avatar, member.user?.username)}
+                              alt={member.user?.username}
+                              className="w-8 h-8 rounded-full object-cover border-2 border-white dark:border-gray-900"
+                            />
                             <div className="absolute -bottom-1 -right-1">
                               {getRoleIcon(member.role)}
                             </div>
@@ -650,17 +663,11 @@ const TeamsManage = () => {
                     {selectedTeam.members?.map((member, index) => (
                       <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                         <div className="flex items-center gap-3">
-                          {member.user?.avatar ? (
-                            <img
-                              src={member.user.avatar.startsWith('http') ? member.user.avatar : `http://localhost:4000${member.user.avatar}`}
-                              alt={member.user.username}
-                              className="w-8 h-8 rounded-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-700 dark:text-gray-300">
-                              {member.user?.username?.charAt(0).toUpperCase()}
-                            </div>
-                          )}
+                          <img
+                            {...getAvatarProps(member.user?.avatar, member.user?.username)}
+                            alt={member.user?.username}
+                            className="w-8 h-8 rounded-full object-cover"
+                          />
                           <div>
                             <p className="text-sm font-medium text-gray-900 dark:text-white">
                               {member.user?.username}
@@ -735,16 +742,29 @@ const TeamsManage = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Select User
+                      Select Friend
                     </label>
                     <Select value={newMember.userId} onValueChange={(value) => setNewMember({...newMember, userId: value})}>
                       <SelectTrigger className={'w-full'}>
-                        <SelectValue placeholder="Choose a user" />
+                        <SelectValue placeholder="Choose a friend" />
                       </SelectTrigger>
                       <SelectContent>
                         {users.map((user) => (
-                          <SelectItem key={user.id} value={user.id}>
-                            {user.username} ({user.email})
+                          <SelectItem key={user.id} value={user.id} className="flex items-center gap-3">
+                            <div className="flex items-center gap-2">
+                              {user.avatar ? (
+                                <img
+                                  {...getAvatarProps(user.avatar, user.username)}
+                                  alt={user.username}
+                                  className="w-6 h-6 rounded-full object-cover"
+                                />
+                              ) : (
+                                <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-700 dark:text-gray-300">
+                                  {user.username?.charAt(0).toUpperCase()}
+                                </div>
+                              )}
+                              <span>{user.username} ({user.email})</span>
+                            </div>
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -778,17 +798,11 @@ const TeamsManage = () => {
                   {selectedTeam.members?.map((member, index) => (
                     <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                       <div className="flex items-center gap-3">
-                        {member.user?.avatar ? (
-                          <img
-                            src={member.user.avatar.startsWith('http') ? member.user.avatar : `http://localhost:4000${member.user.avatar}`}
-                            alt={member.user.username}
-                            className="w-8 h-8 rounded-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-8 h-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-700 dark:text-gray-300">
-                            {member.user?.username?.charAt(0).toUpperCase()}
-                          </div>
-                        )}
+                        <img
+                          {...getAvatarProps(member.user?.avatar, member.user?.username)}
+                          alt={member.user?.username}
+                          className="w-8 h-8 rounded-full object-cover"
+                        />
                         <div>
                           <p className="text-sm font-medium text-gray-900 dark:text-white">
                             {member.user?.username}

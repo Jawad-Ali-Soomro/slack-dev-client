@@ -10,6 +10,7 @@ import About from './pages/About'
 import Contact from './pages/Contact'
 import Teams from './pages/Teams'
 import TeamsManage from './components/TeamsManage'
+import Friends from './pages/Friends'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import ForgotPassword from './pages/ForgotPassword'
@@ -110,14 +111,22 @@ function App() {
                     </ProtectedRoute>
                   } 
                 />
-                <Route 
-                  path="/dashboard/teams" 
-                  element={
-                    <ProtectedRoute requireAuth={true}>
-                      <TeamsManage />
-                    </ProtectedRoute>
-                  } 
-                />
+        <Route 
+          path="/dashboard/teams" 
+          element={
+            <ProtectedRoute requireAuth={true}>
+              <TeamsManage />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/friends" 
+          element={
+            <ProtectedRoute requireAuth={true}>
+              <Friends />
+            </ProtectedRoute>
+          } 
+        />
             </Routes>
           </div>
         </SidebarProvider>
