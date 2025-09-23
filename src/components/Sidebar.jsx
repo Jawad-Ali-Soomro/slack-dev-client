@@ -9,7 +9,8 @@ import {
   Settings,
   LayoutDashboard,
   MessageCircle,
-  LogOut
+  LogOut,
+  Users
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSidebar } from '../contexts/SidebarContext'
@@ -49,6 +50,12 @@ const Sidebar = () => {
       title: 'Projects',
       icon: FolderOpen,
       path: '/dashboard/projects',
+      color: 'text-black dark:text-white'
+    },
+    {
+      title: 'Teams',
+      icon: Users,
+      path: '/dashboard/teams',
       color: 'text-black dark:text-white'
     },
     {

@@ -10,6 +10,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu"
 import taskService from "../services/taskService"
 import userService from "../services/userService"
+import projectService from "../services/projectService"
+import teamService from "../services/teamService"
 import { useAuth } from "../contexts/AuthContext"
 import { getAvatarProps } from "../utils/avatarUtils"
 import TaskEditModal from "../components/TaskEditModal"
@@ -29,13 +31,19 @@ const Tasks = () => {
     priority: "medium",
     assignedTo: "",
     assignedToId: "",
-    dueDate: ""
+    dueDate: "",
+    projectId: "none"
   })
   const [assignedToSuggestions, setAssignedToSuggestions] = useState([])
   const [showAssignedToSuggestions, setShowAssignedToSuggestions] = useState(false)
   const [loading, setLoading] = useState(false)
   const [tasks, setTasks] = useState([])
   const [users, setUsers] = useState([])
+  const [projects, setProjects] = useState([])
+  const [teams, setTeams] = useState([])
+  const [selectedTeam, setSelectedTeam] = useState("")
+  const [teamMembers, setTeamMembers] = useState([])
+  const [availableUsers, setAvailableUsers] = useState([])
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
@@ -110,10 +118,79 @@ const Tasks = () => {
     }
   }
 
-  // Load users on component mount
+  // Load projects from API
+  const loadProjects = async () => {
+    try {
+      const response = await projectService.getProjects({ limit: 100 })
+      setProjects(response.projects || [])
+    } catch (error) {
+      console.error('Error loading projects:', error)
+      toast.error('Failed to load projects')
+      setProjects([])
+    }
+  }
+
+  // Load teams from API
+  const loadTeams = async () => {
+    try {
+      const response = await teamService.getTeams({ limit: 100 })
+      setTeams(response.teams || [])
+    } catch (error) {
+      console.error('Error loading teams:', error)
+    }
+  }
+
+  // Load team members
+  const loadTeamMembers = async (teamId) => {
+    if (!teamId) {
+      setTeamMembers([])
+      setAvailableUsers(users)
+      return
+    }
+    try {
+      const response = await teamService.getTeamMembers(teamId)
+      setTeamMembers(response.members || [])
+      setAvailableUsers(response.members || [])
+    } catch (error) {
+      console.error('Error loading team members:', error)
+      setAvailableUsers(users)
+    }
+  }
+
+  // Update available users based on project selection
+  const updateAvailableUsers = useCallback(() => {
+    if (newTask.projectId && newTask.projectId !== "none") {
+      // Find the selected project
+      const selectedProject = projects.find(p => p.id === newTask.projectId)
+      if (selectedProject && selectedProject.teamId) {
+        // If project has a team, load team members
+        loadTeamMembers(selectedProject.teamId)
+      } else {
+        // If no team, show all users
+        setAvailableUsers(users)
+      }
+    } else {
+      // If no project selected, show all users
+      setAvailableUsers(users)
+    }
+  }, [newTask.projectId, projects, users])
+
+  // Load users and projects on component mount
   useEffect(() => {
     loadUsers()
+    loadProjects()
+    loadTeams()
   }, [])
+
+  // Initialize available users when users are loaded
+  useEffect(() => {
+    setAvailableUsers(users)
+  }, [users])
+
+  // Update available users when project changes
+  useEffect(() => {
+    updateAvailableUsers()
+  }, [updateAvailableUsers])
 
   const filteredTasks = tasks.filter(task => {
     const matchesSearch = task.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -153,33 +230,13 @@ const Tasks = () => {
   const handleAssignedToChange = async (value) => {
     setNewTask({...newTask, assignedTo: value, assignedToId: ""})
     if (value.length > 0) {
-      try {
-        // Use API search for real-time user search
-        const response = await userService.searchUsers(value)
-        const apiUsers = response.users || []
-        
-        // Transform API data to match the expected format
-        const transformedUsers = apiUsers.map(user => ({
-          id: user.id,
-          name: user.username,
-          username: user.username,
-          email: user.email,
-          role: user.role || "Team Member",
-          avatar: user.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username)}&background=random&color=fff&size=128`
-        }))
-        
-        setAssignedToSuggestions(transformedUsers)
-        setShowAssignedToSuggestions(true)
-      } catch (error) {
-        console.error('Error searching users:', error)
-        // Fallback to local filtering
-        const filtered = users.filter(user => 
-          (user.username || user.name).toLowerCase().includes(value.toLowerCase()) ||
-          user.email.toLowerCase().includes(value.toLowerCase())
-        )
-        setAssignedToSuggestions(filtered)
-        setShowAssignedToSuggestions(true)
-      }
+      // Filter available users based on search term
+      const filtered = availableUsers.filter(user => 
+        (user.username || user.name).toLowerCase().includes(value.toLowerCase()) ||
+        user.email.toLowerCase().includes(value.toLowerCase())
+      )
+      setAssignedToSuggestions(filtered)
+      setShowAssignedToSuggestions(true)
     } else {
       setShowAssignedToSuggestions(false)
     }
@@ -248,7 +305,8 @@ const Tasks = () => {
         description: newTask.description,
         assignTo: newTask.assignedToId, // Use the stored user ID
         priority: newTask.priority,
-        dueDate: newTask.dueDate ? new Date(newTask.dueDate) : undefined
+        dueDate: newTask.dueDate ? new Date(newTask.dueDate) : undefined,
+        projectId: newTask.projectId && newTask.projectId !== "none" ? newTask.projectId : undefined
       }
 
       const response = await taskService.createTask(taskData)
@@ -263,7 +321,7 @@ const Tasks = () => {
       // Reload tasks to get the updated list
       await loadTasks()
       
-      setNewTask({ title: "", description: "", priority: "medium", assignedTo: "", assignedToId: "", dueDate: "" })
+      setNewTask({ title: "", description: "", priority: "medium", assignedTo: "", assignedToId: "", dueDate: "", projectId: "none" })
       setShowNewTaskPopup(false)
       toast.success("Task created successfully!")
     } catch (error) {
@@ -470,6 +528,9 @@ const Tasks = () => {
                     Assigned BY
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Project
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     Due Date
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
@@ -516,18 +577,18 @@ const Tasks = () => {
                             {task.title}
                           </div>
                           {user && user.id && (
-                            <span className={`text-xs px-2 py-1 rounded-full ${
+                            <span className={`text-xs px-2 py-1 rounded-full uppercase font-bold ${
                               task.assignTo?.id === user.id 
                                 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
                                 : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
                             }`}>
-                              {task.assignTo?.id === user.id ? 'Assigned to me' : 'Assigned by me'}
+                              {task.assignTo?.id === user.id ? 'to me' : 'by me'}
                             </span>
                           )}
                         </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        {/* <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                           {task.description}
-                        </div>
+                        </div> */}
                       </div>
                     </td>
                     <td className="px-6 py-4">
@@ -602,6 +663,24 @@ const Tasks = () => {
                           </div>
                         </div>
                       </div>
+                    </td>
+                    <td className="px-6 py-4 w-[200px]">
+                      {task.project ? (
+                        <div className="flex items-center gap-2">
+                          {task.project.logo && (
+                            <img 
+                              src={task.project.logo.startsWith('http') ? task.project.logo : `http://localhost:4000${task.project.logo}`}
+                              alt={task.project.name}
+                              className="w-6 h-6 rounded object-cover"
+                            />
+                          )}
+                          <span className="text-sm text-gray-900 dark:text-white">
+                            {task.project.name}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-gray-500 dark:text-gray-400">No Project</span>
+                      )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
@@ -830,6 +909,23 @@ const Tasks = () => {
                       </div>
                     )}
                   </div>
+                </div>
+
+                <div>
+                  {/* Project Selection */}
+                  <Select value={newTask.projectId} onValueChange={(value) => setNewTask({...newTask, projectId: value})}>
+                    <SelectTrigger className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white">
+                      <SelectValue placeholder="Select project (optional)" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700">
+                      <SelectItem value="none">No Project</SelectItem>
+                      {projects.map((project) => (
+                        <SelectItem key={project.id} value={project.id}>
+                          {project.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 

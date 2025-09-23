@@ -35,6 +35,7 @@ import {
 import { useAuth } from '../contexts/AuthContext'
 import taskService from '../services/taskService'
 import meetingService from '../services/meetingService'
+import projectService from '../services/projectService'
 import { toast } from 'sonner'
 
 const Dashboard = () => {
@@ -56,11 +57,17 @@ const Dashboard = () => {
     pendingMeetings: 0,
     meetingsThisWeek: 0,
     meetingsThisMonth: 0,
-    meetingCompletionRate: 0
+    meetingCompletionRate: 0,
+    // Project stats
+    totalProjects: 0,
+    activeProjects: 0,
+    completedProjects: 0,
+    averageProgress: 0
   })
   const [loading, setLoading] = useState(true)
   const [tasks, setTasks] = useState([])
   const [meetings, setMeetings] = useState([])
+  const [projects, setProjects] = useState([])
 
   // Load dashboard data
   const loadDashboardData = useCallback(async () => {
@@ -98,6 +105,19 @@ const Dashboard = () => {
       })
       
       setMeetings(userMeetings)
+      
+      // Get projects for the current user
+      const projectResponse = await projectService.getProjects({ 
+        page: 1, 
+        limit: 100 
+      })
+      
+      const allProjects = projectResponse.projects || []
+      setProjects(allProjects)
+      
+      // Get project statistics from backend
+      const projectStatsResponse = await projectService.getProjectStats()
+      const projectStats = projectStatsResponse.stats || {}
       
       // Calculate statistics
       const now = new Date()
@@ -140,6 +160,12 @@ const Dashboard = () => {
       
       const meetingCompletionRate = totalMeetings > 0 ? Math.round((completedMeetings / totalMeetings) * 100) : 0
       
+      // Project statistics from backend
+      const totalProjects = projectStats.totalProjects || 0
+      const activeProjects = projectStats.activeProjects || 0
+      const completedProjects = projectStats.completedProjects || 0
+      const averageProgress = projectStats.averageProgress || 0
+      
       setStats({
         totalTasks,
         completedTasks,
@@ -156,7 +182,11 @@ const Dashboard = () => {
         pendingMeetings,
         meetingsThisWeek,
         meetingsThisMonth,
-        meetingCompletionRate
+        meetingCompletionRate,
+        totalProjects,
+        activeProjects,
+        completedProjects,
+        averageProgress
       })
       
     } catch (error) {
@@ -206,10 +236,16 @@ const Dashboard = () => {
         return meetingDate.toDateString() === date.toDateString()
       }).length
       
+      const projectsOnDay = projects.filter(project => {
+        const projectDate = new Date(project.createdAt)
+        return projectDate.toDateString() === date.toDateString()
+      }).length
+      
       days.push({
         day: dayName,
         tasks: tasksOnDay,
-        meetings: meetingsOnDay
+        meetings: meetingsOnDay,
+        projects: projectsOnDay
       })
     }
     return days
@@ -231,6 +267,20 @@ const Dashboard = () => {
     { name: 'Hybrid', value: meetings.filter(meeting => meeting.type === 'hybrid').length, color: '#F59E0B' }
   ]
 
+  // Project chart data
+  const projectStatusData = [
+    { name: 'Active', value: stats.activeProjects, color: '#10B981' },
+    { name: 'Planning', value: projects.filter(project => project.status === 'planning').length, color: '#3B82F6' },
+    { name: 'Completed', value: stats.completedProjects, color: '#6B7280' },
+    { name: 'On Hold', value: projects.filter(project => project.status === 'on_hold').length, color: '#F59E0B' }
+  ]
+
+  const projectPriorityData = [
+    { name: 'High', value: projects.filter(project => project.priority === 'high').length, color: '#EF4444' },
+    { name: 'Medium', value: projects.filter(project => project.priority === 'medium').length, color: '#F59E0B' },
+    { name: 'Low', value: projects.filter(project => project.priority === 'low').length, color: '#10B981' }
+  ]
+
 
   // Recent tasks (last 5)
   const recentTasks = tasks
@@ -241,6 +291,11 @@ const Dashboard = () => {
   const recentMeetings = meetings
     .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
     .slice(0, 4)
+
+  // Recent projects (last 3)
+  const recentProjects = projects
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 3)
 
   const StatCard = ({ title, value, icon: Icon, color, trend, trendValue }) => (
     <motion.div
@@ -298,7 +353,7 @@ const Dashboard = () => {
         </div>
 
         {/* Development Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <StatCard
             title="Active Tasks"
             value={stats.totalTasks}
@@ -319,16 +374,10 @@ const Dashboard = () => {
             icon={Clock}
             color="bg-yellow-500"
           />
-          <StatCard
-            title="Blocked"
-            value={stats.overdueTasks}
-            icon={AlertCircle}
-            color="bg-red-500"
-          />
         </div>
 
         {/* Collaboration Metrics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <StatCard
             title="Team Meetings"
             value={stats.totalMeetings}
@@ -349,11 +398,27 @@ const Dashboard = () => {
             trend="up"
             trendValue={stats.meetingCompletionRate}
           />
+        </div>
+
+        {/* Project Metrics Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           <StatCard
-            title="Cancelled"
-            value={stats.cancelledMeetings}
-            icon={XCircle}
-            color="bg-red-500"
+            title="Total Projects"
+            value={stats.totalProjects}
+            icon={Target}
+            color="bg-indigo-500"
+          />
+          <StatCard
+            title="Active Projects"
+            value={stats.activeProjects}
+            icon={Activity}
+            color="bg-green-500"
+          />
+          <StatCard
+            title="Avg Progress"
+            value={`${stats.averageProgress}%`}
+            icon={TrendingUp}
+            color="bg-orange-500"
           />
         </div>
 
@@ -508,6 +573,86 @@ const Dashboard = () => {
               </ResponsiveContainer>
               <div className="flex flex-wrap justify-center mt-4 gap-3">
                 {meetingStatusData.map((item, index) => (
+                  <div key={index} className="flex items-center">
+                    <div
+                      className="w-3 h-3 rounded-full mr-2"
+                      style={{ backgroundColor: item.color }}
+                    ></div>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {item.name}: {item.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Project Distribution Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
+            {/* Project Status Distribution */}
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                  Project Status Distribution
+                </h4>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  {stats.totalProjects} Total Projects
+                </div>
+              </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={projectStatusData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={50}
+                    outerRadius={100}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {projectStatusData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="flex flex-wrap justify-center mt-4 gap-3">
+                {projectStatusData.map((item, index) => (
+                  <div key={index} className="flex items-center">
+                    <div
+                      className="w-3 h-3 rounded-full mr-2"
+                      style={{ backgroundColor: item.color }}
+                    ></div>
+                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                      {item.name}: {item.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Project Priority Distribution */}
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+              <div className="flex items-center justify-between mb-6">
+                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                  Project Priority Breakdown
+                </h4>
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  By Priority Level
+                </div>
+              </div>
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={projectPriorityData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="name" />
+                  <YAxis />
+                  <Tooltip />
+                  <Bar dataKey="value" fill="#8884d8" />
+                </BarChart>
+              </ResponsiveContainer>
+              <div className="flex flex-wrap justify-center mt-4 gap-3">
+                {projectPriorityData.map((item, index) => (
                   <div key={index} className="flex items-center">
                     <div
                       className="w-3 h-3 rounded-full mr-2"
@@ -679,6 +824,68 @@ const Dashboard = () => {
                           'bg-yellow-100 text-yellow-800'
                         }`}>
                           {meeting.type}
+                        </span>
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
+            {/* Recent Projects */}
+            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+              <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-6 flex items-center">
+                <Target className="w-5 h-5 mr-2 text-indigo-500" />
+                Recent Projects
+              </h4>
+              <div className="space-y-3 max-h-64 overflow-y-auto">
+                {recentProjects.length === 0 ? (
+                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">
+                    No recent projects found
+                  </p>
+                ) : (
+                  recentProjects.map((project) => (
+                    <div
+                      key={project.id}
+                      className="flex items-center justify-between p-1 px-4 border border-indigo-300 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-indigo-500"
+                    >
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900 dark:text-white">
+                          {project.name}
+                        </h4>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">
+                          {project.createdBy?.username || 'Unknown User'}
+                        </p>
+                        <div className="mt-1">
+                          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
+                            <span>Progress</span>
+                            <span>{project.progress || 0}%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
+                            <div 
+                              className="bg-indigo-500 h-1 rounded-full transition-all duration-300"
+                              style={{ width: `${project.progress || 0}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                          project.status === 'active' ? 'bg-green-100 text-green-800' :
+                          project.status === 'planning' ? 'bg-blue-100 text-blue-800' :
+                          project.status === 'completed' ? 'bg-gray-100 text-gray-800' :
+                          project.status === 'on_hold' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {project.status.replace('_', ' ')}
+                        </span>
+                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${
+                          project.priority === 'urgent' ? 'bg-red-100 text-red-800' :
+                          project.priority === 'high' ? 'bg-orange-100 text-orange-800' :
+                          project.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-green-100 text-green-800'
+                        }`}>
+                          {project.priority}
                         </span>
                       </div>
                     </div>

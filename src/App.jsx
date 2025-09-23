@@ -9,6 +9,7 @@ import Indexing from './pages/Indexing'
 import About from './pages/About'
 import Contact from './pages/Contact'
 import Teams from './pages/Teams'
+import TeamsManage from './components/TeamsManage'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import ForgotPassword from './pages/ForgotPassword'
@@ -16,6 +17,7 @@ import VerifyEmail from './pages/VerifyEmail'
 import Dashboard from './pages/Dashboard'
 import Tasks from './pages/Tasks'
 import Meetings from './pages/Meetings'
+import Projects from './pages/Projects'
 import { Toaster } from 'sonner'
 
 function App() {
@@ -97,6 +99,22 @@ function App() {
                   element={
                     <ProtectedRoute requireAuth={true}>
                       <Meetings />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/dashboard/projects" 
+                  element={
+                    <ProtectedRoute requireAuth={true}>
+                      <Projects />
+                    </ProtectedRoute>
+                  } 
+                />
+                <Route 
+                  path="/dashboard/teams" 
+                  element={
+                    <ProtectedRoute requireAuth={true}>
+                      <TeamsManage />
                     </ProtectedRoute>
                   } 
                 />
