@@ -72,9 +72,9 @@ const Sidebar = () => {
       color: 'text-black dark:text-white'
     },
     {
-      title: 'Messages',
+      title: 'Chat',
       icon: MessageCircle,
-      path: '/dashboard/messages',
+      path: '/dashboard/chat',
       color: 'text-black dark:text-white'
     },
 

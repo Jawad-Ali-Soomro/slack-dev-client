@@ -4,6 +4,7 @@ import { ThemeToggle } from './components/ThemeToggle'
 import { AuthProvider } from './contexts/AuthContext'
 import { SidebarProvider } from './contexts/SidebarContext'
 import { NotificationProvider } from './contexts/NotificationContext'
+import { ChatProvider } from './contexts/ChatContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Indexing from './pages/Indexing'
 import About from './pages/About'
@@ -19,6 +20,7 @@ import Dashboard from './pages/Dashboard'
 import Tasks from './pages/Tasks'
 import Meetings from './pages/Meetings'
 import Projects from './pages/Projects'
+import Chat from './pages/Chat'
 import { Toaster } from 'sonner'
 
 function App() {
@@ -42,7 +44,8 @@ function App() {
       />
       <AuthProvider>
         <NotificationProvider>
-          <SidebarProvider>
+          <ChatProvider>
+            <SidebarProvider>
           <ThemeToggle className="fixed bottom-5 right-10 z-50" />
           <div className="relative">
             <Routes>
@@ -127,9 +130,18 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        <Route 
+          path="/dashboard/chat" 
+          element={
+            <ProtectedRoute requireAuth={true}>
+              <Chat />
+            </ProtectedRoute>
+          } 
+        />
             </Routes>
           </div>
         </SidebarProvider>
+        </ChatProvider>
         </NotificationProvider>
       </AuthProvider>
     </Router>

@@ -1,41 +1,21 @@
-import axios from '../lib/axios'
+import axiosInstance from "../lib/axios";
 
-const userService = {
-  // Get all users with optional filters
-  getUsers: async (filters = {}) => {
-    try {
-      const queryParams = new URLSearchParams()
-      
-      if (filters.page) queryParams.append('page', filters.page)
-      if (filters.limit) queryParams.append('limit', filters.limit)
-      if (filters.search) queryParams.append('search', filters.search)
 
-      const response = await axios.get(`/api/users?${queryParams.toString()}`)
-      return response.data
-    } catch (error) {
-      throw error.response?.data || error.message
-    }
+const API_BASE = '/api/user';
+
+export const userService = {
+  getUsers: async (page = 1, limit = 20) => {
+    const response = await axiosInstance.get(`${API_BASE}?page=${page}&limit=${limit}`);
+    return response.data;
   },
 
-  // Get user by ID
   getUserById: async (userId) => {
-    try {
-      const response = await axios.get(`/api/users/${userId}`)
-      return response.data
-    } catch (error) {
-      throw error.response?.data || error.message
-    }
+    const response = await axiosInstance.get(`${API_BASE}/${userId}`);
+    return response.data;
   },
 
-  // Search users
   searchUsers: async (query) => {
-    try {
-      const response = await axios.get(`/api/users/search?q=${encodeURIComponent(query)}`)
-      return response.data
-    } catch (error) {
-      throw error.response?.data || error.message
-    }
+    const response = await axiosInstance.get(`${API_BASE}/search?q=${query}`);
+    return response.data;
   }
-}
-
-export default userService
+};

@@ -50,7 +50,7 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
           <ChevronRight />
         </div>
 
-        <div className={`flex-1 ${isOpen ? 'md:pl-25 md:pr-15 md:pt-20 p-20' : 'md:pl-25 md:pr-15 md:pt-20 p-20'}`}>
+        <div className={`flex-1 ${isOpen ? 'md:pl-25 md:pr-15 pt-20 overflow-hidden' : 'md:pl-25 md:pr-15 md:pt-20 p-20 overflow-hidden'}`}>
           {children}
         </div>
       </div>

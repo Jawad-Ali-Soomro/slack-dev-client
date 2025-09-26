@@ -1,0 +1,182 @@
+import React, { useEffect, useState } from 'react';
+import { useChat } from '../contexts/ChatContext';
+import { useAuth } from '../contexts/AuthContext';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
+import { Badge } from './ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { MessageCircle, Plus, Search, Users } from 'lucide-react';
+
+const ChatList = () => {
+  const { user } = useAuth();
+  const { 
+    chats, 
+    currentChat, 
+    setCurrentChat, 
+    unreadCount, 
+    getChatName, 
+    getChatAvatar,
+    isUserOnline,
+    loading 
+  } = useChat();
+
+  const getAvatarUrl = (avatar) => {
+    if (!avatar) return null;
+    // If avatar is already a full URL, return as is
+    if (avatar.startsWith('http')) return avatar;
+    // If avatar is a relative path, prefix with server URL
+    return `http://localhost:4000${avatar.startsWith('/') ? '' : '/'}${avatar}`;
+  };
+  
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showCreateChat, setShowCreateChat] = useState(false);
+
+  const filteredChats = chats.filter(chat => 
+    getChatName(chat).toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const formatTime = (date) => {
+    if (!date) return '';
+    const now = new Date();
+    const messageDate = new Date(date);
+    const diffInHours = (now - messageDate) / (1000 * 60 * 60);
+    
+    if (diffInHours < 24) {
+      return messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    } else if (diffInHours < 168) { // 7 days
+      return messageDate.toLocaleDateString([], { weekday: 'short' });
+    } else {
+      return messageDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    }
+  };
+
+//   useEffect(() => {
+//   console.log(currentChat);
+ 
+  
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col h-full border-r">
+      {/* Header */}
+      <div className="p-4 border-b">
+        {/* <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">Chats</h2>
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="text-xs">
+              {unreadCount} unread
+            </Badge>
+            <Button
+              size="sm"
+              onClick={() => setShowCreateChat(true)}
+              className="h-8 w-8 p-0"
+            >
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+        </div> */}
+        
+        <div className="relative">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search chats..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+      </div>
+
+      {/* Chat List */}
+      <div className="flex-1 overflow-y-auto">
+        {filteredChats.length === 0 ? (
+          <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
+            <MessageCircle className="h-12 w-12 mb-4" />
+            <p className="text-sm">No chats found</p>
+            <p className="text-xs">Start a conversation with someone</p>
+          </div>
+        ) : (
+          <div className="space-y-1 p-2">
+            {filteredChats.map((chat) => {
+              const isActive = currentChat?._id === chat._id;
+              const chatName = getChatName(chat);
+              const chatAvatar = getChatAvatar(chat);
+              const otherParticipant = chat.participants.find(p => p._id !== user?.id && p._id !== user?._id);
+              const isOnline = otherParticipant ? isUserOnline(otherParticipant._id) : false;
+              
+              return (
+                <Card
+                  key={chat._id}
+                  className={`cursor-pointer transition-colors hover:bg-muted/50 ${
+                    isActive ? 'bg-muted border-primary' : ''
+                  }`}
+                  onClick={() => {
+                    console.log('Chat clicked:', chat);
+                    setCurrentChat(chat);
+                  }}
+                >
+                  <CardContent className="p-3">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <Avatar className="h-10 w-10">
+                          <AvatarImage src={getAvatarUrl(chatAvatar)} />
+                          <AvatarFallback>
+                            {chatName.charAt(0).toUpperCase()}
+                          </AvatarFallback>
+                        </Avatar>
+                        {isOnline && (
+                          <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-full"></div>
+                        )}
+                      </div>
+                      
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <h3 className="font-medium text-sm truncate">
+                            {chatName}
+                          </h3>
+                          <span className="text-xs text-muted-foreground">
+                            {formatTime(chat.lastMessageAt)}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center justify-between mt-1">
+                          <p className="text-xs text-muted-foreground truncate">
+                            {chat.lastMessage?.content || 'No messages yet'}
+                          </p>
+                          {chat.unreadCount > 0 && (
+                            <Badge variant="destructive" className="h-5 w-5 p-0 text-xs flex items-center justify-center">
+                              {chat.unreadCount}
+                            </Badge>
+                          )}
+                        </div>
+                        
+                        {chat.type === 'group' && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <Users className="h-3 w-3 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground">
+                              {chat.participants.length} members
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default ChatList;

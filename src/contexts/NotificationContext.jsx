@@ -55,10 +55,28 @@ export const NotificationProvider = ({ children }) => {
     })
     
     // Show toast for new notification
-    toast.info(notification.title, {
-      description: notification.message,
-      duration: 5000,
-    })
+    const notificationType = notification.type || 'info'
+    const title = notification.title || 'New Notification'
+    const message = notification.message || ''
+    
+    if (notificationType === 'message') {
+      toast.info(`💬 ${title}`, {
+        description: message,
+        duration: 5000,
+        action: {
+          label: 'View',
+          onClick: () => {
+            // Navigate to chat if needed
+            window.location.href = '/dashboard/chat'
+          }
+        }
+      })
+    } else {
+      toast.info(title, {
+        description: message,
+        duration: 5000,
+      })
+    }
   }
 
   // Mark as read
