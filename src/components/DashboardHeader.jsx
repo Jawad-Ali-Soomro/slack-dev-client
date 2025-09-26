@@ -176,7 +176,7 @@ const DashboardHeader = () => {
                   />
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-full flex items-center justify-center">
-                  <Camera className="w-2.5 h-2.5 text-white" />
+                  <Camera className="w-2.5 h-2.5 " />
                 </div>
               </button>
             </div>
@@ -241,7 +241,7 @@ const DashboardHeader = () => {
                   />
                 </div>
                 <label className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer transition-colors">
-                  <Camera className="w-3 h-3 text-white" />
+                  <Camera className="w-3 h-3" />
                   <input
                     type="file"
                     accept="image/*"

@@ -51,10 +51,6 @@ const ChatList = () => {
     }
   };
 
-//   useEffect(() => {
-//   console.log(currentChat);
- 
-  
 
   if (loading) {
     return (
@@ -111,6 +107,7 @@ const ChatList = () => {
               const chatAvatar = getChatAvatar(chat);
               const otherParticipant = chat.participants.find(p => p._id !== user?.id && p._id !== user?._id);
               const isOnline = otherParticipant ? isUserOnline(otherParticipant._id) : false;
+
               
               return (
                 <Card
@@ -118,10 +115,7 @@ const ChatList = () => {
                   className={`cursor-pointer transition-colors hover:bg-muted/50 ${
                     isActive ? 'bg-muted border-primary' : ''
                   }`}
-                  onClick={() => {
-                    console.log('Chat clicked:', chat);
-                    setCurrentChat(chat);
-                  }}
+                  onClick={() => setCurrentChat(chat)}
                 >
                   <CardContent className="p-3">
                     <div className="flex items-center gap-3">

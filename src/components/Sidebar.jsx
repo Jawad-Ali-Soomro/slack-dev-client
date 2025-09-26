@@ -11,7 +11,8 @@ import {
   MessageCircle,
   LogOut,
   Users,
-  UserCheck
+  UserCheck,
+  MessageSquare
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSidebar } from '../contexts/SidebarContext'
@@ -65,25 +66,13 @@ const Sidebar = () => {
       path: '/dashboard/friends',
       color: 'text-black dark:text-white'
     },
-    {
-      title: 'Whiteboard',
-      icon: PenTool,
-      path: '/dashboard/whiteboard',
-      color: 'text-black dark:text-white'
-    },
+ 
     {
       title: 'Chat',
-      icon: MessageCircle,
+      icon: MessageSquare,
       path: '/dashboard/chat',
       color: 'text-black dark:text-white'
     },
-
-    {
-        title: 'Settings',
-        icon: Settings,
-        path: '/dashboard/settings',
-        color: 'text-black dark:text-white'
-      }
 
   ]
 
@@ -161,7 +150,7 @@ const Sidebar = () => {
           {/* Overlay */}
           <motion.div
             variants={overlayVariants}
-            initial="closed"
+            initial="open"
             animate="open"
             exit="closed"
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
@@ -171,9 +160,9 @@ const Sidebar = () => {
           {/* Sidebar */}
           <motion.aside
             variants={sidebarVariants}
-            initial="closed"
+            initial="open"
             animate="open"
-            exit="closed"
+            exit="open"
             className="fixed left-0 top-0 h-full w-20 bg-white dark:bg-gray-900 z-100000 border-r border-gray-200 dark:border-gray-700 lg:z-10000"
           >
             {/* Header */}
@@ -205,18 +194,18 @@ const Sidebar = () => {
                         title={item.title}
                         className={`relative flex items-center justify-center w-[50px] h-[50px] rounded-lg transition-all duration-200 group ${
                           active
-                            ? 'shadow-none border border-gray-200 dark:border-gray-700 text-black  dark:text-black shadow-lg scale-105'
+                            ? 'shadow-none bg-black  text-white dark:bg-white  dark:text-black shadow-lg scale-105'
                             : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
-                        }`}
+                        }`} 
                       >
-                        <Icon className={`w-5 h-5 transition-transform ${active ? 'text-black dark:text-white' : item.color}`} />
+                        <Icon className={`w-5 h-5 transition-transform ${active ? 'text-white dark:text-black' : item.color}`} />
                         {active && (
                           <motion.div
                             layoutId="activeIndicator"
                             className="absolute -right-2 top-1/2 -translate-y-1/2 w-1 h-8 bg-black dark:bg-white rounded-full"
-                            initial={{ opacity: 0, x: 10 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 10 }}
+                            initial={{ x: 0 }}
+                            animate={{ x: 0 }}
+                            exit={{ x: 0 }}
                           />
                         )}
                       </Link>

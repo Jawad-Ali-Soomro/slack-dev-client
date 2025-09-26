@@ -5,6 +5,7 @@ import { AuthProvider } from './contexts/AuthContext'
 import { SidebarProvider } from './contexts/SidebarContext'
 import { NotificationProvider } from './contexts/NotificationContext'
 import { ChatProvider } from './contexts/ChatContext'
+import { CodeCollaborationProvider } from './contexts/CodeCollaborationContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Indexing from './pages/Indexing'
 import About from './pages/About'
@@ -21,6 +22,7 @@ import Tasks from './pages/Tasks'
 import Meetings from './pages/Meetings'
 import Projects from './pages/Projects'
 import Chat from './pages/Chat'
+import CodeCollaboration from './pages/CodeCollaboration'
 import { Toaster } from 'sonner'
 
 function App() {
@@ -45,8 +47,9 @@ function App() {
       <AuthProvider>
         <NotificationProvider>
           <ChatProvider>
-            <SidebarProvider>
-          <ThemeToggle className="fixed bottom-5 right-10 z-50" />
+            <CodeCollaborationProvider>
+              <SidebarProvider>
+          <ThemeToggle className="fixed bottom-20 right-10 z-50" />
           <div className="relative">
             <Routes>
             {/* Public Routes */}
@@ -138,9 +141,18 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        <Route 
+          path="/dashboard/code" 
+          element={
+            <ProtectedRoute requireAuth={true}>
+              <CodeCollaboration />
+            </ProtectedRoute>
+          } 
+        />
             </Routes>
           </div>
         </SidebarProvider>
+        </CodeCollaborationProvider>
         </ChatProvider>
         </NotificationProvider>
       </AuthProvider>

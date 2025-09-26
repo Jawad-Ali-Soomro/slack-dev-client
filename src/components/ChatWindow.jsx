@@ -141,7 +141,6 @@ const ChatWindow = () => {
   const otherParticipant = currentChat?.participants.find(p => p._id !== user?.id && p._id !== user?._id);
   const isOnline = otherParticipant ? isUserOnline(otherParticipant._id) : false;
 
-  // Debug logging
 
 
   if (!currentChat) {
@@ -225,12 +224,7 @@ const ChatWindow = () => {
                 <div className={`flex gap-2 max-w-[70%] ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
                   {!isOwn && (
                     <Avatar className="h-8 w-8 mt-1">
-                      <AvatarImage 
-                        src={getAvatarUrl(message.sender.avatar)} 
-                        onError={(e) => {
-                          console.log('Avatar load error for:', message.sender.username, 'URL:', message.sender.avatar);
-                        }}
-                      />
+                      <AvatarImage src={getAvatarUrl(message.sender.avatar)} />
                       <AvatarFallback>
                         {(message.sender.name || message.sender.username || 'U').charAt(0).toUpperCase()}
                       </AvatarFallback>

@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const [token, setToken] = useState(null)
 
   useEffect(() => {
     checkAuthStatus()
@@ -23,16 +24,18 @@ export const AuthProvider = ({ children }) => {
   const checkAuthStatus = async () => {
     try {
       setLoading(true)
-      const token = localStorage.getItem('authToken')
+      const storedToken = localStorage.getItem('authToken')
       const userData = localStorage.getItem('userData')
-      console.log('Checking auth status:', { token: !!token, userData: !!userData })
+      console.log('Checking auth status:', { token: !!storedToken, userData: !!userData })
       
-      if (token && userData) {
+      if (storedToken && userData) {
+        setToken(storedToken)
         setIsAuthenticated(true)
         setUser(JSON.parse(userData))
         console.log('User authenticated from localStorage')
       } else {
         console.log('No valid auth data found')
+        setToken(null)
         setIsAuthenticated(false)
         setUser(null)
       }
@@ -40,6 +43,7 @@ export const AuthProvider = ({ children }) => {
       console.error('Auth check failed:', error)
       localStorage.removeItem('authToken')
       localStorage.removeItem('userData')
+      setToken(null)
       setIsAuthenticated(false)
       setUser(null)
     } finally {
@@ -61,6 +65,7 @@ export const AuthProvider = ({ children }) => {
           localStorage.setItem('authToken', result.token)
           localStorage.setItem('userData', JSON.stringify(result.user))
           
+          setToken(result.token)
           setUser(result.user)
           setIsAuthenticated(true)
         }
@@ -88,6 +93,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('authToken')
     localStorage.removeItem('userData')
+    setToken(null)
     setUser(null)
     setIsAuthenticated(false)
   }
@@ -131,13 +137,14 @@ export const AuthProvider = ({ children }) => {
 
   const value = useMemo(() => ({
     user,
+    token,
     isAuthenticated,
     loading,
     login,
     logout,
     forgotPassword,
     verifyOTP
-  }), [user, isAuthenticated, loading])
+  }), [user, token, isAuthenticated, loading])
 
   // Debug: Log when user object changes
   useEffect(() => {

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { io } from 'socket.io-client';
+import { toast } from 'sonner';
 import { useAuth } from './AuthContext';
 import { useNotifications } from './NotificationContext';
 import { chatService } from '../services/chatService';
@@ -34,14 +35,7 @@ export const ChatProvider = ({ children }) => {
   // Initialize socket connection
   useEffect(() => {
     if (user && token) {
-      console.log('Initializing socket connection...', {
-        user: user.id || user._id,
-        token: token ? 'present' : 'missing',
-        apiUrl: import.meta.env.VITE_API_URL || 'http://localhost:5000'
-      });
-
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
-      console.log('🔌 Connecting to:', apiUrl);
       
       const newSocket = io(apiUrl, {
         auth: {
@@ -49,36 +43,45 @@ export const ChatProvider = ({ children }) => {
         },
         transports: ['websocket', 'polling'],
         timeout: 20000,
-        forceNew: true
+        forceNew: true,
+        autoConnect: true,
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionAttempts: 5,
+        maxReconnectionAttempts: 5
       });
 
       newSocket.on('connect', () => {
-        console.log('✅ Connected to chat server');
         setIsConnected(true);
         setError(null);
       });
 
       newSocket.on('disconnect', (reason) => {
-        console.log('❌ Disconnected from chat server:', reason);
         setIsConnected(false);
         
         // Auto-reconnect if not manually disconnected
         if (reason !== 'io client disconnect') {
           setTimeout(() => {
-            console.log('🔄 Attempting to reconnect...');
             newSocket.connect();
           }, 3000);
         }
       });
 
       newSocket.on('connect_error', (error) => {
-        console.error('❌ Socket connection error:', error);
         setIsConnected(false);
         setError('Connection failed: ' + error.message);
+        
+        // Try to reconnect after a delay
+        setTimeout(() => {
+          if (!isConnected) {
+            newSocket.connect();
+          }
+        }, 5000);
       });
 
       newSocket.on('connected', (data) => {
-        console.log('Chat server connected:', data);
+        setIsConnected(true);
+        setError(null);
       });
 
       newSocket.on('new_message', (message) => {
@@ -86,9 +89,31 @@ export const ChatProvider = ({ children }) => {
         if (currentChat && message.chat === currentChat._id) {
           scrollToBottom();
         }
+        
+        // Show toast notification for new messages (only if not from current user)
+        if (message.sender && message.sender._id !== user?.id && message.sender._id !== user?._id) {
+          const senderName = message.sender.name || message.sender.username || 'Unknown User';
+          toast.success(`${senderName} sent a message just now`, {
+            description: message.content.length > 50 ? `${message.content.substring(0, 50)}...` : message.content,
+            duration: 4000,
+            position: 'top-right',
+            action: {
+              label: 'View Chat',
+              onClick: () => {
+                // Find the chat and switch to it
+                const chat = chats.find(c => c._id === message.chat);
+                if (chat) {
+                  setCurrentChat(chat);
+                }
+              }
+            }
+          });
+        }
       });
 
       newSocket.on('chat_updated', (updatedChat) => {
+        console.log('Received chat update:', updatedChat);
+        console.log('Updated chat participants:', updatedChat.participants);
         setChats(prev => 
           prev.map(chat => chat._id === updatedChat._id ? updatedChat : chat)
         );
@@ -110,17 +135,20 @@ export const ChatProvider = ({ children }) => {
         );
       });
 
-      newSocket.on('chat_updated', (chat) => {
-        setChats(prev => 
-          prev.map(c => c._id === chat._id ? chat : c)
-        );
-      });
-
       newSocket.on('user_online', (data) => {
         setOnlineUsers(prev => {
           const filtered = prev.filter(u => u.userId !== data.userId);
           return [...filtered, { ...data, isOnline: true }];
         });
+        
+        // Show toast notification when a user comes online (only if not current user)
+        if (data.userId !== user?.id && data.userId !== user?._id) {
+          const userName = data.name || data.username || 'Unknown User';
+          toast.info(`${userName} is now online`, {
+            duration: 3000,
+            position: 'top-right'
+          });
+        }
       });
 
       newSocket.on('user_offline', (data) => {
@@ -131,6 +159,15 @@ export const ChatProvider = ({ children }) => {
               : u
           )
         );
+        
+        // Show toast notification when a user goes offline (only if not current user)
+        if (data.userId !== user?.id && data.userId !== user?._id) {
+          const userName = data.name || data.username || 'Unknown User';
+          toast.warning(`${userName} is now offline`, {
+            duration: 3000,
+            position: 'top-right'
+          });
+        }
       });
 
       newSocket.on('user_typing', (data) => {
@@ -140,6 +177,8 @@ export const ChatProvider = ({ children }) => {
             ? [...(prev[data.chatId] || []).filter(u => u.userId !== data.userId), data]
             : (prev[data.chatId] || []).filter(u => u.userId !== data.userId)
         }));
+        
+        
       });
 
       newSocket.on('message_read', (data) => {
@@ -156,7 +195,6 @@ export const ChatProvider = ({ children }) => {
       });
 
       newSocket.on('new_notification', (notification) => {
-        console.log('New notification:', notification);
         addNotification(notification);
       });
 
@@ -181,7 +219,6 @@ export const ChatProvider = ({ children }) => {
   useEffect(() => {
     if (socket && user) {
       // Socket is connected, we can now sync real-time updates
-      console.log('Socket connected, syncing real-time updates');
     }
   }, [socket, user]);
 
@@ -202,8 +239,6 @@ export const ChatProvider = ({ children }) => {
     try {
       setLoading(true);
       const response = await chatService.getUserChats();
-      console.log('Loaded chats response:', response);
-      console.log('Chats data:', response.data);
       setChats(response.data);
     } catch (err) {
       setError('Failed to load chats');
@@ -215,18 +250,14 @@ export const ChatProvider = ({ children }) => {
 
   const loadMessages = async () => {
     if (!currentChat) {
-      console.log('No current chat, clearing messages');
       setMessages([]);
       return;
     }
     
     try {
-      console.log('Loading messages for chat:', currentChat._id);
       setLoading(true);
       const response = await chatService.getChatMessages(currentChat._id);
-      console.log('Messages response:', response);
       setMessages(response.data);
-      // Don't auto-scroll when loading messages - only when sending new ones
     } catch (err) {
       setError('Failed to load messages');
       console.error('Error loading messages:', err);
@@ -270,15 +301,6 @@ export const ChatProvider = ({ children }) => {
     if (!currentChat || !content.trim()) return;
 
     try {
-      console.log('Sending message with data:', {
-        chatId: currentChat._id,
-        content: content.trim(),
-        type,
-        attachments,
-        replyTo,
-        currentChat: currentChat
-      });
-
       const response = await chatService.sendMessage({
         chatId: currentChat._id,
         content: content.trim(),
@@ -287,12 +309,11 @@ export const ChatProvider = ({ children }) => {
         replyTo
       });
 
-      setMessages(prev => [...prev, response.data]);
-    //   scrollToBottom();
+      // Don't add to messages here - let the socket handle it to avoid duplicates
+      // The socket will receive the message and add it to the state
     } catch (err) {
       setError('Failed to send message');
       console.error('Error sending message:', err);
-      console.error('Error response:', err.response?.data);
     }
   };
 
@@ -381,8 +402,21 @@ export const ChatProvider = ({ children }) => {
       return chat.name;
     }
     
-    const otherParticipant = chat.participants.find(p => p._id !== user?.id && p._id !== user?._id);
-    return otherParticipant?.name || 'Unknown User';
+    if (!chat.participants || chat.participants.length === 0) {
+      return 'Unknown User';
+    }
+    
+    const currentUserId = user?.id || user?._id;
+    const otherParticipant = chat.participants.find(p => {
+      const participantId = p._id || p.id;
+      return participantId && participantId.toString() !== currentUserId?.toString();
+    });
+    
+    if (!otherParticipant) {
+      return 'Unknown User';
+    }
+    
+    return otherParticipant.username || otherParticipant.name || 'Unknown User';
   };
 
   const getChatAvatar = (chat) => {
@@ -390,7 +424,16 @@ export const ChatProvider = ({ children }) => {
       return null; // You can add group avatar logic here
     }
     
-    const otherParticipant = chat.participants.find(p => p._id !== user?.id && p._id !== user?._id);
+    if (!chat.participants || chat.participants.length === 0) {
+      return null;
+    }
+    
+    const currentUserId = user?.id || user?._id;
+    const otherParticipant = chat.participants.find(p => {
+      const participantId = p._id || p.id;
+      return participantId && participantId.toString() !== currentUserId?.toString();
+    });
+    
     return otherParticipant?.avatar;
   };
 
