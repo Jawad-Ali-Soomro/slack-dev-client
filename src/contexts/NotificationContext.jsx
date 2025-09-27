@@ -18,12 +18,21 @@ export const NotificationProvider = ({ children }) => {
   const [notifications, setNotifications] = useState([])
   const [unreadCount, setUnreadCount] = useState(0)
   const [loading, setLoading] = useState(false)
+  const [unreadCounts, setUnreadCounts] = useState({
+    tasks: 0,
+    meetings: 0,
+    projects: 0,
+    teams: 0,
+    messages: 0,
+    code: 0
+  })
 
   // Load notifications
   const loadNotifications = useCallback(async () => {
     try {
       setLoading(true)
       const response = await notificationService.getNotifications()
+      console.log('Loaded notifications:', response)
       setNotifications(response.notifications || [])
       updateUnreadCount(response.notifications || [])
     } catch (error) {
@@ -37,6 +46,70 @@ export const NotificationProvider = ({ children }) => {
   const updateUnreadCount = (notificationsList) => {
     const unread = notificationsList.filter(notif => !notif.isRead).length
     setUnreadCount(unread)
+    
+    // Update specific counts by type
+    const counts = {
+      tasks: 0,
+      meetings: 0,
+      projects: 0,
+      teams: 0,
+      messages: 0,
+      code: 0
+    }
+    
+    notificationsList.forEach(notif => {
+      if (!notif.isRead) {
+        const type = notif.type || notif.notificationType || 'general'
+        switch (type) {
+          case 'task':
+          case 'task_assigned':
+          case 'task_updated':
+          case 'task_completed':
+          case 'TASK_ASSIGNED':
+          case 'TASK_UPDATED':
+          case 'TASK_COMPLETED':
+            counts.tasks++
+            break
+          case 'meeting':
+          case 'meeting_invite':
+          case 'meeting_reminder':
+          case 'MEETING_INVITE':
+          case 'MEETING_REMINDER':
+            counts.meetings++
+            break
+          case 'project':
+          case 'project_invite':
+          case 'project_updated':
+          case 'PROJECT_INVITE':
+          case 'PROJECT_UPDATED':
+            counts.projects++
+            break
+          case 'team':
+          case 'team_invite':
+          case 'team_updated':
+          case 'TEAM_INVITE':
+          case 'TEAM_UPDATED':
+            counts.teams++
+            break
+          case 'message':
+          case 'chat':
+          case 'MESSAGE':
+          case 'CHAT':
+            counts.messages++
+            break
+          case 'code':
+          case 'code_invite':
+          case 'code_session':
+          case 'CODE_INVITE':
+          case 'CODE_SESSION':
+            counts.code++
+            break
+        }
+      }
+    })
+    
+    console.log('Updated unread counts:', counts)
+    setUnreadCounts(counts)
   }
 
   // Add new notification
@@ -146,11 +219,21 @@ export const NotificationProvider = ({ children }) => {
   // Load notifications automatically when user is authenticated
   useEffect(() => {
     if (user) {
+      console.log('User authenticated, loading notifications...')
       loadNotifications()
     } else {
       // Clear notifications when user logs out
+      console.log('User not authenticated, clearing notifications...')
       setNotifications([])
       setUnreadCount(0)
+      setUnreadCounts({
+        tasks: 0,
+        meetings: 0,
+        projects: 0,
+        teams: 0,
+        messages: 0,
+        code: 0
+      })
     }
   }, [user, loadNotifications])
 
@@ -158,16 +241,22 @@ export const NotificationProvider = ({ children }) => {
   useEffect(() => {
     if (!user) return
 
+    console.log('Setting up notification refresh interval...')
     const interval = setInterval(() => {
+      console.log('Refreshing notifications...')
       loadNotifications()
     }, 30000) // 30 seconds
 
-    return () => clearInterval(interval)
+    return () => {
+      console.log('Clearing notification refresh interval...')
+      clearInterval(interval)
+    }
   }, [user, loadNotifications])
 
   const value = {
     notifications,
     unreadCount,
+    unreadCounts,
     loading,
     loadNotifications,
     addNotification,

@@ -21,12 +21,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar'
 import friendService from '../services/friendService'
 import { useAuth } from '../contexts/AuthContext'
 import { getAvatarProps } from '../utils/avatarUtils'
+import UserDetailsModal from '../components/UserDetailsModal'
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
 
 const Friends = () => {
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState('friends')
   const [searchTerm, setSearchTerm] = useState('')
+  const [selectedUserId, setSelectedUserId] = useState(null)
+  const [showUserDetails, setShowUserDetails] = useState(false)
   const [loading, setLoading] = useState(false)
   const [friends, setFriends] = useState([])
   const [friendRequests, setFriendRequests] = useState([])
@@ -34,6 +37,14 @@ const Friends = () => {
   const [stats, setStats] = useState(null)
 
   // Load friends
+  // Handle user avatar click
+  const handleUserAvatarClick = (userId) => {
+    console.log('Friends avatar clicked for user ID:', userId)
+    setSelectedUserId(userId)
+    setShowUserDetails(true)
+    console.log('Modal should open now')
+  }
+
   const loadFriends = async () => {
     try {
       setLoading(true)
@@ -150,7 +161,7 @@ const Friends = () => {
   )
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6">
+    <div className="min-h-screen  p-6">
       <div className="mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -196,16 +207,16 @@ const Friends = () => {
         )}
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="friends">Friends ({friends.length})</TabsTrigger>
-            <TabsTrigger value="received">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-15">
+          <TabsList className="grid w-full grid-cols-4 h-15">
+            <TabsTrigger className={"h-13 cursor-pointer"} value="friends">Friends ({friends.length})</TabsTrigger>
+            <TabsTrigger className={"h-13 cursor-pointer"} value="received">
               Received ({pendingReceivedRequests.length})
             </TabsTrigger>
-            <TabsTrigger value="sent">
+            <TabsTrigger className={"h-13 cursor-pointer"} value="sent">
               Sent ({pendingSentRequests.length})
             </TabsTrigger>
-            <TabsTrigger value="search">Find Friends</TabsTrigger>
+            <TabsTrigger className={"h-13 cursor-pointer"} value="search">Find Friends</TabsTrigger>
           </TabsList>
 
           {/* Friends Tab */}
@@ -233,7 +244,11 @@ const Friends = () => {
                         animate={{ opacity: 1, y: 0 }}
                         className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
                       >
-                        <Avatar>
+                        <Avatar 
+                          className="cursor-pointer hover:scale-110 transition-transform"
+                          onClick={() => handleUserAvatarClick(friendship.friend.id)}
+                          title={`View ${friendship.friend.username}'s profile`}
+                        >
                           <AvatarImage {...getAvatarProps(friendship.friend.avatar, friendship.friend.username)} />
                           <AvatarFallback>
                             {friendship.friend.username.charAt(0).toUpperCase()}
@@ -287,7 +302,11 @@ const Friends = () => {
                         className="flex items-center justify-between p-4 border rounded-lg"
                       >
                         <div className="flex items-center space-x-4">
-                          <Avatar>
+                          <Avatar 
+                            className="cursor-pointer hover:scale-110 transition-transform"
+                            onClick={() => handleUserAvatarClick(request.sender.id)}
+                            title={`View ${request.sender.username}'s profile`}
+                          >
                             <AvatarImage {...getAvatarProps(request.sender.avatar, request.sender.username)} />
                             <AvatarFallback>
                               {request.sender.username.charAt(0).toUpperCase()}
@@ -350,7 +369,11 @@ const Friends = () => {
                         className="flex items-center justify-between p-4 border rounded-lg"
                       >
                         <div className="flex items-center space-x-4">
-                          <Avatar>
+                          <Avatar 
+                            className="cursor-pointer hover:scale-110 transition-transform"
+                            onClick={() => handleUserAvatarClick(request.receiver.id)}
+                            title={`View ${request.receiver.username}'s profile`}
+                          >
                             <AvatarImage {...getAvatarProps(request.receiver.avatar, request.receiver.username)} />
                             <AvatarFallback>
                               {request.receiver.username.charAt(0).toUpperCase()}
@@ -413,7 +436,11 @@ const Friends = () => {
                         className="flex items-center justify-between p-4 border rounded-lg"
                       >
                         <div className="flex items-center space-x-4">
-                          <Avatar>
+                          <Avatar 
+                            className="cursor-pointer hover:scale-110 transition-transform"
+                            onClick={() => handleUserAvatarClick(user.id)}
+                            title={`View ${user.username}'s profile`}
+                          >
                             <AvatarImage {...getAvatarProps(user.avatar, user.username)} />
                             <AvatarFallback>
                               {user.username.charAt(0).toUpperCase()}
@@ -443,6 +470,16 @@ const Friends = () => {
             </Card>
           </TabsContent>
         </Tabs>
+
+        {/* User Details Modal */}
+        <UserDetailsModal
+          userId={selectedUserId}
+          isOpen={showUserDetails}
+          onClose={() => {
+            setShowUserDetails(false)
+            setSelectedUserId(null)
+          }}
+        />
       </div>
     </div>
   )

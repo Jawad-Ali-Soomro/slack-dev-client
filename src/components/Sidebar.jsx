@@ -17,63 +17,73 @@ import {
 import { Link, useLocation } from 'react-router-dom'
 import { useSidebar } from '../contexts/SidebarContext'
 import { useAuth } from '../contexts/AuthContext'
+import { useNotifications } from '../contexts/NotificationContext'
 
 const Sidebar = () => {
   const { isOpen, closeSidebar, openSidebar } = useSidebar()
   const { isAuthenticated, logout } = useAuth()
+  const { unreadCounts } = useNotifications()
   const location = useLocation()
+  
+  console.log('Sidebar unreadCounts:', unreadCounts)
   
   const sidebarItems = [
     {
       title: 'Dashboard',
       icon: LayoutDashboard,
       path: '/dashboard',
-      color: 'text-black dark:text-white'
+      color: 'text-black dark:text-white',
+      badgeCount: 0
     },
     {
       title: 'Tasks',
       icon: CheckSquare,
       path: '/dashboard/tasks',
-      color: 'text-black dark:text-white'
+      color: 'text-black dark:text-white',
+      badgeCount: unreadCounts.tasks
     },
     {
       title: 'Meetings',
       icon: Calendar,
       path: '/dashboard/meetings',
-      color: 'text-black dark:text-white'
+      color: 'text-black dark:text-white',
+      badgeCount: unreadCounts.meetings
     },
     {
       title: 'Code',
       icon: Code,
       path: '/dashboard/code',
-      color: 'text-black dark:text-white'
+      color: 'text-black dark:text-white',
+      badgeCount: unreadCounts.code
     },
     {
       title: 'Projects',
       icon: FolderOpen,
       path: '/dashboard/projects',
-      color: 'text-black dark:text-white'
+      color: 'text-black dark:text-white',
+      badgeCount: unreadCounts.projects
     },
     {
       title: 'Teams',
       icon: Users,
       path: '/dashboard/teams',
-      color: 'text-black dark:text-white'
+      color: 'text-black dark:text-white',
+      badgeCount: unreadCounts.teams
     },
     {
       title: 'Friends',
       icon: UserCheck,
       path: '/dashboard/friends',
-      color: 'text-black dark:text-white'
+      color: 'text-black dark:text-white',
+      badgeCount: 0
     },
- 
     {
-      title: 'Chat',
-      icon: MessageSquare,
+      title: 'Messages',
+      icon: MessageCircle,
       path: '/dashboard/chat',
-      color: 'text-black dark:text-white'
+      color: 'text-black dark:text-white',
+      badgeCount: unreadCounts.messages
     },
-
   ]
 
   const isActive = (path) => location.pathname === path
@@ -153,7 +163,7 @@ const Sidebar = () => {
             initial="open"
             animate="open"
             exit="closed"
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-10 lg:hidden"
             onClick={closeSidebar}
           />
           
@@ -163,19 +173,20 @@ const Sidebar = () => {
             initial="open"
             animate="open"
             exit="open"
-            className="fixed left-0 top-0 h-full w-20 bg-white dark:bg-gray-900 z-100000 border-r border-gray-200 dark:border-gray-700 lg:z-10000"
+            className="fixed left-0 top-0 h-full w-60 bg-white dark:bg-gray-900 z-50 border-r border-gray-200 dark:border-gray-700 lg:z-50"
           >
             {/* Header */}
-            <div className="flex items-center justify-center p-4 border-b border-gray-200 dark:border-gray-700">
-              <div className="w-12 h-12 bg-gray-200 p-2 rounded-lg flex items-center justify-center dark:bg-gray-800">
+            <div className="flex items-center justify-start p-4 border-b gap-2 border-gray-200 dark:border-gray-700">
+              <div className="w-12 h-12 bg-gray-200 p-2 rounded-lg gap-2 flex flex items-center justify-center dark:bg-gray-800">
                 {/* <User className="w-5 h-5 text-white dark:text-black" /> */}
                 <img src="/logo.png" alt="" />
               </div>
+                <h1 className=" font-bold text-black dark:text-white">Slack Developers</h1>
             </div>
 
             {/* Navigation */}
             <nav className="flex-1 p-2">
-              <div className="space-y-2 flex flex-col items-center justify-center">
+              <div className="space-y-2 flex flex-col items-center justify-start">
                 {sidebarItems.map((item, index) => {
                   const Icon = item.icon
                   const active = isActive(item.path)
@@ -192,13 +203,23 @@ const Sidebar = () => {
                         to={item.path}
                         onClick={closeSidebar}
                         title={item.title}
-                        className={`relative flex items-center justify-center w-[50px] h-[50px] rounded-lg transition-all duration-200 group ${
+                        className={`relative flex items-center justify-start px-3 gap-4 relative w-50 h-[50px] rounded-lg transition-all duration-200 group ${
                           active
-                            ? 'shadow-none bg-black  text-white dark:bg-white  dark:text-black shadow-lg scale-105'
+                            ? 'shadow-none bg-black  text-white dark:bg-white  dark:text-black shadow-lg '
                             : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
                         }`} 
                       >
-                        <Icon className={`w-5 h-5 transition-transform ${active ? 'text-white dark:text-black' : item.color}`} />
+                        <div className="relative">
+                          <Icon className={`w-5 h-5 transition-transform ${active ? 'text-white dark:text-black' : item.color}`} />
+                         
+                        </div>
+                        {item.title}
+
+                         {item.badgeCount > 0 && (
+                            <span className="absolute  right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold z-10">
+                              {item.badgeCount > 99 ? '99+' : item.badgeCount}
+                            </span>
+                          )}
                         {active && (
                           <motion.div
                             layoutId="activeIndicator"
@@ -212,10 +233,11 @@ const Sidebar = () => {
                     </motion.div>
                   )
                 })}
-                <div className="flex items-center justify-center text-white w-[50px] h-[50px] rounded-lg transition-all duration-200 group absolute bottom-5  bg-red-500 cursor-pointer" onClick={() => {
+                <div className="flex items-center justify-center text-white gap-2 w-50 h-[50px] rounded-lg transition-all duration-200 group absolute bottom-5  bg-red-500 cursor-pointer" onClick={() => {
                   logout()
                 }}>
                   <LogOut className="w-5 h-5 transition-transform" />
+                  Logout
                 </div>
               </div>
 

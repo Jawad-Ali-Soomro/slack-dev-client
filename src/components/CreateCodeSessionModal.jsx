@@ -141,7 +141,7 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-500000 flex items-center justify-center"
+          className="fixed inset-0 z-50 flex items-center justify-center"
         >
           {/* Backdrop with blur */}
           <motion.div
@@ -164,9 +164,7 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
               <CardHeader className="relative pb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
-                      <Code className="h-6 w-6 text-white" />
-                    </div>
+                   
                     <div>
                       <CardTitle className="text-2xl font-bold">
                         Create Code Session
@@ -192,16 +190,9 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   {/* Basic Information */}
                   <div className="space-y-4">
-                    <div className="flex items-center space-x-2 mb-4">
-                      <Settings className="h-5 w-5 text-blue-600" />
-                      <h3 className="text-lg font-semibold">Basic Information</h3>
-                    </div>
-                    
+                   
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="title">
-                          Session Title *
-                        </Label>
                         <Input
                           id="title"
                           value={formData.title}
@@ -215,9 +206,7 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="language">
-                          Programming Language *
-                        </Label>
+                       
                         <Select
                           value={formData.language}
                           onValueChange={(value) => handleInputChange('language', value)}
@@ -245,9 +234,7 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label htmlFor="description">
-                        Description
-                      </Label>
+                    
                       <Textarea
                         id="description"
                         value={formData.description}
@@ -264,16 +251,11 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
                   
                   {/* Session Settings */}
                   <div className="space-y-4">
-                    <div className="flex items-center space-x-2 mb-4">
-                      <Users className="h-5 w-5 text-green-600" />
-                      <h3 className="text-lg font-semibold">Session Settings</h3>
-                    </div>
+                  
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="maxParticipants">
-                          Max Participants
-                        </Label>
+                       
                         <Input
                           id="maxParticipants"
                           type="number"
@@ -289,9 +271,7 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
                       </div>
                       
                       <div className="space-y-2">
-                        <Label htmlFor="theme">
-                          Editor Theme
-                        </Label>
+                       
                         <Select
                           value={formData.theme}
                           onValueChange={(value) => handleInputChange('theme', value)}
@@ -318,7 +298,7 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
                       </div>
                     </div>
                     
-                    <div className="space-y-3">
+                    <div className="space-y-2">
                       <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
                         <div className="flex items-center space-x-2">
                           <Globe className="h-4 w-4 text-blue-600" />
@@ -400,10 +380,7 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
                       className=""
                     >
                       {isLoading ? (
-                        <div className="flex items-center space-x-2">
-                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                          <span>Creating...</span>
-                        </div>
+                        <span className="loader w-5 h-5"></span>
                       ) : (
                         <div className="flex items-center space-x-2">
                           <Sparkles className="h-4 w-4" />

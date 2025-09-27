@@ -16,6 +16,7 @@ import friendService from "../services/friendService"
 import { useAuth } from "../contexts/AuthContext"
 import { getAvatarProps } from "../utils/avatarUtils"
 import MeetingEditModal from "../components/MeetingEditModal"
+import UserDetailsModal from "../components/UserDetailsModal"
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from "../utils/uiConstants"
 
 const Meetings = () => {
@@ -24,6 +25,8 @@ const Meetings = () => {
   const [showNewMeetingPopup, setShowNewMeetingPopup] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [editingMeeting, setEditingMeeting] = useState(null)
+  const [selectedUserId, setSelectedUserId] = useState(null)
+  const [showUserDetails, setShowUserDetails] = useState(false)
   const [selectedMeetings, setSelectedMeetings] = useState([])
   const [filterStatus, setFilterStatus] = useState("all")
   const [filterType, setFilterType] = useState("all")
@@ -60,6 +63,14 @@ const Meetings = () => {
   })
 
   // Load meetings from API
+  // Handle user avatar click
+  const handleUserAvatarClick = (userId) => {
+    console.log('Meetings avatar clicked for user ID:', userId)
+    setSelectedUserId(userId)
+    setShowUserDetails(true)
+    console.log('Modal should open now')
+  }
+
   const loadMeetings = useCallback(async () => {
     try {
       setLoading(true)
@@ -114,7 +125,6 @@ const Meetings = () => {
           name: friendship.friend.username,
           username: friendship.friend.username,
           email: friendship.friend.email,
-          role: "Friend",
           avatar: friendship.friend.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(friendship.friend.username)}&background=random&color=fff&size=128`
         }))
         .filter(friend => friend.id !== user?.id) // Exclude current user
@@ -513,7 +523,7 @@ const Meetings = () => {
         <motion.div variants={itemVariants} className="mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-10" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-50" />
               <Input
                 type="text"
                 placeholder="Search meetings..."
@@ -626,7 +636,7 @@ const Meetings = () => {
                         </td>
                     <td className="px-6 py-4">
                       <div>
-                        <div className="text-sm font-bold text-gray-900 dark:text-white">
+                        <div className="text-sm font-bold text-gray-900 dark:text-white truncate">
                           {meeting.title}
                         </div>
                         {/* <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -647,7 +657,7 @@ const Meetings = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center rounded-full text-xs font-bold ${getTypeColor(meeting.type)}`}>
+                      <span className={`inline-flex items-center rounded-full text-xs font-bold truncate ${getTypeColor(meeting.type)}`}>
                         {meeting.type === 'online' && <Video className="w-3 h-3 mr-1" />}
                         {meeting.type === 'in-person' && <MapPin className="w-3 h-3 mr-1" />}
                         {meeting.type === 'hybrid' && <Calendar className="w-3 h-3 mr-1" />}
@@ -655,7 +665,7 @@ const Meetings = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1 rounded-full text-xs font-bold ${getStatusColor(meeting.status)}`}>
+                      <span className={`inline-flex items-center gap-1 rounded-full text-xs font-bold truncate ${getStatusColor(meeting.status)}`}>
                         {getStatusIcon(meeting.status)}
                         {meeting.status}
                       </span>
@@ -668,15 +678,15 @@ const Meetings = () => {
                             meeting.assignedTo?.username
                           )}
                           alt={meeting.assignedTo?.username || "User"}
-                          className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                          className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                          onClick={() => meeting.assignedTo?.id && handleUserAvatarClick(meeting.assignedTo.id)}
+                          title={meeting.assignedTo?.username ? `View ${meeting.assignedTo.username}'s profile` : ''}
                         />
                         <div>
-                          <div className="text-sm font-medium text-gray-900 dark:text-white">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
                             {meeting.assignedTo?.username || "Unknown User"}
                           </div>
-                          <div className="text-xs text-gray-500 dark:text-gray-400">
-                            Team Member
-                          </div>
+                        
                         </div>
                       </div>
                     </td>
@@ -688,8 +698,9 @@ const Meetings = () => {
                               <img 
                                 {...getAvatarProps(attendee.avatar, attendee.username)}
                                 alt={attendee.username || "User"}
-                                className="w-6 h-6 rounded-full object-cover border border-gray-200 dark:border-gray-700"
-                                title={attendee.username}
+                                className="w-6 h-6 rounded-full object-cover border border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                                onClick={() => attendee.id && handleUserAvatarClick(attendee.id)}
+                                title={attendee.username ? `View ${attendee.username}'s profile` : ''}
                               />
                             </div>
                           ))
@@ -708,14 +719,16 @@ const Meetings = () => {
                     <td className="px-6 py-4 w-[200px]">
                       {meeting.project ? (
                         <div className="flex items-center gap-2">
-                          {meeting.project.logo && (
+                          {/* {meeting.project.logo && (
                             <img 
-                              src={meeting.project.logo.startsWith('http') ? meeting.project.logo : `http://localhost:4000${meeting.project.logo}`}
-                              alt={meeting.project.name}
-                              className="w-6 h-6 rounded object-cover"
-                            />
-                          )}
-                          <span className="text-sm text-gray-900 dark:text-white">
+                            {...getAvatarProps(meeting.project.logo, meeting.project.name)}
+                            alt={meeting.project.name || "User"}
+                            className="w-6 h-6 rounded-full object-cover border border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                            onClick={() => attendee.id && handleUserAvatarClick(attendee.id)}
+                            title={meeting.attendees.username ? `View ${meeting.attendees.username}'s profile` : ''}
+                          />
+                          )} */}
+                          <span className="text-sm text-gray-900 dark:text-white truncate">
                             {meeting.project.name}
                           </span>
                         </div>
@@ -737,7 +750,7 @@ const Meetings = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 dark:text-white">
+                      <div className="text-sm text-gray-900 dark:text-white truncate">
                         {meeting.location}
                       </div>
                       {/* {meeting.meetingLink && (
@@ -934,12 +947,16 @@ const Meetings = () => {
                               <img 
                                 {...getAvatarProps(user.avatar, user.username || user.name)}
                                 alt={user.name}
-                                className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                                className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleUserAvatarClick(user.id)
+                                }}
+                                title={user.username || user.name ? `View ${user.username || user.name}'s profile` : ''}
                               />
                               <div>
                                 <div className="font-medium text-gray-900 dark:text-white">{user.name}</div>
                                 <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
-                                <div className="text-xs text-gray-400 dark:text-gray-500">{user.role}</div>
                               </div>
                             </div>
                           </div>
@@ -1017,7 +1034,12 @@ const Meetings = () => {
                               <img 
                                 {...getAvatarProps(user.avatar, user.username || user.name)}
                                 alt={user.name}
-                                className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                                className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  handleUserAvatarClick(user.id)
+                                }}
+                                title={user.username || user.name ? `View ${user.username || user.name}'s profile` : ''}
                               />
                               <div>
                                 <div className="font-medium text-gray-900 dark:text-white">{user.name}</div>
@@ -1042,7 +1064,9 @@ const Meetings = () => {
                             <img 
                               {...getAvatarProps(attendee.avatar, attendee.username || attendee.name)}
                               alt={attendee.name}
-                              className="w-6 h-6 rounded-full object-cover"
+                              className="w-6 h-6 rounded-full object-cover cursor-pointer hover:scale-110 transition-transform"
+                              onClick={() => attendee.id && handleUserAvatarClick(attendee.id)}
+                              title={attendee.username || attendee.name ? `View ${attendee.username || attendee.name}'s profile` : ''}
                             />
                             <span className="text-sm text-gray-900 dark:text-white">{attendee.name}</span>
                             <button
@@ -1122,18 +1146,23 @@ const Meetings = () => {
                 </div>
               </div>
 
-              <div className="flex gap-3 mt-6">
-                <Button
+              <div className="flex gap-3 mt-6 text-white dark:text-black">
+                {/* <Button
                   onClick={() => setShowNewMeetingPopup(false)}
                   className={getButtonClasses('outline', 'md', 'flex-1')}
                 >
                   Cancel
-                </Button>
+                </Button> */}
                 <Button
                   onClick={handleNewMeeting}
-                  className={getButtonClasses('primary', 'md', 'flex-1')}
+                  disabled={loading}
+                  className={`${getButtonClasses('primary', 'md', 'flex-1')} disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
-                  Create Meeting
+                  {loading ? (
+                    <span className="loader w-5 h-5"></span>
+                  ) : (
+                    'Create Meeting'
+                  )}
                 </Button>
               </div>
             </motion.div>
@@ -1147,6 +1176,16 @@ const Meetings = () => {
           onClose={handleCloseEditModal}
           onMeetingUpdated={handleMeetingUpdated}
           users={users}
+        />
+
+        {/* User Details Modal */}
+        <UserDetailsModal
+          userId={selectedUserId}
+          isOpen={showUserDetails}
+          onClose={() => {
+            setShowUserDetails(false)
+            setSelectedUserId(null)
+          }}
         />
       </motion.div>
     </div>

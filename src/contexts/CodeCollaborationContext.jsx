@@ -104,7 +104,7 @@ export const CodeCollaborationProvider = ({ children }) => {
           });
           toast.success(`${data.user.username} joined the session`, {
             duration: 3000,
-            position: 'top-right'
+            position: 'top-center'
           });
         }
       });
@@ -119,7 +119,7 @@ export const CodeCollaborationProvider = ({ children }) => {
           });
           toast.info('A participant left the session', {
             duration: 3000,
-            position: 'top-right'
+            position: 'top-center'
           });
         }
       });
@@ -138,7 +138,7 @@ export const CodeCollaborationProvider = ({ children }) => {
           toast.warning('Session ended by owner', {
             description: data.reason,
             duration: 5000,
-            position: 'top-right'
+            position: 'top-center'
           });
           setCurrentSession(null);
           setParticipants([]);
@@ -247,13 +247,13 @@ export const CodeCollaborationProvider = ({ children }) => {
       
       toast.success('Left session successfully', {
         duration: 3000,
-        position: 'top-right'
+        position: 'top-center'
       });
     } catch (error) {
       console.error('Error leaving session:', error);
       toast.error('Failed to leave session', {
         duration: 3000,
-        position: 'top-right'
+        position: 'top-center'
       });
     }
   };
@@ -368,13 +368,13 @@ export const CodeCollaborationProvider = ({ children }) => {
       
       toast.success('Session ended successfully', {
         duration: 3000,
-        position: 'top-right'
+        position: 'top-center'
       });
     } catch (error) {
       console.error('Error ending session:', error);
       toast.error('Failed to end session', {
         duration: 3000,
-        position: 'top-right'
+        position: 'top-center'
       });
     }
   };
@@ -389,13 +389,13 @@ export const CodeCollaborationProvider = ({ children }) => {
       
       toast.success('Session deleted successfully', {
         duration: 3000,
-        position: 'top-right'
+        position: 'top-center'
       });
     } catch (error) {
       console.error('Error deleting session:', error);
       toast.error('Failed to delete session', {
         duration: 3000,
-        position: 'top-right'
+        position: 'top-center'
       });
     }
   };
@@ -409,7 +409,7 @@ export const CodeCollaborationProvider = ({ children }) => {
       console.error('Error generating invite code:', error);
       toast.error('Failed to generate invite code', {
         duration: 3000,
-        position: 'top-right'
+        position: 'top-center'
       });
       throw error;
     }
@@ -425,7 +425,7 @@ export const CodeCollaborationProvider = ({ children }) => {
       
       toast.success('Joined session successfully', {
         duration: 3000,
-        position: 'top-right'
+        position: 'top-center'
       });
       
       return result.data;
@@ -433,7 +433,7 @@ export const CodeCollaborationProvider = ({ children }) => {
       console.error('Error joining by invite code:', error);
       toast.error('Failed to join session', {
         duration: 3000,
-        position: 'top-right'
+        position: 'top-center'
       });
       throw error;
     }
@@ -457,13 +457,13 @@ export const CodeCollaborationProvider = ({ children }) => {
       
       toast.success('User invited successfully', {
         duration: 3000,
-        position: 'top-right'
+        position: 'top-center'
       });
     } catch (error) {
       console.error('Error inviting user:', error);
       toast.error('Failed to invite user', {
         duration: 3000,
-        position: 'top-right'
+        position: 'top-center'
       });
       throw error;
     }

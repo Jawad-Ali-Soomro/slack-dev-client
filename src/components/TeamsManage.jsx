@@ -345,7 +345,7 @@ const TeamsManage = () => {
             <motion.div
               key={team.id}
               variants={itemVariants}
-              className="bg-white dark:bg-gray-900 rounded-lg shadow-xl border-2 border-gray-200 dark:border-gray-700 p-6 hover:shadow-2xl transition-shadow duration-300"
+              className="bg-white dark:bg-gray-900 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6  transition-shadow duration-300"
             >
               {/* Team Header */}
               <div className="flex items-start justify-between mb-4">
@@ -571,9 +571,13 @@ const TeamsManage = () => {
                   <Button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 "
+                    className="flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    {loading ? 'Creating...' : 'Create Team'}
+                    {loading ? (
+                      <span className="loader w-5 h-5"></span>
+                    ) : (
+                      'Create Team'
+                    )}
                   </Button>
                 </div>
               </form>

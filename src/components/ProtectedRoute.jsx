@@ -8,7 +8,7 @@ import { ChevronLeft, ChevronRight, SidebarOpen } from 'lucide-react'
 
 const ProtectedRoute = ({ children, requireAuth = true }) => {
   const { isAuthenticated, loading } = useAuth()
-  const { isOpen, toggleSidebar } = useSidebar()
+  const { isOpen, toggleSidebar, isMobile } = useSidebar()
   const location = useLocation()
 
   // Show loading spinner while checking auth status
@@ -50,7 +50,7 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
           <ChevronRight />
         </div>
 
-        <div className={`flex-1 ${isOpen ? 'md:pl-25 md:pr-15 pt-20 overflow-hidden' : 'md:pl-25 md:pr-15 md:pt-20 p-20 overflow-hidden'}`}>
+        <div className={`flex-1 ${ !isMobile &&  isOpen  ? 'md:pl-65 md:pr-10 pt-20 overflow-hidden' : 'md:pl-65 md:pr-10 pt-20 p-5 overflow-hidden'}`}>
           {children}
         </div>
       </div>

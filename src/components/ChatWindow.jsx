@@ -16,7 +16,8 @@ import {
   Paperclip,
   Reply,
   Edit,
-  Trash2
+  Trash2,
+  ArrowDown
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 
@@ -44,9 +45,11 @@ const ChatWindow = () => {
   const [replyTo, setReplyTo] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+  const [showScrollButton, setShowScrollButton] = useState(false);
   
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
+  const messagesContainerRef = useRef(null);
 
   useEffect(() => {
     if (currentChat) {
@@ -54,17 +57,63 @@ const ChatWindow = () => {
     }
   }, [currentChat, markAsRead]);
 
-  // Only scroll to bottom when a new message is added (not when fetching)
+  // Custom scroll to bottom function for better control
+  const scrollToBottomLocal = () => {
+    if (messagesContainerRef.current) {
+      messagesContainerRef.current.scrollTo({
+        top: messagesContainerRef.current.scrollHeight,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  // Auto-scroll to bottom when messages change (but not on initial load)
   useEffect(() => {
     if (messages.length > 0) {
-      const lastMessage = messages[0]; // Messages are in reverse order
-      const isNewMessage = lastMessage.createdAt && 
-        new Date(lastMessage.createdAt).getTime() > Date.now() - 5000; // Within last 5 seconds
-      
-    //   if (isNewMessage) {
-    //     scrollToBottom();
-    //   }
+      // Use requestAnimationFrame to ensure DOM is updated
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          scrollToBottomLocal();
+        }, 50);
+      });
     }
+  }, [messages.length]);
+
+  // Scroll to bottom when current chat changes
+  useEffect(() => {
+    if (currentChat) {
+      // Wait for messages to load, then scroll
+      const timer = setTimeout(() => {
+        if (messages.length > 0) {
+          scrollToBottomLocal();
+        }
+      }, 200);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [currentChat]);
+
+  // Initial scroll to bottom when component mounts with messages
+  useEffect(() => {
+    if (messages.length > 0 && messagesContainerRef.current) {
+      // Force immediate scroll to bottom on mount
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - 200;
+    }
+  }, []);
+
+  // Handle scroll events to show/hide scroll-to-bottom button
+  useEffect(() => {
+    const messagesContainer = messagesContainerRef.current;
+    if (!messagesContainer) return;
+
+    const handleScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 80;
+      setShowScrollButton(!isNearBottom && messages.length > 5);
+    };
+
+    messagesContainer.addEventListener('scroll', handleScroll);
+    return () => messagesContainer.removeEventListener('scroll', handleScroll);
   }, [messages.length]);
 
   const handleSendMessage = async (e) => {
@@ -81,6 +130,13 @@ const ChatWindow = () => {
     
     setMessageText('');
     stopTyping(currentChat._id);
+    
+    // Scroll to bottom after sending message
+    requestAnimationFrame(() => {
+      setTimeout(() => {
+        scrollToBottomLocal();
+      }, 50);
+    });
   };
 
   const handleTyping = (e) => {
@@ -158,7 +214,7 @@ const ChatWindow = () => {
   }
 
   return (
-    <div className="flex flex-col h-[85vh]">
+    <div className="flex flex-col h-full">
       {/* Header */}
       <div className="flex-shrink-0 border-b p-4">
         <div className="flex items-center justify-between">
@@ -196,8 +252,10 @@ const ChatWindow = () => {
         </div>
       </div>
 
-      {/* Messages - Scrollable Area */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4 min-h-0">
+      {/* Messages Container - Takes remaining space */}
+      <div className="flex-1 flex flex-col min-h-0 pb-25">
+        {/* Messages - Scrollable Area */}
+        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 relative">
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -294,6 +352,19 @@ const ChatWindow = () => {
           })
         )}
         
+        {/* Scroll to bottom button */}
+        {showScrollButton && (
+          <div className="absolute bottom-4 right-4 z-10">
+            <Button
+              onClick={scrollToBottomLocal}
+              size="sm"
+              className="rounded-full shadow-lg bg-primary hover:bg-primary/90"
+            >
+              <ArrowDown className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
+        
         {/* Typing indicator */}
         {typingUsers.length > 0 && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -309,29 +380,50 @@ const ChatWindow = () => {
         )}
         
         <div ref={messagesEndRef} />
-      </div>
 
-      {/* Reply indicator */}
-      {replyTo && (
-        <div className="border-t p-2 bg-muted/50">
-          <div className="flex items-center justify-between">
-            <div className="text-sm">
-              <p className="font-medium">Replying to {replyTo.sender.name}</p>
-              <p className="text-muted-foreground truncate">{replyTo.content}</p>
+        {replyTo && (
+          <div className="border-t p-2 bg-muted/50 absolute w-[100%] bottom-0 left-0 right-0">
+            <div className="flex items-center justify-between">
+              <div className="text-sm">
+                <p className="font-medium">Replying to {replyTo.sender.name}</p>
+                <p className="text-muted-foreground truncate">{replyTo.content}</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setReplyTo(null)}
+              >
+                ×
+              </Button>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setReplyTo(null)}
-            >
-              ×
-            </Button>
           </div>
+        )}
         </div>
-      )}
 
-      {/* Message Input - Fixed at Bottom */}
-      <div className="flex-shrink-0 border-t p-4">
+        {/* Reply indicator */}
+       
+
+        {/* Reply indicator */}
+        {/* {replyTo && (
+          <div className="border-t p-2 bg-muted/50">
+            <div className="flex items-center justify-between">
+              <div className="text-sm">
+                <p className="font-medium">Replying to {replyTo.sender.name}</p>
+                <p className="text-muted-foreground truncate">{replyTo.content}</p>
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setReplyTo(null)}
+              >
+                ×
+              </Button>
+            </div>
+          </div>
+        )} */}
+
+        {/* Message Input - Fixed at Bottom */}
+        <div className="flex-shrink-0 border-t p-4">
         <form onSubmit={handleSendMessage} className="flex items-center gap-2">
           <Button
             type="button"
@@ -377,6 +469,7 @@ const ChatWindow = () => {
           onChange={handleFileUpload}
           className="hidden"
         />
+        </div>
       </div>
     </div>
   );

@@ -14,6 +14,11 @@ export const userService = {
     return response.data;
   },
 
+  getUserDetails: async (userId) => {
+    const response = await axiosInstance.get(`${API_BASE}/${userId}/details`);
+    return response.data;
+  },
+
   searchUsers: async (query) => {
     const response = await axiosInstance.get(`${API_BASE}/search?q=${query}`);
     return response.data;

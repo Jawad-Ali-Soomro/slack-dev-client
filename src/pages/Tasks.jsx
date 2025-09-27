@@ -16,6 +16,7 @@ import friendService from "../services/friendService"
 import { useAuth } from "../contexts/AuthContext"
 import { getAvatarProps } from "../utils/avatarUtils"
 import TaskEditModal from "../components/TaskEditModal"
+import UserDetailsModal from "../components/UserDetailsModal"
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from "../utils/uiConstants"
 
 const Tasks = () => {
@@ -24,6 +25,8 @@ const Tasks = () => {
   const [showNewTaskPopup, setShowNewTaskPopup] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
   const [editingTask, setEditingTask] = useState(null)
+  const [selectedUserId, setSelectedUserId] = useState(null)
+  const [showUserDetails, setShowUserDetails] = useState(false)
   const [selectedTasks, setSelectedTasks] = useState([])
   const [filterStatus, setFilterStatus] = useState("all")
   const [filterPriority, setFilterPriority] = useState("all")
@@ -55,6 +58,14 @@ const Tasks = () => {
 
 
   // Load tasks from API
+  // Handle user avatar click
+  const handleUserAvatarClick = (userId) => {
+    console.log('Tasks avatar clicked for user ID:', userId)
+    setSelectedUserId(userId)
+    setShowUserDetails(true)
+    console.log('Modal should open now')
+  }
+
   const loadTasks = useCallback(async () => {
     try {
       setLoading(true)
@@ -109,7 +120,6 @@ const Tasks = () => {
           name: friendship.friend.username,
           username: friendship.friend.username,
           email: friendship.friend.email,
-          role: "Friend",
           avatar: friendship.friend.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(friendship.friend.username)}&background=random&color=fff&size=128`
         }))
         .filter(friend => friend.id !== user?.id) // Exclude current user
@@ -577,11 +587,11 @@ const Tasks = () => {
                     <td className="px-6 py-4">
                       <div>
                         <div className="flex items-center gap-2">
-                          <div className="text-sm font-bold text-gray-900 dark:text-white">
+                          <div className="text-sm font-bold text-gray-900 dark:text-white truncate">
                             {task.title}
                           </div>
                           {user && user.id && (
-                            <span className={`text-xs px-2 py-1 rounded-full uppercase font-bold ${
+                            <span className={`text-xs px-2 py-1 rounded-full uppercase font-bold truncate ${
                               task.assignTo?.id === user.id 
                                 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
                                 : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
@@ -645,10 +655,12 @@ const Tasks = () => {
                         <img 
                           {...getAvatarProps(task.assignTo?.avatar, task.assignTo?.username)}
                           alt={task.assignTo?.username || "User"}
-                          className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                          className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                          onClick={() => task.assignTo?.id && handleUserAvatarClick(task.assignTo.id)}
+                          title={task.assignTo?.username ? `View ${task.assignTo.username}'s profile` : ''}
                         />
                         <div>
-                          <div className="text-sm font-medium text-gray-900 dark:text-white">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
                             {task.assignTo?.username || "Unknown User"}
                           </div>
                         </div>
@@ -659,10 +671,12 @@ const Tasks = () => {
                         <img 
                           {...getAvatarProps(task.assignedBy?.avatar, task.assignedBy?.username)}
                           alt={task.assignedBy?.username || "User"}
-                          className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                          className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                          onClick={() => task.assignedBy?.id && handleUserAvatarClick(task.assignedBy.id)}
+                          title={task.assignedBy?.username ? `View ${task.assignedBy.username}'s profile` : ''}
                         />
                         <div>
-                          <div className="text-sm font-medium text-gray-900 dark:text-white">
+                          <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
                             {task.assignedBy?.username || "Unknown User"}
                           </div>
                         </div>
@@ -671,14 +685,14 @@ const Tasks = () => {
                     <td className="px-6 py-4 w-[200px]">
                       {task.project ? (
                         <div className="flex items-center gap-2">
-                          {task.project.logo && (
+                          {/* {task.project.logo && (
                             <img 
                               src={task.project.logo.startsWith('http') ? task.project.logo : `http://localhost:4000${task.project.logo}`}
                               alt={task.project.name}
                               className="w-6 h-6 rounded object-cover"
                             />
-                          )}
-                          <span className="text-sm text-gray-900 dark:text-white">
+                          )} */}
+                          <span className="text-sm text-gray-900 dark:text-white truncate">
                             {task.project.name}
                           </span>
                         </div>
@@ -800,7 +814,7 @@ const Tasks = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-10000000"
+            className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-50"
             onClick={() => setShowNewTaskPopup(false)}
           >
             <motion.div
@@ -894,18 +908,22 @@ const Tasks = () => {
                               <div
                                 key={user.id}
                                 onClick={() => selectUser(user)}
-                                className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                                className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 truncate cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
                               >
                                 <div className="flex items-center gap-3">
                                   <img 
                                     {...getAvatarProps(user.avatar, user.username || user.name)}
                                     alt={user.username || user.name}
-                                    className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                                    className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      handleUserAvatarClick(user.id)
+                                    }}
+                                    title={user.username || user.name ? `View ${user.username || user.name}'s profile` : ''}
                                   />
                                   <div>
                                     <div className="font-medium text-gray-900 dark:text-white">{user.username || user.name}</div>
                                     <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
-                                    <div className="text-xs text-gray-400 dark:text-gray-500">{user.role || "Team Member"}</div>
                                   </div>
                                 </div>
                               </div>
@@ -943,9 +961,14 @@ const Tasks = () => {
                 </Button>
                 <Button
                   onClick={handleNewTask}
-                  className="flex-1 px-4 py-3 bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                  disabled={loading}
+                  className="flex-1 px-4 py-3 bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Create Task
+                  {loading ? (
+                    <span class="loader w-5 h-5"></span>
+                  ) : (
+                    'Create Task'
+                  )}
                 </Button>
               </div>
             </motion.div>
@@ -959,6 +982,16 @@ const Tasks = () => {
           onClose={handleCloseEditModal}
           onTaskUpdated={handleTaskUpdated}
           users={users}
+        />
+
+        {/* User Details Modal */}
+        <UserDetailsModal
+          userId={selectedUserId}
+          isOpen={showUserDetails}
+          onClose={() => {
+            setShowUserDetails(false)
+            setSelectedUserId(null)
+          }}
         />
       </motion.div>
     </div>

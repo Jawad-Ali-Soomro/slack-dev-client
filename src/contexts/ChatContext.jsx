@@ -96,7 +96,7 @@ export const ChatProvider = ({ children }) => {
           toast.success(`${senderName} sent a message just now`, {
             description: message.content.length > 50 ? `${message.content.substring(0, 50)}...` : message.content,
             duration: 4000,
-            position: 'top-right',
+            position: 'top-center',
             action: {
               label: 'View Chat',
               onClick: () => {
@@ -146,7 +146,7 @@ export const ChatProvider = ({ children }) => {
           const userName = data.name || data.username || 'Unknown User';
           toast.info(`${userName} is now online`, {
             duration: 3000,
-            position: 'top-right'
+            position: 'top-center'
           });
         }
       });
@@ -165,7 +165,7 @@ export const ChatProvider = ({ children }) => {
           const userName = data.name || data.username || 'Unknown User';
           toast.warning(`${userName} is now offline`, {
             duration: 3000,
-            position: 'top-right'
+            position: 'top-center'
           });
         }
       });

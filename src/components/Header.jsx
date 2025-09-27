@@ -34,7 +34,6 @@ const Header = () => {
       <Link className={getLinkClasses("/")} style={{fontWeight: 700}} to="/">Home</Link>
             <Link className={getLinkClasses("/about")} style={{fontWeight: 700}} to="/about">About</Link>
             <Link className={getLinkClasses("/contact")} style={{fontWeight: 700}} to="/contact">Contact</Link>
-            <Link className={getLinkClasses("/teams")} style={{fontWeight: 700}} to="/teams">Teams</Link>
       </div>
           <div className="flex items-center gap-2 md:gap-4">
           {/* Social Media Icons - Hidden on mobile */}

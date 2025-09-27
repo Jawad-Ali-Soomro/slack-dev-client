@@ -19,7 +19,14 @@ import {
   Copy,
   Share2,
   Eye,
-  EyeOff
+  EyeOff,
+  Square,
+  Terminal,
+  AlertCircle,
+  CheckCircle,
+  Code2,
+  Zap,
+  Monitor
 } from 'lucide-react';
 
 // CodeMirror imports
@@ -34,6 +41,7 @@ import { css } from '@codemirror/lang-css';
 import { json } from '@codemirror/lang-json';
 import { xml } from '@codemirror/lang-xml';
 import { oneDark } from '@codemirror/theme-one-dark';
+import compilationService from '../services/compilationService';
 
 const CodeEditor = () => {
   const { user } = useAuth();
@@ -56,6 +64,10 @@ const CodeEditor = () => {
   const [language, setLanguage] = useState('javascript');
   const [isOwner, setIsOwner] = useState(false);
   const [showParticipants, setShowParticipants] = useState(true);
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [output, setOutput] = useState('');
+  const [outputError, setOutputError] = useState('');
+  const [showOutput, setShowOutput] = useState(false);
 
   const editorRef = useRef(null);
   const editorViewRef = useRef(null);
@@ -213,6 +225,42 @@ const CodeEditor = () => {
     }
   }, [code]);
 
+  // Enhanced code execution function using compilation service
+  const executeCode = useCallback(async () => {
+    if (!code || !compilationService.isLanguageSupported(language)) {
+      setOutputError(`Language '${language}' is not supported for compilation.`);
+      setShowOutput(true);
+      return;
+    }
+    
+    setIsExecuting(true);
+    setOutput('');
+    setOutputError('');
+    setShowOutput(true);
+
+    try {
+      const result = await compilationService.compileAndExecute(code, language);
+      
+      if (result.success) {
+        setOutput(result.output || 'Code executed successfully (no output)');
+      } else {
+        setOutputError(result.error || 'Execution failed');
+      }
+      
+    } catch (error) {
+      setOutputError(error.message || 'An unexpected error occurred during compilation');
+    } finally {
+      setIsExecuting(false);
+    }
+  }, [code, language]);
+
+  // Clear output
+  const clearOutput = useCallback(() => {
+    setOutput('');
+    setOutputError('');
+    setShowOutput(false);
+  }, []);
+
   const handleKeyDown = useCallback((e) => {
     if (e.ctrlKey || e.metaKey) {
       switch (e.key) {
@@ -227,14 +275,16 @@ const CodeEditor = () => {
           }
           break;
         case 'Enter':
-          e.preventDefault();
-          // Handle run code
+          if (e.shiftKey) {
+            e.preventDefault();
+            executeCode();
+          }
           break;
         default:
           break;
       }
     }
-  }, [handleSave, handleCopy]);
+  }, [handleSave, handleCopy, executeCode]);
 
   const getAvatarUrl = (avatar) => {
     if (!avatar) return null;
@@ -280,16 +330,45 @@ const CodeEditor = () => {
                 <SelectItem value="python">Python</SelectItem>
                 <SelectItem value="java">Java</SelectItem>
                 <SelectItem value="cpp">C++</SelectItem>
-                <SelectItem value="html">HTML</SelectItem>
-                <SelectItem value="css">CSS</SelectItem>
-                <SelectItem value="json">JSON</SelectItem>
-                <SelectItem value="xml">XML</SelectItem>
+                <SelectItem value="csharp">C#</SelectItem>
+                <SelectItem value="c">C</SelectItem>
               </SelectContent>
             </Select>
           </div>
+          
+          {/* Run Button - Show for all supported languages */}
+          {compilationService.isLanguageSupported(language) && (
+            <Button
+              variant="default"
+              size="sm"
+              onClick={executeCode}
+              disabled={isExecuting || !code}
+              title={`Run ${compilationService.getLanguageInfo(language)?.name || language} code (Ctrl+Shift+Enter)`}
+              className="bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black shadow-lg transition-all duration-300"
+            >
+              {isExecuting ? (
+                <Square className="h-4 w-4 mr-2 animate-pulse" />
+              ) : (
+                <Play className="h-4 w-4 mr-2" />
+              )}
+              {isExecuting ? 'Running...' : 'Run'}
+            </Button>
+          )}
         </div>
         
         <div className="flex items-center space-x-2">
+          {/* Clear Output Button */}
+          {showOutput && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={clearOutput}
+              title="Clear output"
+            >
+              <Square className="h-4 w-4 mr-2" />
+              Clear
+            </Button>
+          )}
           {/* <Button
             variant="outline"
             size="sm"
@@ -324,7 +403,7 @@ const CodeEditor = () => {
           >
             <Save className="h-4 w-4" />
           </Button>
-          
+{/*           
           <Button
             variant="outline"
             size="sm"
@@ -332,7 +411,7 @@ const CodeEditor = () => {
             title={isFullscreen ? 'Exit fullscreen' : 'Enter fullscreen'}
           >
             {isFullscreen ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-          </Button>
+          </Button> */}
           
           
             <Button
@@ -348,15 +427,60 @@ const CodeEditor = () => {
 
       {/* Main Content */}
       <div className="flex h-full">
-        {/* Code Editor */}
+        {/* Code Editor and Output */}
         <div className="flex-1 flex flex-col">
-          <div className="flex-1 relative">
+          {/* Code Editor */}
+          <div className={`${showOutput ? 'flex-1' : 'flex-1'} relative`}>
             <div
               ref={editorRef}
               className="h-full w-full"
               onKeyDown={handleKeyDown}
             />
           </div>
+          
+          {/* Output Panel */}
+          {showOutput && (
+            <div className="border-t bg-gray-50 dark:bg-gray-900">
+              <div className="flex items-center justify-between p-3 border-b bg-gray-100 dark:bg-gray-800">
+                <div className="flex items-center space-x-2">
+                  <Terminal className="h-4 w-4 text-gray-600 dark:text-gray-400" />
+                  <h3 className="text-sm font-medium text-gray-900 dark:text-white">Output</h3>
+                  {isExecuting && (
+                    <div className="flex items-center space-x-1 text-xs text-blue-600 dark:text-blue-400">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                      <span>Executing...</span>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center space-x-2">
+                  {outputError ? (
+                    <AlertCircle className="h-4 w-4 text-red-500" />
+                  ) : output ? (
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  ) : null}
+                </div>
+              </div>
+              <div className="p-4 max-h-48 overflow-y-auto">
+                {outputError ? (
+                  <div className="text-red-600 dark:text-red-400 font-mono text-sm">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <AlertCircle className="h-4 w-4" />
+                      <span className="font-semibold">Error:</span>
+                    </div>
+                    <pre className="whitespace-pre-wrap">{outputError}</pre>
+                  </div>
+                ) : output ? (
+                  <div className="text-gray-900 dark:text-gray-100 font-mono text-sm">
+                    <pre className="whitespace-pre-wrap">{output}</pre>
+                  </div>
+                ) : (
+                  <div className="text-gray-500 dark:text-gray-400 text-sm italic">
+                    No output yet. Click "Run" to execute your JavaScript code.
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Participants sidebar */}
@@ -379,9 +503,9 @@ const CodeEditor = () => {
                     <p className="text-sm font-medium truncate">
                       {participant.name || participant.username || 'Unknown User'}
                     </p>
-                    <p className="text-xs text-muted-foreground">
+                    {/* <p className="text-xs text-muted-foreground">
                       {participant.email}
-                    </p>
+                    </p> */}
                   </div>
                   {participant._id === user?.id || participant._id === user?._id ? (
                     <Badge variant="secondary" className="text-xs">You</Badge>

@@ -10,7 +10,6 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Indexing from './pages/Indexing'
 import About from './pages/About'
 import Contact from './pages/Contact'
-import Teams from './pages/Teams'
 import TeamsManage from './components/TeamsManage'
 import Friends from './pages/Friends'
 import Login from './pages/Login'
@@ -23,6 +22,8 @@ import Meetings from './pages/Meetings'
 import Projects from './pages/Projects'
 import Chat from './pages/Chat'
 import CodeCollaboration from './pages/CodeCollaboration'
+import CompilationDashboard from './components/CompilationDashboard'
+import NotFound from './pages/NotFound'
 import { Toaster } from 'sonner'
 
 function App() {
@@ -30,7 +31,7 @@ function App() {
    <div className="bg-white dark:bg-gray-900">
      <Router>
       <Toaster 
-        position="top-right"
+        position="top-center"
         richColors
         closeButton
         toastOptions={{
@@ -49,14 +50,13 @@ function App() {
           <ChatProvider>
             <CodeCollaborationProvider>
               <SidebarProvider>
-          <ThemeToggle className="fixed bottom-20 right-10 z-50" />
+          <ThemeToggle className="fixed bottom-50 right-10 z-50" />
           <div className="relative">
             <Routes>
             {/* Public Routes */}
             <Route path="/" element={<Indexing />} />
             <Route path="/about" element={<About />} />
             <Route path="/contact" element={<Contact />} />
-            <Route path="/teams" element={<Teams />} />
             
             {/* Auth Routes - Redirect to dashboard if already logged in */}
             <Route 
@@ -149,6 +149,17 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        <Route 
+          path="/dashboard/compiler" 
+          element={
+            <ProtectedRoute requireAuth={true}>
+              <CompilationDashboard />
+            </ProtectedRoute>
+          } 
+        />
+        
+        {/* 404 Route - Must be last */}
+        <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
         </SidebarProvider>

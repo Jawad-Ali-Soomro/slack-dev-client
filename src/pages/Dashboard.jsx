@@ -42,6 +42,7 @@ import {
   MoreHorizontal
 } from 'lucide-react'
 import { useAuth } from '../contexts/AuthContext'
+import UserDetailsModal from '../components/UserDetailsModal'
 import taskService from '../services/taskService'
 import meetingService from '../services/meetingService'
 import projectService from '../services/projectService'
@@ -77,6 +78,16 @@ const Dashboard = () => {
   const [tasks, setTasks] = useState([])
   const [meetings, setMeetings] = useState([])
   const [projects, setProjects] = useState([])
+  const [selectedUserId, setSelectedUserId] = useState(null)
+  const [showUserDetails, setShowUserDetails] = useState(false)
+
+  // Handle user avatar click
+  const handleUserAvatarClick = (userId) => {
+    console.log('Dashboard avatar clicked for user ID:', userId)
+    setSelectedUserId(userId)
+    setShowUserDetails(true)
+    console.log('Modal should open now')
+  }
 
   // Load dashboard data
   const loadDashboardData = useCallback(async () => {
@@ -272,7 +283,7 @@ const Dashboard = () => {
 
   const meetingTypeData = [
     { name: 'Remote', value: meetings.filter(meeting => meeting.type === 'online').length, color: '#3B82F6' },
-    { name: 'Physical', value: meetings.filter(meeting => meeting.type === 'physical').length, color: '#10B981' },
+    { name: 'in-person', value: meetings.filter(meeting => meeting.type === 'in-person').length, color: '#10B981' },
     { name: 'Hybrid', value: meetings.filter(meeting => meeting.type === 'hybrid').length, color: '#F59E0B' }
   ]
 
@@ -312,18 +323,18 @@ const Dashboard = () => {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ scale: 1.02, y: -2 }}
-      className="group relative bg-gradient-to-br from-white to-gray-50 dark:from-gray-900 dark:to-gray-800 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 p-6 overflow-hidden"
+      className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 overflow-hidden"
     >
       {/* Background gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-br from-transparent via-transparent to-gray-100/20 dark:to-gray-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="absolute inset-0 bg-gray-100/20 dark:bg-gray-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
       
       {/* Animated background pattern */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-purple-500/10 rounded-full -translate-y-16 translate-x-16 group-hover:scale-110 transition-transform duration-500" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gray-200/20 dark:bg-gray-600/20 rounded-full -translate-y-16 translate-x-16 group-hover:scale-110 transition-transform duration-500" />
       
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
-            <p className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">{title}</p>
+            <p className="text-sm font-semibold uppercase tracking-wide">{title}</p>
             {subtitle && (
               <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">{subtitle}</p>
             )}
@@ -404,7 +415,7 @@ const Dashboard = () => {
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="text-5xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-purple-900 dark:from-white dark:via-blue-100 dark:to-purple-100 bg-clip-text text-transparent mb-3"
+                  className="text-5xl font-bold text-gray-900 dark:text-white mb-3"
                 >
             Dashboard
                 </motion.h1>
@@ -446,7 +457,7 @@ const Dashboard = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
+                  className="flex items-center space-x-2 px-4 py-2 bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
                 >
                   <Filter className="w-4 h-4" />
                   <span className="text-sm font-medium">Filter</span>
@@ -463,7 +474,7 @@ const Dashboard = () => {
             >
               <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-black dark:bg-white rounded-full animate-pulse"></div>
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">Status</p>
                     <p className="text-sm font-semibold text-gray-900 dark:text-white">All Systems Active</p>
@@ -1039,194 +1050,14 @@ const Dashboard = () => {
         </motion.div>
 
         {/* Recent Activity Feed */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white dark:bg-gray-900 rounded-lg shadow-lg border-2 border-gray-200 dark:border-gray-700 p-6 mb-8"
-        >
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Development Activity Feed
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                Real-time updates on project progress and team collaboration
-              </p>
-            </div>
-            <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-              <span>Auto-refresh</span>
-            </div>
-          </div>
-          
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Recent Tasks */}
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
-              <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-6 flex items-center">
-                <Target className="w-5 h-5 mr-2 text-blue-500" />
-                Recent Development Tasks
-              </h4>
-              <div className="space-y-3 max-h-64 overflow-y-auto">
-                {recentTasks.length === 0 ? (
-                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                    No recent tasks found
-                  </p>
-                ) : (
-                  recentTasks.map((task) => (
-                    <div
-                      key={task.id}
-                      className="flex items-center justify-between p-1 px-4 bg-gray-50 border border-blue-300 dark:bg-gray-800 rounded-lg border-l-4 border-blue-500"
-                    >
-                      <div className="flex-1">
-                        <h4 className="font-medium text-gray-900 dark:text-white">
-                          {task.title}
-                        </h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {task.assignTo?.username || 'Unknown User'}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                          task.status === 'completed' ? 'bg-green-100 text-green-800' :
-                          task.status === 'in_progress' ? 'bg-blue-100 text-blue-800' :
-                          task.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {task.status}
-                        </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                          task.priority === 'high' ? 'bg-red-100 text-red-800' :
-                          task.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-green-100 text-green-800'
-                        }`}>
-                          {task.priority}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-
-            {/* Recent Meetings */}
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
-              <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-6 flex items-center">
-                <Video className="w-5 h-5 mr-2 text-purple-500" />
-                Recent Team Meetings
-              </h4>
-              <div className="space-y-3 max-h-64 overflow-y-auto">
-                {recentMeetings.length === 0 ? (
-                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                    No recent meetings found
-                  </p>
-                ) : (
-                  recentMeetings.map((meeting) => (
-                    <div
-                      key={meeting.id}
-                      className="flex items-center justify-between  p-1 px-4 border border-purple-300 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-purple-500"
-                    >
-                      <div className="flex-1">
-                        <h4 className="font-medium text-gray-900 dark:text-white">
-                          {meeting.title}
-                        </h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {meeting.assignedTo?.username || 'Unknown User'}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                          meeting.status === 'completed' ? 'bg-green-100 text-green-800' :
-                          meeting.status === 'scheduled' ? 'bg-blue-100 text-blue-800' :
-                          meeting.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {meeting.status}
-                        </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                          meeting.type === 'online' ? 'bg-blue-100 text-blue-800' :
-                          meeting.type === 'in-person' ? 'bg-green-100 text-green-800' :
-                          'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {meeting.type}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-
-            {/* Recent Projects */}
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
-              <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-6 flex items-center">
-                <Target className="w-5 h-5 mr-2 text-indigo-500" />
-                Recent Projects
-              </h4>
-              <div className="space-y-3 max-h-64 overflow-y-auto">
-                {recentProjects.length === 0 ? (
-                  <p className="text-gray-500 dark:text-gray-400 text-center py-8">
-                    No recent projects found
-                  </p>
-                ) : (
-                  recentProjects.map((project) => (
-                    <div
-                      key={project.id}
-                      className="flex items-center justify-between p-1 px-4 border border-indigo-300 bg-gray-50 dark:bg-gray-800 rounded-lg border-l-4 border-indigo-500"
-                    >
-                      <div className="flex-1">
-                        <h4 className="font-medium text-gray-900 dark:text-white">
-                          {project.name}
-                        </h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {project.createdBy?.username || 'Unknown User'}
-                        </p>
-                        <div className="mt-1">
-                          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
-                            <span>Progress</span>
-                            <span>{project.progress || 0}%</span>
-                          </div>
-                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1">
-                            <div 
-                              className="bg-indigo-500 h-1 rounded-full transition-all duration-300"
-                              style={{ width: `${project.progress || 0}%` }}
-                            ></div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                          project.status === 'active' ? 'bg-green-100 text-green-800' :
-                          project.status === 'planning' ? 'bg-blue-100 text-blue-800' :
-                          project.status === 'completed' ? 'bg-gray-100 text-gray-800' :
-                          project.status === 'on_hold' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-red-100 text-red-800'
-                        }`}>
-                          {project.status.replace('_', ' ')}
-                        </span>
-                        <span className={`px-2 py-1 rounded-full text-xs font-bold ${
-                          project.priority === 'urgent' ? 'bg-red-100 text-red-800' :
-                          project.priority === 'high' ? 'bg-orange-100 text-orange-800' :
-                          project.priority === 'medium' ? 'bg-yellow-100 text-yellow-800' :
-                          'bg-green-100 text-green-800'
-                        }`}>
-                          {project.priority}
-                        </span>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-            </div>
-          </div>
-        </motion.div>
+      
 
         {/* Performance Metrics */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="bg-white dark:bg-gray-900 rounded-lg shadow-lg border-2 border-gray-200 dark:border-gray-700 p-6"
+          className="bg-white dark:bg-gray-900 rounded-lg shadow-lg border-2 border-gray-200 dark:border-gray-700 p-6 mt-10"
         >
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -1309,8 +1140,18 @@ const Dashboard = () => {
               </div>
             </div>
           </div>
-      </motion.div>
+        </motion.div>
       </div>
+
+      {/* User Details Modal */}
+      <UserDetailsModal
+        userId={selectedUserId}
+        isOpen={showUserDetails}
+        onClose={() => {
+          setShowUserDetails(false)
+          setSelectedUserId(null)
+        }}
+      />
     </div>
   )
 }

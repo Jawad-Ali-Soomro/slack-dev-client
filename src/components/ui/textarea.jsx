@@ -11,7 +11,7 @@ const Textarea = React.forwardRef(({ className, size = "default", ...props }, re
   return (
     <textarea
       className={cn(
-        "flex w-full rounded-lg border border-input bg-background shadow-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary focus-visible:shadow-md transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50",
+        "flex w-full rounded-lg border border-input shadow-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus-visible:border-primary focus-visible:shadow-md transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50",
         sizeVariants[size],
         className
       )}

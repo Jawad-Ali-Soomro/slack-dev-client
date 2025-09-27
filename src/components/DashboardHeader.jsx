@@ -144,7 +144,7 @@ const DashboardHeader = () => {
   return (
     <>
       {/* Dashboard Header */}
-      <header className="bg-white dark:bg-gray-900 z-100  border-gray-200 dark:border-gray-700 px-6 py-5 border-b fixed w-full">
+      <header className="bg-white dark:bg-gray-900 z-50  border-gray-200 dark:border-gray-700 px-6 py-5 border-b fixed w-full">
         <div className="flex items-center justify-end">
         
           

@@ -24,7 +24,7 @@ const About = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center pt-50 relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950 min-h-screen">
+    <div className="flex flex-col items-center justify-center pt-50 relative overflow-hidden bg-gray-50 dark:bg-gray-900 min-h-screen">
       <Header />
       
       <motion.main 

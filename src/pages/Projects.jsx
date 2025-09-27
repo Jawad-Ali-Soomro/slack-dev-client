@@ -41,6 +41,7 @@ import teamService from '../services/teamService'
 import { useAuth } from '../contexts/AuthContext'
 import { getAvatarProps } from '../utils/avatarUtils'
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
+import UserDetailsModal from '../components/UserDetailsModal'
 
 const Projects = () => {
   const { user } = useAuth()
@@ -80,6 +81,8 @@ const Projects = () => {
   const [showMembersModal, setShowMembersModal] = useState(false)
   const [showLinksModal, setShowLinksModal] = useState(false)
   const [projectProgress, setProjectProgress] = useState(0)
+  const [selectedUserId, setSelectedUserId] = useState(null)
+  const [showUserDetails, setShowUserDetails] = useState(false)
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 12,
@@ -101,6 +104,8 @@ const Projects = () => {
         page: pagination.page,
         limit: pagination.limit
       })
+      console.log('Projects response:', response)
+      console.log('Projects data:', response.projects)
       setProjects(response.projects || [])
       setPagination(response.pagination || pagination)
     } catch (error) {
@@ -323,15 +328,27 @@ const Projects = () => {
     try {
       // Fetch full project details with populated tasks and meetings
       const response = await projectService.getProjectById(project.id)
+      console.log('=== FRONTEND PROJECT DEBUG START ===')
       console.log('Full project data:', response.project)
       console.log('Project tasks:', response.project.tasks)
       console.log('Project meetings:', response.project.meetings)
+      console.log('Tasks length:', response.project.tasks?.length || 0)
+      console.log('Meetings length:', response.project.meetings?.length || 0)
+      console.log('=== FRONTEND PROJECT DEBUG END ===')
       setSelectedProject(response.project)
       setShowProjectDetails(true)
     } catch (error) {
       console.error('Error fetching project details:', error)
       toast.error('Failed to load project details')
     }
+  }
+
+  // Handle user avatar click
+  const handleUserAvatarClick = (userId) => {
+    console.log('Avatar clicked for user ID:', userId)
+    setSelectedUserId(userId)
+    setShowUserDetails(true)
+    console.log('Modal should open now')
   }
 
   // Update project progress
@@ -540,7 +557,7 @@ const Projects = () => {
   }
 
   return (
-    <div className="overflow-hidden pt-6 pl-6">
+    <div className="overflow-hidden pt-6 pl-6 pb-10">
       <motion.div
         className="mx-auto"
         variants={containerVariants}
@@ -807,6 +824,16 @@ const Projects = () => {
                   </div>
                 </div>
 
+                {/* Team Info */}
+                {project.teamId && (
+                  <div className="mb-4">
+                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm">
+                      <Users className="w-4 h-4" />
+                      <span>Team: {project.teamId.name}</span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Project Stats */}
                 <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
@@ -850,7 +877,9 @@ const Projects = () => {
                       {project.members?.slice(0, 3).map((member, index) => (
                         <div
                           key={index}
-                          className="w-6 h-6 rounded-full border-2 border-white dark:border-gray-900 overflow-hidden"
+                          className="w-6 h-6 rounded-full border-2 border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:scale-110 transition-transform"
+                          onClick={() => handleUserAvatarClick(member.user._id)}
+                          title={member.user.username}
                         >
                           <img
                             {...getAvatarProps(member.user.avatar, member.user.username)}
@@ -882,7 +911,7 @@ const Projects = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-1000000000"
+            className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-50"
             onClick={() => setShowNewProjectPopup(false)}
           >
             <motion.div
@@ -1224,16 +1253,24 @@ const Projects = () => {
                   </Button>
                   <Button
                     type="submit"
-                    className="flex-1"
+                    className="flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
                     disabled={loading}
                   >
-                    {loading ? 'Creating...' : 'Create Project'}
+                    {loading ? (
+                      <span className="loader w-5 h-5"></span>
+                    ) : (
+                      'Create Project'
+                    )}
                   </Button>
                 </div>
               </form>
             </motion.div>
           </motion.div>
         )}
+
+        {
+          console.log(selectedProject)
+        }
 
         {/* Project Details Modal */}
         {showProjectDetails && selectedProject && (
@@ -1296,6 +1333,16 @@ const Projects = () => {
                       </div>
                     </div>
 
+                    {selectedProject.teamId && (
+                      <div>
+                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Team</h4>
+                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                          <Users className="w-4 h-4" />
+                          <span>{selectedProject.teamId.name}</span>
+                        </div>
+                      </div>
+                    )}
+
                     <div>
                       <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Progress</h4>
                       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
@@ -1337,7 +1384,9 @@ const Projects = () => {
                               <img
                                 {...getAvatarProps(member.user?.avatar, member.user?.username)}
                                 alt={member.user?.username}
-                                className="w-8 h-8 rounded-full"
+                                className="w-8 h-8 rounded-full cursor-pointer hover:scale-110 transition-transform"
+                                onClick={() => handleUserAvatarClick(member.user?.id)}
+                                title={`View ${member.user?.username}'s profile`}
                               />
                               <div>
                                 <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -1506,6 +1555,14 @@ const Projects = () => {
                     <Link className="w-4 h-4 mr-2" />
                     Manage Links
                   </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => handleViewProject(selectedProject)}
+                    className="flex-1"
+                  >
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Refresh
+                  </Button>
                 </div>
               </div>
             </motion.div>
@@ -1518,7 +1575,7 @@ const Projects = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-1000000000"
+            className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-50"
             onClick={() => setShowProgressModal(false)}
           >
             <motion.div
@@ -1581,7 +1638,7 @@ const Projects = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-1000000000"
+            className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-50"
             onClick={() => setShowMembersModal(false)}
           >
             <motion.div
@@ -1673,7 +1730,9 @@ const Projects = () => {
                             <img
                               {...getAvatarProps(member.user?.avatar, member.user?.username)}
                               alt={member.user?.username}
-                              className="w-8 h-8 rounded-full"
+                              className="w-8 h-8 rounded-full cursor-pointer hover:scale-110 transition-transform"
+                              onClick={() => handleUserAvatarClick(member.user?.id)}
+                              title={`View ${member.user?.username}'s profile`}
                             />
                             <div>
                               <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -1708,7 +1767,7 @@ const Projects = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-1000000000"
+            className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-50"
             onClick={() => setShowLinksModal(false)}
           >
             <motion.div
@@ -1817,6 +1876,16 @@ const Projects = () => {
             </motion.div>
           </motion.div>
         )}
+
+        {/* User Details Modal */}
+        <UserDetailsModal
+          userId={selectedUserId}
+          isOpen={showUserDetails}
+          onClose={() => {
+            setShowUserDetails(false)
+            setSelectedUserId(null)
+          }}
+        />
       </motion.div>
     </div>
   )

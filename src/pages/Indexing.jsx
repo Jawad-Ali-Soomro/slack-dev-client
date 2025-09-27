@@ -46,7 +46,7 @@ const Indexing = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center relative overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950">
+    <div className="flex flex-col items-center justify-center relative overflow-hidden bg-gray-50 dark:bg-gray-900">
         {/* Floating Background Orbs */}
         <div className="floating-orb w-96 h-96 top-10 left-10 opacity-30"></div>
         <div className="floating-orb w-64 h-64 top-1/3 right-20 opacity-20" style={{animationDelay: '2s'}}></div>
