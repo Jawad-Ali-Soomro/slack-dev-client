@@ -418,7 +418,9 @@ export const CodeCollaborationProvider = ({ children }) => {
   // Join session by invite code
   const joinByInviteCode = async (inviteCode) => {
     try {
+      console.log('Attempting to join with invite code:', inviteCode);
       const result = await codeCollaborationService.joinByInviteCode(inviteCode);
+      console.log('Join result:', result);
       
       // Reload sessions to update the list
       await loadUserSessions();
@@ -431,7 +433,8 @@ export const CodeCollaborationProvider = ({ children }) => {
       return result.data;
     } catch (error) {
       console.error('Error joining by invite code:', error);
-      toast.error('Failed to join session', {
+      console.error('Error response:', error.response?.data);
+      toast.error(error.response?.data?.message || 'Failed to join session', {
         duration: 3000,
         position: 'top-center'
       });

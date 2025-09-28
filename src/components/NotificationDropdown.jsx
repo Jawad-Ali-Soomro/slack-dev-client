@@ -65,7 +65,7 @@ const NotificationDropdown = () => {
         <Button
           variant="ghost"
           size="sm"
-          className="relative p-2 text-gray-500 hover:text-black dark:hover:text-white"
+          className="relative p-2 w-12 text-gray-500 hover:text-black dark:hover:text-white"
         >
           <Bell className="w-5 h-5" />
           {unreadCount > 0 && (
@@ -78,10 +78,10 @@ const NotificationDropdown = () => {
       
       <DropdownMenuContent 
         align="end" 
-        className="w-80 bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 p-0 pt-5"
+        className="w-80 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 p-0"
       >
         {/* Header */}
-        <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="p-4 border-b border-gray-200 dark:border-gray-700 icon">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
               Notifications
@@ -133,7 +133,7 @@ const NotificationDropdown = () => {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className={`p-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${
+                  className={`p-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-black transition-colors ${
                     !notification.isRead ? 'bg-blue-50 dark:bg-blue-900/20' : ''
                   }`}
                 >
@@ -212,7 +212,7 @@ const NotificationDropdown = () => {
         </div>
 
         {/* Footer */}
-        {notifications.length > 0 && (
+        {/* {notifications.length > 0 && (
           <div className="p-3 border-t border-gray-200 dark:border-gray-700">
             <Button
               variant="ghost"
@@ -226,7 +226,7 @@ const NotificationDropdown = () => {
               View all notifications
             </Button>
           </div>
-        )}
+        )} */}
       </DropdownMenuContent>
     </DropdownMenu>
   )

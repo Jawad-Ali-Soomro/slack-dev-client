@@ -144,7 +144,7 @@ const DashboardHeader = () => {
   return (
     <>
       {/* Dashboard Header */}
-      <header className="bg-white dark:bg-gray-900 z-50  border-gray-200 dark:border-gray-700 px-6 py-5 border-b fixed w-full">
+      <header className="bg-white dark:bg-black z-50 icon  border-gray-200 dark:border-gray-700 px-6 py-5 border-b fixed w-full">
         <div className="flex items-center justify-end">
         
           
@@ -193,14 +193,14 @@ const DashboardHeader = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-50"
+          className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-60"
           onClick={() => setShowProfileModal(false)}
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+            className="bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
@@ -258,7 +258,7 @@ const DashboardHeader = () => {
               {/* User Stats */}
               <div className="flex gap-4 mt-4 text-center">
                 
-                <div className="px-5 py-2 bg-gray-100 dark:bg-gray-800 rounded-full">
+                <div className="px-5 py-2 bg-gray-100 dark:bg-black rounded-full">
                   <div className="text-sm font-medium text-green-600 dark:text-green-400">
                     {user?.emailVerified ? 'Verified' : 'Pending'}
                   </div>

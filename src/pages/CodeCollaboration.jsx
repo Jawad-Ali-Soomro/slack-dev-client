@@ -33,6 +33,7 @@ import {
 import CodeEditor from '../components/CodeEditor';
 import CreateCodeSessionModal from '../components/CreateCodeSessionModal';
 import { toast } from 'sonner';
+import { getAvatarProps } from '../utils/avatarUtils';
 
 const CodeCollaboration = () => {
   const { user } = useAuth();
@@ -168,10 +169,12 @@ const CodeCollaboration = () => {
     }
 
     try {
+      console.log('Joining with invite code:', inviteCode.trim());
       await joinByInviteCode(inviteCode.trim());
       setInviteCode('');
       setShowJoinModal(false);
     } catch (error) {
+      console.error('Join error:', error);
       toast.error('Failed to join session');
     }
   };
@@ -201,24 +204,8 @@ const CodeCollaboration = () => {
   const getLanguageColor = (lang) => {
     const colors = {
       javascript: 'bg-yellow-500 text-white',
-      typescript: 'bg-blue-600 text-white',
+     
       python: 'bg-green-600 text-white',
-      java: 'bg-red-600 text-white',
-      cpp: 'bg-purple-600 text-white',
-      csharp: 'bg-indigo-600 text-white',
-      go: 'bg-cyan-600 text-white',
-      rust: 'bg-orange-600 text-white',
-      php: 'bg-pink-600 text-white',
-      ruby: 'bg-red-700 text-white',
-      swift: 'bg-orange-500 text-white',
-      kotlin: 'bg-purple-700 text-white',
-      html: 'bg-orange-700 text-white',
-      css: 'bg-blue-700 text-white',
-      sql: 'bg-gray-700 text-white',
-      json: 'bg-gray-600 text-white',
-      xml: 'bg-green-700 text-white',
-      yaml: 'bg-gray-800 text-white',
-      markdown: 'bg-gray-900 text-white'
     };
     return colors[lang] || 'bg-gray-600 text-white';
   };
@@ -226,22 +213,9 @@ const CodeCollaboration = () => {
   const getLanguageIcon = (lang) => {
     const icons = {
       javascript: '🟨',
-      typescript: '🔵',
+     
       python: '🐍',
-      java: '☕',
-      cpp: '⚙️',
-      csharp: '🔷',
-      go: '🐹',
-      rust: '🦀',
-      php: '🐘',
-      ruby: '💎',
-      swift: '🍎',
-      kotlin: '📱',
-      html: '🌐',
-      css: '🎨',
-      sql: '🗄️',
-      json: '📄',
-      xml: '📋'
+    
     };
     return icons[lang] || '💻';
   };
@@ -301,7 +275,8 @@ const CodeCollaboration = () => {
             variant="outline"
             onClick={loadPublicSessionsData}
             disabled={isLoading}
-            className="bg-white/80 hover:bg-white border-gray-200 hover:border-blue-300 shadow-sm  transition-all duration-200"
+            // className="bg-white/80 hover:bg-white border-gray-200 hover:border-blue-300 shadow-sm  px-20 transition-all duration-200"
+            className={'w-[202px] h-12 rounded-xl'}
           >
             <Globe className="h-4 w-4 mr-2" />
             Browse Public
@@ -310,7 +285,8 @@ const CodeCollaboration = () => {
           <Button 
             variant="outline"
             onClick={() => setShowJoinModal(true)}
-            className="bg-white/80 hover:bg-white border-gray-200 hover:border-purple-300 shadow-sm  transition-all duration-200"
+            className={'w-[202px] h-12 rounded-xl'}
+
           >
             <Users className="h-4 w-4 mr-2" />
             Join by Invite Code
@@ -318,7 +294,8 @@ const CodeCollaboration = () => {
           
           <Button 
             onClick={() => setShowCreateSessionModal(true)}
-            className="transition-all duration-200"
+            className={'w-[200px] rounded-xl h-12 rounded-xl'}
+
           >
             <Plus className="h-4 w-4 mr-2" />
             Create Session
@@ -335,35 +312,18 @@ const CodeCollaboration = () => {
               placeholder="Search sessions..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 bg-white/80"
+              className="pl-10 bg-white/80 h-13"
             />
           </div>
         </div>
         <Select value={languageFilter} onValueChange={setLanguageFilter}>
-          <SelectTrigger className="w-48 bg-white/80 ">
+          <SelectTrigger className="w-48 bg-white/80 h-13 cursor-pointer ">
             <SelectValue placeholder="Filter by language" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Languages</SelectItem>
-            <SelectItem value="javascript">JavaScript</SelectItem>
-            <SelectItem value="typescript">TypeScript</SelectItem>
-            <SelectItem value="python">Python</SelectItem>
-            <SelectItem value="java">Java</SelectItem>
-            <SelectItem value="cpp">C++</SelectItem>
-            <SelectItem value="csharp">C#</SelectItem>
-            <SelectItem value="go">Go</SelectItem>
-            <SelectItem value="rust">Rust</SelectItem>
-            <SelectItem value="php">PHP</SelectItem>
-            <SelectItem value="ruby">Ruby</SelectItem>
-            <SelectItem value="swift">Swift</SelectItem>
-            <SelectItem value="kotlin">Kotlin</SelectItem>
-            <SelectItem value="html">HTML</SelectItem>
-            <SelectItem value="css">CSS</SelectItem>
-            <SelectItem value="sql">SQL</SelectItem>
-            <SelectItem value="json">JSON</SelectItem>
-            <SelectItem value="xml">XML</SelectItem>
-            <SelectItem value="yaml">YAML</SelectItem>
-            <SelectItem value="markdown">Markdown</SelectItem>
+            <SelectItem className={'px-5 h-10 cursor-pointer'} value="all">All Languages</SelectItem>
+            <SelectItem className={'px-5 h-10 cursor-pointer'} value="javascript">JavaScript</SelectItem>
+            <SelectItem className={'px-5 h-10 cursor-pointer'} value="python">Python</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -371,7 +331,7 @@ const CodeCollaboration = () => {
       {/* Sessions Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredSessions.map((session) => (
-          <Card key={session._id} className="group hover:shadow-blue-500/10 transition-all duration-300 border overflow-hidden">
+          <Card key={session._id} className="group hover:shadow-blue-500/10 transition-all bg-white  duration-300 border overflow-hidden">
             <CardHeader>
               <div className="flex items-start justify-between">
                 <div className="flex-1">
@@ -408,22 +368,28 @@ const CodeCollaboration = () => {
                     <Users className="h-4 w-4" />
                     <span>{session.participantCount}/{session.maxParticipants}</span>
                   </div> */}
-                  <div className="flex items-center space-x-1 px-4 py-2 bg-gray-100 rounded-full dark:bg-gray-800">
+                  <div className="flex items-center space-x-1 px-4 py-2 bg-gray-100 border rounded-full dark:bg-white dark:border-none">
                     <Clock className="h-4 w-4" />
                     <span>{formatDate(session.updatedAt)}</span>
                   </div>
                 </div>
               </div>
               
-              <div className="flex items-center justify-between">
-                <div className="text-sm text-gray-500 px-4 py-2 bg-gray-100 rounded-full dark:bg-gray-800 truncate">
+              <div className="flex items-start justify-between">
+                <div className="text-sm text-gray-500 px-2 pr-5 py-2 bg-gray-100 border flex items-center gap-2 rounded-full dark:bg-white dark:border-none truncate">
+                <img
+                              {...getAvatarProps(session.owner?.avatar, session.owner?.username)}
+                              alt={session.owner?.username}
+                              className="w-8 h-8 rounded-full object-cover border-2 border-white dark:border-gray-900"
+                            />
                   {session.owner.username}
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 flex-col w-[150px] gap-2">
                   {session.isActive ? (
                     <Button
                       onClick={() => handleJoinPublicSession(session)}
                       disabled={isLoading}
+                      className={'w-full h-12 rounded-lg'}
                     >
                       <Play className="h-4 w-4 mr-1" />
                       Join
@@ -436,12 +402,12 @@ const CodeCollaboration = () => {
                   
                   {/* Owner actions */}
                   {session.owner._id === user?.id || session.owner._id === user?._id ? (
-                    <div className="flex items-center space-x-1">
+                    <div className="flex items-center flex-col w-[150px] space-x-1 gap-2">
                       {session.isActive && (
                         <>
                           <Button
                             onClick={() => handleGenerateInvite(session)}
-                            className="bg-blue-500 hover:bg-blue-600 text-white"
+                            className="bg-blue-500 h-12 hover:bg-blue-600 w-full text-white"
                           >
                             <Users className="h-4 w-4 mr-1 text-white" />
                             Invite
@@ -466,7 +432,7 @@ const CodeCollaboration = () => {
                             deleteSession(session._id);
                           }
                         }}
-                        className="bg-red-600 hover:bg-red-700 text-white"
+                        className="bg-red-600 hover:bg-red-700 text-white w-full h-12 rounded-lg"
                       >
                         <Trash2 className="h-4 w-4 mr-1" />
                         Delete
@@ -507,11 +473,11 @@ const CodeCollaboration = () => {
 
       {/* Invite Modal */}
       <Dialog open={showInviteModal} onOpenChange={setShowInviteModal}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md text-black dark:text-white">
           <DialogHeader>
             <DialogTitle>Invite to Session</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4">
+          <div className="space-y-4 ">
             <div>
               <Label htmlFor="invite-code">Invite Code</Label>
               <div className="flex items-center space-x-2">
@@ -519,14 +485,15 @@ const CodeCollaboration = () => {
                   id="invite-code"
                   value={inviteCode}
                   readOnly
-                  className="font-mono"
+                  // className="font-mono text-black dark:text-black"
                 />
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={() => navigator.clipboard.writeText(inviteCode)}
+                  className={'w-12'}
                 >
-                  Copy
+                  <Copy  className='icon'/>
                 </Button>
               </div>
             </div>

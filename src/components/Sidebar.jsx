@@ -18,6 +18,8 @@ import { Link, useLocation } from 'react-router-dom'
 import { useSidebar } from '../contexts/SidebarContext'
 import { useAuth } from '../contexts/AuthContext'
 import { useNotifications } from '../contexts/NotificationContext'
+import { BsChatSquareText } from "react-icons/bs";
+import { PiCrown, PiUserCheck } from "react-icons/pi";
 
 const Sidebar = () => {
   const { isOpen, closeSidebar, openSidebar } = useSidebar()
@@ -48,15 +50,15 @@ const Sidebar = () => {
       path: '/dashboard/meetings',
       color: 'text-black dark:text-white',
       badgeCount: unreadCounts.meetings
-    },
+    },  
     {
       title: 'Code',
       icon: Code,
       path: '/dashboard/code',
       color: 'text-black dark:text-white',
-      badgeCount: unreadCounts.code
-    },
-    {
+      badgeCount: unreadCounts.code || 0
+    },  
+      {
       title: 'Projects',
       icon: FolderOpen,
       path: '/dashboard/projects',
@@ -72,17 +74,24 @@ const Sidebar = () => {
     },
     {
       title: 'Friends',
-      icon: UserCheck,
+      icon: PiUserCheck,
       path: '/dashboard/friends',
       color: 'text-black dark:text-white',
       badgeCount: 0
     },
     {
       title: 'Messages',
-      icon: MessageCircle,
+      icon: BsChatSquareText,
       path: '/dashboard/chat',
       color: 'text-black dark:text-white',
       badgeCount: unreadCounts.messages
+    },
+    {
+      title: 'Premium',
+      icon: PiCrown,
+      path: '/premium',
+      color: 'text-white',
+      bg: 'bg-yellow-500 dark:bg-yellow-600'
     },
   ]
 
@@ -173,15 +182,15 @@ const Sidebar = () => {
             initial="open"
             animate="open"
             exit="open"
-            className="fixed left-0 top-0 h-full w-60 bg-white dark:bg-gray-900 z-50 border-r border-gray-200 dark:border-gray-700 lg:z-50"
+            className="fixed icon left-0 top-0 h-full w-60 bg-white dark:bg-black z-50 border-r border-gray-200 dark:border-gray-700 lg:z-50"
           >
             {/* Header */}
-            <div className="flex items-center justify-start p-4 border-b gap-2 border-gray-200 dark:border-gray-700">
-              <div className="w-12 h-12 bg-gray-200 p-2 rounded-lg gap-2 flex flex items-center justify-center dark:bg-gray-800">
+            <div className="flex items-center py-5 justify-start p-4 border-b icon gap-2 border-gray-200 dark:border-gray-700">
+              <div className="w-12 h-12 bg-gray-200 p-2 rounded-lg gap-2 flex flex items-center justify-center dark:bg-black">
                 {/* <User className="w-5 h-5 text-white dark:text-black" /> */}
                 <img src="/logo.png" alt="" />
               </div>
-                <h1 className=" font-bold text-black dark:text-white">Slack Developers</h1>
+                <h1 className=" font-bold ">Slack Developers</h1>
             </div>
 
             {/* Navigation */}
@@ -203,14 +212,14 @@ const Sidebar = () => {
                         to={item.path}
                         onClick={closeSidebar}
                         title={item.title}
-                        className={`relative flex items-center justify-start px-3 gap-4 relative w-50 h-[50px] rounded-lg transition-all duration-200 group ${
+                        className={`relative flex items-center justify-start px-4 gap-4 ${item.title == 'Premium' && 'bg-yellow-500 dark:bg-yellow-600 text-white hover:bg-yellow-600 dark:hover:bg-yellow-700'} relative w-50 h-[50px] rounded-lg transition-all duration-200 group ${
                           active
-                            ? 'shadow-none bg-black  text-white dark:bg-white  dark:text-black shadow-lg '
-                            : 'hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
+                            ? 'shadow-none bg-black  text-white dark:bg-white  px-5  dark:text-black shadow-lg '
+                            : item.title == 'Premium' ? '' : 'hover:bg-gray-100 dark:hover:bg-black text-gray-700 dark:text-gray-300'
                         }`} 
                       >
                         <div className="relative">
-                          <Icon className={`w-5 h-5 transition-transform ${active ? 'text-white dark:text-black' : item.color}`} />
+                          <Icon className={`w-5 h-5 icon transition-transform ${active ? 'text-white dark:text-black' : item.color}`} />
                          
                         </div>
                         {item.title}
@@ -236,7 +245,7 @@ const Sidebar = () => {
                 <div className="flex items-center justify-center text-white gap-2 w-50 h-[50px] rounded-lg transition-all duration-200 group absolute bottom-5  bg-red-500 cursor-pointer" onClick={() => {
                   logout()
                 }}>
-                  <LogOut className="w-5 h-5 transition-transform" />
+                  <LogOut className="w-5 h-5 transition-transform icon" />
                   Logout
                 </div>
               </div>

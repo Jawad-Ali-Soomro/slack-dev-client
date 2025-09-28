@@ -4,8 +4,10 @@ import { Github, Twitter, Linkedin, Mail, MapPin, Phone } from "lucide-react"
 
 const Footer = () => {
   return (
-    <footer className="bg-black dark:bg-black text-white py-16 w-full">
-      <div className="max-w-7xl mx-auto px-6">
+    <div className="bg-black text-white icon py-16 w-full" style={{
+      borderRadius: 0
+    }}>
+      <div className="max-w-7xl mx-auto px-6 icon bg">
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           {/* Company Info */}
           <div className="space-y-4">
@@ -101,8 +103,8 @@ const Footer = () => {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-800 pt-8">
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <div className="border-t border-gray-800 pt-8 icon">
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 icon">
             <div className="text-gray-400 text-sm">
               © 2024 Core Stack. All rights reserved.
             </div>
@@ -120,7 +122,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-    </footer>
+    </div>
   )
 }
 

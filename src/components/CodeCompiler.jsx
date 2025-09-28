@@ -138,7 +138,7 @@ const CodeCompiler = ({
       return {
         icon: Code2,
         color: 'text-gray-500',
-        bgColor: 'bg-gray-50 dark:bg-gray-800',
+        bgColor: 'bg-gray-50 dark:bg-black',
         text: 'Ready to execute',
         animate: ''
       };
@@ -170,7 +170,7 @@ const CodeCompiler = ({
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Compiler Header */}
-      <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+      <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-black shadow-lg">
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -223,7 +223,7 @@ const CodeCompiler = ({
             <Button
               onClick={executeCode}
               disabled={!canExecute}
-              className="bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black shadow-lg transition-all duration-300"
+              className="bg-black hover:bg-black dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black shadow-lg transition-all duration-300"
             >
               {isExecuting ? (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -301,7 +301,7 @@ const CodeCompiler = ({
                 key={historyItem.timestamp}
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                className="p-3 bg-gray-50 dark:bg-black rounded-lg border border-gray-200 dark:border-gray-700 cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
                 onClick={() => setResult(historyItem)}
               >
                 <div className="flex items-center justify-between text-xs">
@@ -338,7 +338,7 @@ const CodeCompiler = ({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
           >
-            <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+            <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-black shadow-lg">
               <CardHeader className="pb-3">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
@@ -367,7 +367,7 @@ const CodeCompiler = ({
               </CardHeader>
               
               <CardContent>
-                <div className="bg-gray-900 dark:bg-gray-950 rounded-lg p-4 max-h-96 overflow-y-auto">
+                <div className="bg-black dark:bg-gray-950 rounded-lg p-4 max-h-96 overflow-y-auto">
                   <pre className="text-sm text-gray-100 font-mono whitespace-pre-wrap">
                     {result.success ? result.formattedOutput : result.formattedError}
                   </pre>

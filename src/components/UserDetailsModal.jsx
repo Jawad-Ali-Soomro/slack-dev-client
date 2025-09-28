@@ -62,9 +62,9 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'active': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-      case 'inactive': return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+      case 'inactive': return 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200'
       case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+      default: return 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200'
     }
   }
 
@@ -73,7 +73,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
       case 'admin': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
       case 'moderator': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
       case 'user': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+      default: return 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200'
     }
   }
 
@@ -90,7 +90,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 max-w-5xl w-full max-h-[90vh] overflow-hidden"
+        className="bg-white dark:bg-black rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 max-w-5xl w-full max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {loading ? (
@@ -100,7 +100,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
         ) : user ? (
           <>
             {/* Header */}
-            <div className="relative p-8  border-b border-gray-200/50 dark:border-gray-700/50 bg-gray-100 dark:bg-gray-900 tex-white dark:text-black">
+            <div className="relative p-8  border-b border-gray-200/50 dark:border-gray-700/50 bg-gray-100 dark:bg-black tex-white dark:text-black">
               <div className="absolute bg-black dark:bg-white"></div>
               <div className="relative flex items-start justify-between">
                 <div className="flex items-center gap-6">
@@ -132,7 +132,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                 </div>
                 <button
                   onClick={onClose}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200 p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200 p-2 hover:bg-gray-100 dark:hover:bg-black rounded-full"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -140,19 +140,19 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
             </div>
 
             {/* Tabs */}
-            <div className="border-b border-gray-200/50 dark:border-gray-700/50 bg-gray-50/50 dark:bg-gray-800/50">
+            <div className="border-b icon border-gray-200/50 dark:border-gray-700/50 bg-gray-50/50 dark:bg-black/50">
               <nav className="flex space-x-1 px-6">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-2 py-4 px-4 border-b-2 font-semibold text-sm transition-all duration-200 rounded-t-lg ${
+                    className={`flex items-center gap-2 py-4 px-4 border-b-2 icon font-semibold text-sm transition-all duration-200 rounded-t-lg ${
                       activeTab === tab.id
                         ? 'border-b-black dark:border-b-white border-b shadow-sm'
                         : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 cursor-pointer'
                     }`}
                   >
-                    <tab.icon className="w-4 h-4" />
+                    <tab.icon className="w-4 h-4 icon" />
                     {tab.label}
                   </button>
                 ))}
@@ -168,7 +168,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                     <div className="space-y-6">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Contact Information</h3>
                       <div className="space-y-4">
-                        <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-lg">
                           <Mail className="w-5 h-5 text-blue-500" />
                           <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
@@ -177,7 +177,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                         </div>
                         
                         {user.phone && (
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-lg">
                             <Phone className="w-5 h-5 text-green-500" />
                             <div>
                               <p className="text-sm text-gray-500 dark:text-gray-400">Phone</p>
@@ -187,7 +187,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                         )}
 
                         {user.userLocation && (
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-lg">
                             <MapPin className="w-5 h-5 text-red-500" />
                             <div>
                               <p className="text-sm text-gray-500 dark:text-gray-400">Location</p>
@@ -197,7 +197,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                         )}
 
                         {user.website && (
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-lg">
                             <Globe className="w-5 h-5 text-indigo-500" />
                             <div>
                               <p className="text-sm text-gray-500 dark:text-gray-400">Website</p>
@@ -216,7 +216,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                           <h4 className="text-md font-semibold text-gray-900 dark:text-white">Social Links</h4>
                           <div className="space-y-3">
                             {user.socialLinks.website && (
-                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-lg">
                                 <Globe className="w-5 h-5 text-purple-500" />
                                 <div>
                                   <p className="text-sm text-gray-500 dark:text-gray-400">Website</p>
@@ -228,7 +228,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                               </div>
                             )}
                             {user.socialLinks.linkedin && (
-                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-lg">
                                 <Building className="w-5 h-5 text-blue-600" />
                                 <div>
                                   <p className="text-sm text-gray-500 dark:text-gray-400">LinkedIn</p>
@@ -240,7 +240,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                               </div>
                             )}
                             {user.socialLinks.github && (
-                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-lg">
                                 <Building className="w-5 h-5 text-gray-700" />
                                 <div>
                                   <p className="text-sm text-gray-500 dark:text-gray-400">GitHub</p>
@@ -252,7 +252,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                               </div>
                             )}
                             {user.socialLinks.twitter && (
-                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-lg">
                                 <Globe className="w-5 h-5 text-blue-400" />
                                 <div>
                                   <p className="text-sm text-gray-500 dark:text-gray-400">Twitter</p>
@@ -271,7 +271,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                     <div className="space-y-6">
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Profile Information</h3>
                       <div className="space-y-4">
-                        {/* <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        {/* <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-lg">
                           <Calendar className="w-5 h-5 text-orange-500" />
                           <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">Joined</p>
@@ -280,7 +280,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                         </div> */}
                         
                         {user.dateOfBirth && (
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-lg">
                             <Calendar className="w-5 h-5 text-pink-500" />
                             <div>
                               <p className="text-sm text-gray-500 dark:text-gray-400">Date of Birth</p>
@@ -290,7 +290,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                         )}
 
                         {user.emailVerified !== undefined && (
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-lg">
                             <Mail className="w-5 h-5 text-emerald-500" />
                             <div>
                               <p className="text-sm text-gray-500 dark:text-gray-400">Email Status</p>
@@ -366,7 +366,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                   {user.projects && user.projects.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {user.projects.map((project, index) => (
-                        <div key={index} className="bg-white dark:bg-gray-800 p-5 rounded-xl border border-gray-200/50 dark:border-gray-700/50 hover:shadow-lg transition-all duration-200 hover:border-blue-300 dark:hover:border-blue-600">
+                        <div key={index} className="bg-white dark:bg-black p-5 rounded-xl border border-gray-200/50 dark:border-gray-700/50 hover:shadow-lg transition-all duration-200 hover:border-blue-300 dark:hover:border-blue-600">
                           <div className="flex items-start gap-4">
                             {project.logo && (
                               <div className="relative">
@@ -386,7 +386,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                               <div className="flex items-center gap-2 flex-wrap">
                                 <span className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${
                                   project.status === 'active' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300' :
-                                  project.status === 'completed' ? 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200' :
+                                  project.status === 'completed' ? 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200' :
                                   'bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-300'
                                 }`}>
                                   {project.status}
@@ -418,7 +418,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                   {user.teams && user.teams.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {user.teams.map((team, index) => (
-                        <div key={index} className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                        <div key={index} className="bg-gray-50 dark:bg-black p-4 rounded-lg">
                           <div className="flex items-start gap-3">
                             <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
                               <Users className="w-5 h-5 text-gray-500" />
@@ -454,11 +454,11 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                 <div className="space-y-6">
                   {/* Tasks */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Tasks</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 ml-5">Recent Tasks</h3>
                     {user.tasks && user.tasks.length > 0 ? (
                       <div className="space-y-3">
                         {user.tasks.slice(0, 5).map((task, index) => (
-                          <div key={index} className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                          <div key={index} className="bg-gray-50 dark:bg-black p-4 rounded-lg">
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
                                 <h4 className="font-medium text-gray-900 dark:text-white">{task.title}</h4>
@@ -502,11 +502,11 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
 
                   {/* Meetings */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Recent Meetings</h3>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 ml-5">Recent Meetings</h3>
                     {user.meetings && user.meetings.length > 0 ? (
                       <div className="space-y-3">
                         {user.meetings.slice(0, 5).map((meeting, index) => (
-                          <div key={index} className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
+                          <div key={index} className="bg-gray-50 dark:bg-black p-4 rounded-lg">
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
                                 <h4 className="font-medium text-gray-900 dark:text-white">{meeting.title}</h4>

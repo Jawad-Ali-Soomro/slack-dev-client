@@ -46,7 +46,7 @@ const Indexing = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center relative overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div className="flex flex-col items-center justify-center relative overflow-hidden bg-gray-50 dark:bg-black">
         {/* Floating Background Orbs */}
         <div className="floating-orb w-96 h-96 top-10 left-10 opacity-30"></div>
         <div className="floating-orb w-64 h-64 top-1/3 right-20 opacity-20" style={{animationDelay: '2s'}}></div>
@@ -116,7 +116,7 @@ const Indexing = () => {
               className="flex gap-6 mt-10"
             >
                 <motion.button 
-                  className="w-[300px] font-bold py-4 bg-black text-white z-50 rounded-full text-sm cursor-pointer hover:bg-gray-800 transition-colors shadow-lg dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                  className="w-[300px] font-bold py-4 bg-black text-white z-50 rounded-full text-sm cursor-pointer hover:bg-black transition-colors shadow-lg dark:bg-white dark:text-black dark:hover:bg-gray-200"
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
@@ -229,7 +229,7 @@ const Indexing = () => {
             ].map((feature, index) => (
               <motion.div
                 key={index}
-                className="p-8 bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
+                className="p-8 bg-white dark:bg-black rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
@@ -264,7 +264,7 @@ const Indexing = () => {
 
         {/* Stats Section */}
         <motion.section 
-          className="w-full bg-black py-16 relative dark:bg-white"
+          className="w-full bg-black icon py-16 relative dark:bg-white"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
@@ -449,7 +449,7 @@ How It Works
 
         {/* Final CTA Section */}
         <motion.section 
-          className="w-full bg-black dark:bg-black py-20 relative z-10"
+          className="w-full bg-black icon dark:bg-black py-20 relative z-10"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}

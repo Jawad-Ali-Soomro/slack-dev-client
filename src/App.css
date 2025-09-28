@@ -55,3 +55,17 @@
         transform: rotate(360deg);
     }
     } 
+
+    *{
+        box-shadow: none;
+    }
+
+    .icon  {
+        border-radius: 0 !important;
+    }
+
+
+    footer {
+        border-radius: 0 !important;
+    }
+  

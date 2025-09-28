@@ -30,7 +30,7 @@ const NotFound = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4">
       <motion.div
         className="text-center max-w-2xl mx-auto"
         variants={containerVariants}
@@ -69,7 +69,7 @@ const NotFound = () => {
         >
           <Button
             onClick={() => navigate('/')}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-colors"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-black text-white hover:bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-colors"
           >
             <Home className="w-4 h-4" />
             Go Home
@@ -78,7 +78,7 @@ const NotFound = () => {
           <Button
             onClick={() => navigate(-1)}
             variant="outline"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
             Go Back

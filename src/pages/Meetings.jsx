@@ -289,11 +289,11 @@ const Meetings = () => {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case "completed": return <CheckCircle className="w-4 h-4" />
-      case "pregress": return <Clock className="w-4 h-4" />
-      case "scheduled": return <Calendar className="w-4 h-4" />
-      case "cancelled": return <AlertCircle className="w-4 h-4" />
-      default: return <Calendar className="w-4 h-4" />
+      case "completed": return <CheckCircle className="w-4 h-4 icon" />
+      case "pregress": return <Clock className="w-4 h-4 icon" />
+      case "scheduled": return <Calendar className="w-4 h-4 icon" />
+      case "cancelled": return <AlertCircle className="w-4 h-4 icon" />
+      default: return <Calendar className="w-4 h-4 icon" />
     }
   }
 
@@ -504,13 +504,14 @@ const Meetings = () => {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
-                  <Trash2 className="w-4 h-4" />
+                  <Trash2 className="w-4 h-4 icon" />
                   Delete ({selectedMeetings.length})
                 </motion.button>
               )}
               <Button
                 onClick={() => setShowNewMeetingPopup(true)}
-                className={getButtonClasses('primary', 'md', 'flex items-center gap-2')}
+                className={'w-[200px] rounded-xl h-12'}
+
               >
                 <Plus className={ICON_SIZES.sm} />
                 New Meeting
@@ -523,37 +524,37 @@ const Meetings = () => {
         <motion.div variants={itemVariants} className="mb-6">
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-50" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-50 icon" />
               <Input
                 type="text"
                 placeholder="Search meetings..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-900 text-black dark:text-white"
+                className="w-full pl-10 pr-4 py-3 border border-gray-200 h-13 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
               />
             </div>
             <div className="flex gap-3">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-[180px] border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-900 text-black dark:text-white">
+                <SelectTrigger className="w-[180px] h-13 bg-white cursor-pointer dark:bg-black text-black dark:text-white">
                   <SelectValue placeholder="All Status" />
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700">
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="scheduled">Scheduled</SelectItem>
-                  <SelectItem value="pregress">In Progress</SelectItem>
-                  <SelectItem value="completed">Completed</SelectItem>
-                  <SelectItem value="cancelled">Cancelled</SelectItem>
+                <SelectContent className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
+                  <SelectItem className={'cursor-pointer h-10 px-5'} value="all">All Status</SelectItem>
+                  <SelectItem className={'cursor-pointer h-10 px-5'} value="scheduled">Scheduled</SelectItem>
+                  <SelectItem className={'cursor-pointer h-10 px-5'} value="pregress">In Progress</SelectItem>
+                  <SelectItem className={'cursor-pointer h-10 px-5'} value="completed">Completed</SelectItem>
+                  <SelectItem className={'cursor-pointer h-10 px-5'} value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger className="w-[180px] border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-900 text-black dark:text-white">
+                <SelectTrigger className="w-[180px] h-13 bg-white cursor-pointer dark:bg-black text-black dark:text-white">
                   <SelectValue placeholder="All Types" />
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700">
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="online">Online</SelectItem>
-                  <SelectItem value="in-person">in-person</SelectItem>
-                  <SelectItem value="hybrid">Hybrid</SelectItem>
+                <SelectContent className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
+                  <SelectItem className={'cursor-pointer h-10 px-5'} value="all">All Types</SelectItem>
+                  <SelectItem className={'cursor-pointer h-10 px-5'} value="online">Online</SelectItem>
+                  <SelectItem className={'cursor-pointer h-10 px-5'} value="in-person">in-person</SelectItem>
+                  <SelectItem className={'cursor-pointer h-10 px-5'} value="hybrid">Hybrid</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -561,10 +562,10 @@ const Meetings = () => {
         </motion.div>
 
         {/* Meetings Table */}
-        <motion.div variants={itemVariants} className="bg-white dark:bg-gray-900 rounded-lg shadow-xl border-2 border-gray-200 dark:border-gray-700 overflow-hidden">
+        <motion.div variants={itemVariants} className="bg-white dark:bg-black rounded-lg shadow-xl border-2 border-gray-200 dark:border-gray-700 overflow-hidden">
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
-              <thead className="bg-gray-100 dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+              <thead className="bg-gray-100 dark:bg-black border-b-2 border-gray-200 dark:border-gray-700 sticky top-0 z-10">
                 <tr>
                       <th className="px-6 py-4 text-left">
                         <Checkbox
@@ -622,7 +623,7 @@ const Meetings = () => {
                   filteredMeetings.map((meeting) => (
                   <motion.tr
                     key={meeting.id}
-                    className={`hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors ${selectedMeetings.includes(meeting.id) ? 'bg-gray-100 dark:bg-gray-800' : ''}`}
+                    className={`hover:bg-gray-50 dark:hover:bg-black transition-colors ${selectedMeetings.includes(meeting.id) ? 'bg-gray-100 dark:bg-black' : ''}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2 }}
@@ -647,7 +648,7 @@ const Meetings = () => {
                             {meeting.tags.map((tag, index) => (
                               <span
                                 key={index}
-                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200"
+                                className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200"
                               >
                                 {tag}
                               </span>
@@ -658,9 +659,9 @@ const Meetings = () => {
                     </td>
                     <td className="px-6 py-4">
                       <span className={`inline-flex items-center rounded-full text-xs font-bold truncate ${getTypeColor(meeting.type)}`}>
-                        {meeting.type === 'online' && <Video className="w-3 h-3 mr-1" />}
-                        {meeting.type === 'in-person' && <MapPin className="w-3 h-3 mr-1" />}
-                        {meeting.type === 'hybrid' && <Calendar className="w-3 h-3 mr-1" />}
+                        {meeting.type === 'online' && <Video className="w-3 h-3 mr-1 icon" />}
+                        {meeting.type === 'in-person' && <MapPin className="w-3 h-3 mr-1 icon" />}
+                        {meeting.type === 'hybrid' && <Calendar className="w-3 h-3 mr-1 icon" />}
                         {meeting.type}
                       </span>
                     </td>
@@ -670,7 +671,7 @@ const Meetings = () => {
                         {meeting.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 w-[200px]">
+                    <td className="px-6 py-4 w-[200px] rounded-xl">
                       <div className="flex items-center gap-3">
                         <img 
                           {...getAvatarProps(
@@ -690,7 +691,7 @@ const Meetings = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 w-[200px]">
+                    <td className="px-6 py-4 w-[200px] rounded-xl">
                       <div className="flex flex-wrap gap-1">
                         {meeting.attendees && meeting.attendees.length > 0 ? (
                           meeting.attendees.slice(0, 3).map((attendee, index) => (
@@ -716,7 +717,7 @@ const Meetings = () => {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 w-[200px]">
+                    <td className="px-6 py-4 w-[200px] rounded-xl">
                       {meeting.project ? (
                         <div className="flex items-center gap-2">
                           {/* {meeting.project.logo && (
@@ -733,12 +734,12 @@ const Meetings = () => {
                           </span>
                         </div>
                       ) : (
-                        <span className="text-sm text-gray-500 dark:text-gray-400">No Project</span>
+                        <span className="text-sm text-gray-500 dark:text-gray-400 truncate">No Project</span>
                       )}
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-gray-400" />
+                        <Calendar className="w-4 h-4 text-gray-400 icon" />
                         <div>
                           <div className="text-sm text-gray-900 dark:text-white">
                             {meeting.startDate ? new Date(meeting.startDate).toLocaleDateString() : 'N/A'}
@@ -773,7 +774,7 @@ const Meetings = () => {
                             onClick={() => handleEditMeeting(meeting)}
                             className="p-2 text-gray-400 hover:text-black dark:hover:text-white"
                           >
-                            <Edit className="w-4 h-4" />
+                            <Edit className="w-4 h-4 icon" />
                           </Button>
                         )}
                         {user && user.id && meeting.assignedBy?.id === user.id && (
@@ -783,7 +784,7 @@ const Meetings = () => {
                             onClick={() => handleDeleteMeeting(meeting.id)}
                             className="p-2 text-gray-400 hover:text-red-600"
                           >
-                            <Trash2 className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4 icon" />
                           </Button>
                         )}
                         <DropdownMenu>
@@ -791,40 +792,40 @@ const Meetings = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="p-2 text-gray-400 hover:text-black dark:hover:text-white"
+                              className="p-2 text-gray-400 h-10 hover:text-black dark:hover:text-white"
                             >
-                              <MoreVertical className="w-4 h-4" />
+                              <MoreVertical className="w-4 h-4 icon" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700">
+                          <DropdownMenuContent align="end" className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
                             {user && user.id && meeting.assignedBy?.id === user.id && (
                               <DropdownMenuItem 
                                 onClick={() => handleEditMeeting(meeting)}
-                                className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                                className="text-black h-12 px-5 cursor-pointer dark:text-white hover:bg-gray-100 dark:hover:bg-black"
                               >
-                                <Edit className="w-4 h-4 mr-2" />
+                                <Edit className="w-4 h-4 mr-2 icon" />
                                 Edit Meeting
                               </DropdownMenuItem>
                             )}
                             {user && user.id && meeting.assignedBy?.id === user.id && (
                               <DropdownMenuItem 
                                 onClick={() => handleEditMeeting(meeting)}
-                                className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800"
+                                className="text-black dark:text-white h-12 px-5 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                               >
-                                <Calendar className="w-4 h-4 mr-2" />
+                                <Calendar className="w-4 h-4 mr-2 icon" />
                                 Reschedule
                               </DropdownMenuItem>
                             )}
-                            <DropdownMenuItem className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-gray-800" onClick={() => handleJoinMeeting(meeting.meetingLink)}>
-                              <Video className="w-4 h-4 mr-2" />
+                            <DropdownMenuItem className="text-black dark:text-white h-12 px-5 cursor-pointer hover:bg-gray-100 dark:hover:bg-black" onClick={() => handleJoinMeeting(meeting.meetingLink)}>
+                              <Video className="w-4 h-4 mr-2 icon" />
                               Join Meeting
                             </DropdownMenuItem>
                             {user && user.id && meeting.assignedBy?.id === user.id && (
                               <DropdownMenuItem 
                                 onClick={() => handleDeleteMeeting(meeting.id)}
-                                className="text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                                className="text-red-600 hover:bg-red-500 hover:text-white px-5 h-12 cursor-pointer dark:hover:bg-red-900"
                               >
-                                <Trash2 className="w-4 h-4 mr-2" />
+                                <Trash2 className="w-4 h-4 mr-2 icon" />
                                 Delete Meeting
                               </DropdownMenuItem>
                             )}
@@ -853,7 +854,7 @@ const Meetings = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+              className=" bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-3xl font-bold text-black dark:text-white mb-6">
@@ -869,7 +870,7 @@ const Meetings = () => {
                     type="text"
                     value={newMeeting.title}
                     onChange={(e) => setNewMeeting({...newMeeting, title: e.target.value})}
-                    className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
+                    className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
                     placeholder="Enter meeting title"
                   />
                 </div>
@@ -881,7 +882,7 @@ const Meetings = () => {
                   <Textarea
                     value={newMeeting.description}
                     onChange={(e) => setNewMeeting({...newMeeting, description: e.target.value})}
-                    className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
+                    className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
                     placeholder="Enter meeting description"
                     rows="3"
                   />
@@ -893,13 +894,13 @@ const Meetings = () => {
                       Meeting Type
                     </label> */}
                     <Select value={newMeeting.type} onValueChange={(value) => setNewMeeting({...newMeeting, type: value})}>
-                      <SelectTrigger className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white">
+                      <SelectTrigger className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white">
                         <SelectValue placeholder="Select meeting type" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700">
-                        <SelectItem value="online">Online</SelectItem>
-                        <SelectItem value="in-person">in-person</SelectItem>
-                        <SelectItem value="hybrid">Hybrid</SelectItem>
+                      <SelectContent className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
+                        <SelectItem className={'cursor-pointer h-10 px-5'} value="online">Online</SelectItem>
+                        <SelectItem className={'cursor-pointer h-10 px-5'} value="in-person">in-person</SelectItem>
+                        <SelectItem className={'cursor-pointer h-10 px-5'} value="hybrid">Hybrid</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -912,7 +913,7 @@ const Meetings = () => {
                       type="text"
                       value={newMeeting.location}
                       onChange={(e) => setNewMeeting({...newMeeting, location: e.target.value})}
-                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
+                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
                       placeholder="Enter location or platform"
                     />
                   </div>
@@ -932,11 +933,11 @@ const Meetings = () => {
                           setShowAssignedToSuggestions(true)
                         }
                       }}
-                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
+                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
                       placeholder="Assign To Person"
                     />
                     {showAssignedToSuggestions && assignedToSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                         {assignedToSuggestions.map((user) => (
                           <div
                             key={user.id}
@@ -975,7 +976,7 @@ const Meetings = () => {
                       type="date"
                       value={newMeeting.startDate}
                       onChange={(e) => setNewMeeting({...newMeeting, startDate: e.target.value})}
-                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
+                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
                     />
                   </div>
 
@@ -987,7 +988,7 @@ const Meetings = () => {
                       type="date"
                       value={newMeeting.endDate}
                       onChange={(e) => setNewMeeting({...newMeeting, endDate: e.target.value})}
-                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
+                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
                     />
                   </div>
                 </div>
@@ -1000,7 +1001,7 @@ const Meetings = () => {
                     type="url"
                     value={newMeeting.meetingLink}
                     onChange={(e) => setNewMeeting({...newMeeting, meetingLink: e.target.value})}
-                    className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
+                    className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
                     placeholder="Enter meeting link"
                   />
                 </div>
@@ -1020,10 +1021,10 @@ const Meetings = () => {
                           setShowAttendeeSuggestions(true)
                         }
                       }}
-                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
+                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
                     />
                     {showAttendeeSuggestions && attendeeSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                         {attendeeSuggestions.map((user) => (
                           <div
                             key={user.id}
@@ -1073,7 +1074,7 @@ const Meetings = () => {
                               onClick={() => handleRemoveAttendee(attendee.id)}
                               className="text-gray-500 hover:text-red-500"
                             >
-                              <X className="w-4 h-4" />
+                              <X className="w-4 h-4 icon" />
                             </button>
                           </div>
                         ))}
@@ -1093,15 +1094,15 @@ const Meetings = () => {
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
-                      className="flex-1 border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white"
+                      className="flex-1 border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
                       placeholder="Add a tag and press Enter"
                     />
                     <Button
                       type="button"
                       onClick={handleAddTag}
-                      className={getButtonClasses('secondary', 'sm', '')}
+                      className={getButtonClasses('secondary', 'sm', 'w-12 dark:bg-white dark:text-black')}
                     >
-                      Add
+                      <Plus className="w-4 h-4 icon" />
                     </Button>
                   </div>
                   
@@ -1112,14 +1113,14 @@ const Meetings = () => {
                         {newMeeting.tags.map((tag, index) => (
                           <div
                             key={index}
-                            className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 px-3 py-1 rounded-lg"
+                            className="flex items-center gap-2 bg-gray-100 dark:bg-black px-3 py-1 rounded-lg"
                           >
                             <span className="text-sm text-gray-900 dark:text-gray-100">{tag}</span>
                             <button
                               onClick={() => handleRemoveTag(tag)}
                               className="text-gray-500 hover:text-red-500"
                             >
-                              <X className="w-3 h-3" />
+                              <X className="w-3 h-3 icon" />
                             </button>
                           </div>
                         ))}
@@ -1131,13 +1132,13 @@ const Meetings = () => {
                 <div>
                   {/* Project Selection */}
                   <Select value={newMeeting.projectId} onValueChange={(value) => setNewMeeting({...newMeeting, projectId: value})}>
-                    <SelectTrigger className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white">
+                    <SelectTrigger className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white">
                       <SelectValue placeholder="Select project (optional)" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700">
-                      <SelectItem value="none">No Project</SelectItem>
+                    <SelectContent className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
+                      <SelectItem className={'cursor-pointer h-10 px-5'} value="none">No Project</SelectItem>
                       {projects.map((project) => (
-                        <SelectItem key={project.id} value={project.id}>
+                        <SelectItem className={'cursor-pointer h-10 px-5'} key={project.id} value={project.id}>
                           {project.name}
                         </SelectItem>
                       ))}

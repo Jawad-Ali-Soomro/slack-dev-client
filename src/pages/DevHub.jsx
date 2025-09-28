@@ -204,7 +204,7 @@ const DevHub = () => {
             Start learning, sharing, and building with thousands of developers worldwide
           </p>
           <motion.button 
-            className="px-12 py-4 bg-black text-white rounded-full font-bold text-lg  hover:bg-gray-800 transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
+            className="px-12 py-4 bg-black text-white rounded-full font-bold text-lg  hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

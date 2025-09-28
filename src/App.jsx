@@ -28,7 +28,7 @@ import { Toaster } from 'sonner'
 
 function App() {
   return (
-   <div className="bg-white dark:bg-gray-900">
+   <div className='bg-gray-100 dark:bg-gray-900'>
      <Router>
       <Toaster 
         position="top-center"
@@ -50,7 +50,7 @@ function App() {
           <ChatProvider>
             <CodeCollaborationProvider>
               <SidebarProvider>
-          <ThemeToggle className="fixed bottom-50 right-10 z-50" />
+          <ThemeToggle className="fixed bottom-25 right-10 z-50" />
           <div className="relative">
             <Routes>
             {/* Public Routes */}

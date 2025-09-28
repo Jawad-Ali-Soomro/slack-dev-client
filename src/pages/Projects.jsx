@@ -470,12 +470,12 @@ const Projects = () => {
   // Get status color
   const getStatusColor = (status) => {
     switch (status) {
-      case 'planning': return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+      case 'planning': return 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200'
       case 'active': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
       case 'on_hold': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-      case 'completed': return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+      case 'completed': return 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200'
       case 'cancelled': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+      default: return 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200'
     }
   }
 
@@ -486,18 +486,18 @@ const Projects = () => {
       case 'medium': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
       case 'high': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
       case 'urgent': return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200'
+      default: return 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200'
     }
   }
 
   // Get priority icon
   const getPriorityIcon = (priority) => {
     switch (priority) {
-      case 'low': return <ArrowDown className="w-3 h-3" />
-      case 'medium': return <Minus className="w-3 h-3" />
-      case 'high': return <ArrowUp className="w-3 h-3" />
-      case 'urgent': return <AlertTriangle className="w-3 h-3" />
-      default: return <Minus className="w-3 h-3" />
+      case 'low': return <ArrowDown className="w-3 h-3 icon" />
+      case 'medium': return <Minus className="w-3 h-3 icon" />
+      case 'high': return <ArrowUp className="w-3 h-3 icon" />
+      case 'urgent': return <AlertTriangle className="w-3 h-3 icon" />
+      default: return <Minus className="w-3 h-3 icon" />
     }
   }
 
@@ -516,12 +516,12 @@ const Projects = () => {
   // Get status icon
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'planning': return <Clock className="w-4 h-4" />
-      case 'active': return <CheckCircle className="w-4 h-4" />
-      case 'on_hold': return <Pause className="w-4 h-4" />
-      case 'completed': return <CheckCircle className="w-4 h-4" />
-      case 'cancelled': return <X className="w-4 h-4" />
-      default: return <Clock className="w-4 h-4" />
+      case 'planning': return <Clock className="w-4 h-4 icon" />
+      case 'active': return <CheckCircle className="w-4 h-4 icon" />
+      case 'on_hold': return <Pause className="w-4 h-4 icon" />
+      case 'completed': return <CheckCircle className="w-4 h-4 icon" />
+      case 'cancelled': return <X className="w-4 h-4 icon" />
+      default: return <Clock className="w-4 h-4 icon" />
     }
   }
 
@@ -534,6 +534,9 @@ const Projects = () => {
     const matchesPriority = filterPriority === 'all' || project.priority === filterPriority
     return matchesSearch && matchesStatus && matchesPriority
   })
+
+  console.log(filteredProjects);
+  
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -574,7 +577,8 @@ const Projects = () => {
             
             <Button
               onClick={() => setShowNewProjectPopup(true)}
-              className={getButtonClasses('primary', 'md', 'flex items-center gap-2')}
+            className={'w-[200px] rounded-xl rounded-xl h-12'}
+
             >
               <Plus className={ICON_SIZES.sm} />
               New Project
@@ -585,50 +589,50 @@ const Projects = () => {
         {/* Stats Cards */}
         {stats && (
           <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl border-2 border-gray-200 dark:border-gray-700 p-6">
+            <div className="bg-white dark:bg-black rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Projects</p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalProjects}</p>
                 </div>
-                <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-full">
-                  <CheckCircle className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+                <div className="p-3 bg-gray-100 dark:bg-black rounded-full">
+                  <CheckCircle className="w-6 h-6 text-gray-600 dark:text-gray-400 icon" />
                 </div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl border-2 border-gray-200 dark:border-gray-700 p-6">
+            <div className="bg-white dark:bg-black rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Projects</p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.activeProjects}</p>
                 </div>
                 <div className="p-3 bg-green-100 dark:bg-green-900 rounded-full">
-                  <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
+                  <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400 icon" />
                 </div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl border-2 border-gray-200 dark:border-gray-700 p-6">
+            <div className="bg-white dark:bg-black rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Completed</p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.completedProjects}</p>
                 </div>
-                <div className="p-3 bg-gray-100 dark:bg-gray-800 rounded-full">
-                  <CheckCircle className="w-6 h-6 text-gray-600 dark:text-gray-400" />
+                <div className="p-3 bg-gray-100 dark:bg-black rounded-full">
+                  <CheckCircle className="w-6 h-6 text-gray-600 dark:text-gray-400 icon" />
                 </div>
               </div>
             </div>
             
-            <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl border-2 border-gray-200 dark:border-gray-700 p-6">
+            <div className="bg-white dark:bg-black rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Progress</p>
                   <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.averageProgress}%</p>
                 </div>
                 <div className="p-3 bg-purple-100 dark:bg-purple-900 rounded-full">
-                  <Clock className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                  <Clock className="w-6 h-6 text-purple-600 dark:text-purple-400 icon" />
                 </div>
               </div>
             </div>
@@ -639,41 +643,41 @@ const Projects = () => {
         <motion.div variants={itemVariants} className="flex flex-wrap justify-start items-center gap-4 mb-6">
           <div className="">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon" />
               <Input
                 type="text"
                 placeholder="Search projects..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={getInputClasses('default', 'md', 'pl-10 w-[350px]')}
+                className={getInputClasses('default', 'md', 'pl-10 w-[350px] h-13')}
               />
             </div>
           </div>
           
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-40 bg-white dark:bg-gray-900">
+            <SelectTrigger className="w-40 bg-white dark:bg-black h-13">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="planning">Planning</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="on_hold">On Hold</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="cancelled">Cancelled</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="all">All Status</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="planning">Planning</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="active">Active</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="on_hold">On Hold</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="completed">Completed</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="cancelled">Cancelled</SelectItem>
             </SelectContent>
           </Select>
           
           <Select value={filterPriority} onValueChange={setFilterPriority}>
-            <SelectTrigger className="w-40 bg-white dark:bg-gray-900">
+            <SelectTrigger className="w-40 bg-white dark:bg-black h-13">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Priority</SelectItem>
-              <SelectItem value="low">Low</SelectItem>
-              <SelectItem value="medium">Medium</SelectItem>
-              <SelectItem value="high">High</SelectItem>
-              <SelectItem value="urgent">Urgent</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="all">All Priority</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="low">Low</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="medium">Medium</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="high">High</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="urgent">Urgent</SelectItem>
             </SelectContent>
           </Select>
         </motion.div>
@@ -682,7 +686,7 @@ const Projects = () => {
         <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
             Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="bg-white dark:bg-gray-900 rounded-lg shadow-xl border-2 border-gray-200 dark:border-gray-700 p-6 animate-pulse">
+              <div key={index} className="bg-white dark:bg-black rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6 animate-pulse">
                 <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
                 <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
                 <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
@@ -700,14 +704,14 @@ const Projects = () => {
           ) : filteredProjects.length === 0 ? (
             <div className="col-span-full text-center py-12">
               <div className="text-gray-400 dark:text-gray-600 mb-4">
-                <CheckCircle className="w-16 h-16 mx-auto" />
+                <CheckCircle className="w-16 h-16 mx-auto icon" />
               </div>
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No projects found</h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">Get started by creating your first project</p>
               <Button
                 onClick={() => setShowNewProjectPopup(true)}
               >
-                <Plus className="w-4 h-4 mr-2" />
+                <Plus className="w-4 h-4 mr-2 icon" />
                 Create Project
               </Button>
             </div>
@@ -716,11 +720,11 @@ const Projects = () => {
               <motion.div
                 key={project.id}
                 variants={itemVariants}
-                className="bg-white dark:bg-gray-900 rounded-lg shadow-xl border-2 border-gray-200 dark:border-gray-700 p-6 hover:shadow-2xl transition-shadow duration-300"
+                className="dark:bg-gray-900 rounded-lg bg-white border  p-6 transition-shadow duration-300"
               >
                 {/* Project Header */}
                 <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
+                  <div className="flex-1 h-12">
                     <div className="flex items-center gap-3 mb-2">
                       {project.logo && (
                         <img
@@ -742,9 +746,9 @@ const Projects = () => {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleViewProject(project)}
-                      className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 w-12"
                     >
-                      <Eye className="w-4 h-4" />
+                      <Eye className="w-4 h-4 icon" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -754,42 +758,42 @@ const Projects = () => {
                         setProjectProgress(project.progress || 0)
                         setShowProgressModal(true)
                       }}
-                      className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                      className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 w-12"
                     >
-                      <TrendingUp className="w-4 h-4" />
+                      <TrendingUp className="w-4 h-4 icon" />
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm" className="p-2">
-                          <MoreVertical className="w-4 h-4" />
+                          <MoreVertical className="w-4 h-4 icon" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleViewProject(project)}>
-                          <Eye className="w-4 h-4 mr-2" />
+                        <DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => handleViewProject(project)}>
+                          <Eye className="w-4 h-4 mr-2 icon" />
                           View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Edit className="w-4 h-4 mr-2" />
+                        <DropdownMenuItem className="h-10 px-5 cursor-pointer">
+                          <Edit className="w-4 h-4 mr-2 icon" />
                           Edit Project
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => {
+                        <DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => {
                           setSelectedProject(project)
                           setShowMembersModal(true)
                         }}>
-                          <Users className="w-4 h-4 mr-2" />
+                          <Users className="w-4 h-4 mr-2 icon" />
                           Manage Members
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => {
+                        <DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => {
                           setSelectedProject(project)
                           setShowLinksModal(true)
                         }}>
-                          <Link className="w-4 h-4 mr-2" />
+                          <Link className="w-4 h-4 mr-2 icon" />
                           Manage Links
                         </DropdownMenuItem>
-                        <DropdownMenuItem 
+                        <DropdownMenuItem className="h-10 px-5 cursor-pointer text-red-600" 
                           onClick={() => handleDeleteProject(project.id)}
-                          className="text-red-600"
+                       
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
                           Delete
@@ -828,7 +832,7 @@ const Projects = () => {
                 {project.teamId && (
                   <div className="mb-4">
                     <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm">
-                      <Users className="w-4 h-4" />
+                      <Users className="w-4 h-4 icon" />
                       <span>Team: {project.teamId.name}</span>
                     </div>
                   </div>
@@ -841,11 +845,11 @@ const Projects = () => {
                     <span>{project?.members.length || 0} members</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <CheckCircle className="w-4 h-4" />
+                    <CheckCircle className="w-4 h-4 icon" />
                     <span>{project?.tasks.length || 0} tasks</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <Calendar className="w-4 h-4" />
+                    <Calendar className="w-4 h-4 icon" />
                     <span>{project?.meetings.length || 0} meetings</span>
                   </div>
                 </div>
@@ -856,9 +860,9 @@ const Projects = () => {
                     {project.tags.slice(0, 3).map((tag, index) => (
                       <span
                         key={index}
-                        className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-full text-xs"
+                        className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-black text-gray-700 dark:text-gray-300 rounded-full text-xs"
                       >
-                        <Tag className="w-3 h-3 mr-1" />
+                        <Tag className="w-3 h-3 mr-1 icon" />
                         {tag}
                       </span>
                     ))}
@@ -871,13 +875,13 @@ const Projects = () => {
                 )}
 
                 {/* Project Footer */}
-                <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between pt-4 border-t icon border-gray-200 dark:border-gray-700">
                   <div className="flex items-center gap-2">
                     <div className="flex -space-x-2">
                       {project.members?.slice(0, 3).map((member, index) => (
                         <div
                           key={index}
-                          className="w-6 h-6 rounded-full border-2 border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:scale-110 transition-transform"
+                          className="w-10 h-10 rounded-full border-2 border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:scale-110 transition-transform"
                           onClick={() => handleUserAvatarClick(member.user._id)}
                           title={member.user.username}
                         >
@@ -890,7 +894,7 @@ const Projects = () => {
                         </div>
                       ))}
                       {project.members?.length > 3 && (
-                        <div className="w-6 h-6 rounded-full border-2 border-white dark:border-gray-900 bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
+                        <div className="w-6 h-6 rounded-full border-2 border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
                           +{project.members.length - 3}
                         </div>
                       )}
@@ -918,7 +922,7 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
@@ -927,11 +931,11 @@ const Projects = () => {
                   onClick={() => setShowNewProjectPopup(false)}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-6 h-6 icon" />
                 </button>
               </div>
 
-              <form onSubmit={handleCreateProject} className="space-y-6">
+              <form onSubmit={handleCreateProject} className="space-y-2">
                 {/* Project Name and Description */}
                 <div className="grid grid-cols-1 gap-4">
                   <div>
@@ -939,7 +943,7 @@ const Projects = () => {
                       value={newProject.name}
                       onChange={(e) => setNewProject({...newProject, name: e.target.value})}
                       placeholder="Project name *"
-                      className="w-full"
+                      className="w-full h-12 rounded-lg"
                       required
                     />
                   </div>
@@ -948,20 +952,20 @@ const Projects = () => {
                       value={newProject.description}
                       onChange={(e) => setNewProject({...newProject, description: e.target.value})}
                       placeholder="Project description *"
-                      className="w-full"
+                      className="w-full h-12 rounded-lg"
                       rows="3"
                       required
                     />
                   </div>
                   <div>
                     <Select value={newProject.teamId || "none"} onValueChange={(value) => setNewProject({...newProject, teamId: value === "none" ? "" : value})}>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full h-12">
                         <SelectValue placeholder="Select Team (Optional)" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="none">No Team</SelectItem>
+                        <SelectItem className={'px-5 h-10 cursor-pointer'} value="none">No Team</SelectItem>
                         {teams.map((team) => (
-                          <SelectItem key={team.id} value={team.id}>
+                          <SelectItem className={'px-5 h-10 cursor-pointer'} key={team.id} value={team.id}>
                             {team.name}
                           </SelectItem>
                         ))}
@@ -1011,7 +1015,7 @@ const Projects = () => {
                       />
                       <label
                         htmlFor="logo-upload"
-                        className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700"
+                        className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-gray-700"
                       >
                         <Camera className="w-4 h-4 mr-2" />
                         {newProject.logo ? 'Change Logo' : 'Upload Logo'}
@@ -1027,28 +1031,28 @@ const Projects = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Select value={newProject.status} onValueChange={(value) => setNewProject({...newProject, status: value})}>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full h-12">
                         <SelectValue placeholder="Status" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="planning">Planning</SelectItem>
-                        <SelectItem value="active">Active</SelectItem>
-                        <SelectItem value="on_hold">On Hold</SelectItem>
-                        <SelectItem value="completed">Completed</SelectItem>
-                        <SelectItem value="cancelled">Cancelled</SelectItem>
+                        <SelectItem className={'px-5 h-10 cursor-pointer'} value="planning">Planning</SelectItem>
+                        <SelectItem className={'px-5 h-10 cursor-pointer'} value="active">Active</SelectItem>
+                        <SelectItem className={'px-5 h-10 cursor-pointer'} value="on_hold">On Hold</SelectItem>
+                        <SelectItem className={'px-5 h-10 cursor-pointer'} value="completed">Completed</SelectItem>
+                        <SelectItem className={'px-5 h-10 cursor-pointer'} value="cancelled">Cancelled</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
                     <Select value={newProject.priority} onValueChange={(value) => setNewProject({...newProject, priority: value})}>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className="w-full h-12">
                         <SelectValue placeholder="Priority" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="low">Low</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="high">High</SelectItem>
-                        <SelectItem value="urgent">Urgent</SelectItem>
+                        <SelectItem className={'px-5 h-10 cursor-pointer'} value="low">Low</SelectItem>
+                        <SelectItem className={'px-5 h-10 cursor-pointer'} value="medium">Medium</SelectItem>
+                        <SelectItem className={'px-5 h-10 cursor-pointer'} value="high">High</SelectItem>
+                        <SelectItem className={'px-5 h-10 cursor-pointer'} value="urgent">Urgent</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -1061,7 +1065,7 @@ const Projects = () => {
                       value={newProject.startDate}
                       onChange={(e) => setNewProject({...newProject, startDate: e.target.value})}
                       placeholder="Start date *"
-                      className="w-full"
+                      className="w-full h-12 rounded-lg"
                       required
                     />
                   </div>
@@ -1071,7 +1075,7 @@ const Projects = () => {
                       value={newProject.endDate}
                       onChange={(e) => setNewProject({...newProject, endDate: e.target.value})}
                       placeholder="End date"
-                      className="w-full"
+                      className="w-full h-12 rounded-lg"
                     />
                   </div>
                 </div>
@@ -1083,10 +1087,10 @@ const Projects = () => {
                       value={memberSearch}
                       onChange={(e) => handleMemberSearch(e.target.value)}
                       placeholder="Add team members"
-                      className="w-full"
+                      className="w-full h-12 rounded-lg"
                     />
                     {showMemberSuggestions && memberSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
                         {memberSuggestions.map((user) => (
                           <div
                             key={user.id}
@@ -1115,7 +1119,7 @@ const Projects = () => {
                       {newProject.members.map((member) => (
                         <span
                           key={member.id}
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full text-sm"
+                          className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200 rounded-full text-sm"
                         >
                           <img
                             {...getAvatarProps(member.avatar, member.username)}
@@ -1143,34 +1147,34 @@ const Projects = () => {
                       value={newLink.title}
                       onChange={(e) => setNewLink({...newLink, title: e.target.value})}
                       placeholder="Link title"
-                      className="flex-1"
+                      className="flex-1 h-12 rounded-lg"
                     />
                     <Input
                       value={newLink.url}
                       onChange={(e) => setNewLink({...newLink, url: e.target.value})}
                       placeholder="URL"
-                      className="flex-1"
+                      className="flex-1 h-12 rounded-lg"
                     />
                     <Select value={newLink.type} onValueChange={(value) => setNewLink({...newLink, type: value})}>
-                      <SelectTrigger className="w-32">
+                      <SelectTrigger className="w-32 h-12 cursor-pointer">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="repository">Repository</SelectItem>
-                        <SelectItem value="documentation">Documentation</SelectItem>
-                        <SelectItem value="design">Design</SelectItem>
-                        <SelectItem value="other">Other</SelectItem>
+                        <SelectItem className={'px-5 h-10 cursor-pointer'} value="repository">Repository</SelectItem>
+                        <SelectItem className={'px-5 h-10 cursor-pointer'} value="documentation">Documentation</SelectItem>
+                        <SelectItem className={'px-5 h-10 cursor-pointer'} value="design">Design</SelectItem>
+                        <SelectItem className={'px-5 h-10 cursor-pointer'} value="other">Other</SelectItem>
                       </SelectContent>
                     </Select>
-                    <Button type="button" onClick={handleAddLink} variant="outline">
-                      Add
+                    <Button type="button" className={'h-12 w-12'} onClick={handleAddLink} variant="outline">
+                      <Plus />
                     </Button>
                   </div>
                   
                   {newProject.links.length > 0 && (
                     <div className="space-y-2">
                       {newProject.links.map((link) => (
-                        <div key={link.id} className="flex items-center justify-between p-2 bg-gray-100 dark:bg-gray-800 rounded">
+                        <div key={link.id} className="flex items-center justify-between p-2 bg-gray-100 dark:bg-black rounded">
                           <div className="flex items-center gap-2">
                             <ExternalLink className="w-4 h-4 text-gray-500" />
                             <span className="text-sm font-medium">{link.title}</span>
@@ -1196,7 +1200,7 @@ const Projects = () => {
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
                       placeholder="Add a tag"
-                      className="flex-1"
+                      className="flex-1 h-12 rounded-lg"
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                     />
                     <Button type="button" onClick={handleAddTag} variant="outline">
@@ -1241,19 +1245,19 @@ const Projects = () => {
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex gap-3 pt-4 border-t icon border-gray-200 dark:border-gray-700">
                   <Button
                     type="button"
                     variant="outline"
                     onClick={() => setShowNewProjectPopup(false)}
-                    className="flex-1"
+                    className="flex-1 h-12 rounded-lg"
                     disabled={loading}
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    className="flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-lg"
                     disabled={loading}
                   >
                     {loading ? (
@@ -1285,7 +1289,7 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-6">
@@ -1302,7 +1306,7 @@ const Projects = () => {
                     onClick={() => setShowProjectDetails(false)}
                     className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                   >
-                    <X className="w-6 h-6" />
+                    <X className="w-6 h-6 icon" />
                   </button>
                 </div>
 
@@ -1337,7 +1341,7 @@ const Projects = () => {
                       <div>
                         <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Team</h4>
                         <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                          <Users className="w-4 h-4" />
+                          <Users className="w-4 h-4 icon" />
                           <span>{selectedProject.teamId.name}</span>
                         </div>
                       </div>
@@ -1363,7 +1367,7 @@ const Projects = () => {
                           {selectedProject.tags.map((tag, index) => (
                             <span
                               key={index}
-                              className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-full text-xs"
+                              className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200 rounded-full text-xs"
                             >
                               {tag}
                             </span>
@@ -1379,7 +1383,7 @@ const Projects = () => {
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Members ({selectedProject.members?.length || 0})</h3>
                       <div className="space-y-2 max-h-40 overflow-y-auto">
                         {selectedProject.members?.map((member, index) => (
-                          <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                          <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-lg">
                             <div className="flex items-center gap-2">
                               <img
                                 {...getAvatarProps(member.user?.avatar, member.user?.username)}
@@ -1406,7 +1410,7 @@ const Projects = () => {
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Links ({selectedProject.links?.length || 0})</h3>
                       <div className="space-y-2 max-h-40 overflow-y-auto">
                         {selectedProject.links?.map((link, index) => (
-                          <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                          <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-lg">
                             <div className="flex items-center gap-2">
                               <Link className="w-4 h-4 text-gray-500" />
                               <div>
@@ -1444,7 +1448,7 @@ const Projects = () => {
                     <div className="space-y-2 max-h-60 overflow-y-auto">
                       {selectedProject.tasks?.length > 0 ? (
                         selectedProject.tasks.map((task, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
                             <div className="flex items-center gap-3">
                               <div className={`w-3 h-3 rounded-full ${
                                 task.status === 'completed' ? 'bg-green-500' :
@@ -1462,7 +1466,7 @@ const Projects = () => {
                             </div>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                               task.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                              task.status === 'in_progress' ? 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200' :
+                              task.status === 'in_progress' ? 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200' :
                               task.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
                               'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
                             }`}>
@@ -1482,13 +1486,13 @@ const Projects = () => {
                   {/* Meetings */}
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                      <Calendar className="w-5 h-5" />
+                      <Calendar className="w-5 h-5 icon" />
                       Meetings ({selectedProject.meetings?.length || 0})
                     </h3>
                     <div className="space-y-2 max-h-60 overflow-y-auto">
                       {selectedProject.meetings?.length > 0 ? (
                         selectedProject.meetings.map((meeting, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
                             <div className="flex items-center gap-3">
                               <div className={`w-3 h-3 rounded-full ${
                                 meeting.status === 'completed' ? 'bg-green-500' :
@@ -1506,7 +1510,7 @@ const Projects = () => {
                             </div>
                             <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                               meeting.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                              meeting.status === 'scheduled' ? 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-200' :
+                              meeting.status === 'scheduled' ? 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200' :
                               meeting.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
                               'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
                             }`}>
@@ -1524,13 +1528,13 @@ const Projects = () => {
                   </div>
                 </div>
 
-                <div className="flex gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="flex gap-3 mt-6 pt-4  icon border-gray-200 dark:border-gray-700">
                   <Button
                     onClick={() => {
                       setProjectProgress(selectedProject.progress || 0)
                       setShowProgressModal(true)
                     }}
-                    className="flex-1"
+                    className="flex-1 h-12 rounded-lg"
                   >
                     <TrendingUp className="w-4 h-4 mr-2" />
                     Update Progress
@@ -1540,7 +1544,7 @@ const Projects = () => {
                     onClick={() => {
                       setShowMembersModal(true)
                     }}
-                    className="flex-1"
+                    className="flex-1 h-12 rounded-lg"
                   >
                     <Users className="w-4 h-4 mr-2" />
                     Manage Members
@@ -1550,7 +1554,7 @@ const Projects = () => {
                     onClick={() => {
                       setShowLinksModal(true)
                     }}
-                    className="flex-1"
+                    className="flex-1 h-12 rounded-lg"
                   >
                     <Link className="w-4 h-4 mr-2" />
                     Manage Links
@@ -1558,7 +1562,7 @@ const Projects = () => {
                   <Button
                     variant="outline"
                     onClick={() => handleViewProject(selectedProject)}
-                    className="flex-1"
+                    className="flex-1 h-12 rounded-lg"
                   >
                     <RefreshCw className="w-4 h-4 mr-2" />
                     Refresh
@@ -1582,7 +1586,7 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+              className="bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
@@ -1593,7 +1597,7 @@ const Projects = () => {
                   onClick={() => setShowProgressModal(false)}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-6 h-6 icon" />
                 </button>
               </div>
 
@@ -1616,13 +1620,13 @@ const Projects = () => {
                   <Button
                     variant="outline"
                     onClick={() => setShowProgressModal(false)}
-                    className="flex-1"
+                    className="flex-1 h-12 rounded-lg"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={handleUpdateProgress}
-                    className="flex-1"
+                    className="flex-1 h-12 rounded-lg"
                   >
                     Update Progress
                   </Button>
@@ -1645,7 +1649,7 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+              className="bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-6">
@@ -1657,7 +1661,7 @@ const Projects = () => {
                     onClick={() => setShowMembersModal(false)}
                     className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                   >
-                    <X className="w-6 h-6" />
+                    <X className="w-6 h-6 icon" />
                   </button>
                 </div>
 
@@ -1682,22 +1686,22 @@ const Projects = () => {
                           }
                         }}
                         placeholder="Search users..."
-                        className="flex-1"
+                        className="flex-1 h-12 rounded-lg"
                       />
                       <Select value={memberRole} onValueChange={setMemberRole}>
                         <SelectTrigger className="w-32">
                           <SelectValue placeholder="Role" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="member">Member</SelectItem>
-                          <SelectItem value="admin">Admin</SelectItem>
-                          <SelectItem value="viewer">Viewer</SelectItem>
+                          <SelectItem className={'px-5 h-10 cursor-pointer'} value="member">Member</SelectItem>
+                          <SelectItem className={'px-5 h-10 cursor-pointer'} value="admin">Admin</SelectItem>
+                          <SelectItem className={'px-5 h-10 cursor-pointer'} value="viewer">Viewer</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     
                     {showMemberSuggestions && memberSuggestions.length > 0 && (
-                      <div className="mt-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 max-h-40 overflow-y-auto">
+                      <div className="mt-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-black max-h-40 overflow-y-auto">
                         {memberSuggestions.map((user) => (
                           <div
                             key={user.id}
@@ -1725,7 +1729,7 @@ const Projects = () => {
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Current Members</h3>
                     <div className="space-y-2 max-h-60 overflow-y-auto">
                       {selectedProject.members?.map((member, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
                           <div className="flex items-center gap-3">
                             <img
                               {...getAvatarProps(member.user?.avatar, member.user?.username)}
@@ -1774,7 +1778,7 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+              className="bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-6">
@@ -1786,7 +1790,7 @@ const Projects = () => {
                     onClick={() => setShowLinksModal(false)}
                     className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                   >
-                    <X className="w-6 h-6" />
+                    <X className="w-6 h-6 icon" />
                   </button>
                 </div>
 
@@ -1812,10 +1816,10 @@ const Projects = () => {
                           <SelectValue placeholder="Type" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="repository">Repository</SelectItem>
-                          <SelectItem value="documentation">Documentation</SelectItem>
-                          <SelectItem value="design">Design</SelectItem>
-                          <SelectItem value="other">Other</SelectItem>
+                          <SelectItem className={'px-5 h-10 cursor-pointer'} value="repository">Repository</SelectItem>
+                          <SelectItem className={'px-5 h-10 cursor-pointer'} value="documentation">Documentation</SelectItem>
+                          <SelectItem className={'px-5 h-10 cursor-pointer'} value="design">Design</SelectItem>
+                          <SelectItem className={'px-5 h-10 cursor-pointer'} value="other">Other</SelectItem>
                         </SelectContent>
                       </Select>
                       <Button
@@ -1825,7 +1829,7 @@ const Projects = () => {
                             setNewLink({ title: '', url: '', type: 'other' })
                           }
                         }}
-                        className="flex-1"
+                        className="flex-1 h-12 rounded-lg"
                       >
                         Add Link
                       </Button>
@@ -1837,7 +1841,7 @@ const Projects = () => {
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Current Links</h3>
                     <div className="space-y-2 max-h-60 overflow-y-auto">
                       {selectedProject.links?.map((link, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
                           <div className="flex items-center gap-3">
                             <Link className="w-4 h-4 text-gray-500" />
                             <div>

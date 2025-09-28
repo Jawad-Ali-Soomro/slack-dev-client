@@ -2,31 +2,21 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useCodeCollaboration } from '../contexts/CodeCollaborationContext';
 import { useAuth } from '../contexts/AuthContext';
 import { Button } from './ui/button';
-import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Badge } from './ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { 
   Play, 
   Save, 
-  Download, 
-  Upload, 
-  Settings, 
-  Users, 
-  Maximize2, 
-  Minimize2,
   Copy,
-  Share2,
   Eye,
   EyeOff,
   Square,
   Terminal,
   AlertCircle,
   CheckCircle,
-  Code2,
-  Zap,
-  Monitor
+  WifiHigh,
+  WifiOff
 } from 'lucide-react';
 
 // CodeMirror imports
@@ -307,17 +297,17 @@ const CodeEditor = () => {
   }
 
   return (
-    <div className={`flex flex-col h-[91vh] ${isFullscreen ? 'fixed inset-0 z-50 bg-white dark:bg-gray-900' : ''}`}>
+    <div className={`flex flex-col h-[91vh] ${isFullscreen ? 'fixed inset-0 z-50 bg-white dark:bg-black' : ''}`}>
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center space-x-4">
           <div className="flex items-center space-x-2">
-            <Badge variant={isConnected ? 'default' : 'destructive'}>
-              {isConnected ? 'Connected' : 'Disconnected'}
-            </Badge>
-            <Badge variant="outline">
-              {participants.length} participant{participants.length !== 1 ? 's' : ''}
-            </Badge>
+            <span className='w-[50px] text-green-500 dark:bg-black dark:text-green-500 text-[10px] font-bold h-12 flex items-center justify-center' variant={isConnected ? 'default' : 'destructive'}>
+              {isConnected ? <WifiHigh /> : <WifiOff />}
+            </span>
+            <span className='border w-[120px] text-[10px] font-bold h-12 rounded-lg flex items-center justify-center' variant="outline w-12">
+              {participants.length} Participant{participants.length !== 1 ? 's' : ''}
+            </span>
           </div>
           
           <div className="flex items-center space-x-2">
@@ -326,12 +316,8 @@ const CodeEditor = () => {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="javascript">JavaScript</SelectItem>
-                <SelectItem value="python">Python</SelectItem>
-                <SelectItem value="java">Java</SelectItem>
-                <SelectItem value="cpp">C++</SelectItem>
-                <SelectItem value="csharp">C#</SelectItem>
-                <SelectItem value="c">C</SelectItem>
+                <SelectItem className={'h-9 px-5 cursor-pointer'} value="javascript">JavaScript</SelectItem>
+                <SelectItem className={'h-9 px-5 cursor-pointer'} value="python">Python</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -344,7 +330,7 @@ const CodeEditor = () => {
               onClick={executeCode}
               disabled={isExecuting || !code}
               title={`Run ${compilationService.getLanguageInfo(language)?.name || language} code (Ctrl+Shift+Enter)`}
-              className="bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black shadow-lg transition-all duration-300"
+              className="bg-black w-[150px] hover:bg-black dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black shadow-lg transition-all duration-300"
             >
               {isExecuting ? (
                 <Square className="h-4 w-4 mr-2 animate-pulse" />
@@ -364,9 +350,10 @@ const CodeEditor = () => {
               size="sm"
               onClick={clearOutput}
               title="Clear output"
+              className={'flex items-center justify-center w-12'}
             >
-              <Square className="h-4 w-4 mr-2" />
-              Clear
+              <Square className="h-4 w-4  icon" />
+              {/* Clear */}
             </Button>
           )}
           {/* <Button
@@ -382,8 +369,9 @@ const CodeEditor = () => {
             variant="outline"
             size="sm"
             onClick={() => setShowParticipants(!showParticipants)}
+            className={'w-12 h-12'}
           >
-            {showParticipants ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+            {showParticipants ? <EyeOff className="h-4 w-4 icon" /> : <Eye className="h-4 w-4 icon" />}
           </Button>
           
           <Button
@@ -391,8 +379,9 @@ const CodeEditor = () => {
             size="sm"
             onClick={handleCopy}
             title="Copy code (Ctrl+Shift+C)"
+            className={'w-12 h-12'}
           >
-            <Copy className="h-4 w-4" />
+            <Copy className="h-4 w-4 icon" />
           </Button>
           
           <Button
@@ -400,8 +389,9 @@ const CodeEditor = () => {
             size="sm"
             onClick={handleSave}
             title="Save code (Ctrl+S)"
+            className={'w-12 h-12'}
           >
-            <Save className="h-4 w-4" />
+            <Save className="h-4 w-4 icon" />
           </Button>
 {/*           
           <Button
@@ -418,6 +408,7 @@ const CodeEditor = () => {
               variant="destructive"
               size="sm"
               onClick={() => leaveSession(currentSession._id)}
+              className={'w-[150px] h-12'}
             >
               End Session
             </Button>
@@ -440,8 +431,8 @@ const CodeEditor = () => {
           
           {/* Output Panel */}
           {showOutput && (
-            <div className="border-t bg-gray-50 dark:bg-gray-900">
-              <div className="flex items-center justify-between p-3 border-b bg-gray-100 dark:bg-gray-800">
+            <div className="border-t bg-gray-50 dark:bg-black">
+              <div className="flex items-center justify-between p-3 border-b bg-gray-100 dark:bg-black">
                 <div className="flex items-center space-x-2">
                   <Terminal className="h-4 w-4 text-gray-600 dark:text-gray-400" />
                   <h3 className="text-sm font-medium text-gray-900 dark:text-white">Output</h3>
@@ -491,7 +482,7 @@ const CodeEditor = () => {
               {participants.map((participant) => (
                 <div
                   key={participant._id || participant.id}
-                  className="flex items-center space-x-2 p-2 rounded-lg bg-muted/50"
+                  className="flex items-center space-x-2 p-2 bg-muted/50"
                 >
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={getAvatarUrl(participant.avatar)} />

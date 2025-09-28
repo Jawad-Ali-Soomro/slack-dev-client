@@ -61,9 +61,9 @@ const ChatList = () => {
   }
 
   return (
-    <div className="flex flex-col h-full border-r">
+    <div className="flex flex-col h-full border-r icon">
       {/* Header */}
-      <div className="p-4 border-b">
+      <div className="p-4 border-b icon">
         {/* <div className="flex items-center justify-between mb-4">
           <h2 className="text-xl font-semibold">Chats</h2>
           <div className="flex items-center gap-2">

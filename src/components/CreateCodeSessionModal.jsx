@@ -44,20 +44,11 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
   const languages = [
     { value: 'javascript', label: 'JavaScript', icon: '🟨' },
     { value: 'python', label: 'Python', icon: '🐍' },
-    { value: 'java', label: 'Java', icon: '☕' },
-    { value: 'cpp', label: 'C++', icon: '⚡' },
-    { value: 'html', label: 'HTML', icon: '🌐' },
-    { value: 'css', label: 'CSS', icon: '🎨' },
-    { value: 'json', label: 'JSON', icon: '📄' },
-    { value: 'xml', label: 'XML', icon: '📋' },
-    { value: 'typescript', label: 'TypeScript', icon: '🔷' },
-    { value: 'php', label: 'PHP', icon: '🐘' },
-    { value: 'ruby', label: 'Ruby', icon: '💎' },
-    { value: 'go', label: 'Go', icon: '🐹' }
+  
   ];
 
   const themes = [
-    { value: 'dark', label: 'Dark', preview: 'bg-gray-900' },
+    { value: 'dark', label: 'Dark', preview: 'bg-black' },
     { value: 'light', label: 'Light', preview: 'bg-white' },
     { value: 'monokai', label: 'Monokai', preview: 'bg-purple-900' },
     { value: 'solarized', label: 'Solarized', preview: 'bg-yellow-100' }
@@ -148,7 +139,7 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
             initial={{ backdropFilter: 'blur(0px)' }}
             animate={{ backdropFilter: 'blur(8px)' }}
             exit={{ backdropFilter: 'blur(0px)' }}
-            className="absolute inset-0 bg-black/50 backdrop-blur-md"
+            className="absolute inset-0 bg-black/50 backdrop-blur-md icon" 
             onClick={onClose}
           />
           
@@ -158,9 +149,9 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
             animate={{ scale: 1, opacity: 1, y: 0 }}
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="relative w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden"
+            className="relative w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden border-gray-200 dark:border-gray-700"
           >
-            <Card className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-0 shadow-2xl">
+            <Card className="bg-white/95 dark:bg-black/95 backdrop-blur-xl border-0 shadow-2xl">
               <CardHeader className="relative pb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
@@ -179,7 +170,7 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
                     variant="ghost"
                     size="sm"
                     onClick={onClose}
-                    className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    className="h-8 w-8 p-0 hover:bg-gray-100 dark:hover:bg-black"
                   >
                     <X className="h-4 w-4" />
                   </Button>
@@ -211,7 +202,7 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
                           value={formData.language}
                           onValueChange={(value) => handleInputChange('language', value)}
                         >
-                          <SelectTrigger>
+                          <SelectTrigger className={'px-10 cursor-pointer'}>
                             <SelectValue>
                               <div className="flex items-center space-x-2">
                                 <span>{selectedLanguage?.icon}</span>
@@ -221,8 +212,8 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
                           </SelectTrigger>
                           <SelectContent>
                             {languages.map((lang) => (
-                              <SelectItem key={lang.value} value={lang.value}>
-                                <div className="flex items-center space-x-2">
+                              <SelectItem key={lang.value} className={'h-10 px-10 cursor-pointer'} value={lang.value}>
+                                <div className="flex items-center  space-x-2">
                                   <span>{lang.icon}</span>
                                   <span>{lang.label}</span>
                                 </div>
@@ -299,11 +290,11 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
                     </div>
                     
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg border">
                         <div className="flex items-center space-x-2">
-                          <Globe className="h-4 w-4 text-blue-600" />
+                          <Globe className="h-4 w-4 w-12 text-blue-600 w-12" />
                           <span className="text-sm font-medium">Public Session</span>
-                          <Badge variant={formData.isPublic ? 'default' : 'secondary'}>
+                          <Badge variant={formData.isPublic ? 'default' : 'default'}>
                             {formData.isPublic ? 'Public' : 'Private'}
                           </Badge>
                         </div>
@@ -311,51 +302,55 @@ const CreateCodeSessionModal = ({ isOpen, onClose }) => {
                           type="button"
                           variant="outline"
                           size="sm"
+                          className={'w-12'}
                           onClick={() => handleInputChange('isPublic', !formData.isPublic)}
                         >
-                          {formData.isPublic ? <Globe className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
+                          {formData.isPublic ? <Globe className="h-4 w-4 w-12" /> : <Lock className="h-4 w-4 w-12" />}
                         </Button>
                       </div>
                       
-                      <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg border">
                         <div className="flex items-center space-x-2">
-                          <Users className="h-4 w-4 text-green-600" />
+                          <Users className="h-4 w-4 w-12 text-green-600" />
                           <span className="text-sm font-medium">Allow Anonymous Users</span>
                         </div>
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
+                          className={'w-20'}
                           onClick={() => handleInputChange('allowAnonymous', !formData.allowAnonymous)}
                         >
                           {formData.allowAnonymous ? 'Yes' : 'No'}
                         </Button>
                       </div>
                       
-                      <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg border">
                         <div className="flex items-center space-x-2">
-                          <Clock className="h-4 w-4 text-orange-600" />
+                          <Clock className="h-4 w-4 w-12 text-orange-600" />
                           <span className="text-sm font-medium">Auto-save Changes</span>
                         </div>
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
+                          className={'w-20'}
                           onClick={() => handleInputChange('autoSave', !formData.autoSave)}
                         >
                           {formData.autoSave ? 'Yes' : 'No'}
                         </Button>
                       </div>
                       
-                      <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg border">
                         <div className="flex items-center space-x-2">
-                          <Monitor className="h-4 w-4 text-purple-600" />
+                          <Monitor className="h-4 w-4 w-12 text-purple-600" />
                           <span className="text-sm font-medium">Collaborative Editing</span>
                         </div>
                         <Button
                           type="button"
                           variant="outline"
                           size="sm"
+                          className={'w-20'}
                           onClick={() => handleInputChange('collaborativeEditing', !formData.collaborativeEditing)}
                         >
                           {formData.collaborativeEditing ? 'Yes' : 'No'}

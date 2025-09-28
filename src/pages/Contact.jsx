@@ -24,7 +24,7 @@ const Contact = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center relative pt-30 overflow-hidden bg-gray-50 dark:bg-gray-900 min-h-screen">
+    <div className="flex flex-col items-center justify-center relative pt-30 overflow-hidden bg-gray-50 dark:bg-black min-h-screen">
       <Header />
       
       <motion.main 
@@ -134,7 +134,7 @@ const Contact = () => {
               </div>
               <motion.button
                 type="submit"
-                className="w-full p-4 bg-black text-white rounded-lg font-bold text-sm  hover:bg-gray-800 transition-colors flex items-center justify-center space-x-2 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className="w-full p-4 bg-black text-white rounded-lg font-bold text-sm  hover:bg-black transition-colors flex items-center justify-center space-x-2 dark:bg-white dark:text-black dark:hover:bg-gray-200"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >

@@ -25,7 +25,7 @@ const Chat = () => {
   return (
     <div className='max-h-[90vh]'>
       {/* Header */}
-      <div className="border-b backdrop-blur">
+      <div className="border-b backdrop-blur icon">
         <div className="flex h-14 items-center px-4">
           {/* <div className="flex items-center gap-2">
             <MessageCircle className="h-6 w-6" />

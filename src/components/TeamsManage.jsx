@@ -23,6 +23,7 @@ import {
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
+import { Checkbox } from './ui/checkbox'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu'
 import { toast } from 'sonner'
@@ -226,16 +227,16 @@ const TeamsManage = () => {
   // Get role icon
   const getRoleIcon = (role) => {
     switch (role) {
-      case 'owner': return <Crown className="w-4 h-4 text-yellow-500" />
-      case 'admin': return <Shield className="w-4 h-4 text-blue-500" />
-      default: return <User className="w-4 h-4 text-gray-500" />
+      case 'owner': return <Crown className="w-4 h-4 text-yellow-600 dark:text-yellow-400 icon p2" />
+      case 'admin': return <Shield className="w-4 h-4 text-blue-500 icon" />
+      default: return null
     }
   }
 
   // Get role color
   const getRoleColor = (role) => {
     switch (role) {
-      case 'owner': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+      case 'owner': return 'bg-yellow-500 text-yellow-900 dark:bg-yellow-600 dark:text-yellow-100'
       case 'admin': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
       default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
     }
@@ -281,34 +282,34 @@ const TeamsManage = () => {
         </div>
         <Button
           onClick={() => setShowNewTeamModal(true)}
-          className=""
+            className={'w-[200px] rounded-xl h-12'}
         >
-          <Plus className="w-4 h-4 mr-2" />
+          <Plus className="w-4 h-4 mr-2 icon" />
           Create Team
         </Button>
       </div>
 
       {/* Filters */}
       <div className="flex gap-4 mb-6 justify-start items-center">
-        <div className="bg-white dark:bg-gray-900">
+        <div className="bg-white dark:bg-black">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon" />
             <Input
               placeholder="Search teams..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-[350px]"
+              className="pl-10 w-[350px] h-13"
             />
           </div>
         </div>
         <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-48 bg-white dark:bg-gray-900">
+          <SelectTrigger className="w-48 bg-white dark:bg-black h-13">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Teams</SelectItem>
-            <SelectItem value="active">Active</SelectItem>
-            <SelectItem value="inactive">Inactive</SelectItem>
+            <SelectItem className={'h-10 px-5'} value="all">All Teams</SelectItem>
+            <SelectItem className={'h-10 px-5'} value="active">Active</SelectItem>
+            <SelectItem className={'h-10 px-5'} value="inactive">Inactive</SelectItem>
           </SelectContent>
         </Select>
       </div>
@@ -320,7 +321,7 @@ const TeamsManage = () => {
         </div>
       ) : filteredTeams.length === 0 ? (
         <div className="text-center py-12">
-          <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <Users className="w-16 h-16 text-gray-400 mx-auto mb-4 icon" />
           <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
             No teams found
           </h3>
@@ -329,7 +330,7 @@ const TeamsManage = () => {
           </p>
           {!searchTerm && (
             <Button onClick={() => setShowNewTeamModal(true)}>
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4 mr-2 icon" />
               Create Team
             </Button>
           )}
@@ -345,7 +346,7 @@ const TeamsManage = () => {
             <motion.div
               key={team.id}
               variants={itemVariants}
-              className="bg-white dark:bg-gray-900 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6  transition-shadow duration-300"
+              className="bg-white dark:bg-gray-900 rounded-lg border p-6  transition-shadow duration-300"
             >
               {/* Team Header */}
               <div className="flex items-start justify-between mb-4">
@@ -367,12 +368,12 @@ const TeamsManage = () => {
                     }}
                     className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                   >
-                    <Eye className="w-4 h-4" />
+                    <Eye className="w-4 h-4 icon" />
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm" className="p-2">
-                        <MoreVertical className="w-4 h-4" />
+                        <MoreVertical className="w-4 h-4 icon" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -380,14 +381,14 @@ const TeamsManage = () => {
                         setSelectedTeam(team)
                         setShowTeamDetails(true)
                       }}>
-                        <Eye className="w-4 h-4 mr-2" />
+                        <Eye className="w-4 h-4 mr-2 icon" />
                         View Details
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => {
                         setSelectedTeam(team)
                         setShowMembersModal(true)
                       }}>
-                        <Users className="w-4 h-4 mr-2" />
+                        <Users className="w-4 h-4 mr-2 icon" />
                         Manage Members
                       </DropdownMenuItem>
                       <DropdownMenuItem 
@@ -407,8 +408,8 @@ const TeamsManage = () => {
                 <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(team.isActive)}`}>
                   {team.isActive ? 'Active' : 'Inactive'}
                 </span>
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300">
-                  <Users className="w-3 h-3" />
+                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-black text-gray-700 dark:text-gray-300">
+                  <Users className="w-3 h-3 icon" />
                   {team.memberCount || team.members?.length || 0} members
                 </span>
               </div>
@@ -416,11 +417,11 @@ const TeamsManage = () => {
               {/* Team Stats */}
               <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                 <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                  <Target className="w-4 h-4" />
+                  <Target className="w-4 h-4 icon" />
                   <span>{team.projects?.length || 0} projects</span>
                 </div>
                 <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                  <Activity className="w-4 h-4" />
+                  <Activity className="w-4 h-4 icon" />
                   <span>Created {new Date(team.createdAt).toLocaleDateString()}</span>
                 </div>
               </div>
@@ -428,15 +429,15 @@ const TeamsManage = () => {
               {/* Team Members Preview */}
               <div className="mb-4">
                 <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Members</h4>
-                <div className="flex -space-x-2">
+                <div className="flex -space-x-1">
                         {team.members?.slice(0, 3).map((member, index) => (
                           <div key={index} className="relative">
                             <img
                               {...getAvatarProps(member.user?.avatar, member.user?.username)}
                               alt={member.user?.username}
-                              className="w-8 h-8 rounded-full object-cover border-2 border-white dark:border-gray-900"
+                              className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-gray-900"
                             />
-                            <div className="absolute -bottom-1 -right-1">
+                            <div className="absolute -bottom-1 -right-1 bg-white">
                               {getRoleIcon(member.role)}
                             </div>
                           </div>
@@ -450,7 +451,7 @@ const TeamsManage = () => {
               </div>
 
               {/* Team Footer */}
-              <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex items-center justify-between pt-4 border-t icon border-gray-200 dark:border-gray-700">
                 <div className="text-xs text-gray-500 dark:text-gray-400">
                   Created by {team.createdBy?.username}
                 </div>
@@ -461,8 +462,9 @@ const TeamsManage = () => {
                     setSelectedTeam(team)
                     setShowMembersModal(true)
                   }}
+                  className={'w-[200px] h-12 rounded-lg'}
                 >
-                  <UserPlus className="w-4 h-4 mr-1" />
+                  <UserPlus className="w-4 h-4 mr-1 icon" />
                   Manage
                 </Button>
               </div>
@@ -484,7 +486,7 @@ const TeamsManage = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full"
+            className="bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
@@ -494,27 +496,23 @@ const TeamsManage = () => {
                   onClick={() => setShowNewTeamModal(false)}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-6 h-6 icon" />
                 </button>
               </div>
 
               <form onSubmit={handleCreateTeam} className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Team Name *
-                  </label>
+                 
                   <Input
                     value={newTeam.name}
                     onChange={(e) => setNewTeam({...newTeam, name: e.target.value})}
                     placeholder="Enter team name"
-                    required
+                    required  
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Description
-                  </label>
+                 
                   <Textarea
                     value={newTeam.description}
                     onChange={(e) => setNewTeam({...newTeam, description: e.target.value})}
@@ -528,32 +526,28 @@ const TeamsManage = () => {
                     Team Settings
                   </label>
                   <div className="space-y-2">
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
+                    <label className="flex items-center space-x-2">
+                      <Checkbox
                         checked={newTeam.settings.allowMemberInvites}
-                        onChange={(e) => setNewTeam({
+                        onCheckedChange={(checked) => setNewTeam({
                           ...newTeam,
-                          settings: {...newTeam.settings, allowMemberInvites: e.target.checked}
+                          settings: {...newTeam.settings, allowMemberInvites: checked}
                         })}
-                        className="mr-2"
                       />
                       <span className="text-sm text-gray-700 dark:text-gray-300">
-                        Allow member invites
+                        Allow Member Invites
                       </span>
                     </label>
-                    <label className="flex items-center">
-                      <input
-                        type="checkbox"
+                    <label className="flex items-center space-x-2">
+                      <Checkbox
                         checked={newTeam.settings.allowProjectCreation}
-                        onChange={(e) => setNewTeam({
+                        onCheckedChange={(checked) => setNewTeam({
                           ...newTeam,
-                          settings: {...newTeam.settings, allowProjectCreation: e.target.checked}
+                          settings: {...newTeam.settings, allowProjectCreation: checked}
                         })}
-                        className="mr-2"
                       />
                       <span className="text-sm text-gray-700 dark:text-gray-300">
-                        Allow project creation
+                        Allow Project Creation
                       </span>
                     </label>
                   </div>
@@ -599,7 +593,7 @@ const TeamsManage = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
@@ -616,7 +610,7 @@ const TeamsManage = () => {
                   onClick={() => setShowTeamDetails(false)}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-6 h-6 icon" />
                 </button>
               </div>
 
@@ -665,7 +659,7 @@ const TeamsManage = () => {
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Members ({selectedTeam.members?.length || 0})</h3>
                   <div className="space-y-2 max-h-60 overflow-y-auto">
                     {selectedTeam.members?.map((member, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
                         <div className="flex items-center gap-3">
                           <img
                             {...getAvatarProps(member.user?.avatar, member.user?.username)}
@@ -702,7 +696,7 @@ const TeamsManage = () => {
                   }}
                   className="flex-1"
                 >
-                  <Users className="w-4 h-4 mr-2" />
+                  <Users className="w-4 h-4 mr-2 icon" />
                   Manage Members
                 </Button>
               </div>
@@ -724,7 +718,7 @@ const TeamsManage = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
@@ -736,12 +730,12 @@ const TeamsManage = () => {
                   onClick={() => setShowMembersModal(false)}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                 >
-                  <X className="w-6 h-6" />
+                  <X className="w-6 h-6 icon" />
                 </button>
               </div>
 
               {/* Add Member Form */}
-              <form onSubmit={handleAddMember} className="mb-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              <form onSubmit={handleAddMember} className="mb-6 p-4 bg-gray-50 dark:bg-black rounded-lg">
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Add New Member</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -790,7 +784,7 @@ const TeamsManage = () => {
                   </div>
                 </div>
                 <Button type="submit" disabled={loading} className="mt-4 w-full">
-                  <UserPlus className="w-4 h-4 mr-2" />
+                  <UserPlus className="w-4 h-4 mr-2 icon" />
                   Add Member
                 </Button>
               </form>
@@ -800,7 +794,7 @@ const TeamsManage = () => {
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Current Members</h3>
                 <div className="space-y-2 max-h-60 overflow-y-auto">
                   {selectedTeam.members?.map((member, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
                       <div className="flex items-center gap-3">
                         <img
                           {...getAvatarProps(member.user?.avatar, member.user?.username)}
@@ -835,7 +829,7 @@ const TeamsManage = () => {
                           onClick={() => handleRemoveMember(member.user.id)}
                           className="text-red-600 hover:text-red-700"
                         >
-                          <UserMinus className="w-4 h-4" />
+                          <UserMinus className="w-4 h-4 icon" />
                         </Button>
                       </div>
                     </div>

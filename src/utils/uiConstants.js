@@ -8,10 +8,10 @@ export const BUTTON_SIZES = {
 }
 
 export const BUTTON_VARIANTS = {
-  primary: 'bg-black text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-200',
-  secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-100 dark:hover:bg-gray-700',
-  outline: 'border-2 border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-gray-800',
-  ghost: 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800',
+  primary: 'bg-black text-white hover:bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200',
+  secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-black dark:text-gray-100 dark:hover:bg-gray-700',
+  outline: 'border-2 border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-black',
+  ghost: 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-black',
   danger: 'bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800'
 }
 
@@ -22,8 +22,8 @@ export const INPUT_SIZES = {
 }
 
 export const INPUT_VARIANTS = {
-  default: 'border-2 border-gray-200 focus:border-black dark:border-gray-700 dark:focus:border-white bg-white dark:bg-gray-800 text-black dark:text-white',
-  error: 'border-2 border-red-500 focus:border-red-600 dark:border-red-600 dark:focus:border-red-500 bg-white dark:bg-gray-800 text-black dark:text-white'
+  default: 'border border-gray-200 focus:border-black dark:border-gray-700 dark:focus:border-white bg-white dark:bg-black text-black dark:text-white',
+  error: 'border border-red-500 focus:border-red-600 dark:border-red-600 dark:focus:border-red-500 bg-white dark:bg-black text-black dark:text-white'
 }
 
 export const ICON_SIZES = {
@@ -59,7 +59,7 @@ export const COLOR_THEME = {
 
 // Standard button classes
 export const getButtonClasses = (variant = 'primary', size = 'md', additionalClasses = '') => {
-  const baseClasses = 'inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none'
+  const baseClasses = 'inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-1 focus:ring-offset-1 disabled:opacity-50 disabled:pointer-events-none'
   const variantClasses = BUTTON_VARIANTS[variant] || BUTTON_VARIANTS.primary
   const sizeClasses = BUTTON_SIZES[size] || BUTTON_SIZES.md
   
@@ -68,7 +68,7 @@ export const getButtonClasses = (variant = 'primary', size = 'md', additionalCla
 
 // Standard input classes
 export const getInputClasses = (variant = 'default', size = 'md', additionalClasses = '') => {
-  const baseClasses = 'w-full rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2'
+  const baseClasses = 'w-full rounded-lg transition-colors focus:outline-none focus:ring-1 focus:ring-offset-1'
   const variantClasses = INPUT_VARIANTS[variant] || INPUT_VARIANTS.default
   const sizeClasses = INPUT_SIZES[size] || INPUT_SIZES.md
   

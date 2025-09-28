@@ -113,7 +113,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white dark:bg-gray-900 rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        className="bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6">
@@ -254,7 +254,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                 {formData.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-gray-900 text-blue-800 dark:text-blue-200 rounded-full text-sm"
+                    className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-black text-blue-800 dark:text-blue-200 rounded-full text-sm"
                   >
                     {tag}
                     <button

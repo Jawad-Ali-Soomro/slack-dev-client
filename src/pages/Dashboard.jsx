@@ -323,7 +323,7 @@ const Dashboard = () => {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ scale: 1.02, y: -2 }}
-      className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 overflow-hidden"
+      className="group relative bg-white dark:bg-black rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 overflow-hidden"
     >
       {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-gray-100/20 dark:bg-gray-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -445,23 +445,16 @@ const Dashboard = () => {
                 className="flex items-center space-x-3"
               >
                 <motion.button
-                  whileHover={{ scale: 1.05 }}
+                  whileHover={{ scale: 1 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={loadDashboardData}
-                  className="flex items-center space-x-2 px-4 py-2 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 hover:shadow-xl transition-all duration-200"
+                  className="flex items-center cursor-pointer space-x-2 px-10 py-4 bg-black dark:bg-white rounded-xl dark:border-gray-700 transition-all duration-200"
                 >
-                  <RefreshCw className="w-4 h-4 text-gray-600 dark:text-gray-400" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Refresh</span>
+                  <RefreshCw className="w-4 h-4 text-white dark:text-black" />
+                  <span className="text-sm font-medium text-white dark:text-black">Refresh</span>
                 </motion.button>
                 
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="flex items-center space-x-2 px-4 py-2 bg-black hover:bg-gray-800 dark:bg-white dark:hover:bg-gray-200 text-white dark:text-black rounded-xl shadow-lg hover:shadow-xl transition-all duration-200"
-                >
-                  <Filter className="w-4 h-4" />
-                  <span className="text-sm font-medium">Filter</span>
-                </motion.button>
+              
               </motion.div>
             </div>
             
@@ -472,7 +465,7 @@ const Dashboard = () => {
               transition={{ delay: 0.5 }}
               className="grid grid-cols-2 md:grid-cols-4 gap-4"
             >
-              <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-black dark:bg-white rounded-full animate-pulse"></div>
                   <div>
@@ -482,7 +475,7 @@ const Dashboard = () => {
                 </div>
               </div>
               
-              <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                   <div>
@@ -492,7 +485,7 @@ const Dashboard = () => {
                 </div>
               </div>
               
-              <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                   <div>
@@ -502,7 +495,7 @@ const Dashboard = () => {
                 </div>
               </div>
               
-              <div className="bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
                   <div>
@@ -595,7 +588,7 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9, duration: 0.6 }}
-            className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 p-8 mb-12 overflow-hidden"
+            className="bg-white/80 dark:bg-black/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 p-8 mb-12 overflow-hidden"
           >
             {/* Header with modern styling */}
             <div className="flex items-center justify-between mb-10">
@@ -637,7 +630,7 @@ const Dashboard = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="p-2 bg-gray-100 dark:bg-gray-800 rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  className="p-2 bg-gray-100 dark:bg-black rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 >
                   <MoreHorizontal className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 </motion.button>
@@ -675,7 +668,7 @@ const Dashboard = () => {
             </div>
                 </div>
               </div>
-              <div className="bg-gray-50/50 dark:bg-gray-800/50 rounded-2xl p-6">
+              <div className="bg-gray-50/50 dark:bg-black/50 rounded-2xl p-6">
             <ResponsiveContainer width="100%" height={400}>
               <LineChart data={weeklyData}>
                     <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" opacity={0.3} />
@@ -818,7 +811,7 @@ const Dashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.5 + index * 0.1 }}
-                      className="flex items-center p-3 bg-white/50 dark:bg-gray-800/50 rounded-xl"
+                      className="flex items-center p-3 bg-white/50 dark:bg-black/50 rounded-xl"
                     >
                       <div
                         className="w-4 h-4 rounded-full mr-3 shadow-sm"
@@ -897,7 +890,7 @@ const Dashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.6 + index * 0.1 }}
-                      className="flex items-center p-3 bg-white/50 dark:bg-gray-800/50 rounded-xl"
+                      className="flex items-center p-3 bg-white/50 dark:bg-black/50 rounded-xl"
                     >
                       <div
                         className="w-4 h-4 rounded-full mr-3 shadow-sm"
@@ -926,7 +919,7 @@ const Dashboard = () => {
             className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8"
           >
             {/* Project Status Distribution */}
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+            <div className="bg-gray-50 dark:bg-black rounded-lg p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Project Status Distribution
@@ -969,7 +962,7 @@ const Dashboard = () => {
             </div>
 
             {/* Project Priority Distribution */}
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+            <div className="bg-gray-50 dark:bg-black rounded-lg p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Project Priority Breakdown
@@ -1006,7 +999,7 @@ const Dashboard = () => {
           {/* Combined Priority & Type Distribution */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
             {/* Task Priority Distribution */}
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+            <div className="bg-gray-50 dark:bg-black rounded-lg p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Task Priority Breakdown
@@ -1027,7 +1020,7 @@ const Dashboard = () => {
             </div>
 
             {/* Meeting Type Distribution */}
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6">
+            <div className="bg-gray-50 dark:bg-black rounded-lg p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Meeting Format Analysis
@@ -1057,7 +1050,7 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="bg-white dark:bg-gray-900 rounded-lg shadow-lg border-2 border-gray-200 dark:border-gray-700 p-6 mt-10"
+          className="bg-white dark:bg-black rounded-lg shadow-lg border-2 border-gray-200 dark:border-gray-700 p-6 mt-10"
         >
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -1073,7 +1066,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center">
+            <div className="bg-gray-50 dark:bg-black rounded-lg p-6 text-center">
               <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
                 {stats.tasksThisWeek}
               </div>
@@ -1084,7 +1077,7 @@ const Dashboard = () => {
                 Development Velocity
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center">
+            <div className="bg-gray-50 dark:bg-black rounded-lg p-6 text-center">
               <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
                 {stats.tasksThisMonth}
               </div>
@@ -1095,7 +1088,7 @@ const Dashboard = () => {
                 Monthly Throughput
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center">
+            <div className="bg-gray-50 dark:bg-black rounded-lg p-6 text-center">
               <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
                 {stats.completionRate}%
               </div>
@@ -1106,7 +1099,7 @@ const Dashboard = () => {
                 Quality Metric
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center">
+            <div className="bg-gray-50 dark:bg-black rounded-lg p-6 text-center">
               <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
                 {stats.meetingsThisWeek}
               </div>
@@ -1117,7 +1110,7 @@ const Dashboard = () => {
                 Collaboration
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center">
+            <div className="bg-gray-50 dark:bg-black rounded-lg p-6 text-center">
               <div className="text-3xl font-bold text-pink-600 dark:text-pink-400 mb-2">
                 {stats.meetingsThisMonth}
               </div>
@@ -1128,7 +1121,7 @@ const Dashboard = () => {
                 Team Sync
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-6 text-center">
+            <div className="bg-gray-50 dark:bg-black rounded-lg p-6 text-center">
               <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
                 {stats.meetingCompletionRate}%
               </div>

@@ -150,7 +150,7 @@ const VerifyEmail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900 dark:via-slate-900 dark:to-indigo-950 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-white dark:bg-black dark:via-slate-900 dark:to-indigo-950 flex items-center justify-center p-6">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="floating-orb w-96 h-96 top-10 left-10 opacity-20"></div>
@@ -222,7 +222,7 @@ const VerifyEmail = () => {
                   value={digit}
                   onChange={(e) => handleOtpChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-12 h-12 text-center text-xl font-bold border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-gray-800 dark:text-white"
+                  className="w-12 h-12 text-center text-xl font-bold border-2 border-gray-200 dark:border-gray-700 rounded-lg focus:outline-none focus:border-blue-500 dark:bg-black dark:text-white"
                 />
               ))}
             </div>

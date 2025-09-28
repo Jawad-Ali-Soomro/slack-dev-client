@@ -4,6 +4,7 @@ import { Eye, EyeOff, Mail, Lock, User } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { authService } from "../services/authService"
+import { Input } from "../components/ui/input"
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -75,7 +76,7 @@ const Signup = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center p-6">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="floating-orb w-96 h-96 top-10 left-10 opacity-20"></div>
@@ -126,13 +127,13 @@ const Signup = () => {
                 Username
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
+                <Input
                   type="text"
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-gray-800 dark:text-white"
+                  className="w-full pl-10 pr-4 py-3"
                   placeholder="Enter your username"
                   required
                 />
@@ -145,13 +146,13 @@ const Signup = () => {
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
+                <Mail className="absolute icon left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-gray-800 dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
                   placeholder="Enter your email"
                   required
                 />
@@ -164,13 +165,13 @@ const Signup = () => {
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Lock className="absolute left-3 top-1/2 icon transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-gray-800 dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-lg focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
                   placeholder="Create a password"
                   required
                 />
@@ -188,7 +189,7 @@ const Signup = () => {
             <motion.button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-black text-white rounded-lg font-bold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
+              className="w-full py-3 bg-black text-white rounded-lg font-bold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
@@ -201,7 +202,7 @@ const Signup = () => {
               <div className="w-full border-t border-gray-200 dark:border-gray-700"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-[rgba(255, 255, 255, 0.1)] dark:bg-gray-900 text-gray-500 uppercase">Or</span>
+              <span className="px-2 bg-[rgba(255, 255, 255, 0.1)] dark:bg-black text-gray-500 uppercase">Or</span>
             </div>
           </motion.div>
 

@@ -245,7 +245,7 @@ int main() {
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="relative">
-          <div className="relative bg-white dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
+          <div className="relative bg-white dark:bg-black rounded-2xl p-8 border border-gray-200 dark:border-gray-700">
             <div className="flex items-center gap-4 mb-4">
               <div className="p-3 bg-black dark:bg-white rounded-lg">
                 <Code2 className="h-8 w-8 text-white dark:text-black" />
@@ -269,7 +269,7 @@ int main() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
           >
-            <Card className="relative overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <Card className="relative overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-black hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">Total Executions</CardTitle>
                 <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
@@ -288,7 +288,7 @@ int main() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
           >
-            <Card className="relative overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <Card className="relative overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-black hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">Successful</CardTitle>
                 <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
@@ -307,7 +307,7 @@ int main() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
           >
-            <Card className="relative overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <Card className="relative overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-black hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">Failed</CardTitle>
                 <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
@@ -326,7 +326,7 @@ int main() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
           >
-            <Card className="relative overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+            <Card className="relative overflow-hidden border border-gray-200 dark:border-gray-700 bg-white dark:bg-black hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
               <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium text-gray-900 dark:text-white">Avg. Time</CardTitle>
                 <div className="p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
@@ -344,7 +344,7 @@ int main() {
         {/* Main Content */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <div className="relative mb-6">
-            <TabsList className="relative grid w-full grid-cols-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-lg">
+            <TabsList className="relative grid w-full grid-cols-4 bg-white dark:bg-black border border-gray-200 dark:border-gray-700 shadow-lg">
               <TabsTrigger 
                 value="compiler" 
                 className="relative cursor-pointer flex items-center gap-2 data-[state=active]:bg-black data-[state=active]:text-white data-[state=active]:dark:bg-white data-[state=active]:dark:text-black transition-all duration-300"
@@ -380,7 +380,7 @@ int main() {
           <TabsContent value="compiler" className="space-y-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Code Editor */}
-              <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+              <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-black shadow-lg">
                 <CardHeader className="pb-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
@@ -442,7 +442,7 @@ int main() {
 
           {/* History Tab */}
           <TabsContent value="history" className="space-y-6">
-            <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+            <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-black shadow-lg">
               <CardHeader className="pb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
@@ -507,7 +507,7 @@ int main() {
                               </Badge>
                             )}
                           </div>
-                          <div className="bg-gray-900 dark:bg-gray-950 rounded p-3 max-h-32 overflow-y-auto">
+                          <div className="bg-black dark:bg-gray-950 rounded p-3 max-h-32 overflow-y-auto">
                             <pre className="text-xs text-gray-100 font-mono whitespace-pre-wrap">
                               {execution.success ? execution.formattedOutput : execution.formattedError}
                             </pre>
@@ -523,7 +523,7 @@ int main() {
 
           {/* Snippets Tab */}
           <TabsContent value="snippets" className="space-y-6">
-            <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+            <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-black shadow-lg">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-black dark:bg-white rounded-lg">
@@ -567,7 +567,7 @@ int main() {
 
           {/* Settings Tab */}
           <TabsContent value="settings" className="space-y-6">
-            <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg">
+            <Card className="border border-gray-200 dark:border-gray-700 bg-white dark:bg-black shadow-lg">
               <CardHeader className="pb-4">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-black dark:bg-white rounded-lg">
@@ -587,7 +587,7 @@ int main() {
                       {supportedLanguages.map(lang => {
                         const info = compilationService.getLanguageInfo(lang);
                         return (
-                          <div key={lang} className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                          <div key={lang} className="flex items-center gap-2 p-3 bg-gray-50 dark:bg-black rounded-lg">
                             <span className="text-xl">{info?.icon}</span>
                             <span className="text-sm font-medium text-gray-900 dark:text-white">{info?.name}</span>
                           </div>

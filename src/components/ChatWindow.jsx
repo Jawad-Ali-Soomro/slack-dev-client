@@ -216,7 +216,7 @@ const ChatWindow = () => {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex-shrink-0 border-b p-4">
+      <div className="flex-shrink-0 border-b icon p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="relative">
@@ -240,13 +240,13 @@ const ChatWindow = () => {
           
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm">
-              <Phone className="h-4 w-4" />
+              <Phone className="h-4 w-4 icon" />
             </Button>
             <Button variant="ghost" size="sm">
-              <Video className="h-4 w-4" />
+              <Video className="h-4 w-4 icon" />
             </Button>
             <Button variant="ghost" size="sm">
-              <Info className="h-4 w-4" />
+              <Info className="h-4 w-4 icon" />
             </Button>
           </div>
         </div>
@@ -291,7 +291,7 @@ const ChatWindow = () => {
                   
                   <div className={`space-y-1 ${isOwn ? 'items-end' : 'items-start'}`}>
                     <div
-                      className={`px-3 py-2 rounded-lg ${
+                      className={`px-5 py-3 rounded-lg ${
                         isOwn
                           ? 'bg-primary text-primary-foreground'
                           : 'bg-muted'
@@ -321,7 +321,7 @@ const ChatWindow = () => {
                             className="h-6 w-6 p-0"
                             onClick={() => handleEditMessage(message)}
                           >
-                            <Edit className="h-3 w-3" />
+                            <Edit className="h-3 w-3 icon" />
                           </Button>
                           <Button
                             variant="ghost"
@@ -382,7 +382,7 @@ const ChatWindow = () => {
         <div ref={messagesEndRef} />
 
         {replyTo && (
-          <div className="border-t p-2 bg-muted/50 absolute w-[100%] bottom-0 left-0 right-0">
+          <div className="border-t p-2 icon bg-muted/50 absolute w-[100%] bottom-0 left-0 right-0">
             <div className="flex items-center justify-between">
               <div className="text-sm">
                 <p className="font-medium">Replying to {replyTo.sender.name}</p>
@@ -423,7 +423,7 @@ const ChatWindow = () => {
         )} */}
 
         {/* Message Input - Fixed at Bottom */}
-        <div className="flex-shrink-0 border-t p-4">
+        <div className="flex-shrink-0 border-t p-4 icon">
         <form onSubmit={handleSendMessage} className="flex items-center gap-2">
           <Button
             type="button"
@@ -448,17 +448,19 @@ const ChatWindow = () => {
             type="button"
             variant="ghost"
             size="sm"
+            className={'w-12'}
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
           >
-            <Smile className="h-4 w-4" />
+            <Smile className="h-4 w-4 icon" />
           </Button>
           
           <Button
             type="submit"
             size="sm"
             disabled={!messageText.trim() || loading}
+            className={'w-12'}
           >
-            <Send className="h-4 w-4" />
+            <Send className="h-4 w-4 icon" />
           </Button>
         </form>
         

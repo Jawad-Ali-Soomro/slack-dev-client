@@ -161,7 +161,7 @@ const Friends = () => {
   )
 
   return (
-    <div className="min-h-screen  p-6">
+    <div className="min-h-screen bg-white dark:bg-black p-6">
       <div className="mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -176,7 +176,7 @@ const Friends = () => {
         {/* Stats Cards */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card>
+            <Card className={'bg-gray-100 dark:bg-gray-900'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Friends</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
@@ -185,7 +185,7 @@ const Friends = () => {
                 <div className="text-2xl font-bold">{stats.totalFriends}</div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className={'bg-gray-100 dark:bg-gray-900'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Pending Received</CardTitle>
                 <Clock className="h-4 w-4 text-muted-foreground" />
@@ -194,7 +194,7 @@ const Friends = () => {
                 <div className="text-2xl font-bold">{stats.pendingReceivedRequests}</div>
               </CardContent>
             </Card>
-            <Card>
+            <Card className={'bg-gray-100 dark:bg-gray-900'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Pending Sent</CardTitle>
                 <Send className="h-4 w-4 text-muted-foreground" />
@@ -221,7 +221,7 @@ const Friends = () => {
 
           {/* Friends Tab */}
           <TabsContent value="friends" className="mt-6">
-            <Card>
+            <Card className={'bg-white dark:bg-black'}>
               <CardHeader>
                 <CardTitle>Your Friends</CardTitle>
                 <CardDescription>
@@ -242,7 +242,7 @@ const Friends = () => {
                         key={friendship.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+                        className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-black"
                       >
                         <Avatar 
                           className="cursor-pointer hover:scale-110 transition-transform"
@@ -280,7 +280,7 @@ const Friends = () => {
 
           {/* Received Requests Tab */}
           <TabsContent value="received" className="mt-6">
-            <Card>
+            <Card className={'bg-white dark:bg-black'}>
               <CardHeader>
                 <CardTitle>Received Requests</CardTitle>
                 <CardDescription>
@@ -347,7 +347,7 @@ const Friends = () => {
 
           {/* Sent Requests Tab */}
           <TabsContent value="sent" className="mt-6">
-            <Card>
+            <Card className={'bg-white dark:bg-black'}>
               <CardHeader>
                 <CardTitle>Sent Requests</CardTitle>
                 <CardDescription>
@@ -402,7 +402,7 @@ const Friends = () => {
 
           {/* Search Tab */}
           <TabsContent value="search" className="mt-6">
-            <Card>
+            <Card className={'bg-white dark:bg-black'}>
               <CardHeader>
                 <CardTitle>Find Friends</CardTitle>
                 <CardDescription>
