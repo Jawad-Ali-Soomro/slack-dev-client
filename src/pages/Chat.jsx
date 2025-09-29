@@ -4,7 +4,6 @@ import ChatList from '../components/ChatList';
 import ChatWindow from '../components/ChatWindow';
 import CreateChatModal from '../components/CreateChatModal';
 import { Button } from '../components/ui/button';
-import { Card } from '../components/ui/card';
 import { Plus, MessageCircle, Wifi, WifiOff } from 'lucide-react';
 
 const Chat = () => {
@@ -25,17 +24,16 @@ const Chat = () => {
   return (
     <div className='max-h-[90vh]'>
       {/* Header */}
-      <div className="border-b backdrop-blur icon">
+      <div className="border-b backdrop-blur icon pt-2">
         <div className="flex h-14 items-center px-4">
-          {/* <div className="flex items-center gap-2">
-            <MessageCircle className="h-6 w-6" />
+          <div className="flex items-center gap-2">
             <h1 className="text-lg font-semibold">Messages</h1>
             {unreadCount > 0 && (
               <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
                 {unreadCount}
               </span>
             )}
-          </div> */}
+          </div>
           
           <div className="ml-auto flex items-center gap-2">
             <div className="flex items-center gap-1 text-sm">

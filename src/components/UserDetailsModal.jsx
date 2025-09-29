@@ -61,7 +61,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'active': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+      case 'active': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 uppercase'
       case 'inactive': return 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200'
       case 'pending': return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
       default: return 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200'

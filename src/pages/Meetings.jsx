@@ -1148,12 +1148,12 @@ const Meetings = () => {
               </div>
 
               <div className="flex gap-3 mt-6 text-white dark:text-black">
-                {/* <Button
+                <Button
                   onClick={() => setShowNewMeetingPopup(false)}
                   className={getButtonClasses('outline', 'md', 'flex-1')}
                 >
                   Cancel
-                </Button> */}
+                </Button>
                 <Button
                   onClick={handleNewMeeting}
                   disabled={loading}

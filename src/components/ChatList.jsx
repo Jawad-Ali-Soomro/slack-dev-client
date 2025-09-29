@@ -64,21 +64,14 @@ const ChatList = () => {
     <div className="flex flex-col h-full border-r icon">
       {/* Header */}
       <div className="p-4 border-b icon">
-        {/* <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">Chats</h2>
+        <div className="flex items-center justify-end mb-4">
           <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="text-xs">
-              {unreadCount} unread
+            <Badge variant="secondary" className="text-xs px-5 py-2">
+              {unreadCount}
             </Badge>
-            <Button
-              size="sm"
-              onClick={() => setShowCreateChat(true)}
-              className="h-8 w-8 p-0"
-            >
-              <Plus className="h-4 w-4" />
-            </Button>
+           
           </div>
-        </div> */}
+        </div>
         
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -112,8 +105,8 @@ const ChatList = () => {
               return (
                 <Card
                   key={chat._id}
-                  className={`cursor-pointer transition-colors hover:bg-muted/50 ${
-                    isActive ? 'bg-muted border-primary' : ''
+                  className={`cursor-pointer border dark:bg-black bg-white ${
+                    isActive ? 'bg-muted border bg-white dark:bg-gray-900 bg-gray-100' : ''
                   }`}
                   onClick={() => setCurrentChat(chat)}
                 >

@@ -253,7 +253,7 @@ const ChatWindow = () => {
       </div>
 
       {/* Messages Container - Takes remaining space */}
-      <div className="flex-1 flex flex-col min-h-0 pb-25">
+      <div className="flex-1 flex flex-col min-h-0 pb-26">
         {/* Messages - Scrollable Area */}
         <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 relative">
         {loading ? (

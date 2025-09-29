@@ -466,7 +466,7 @@ const CodeEditor = () => {
                   </div>
                 ) : (
                   <div className="text-gray-500 dark:text-gray-400 text-sm italic">
-                    No output yet. Click "Run" to execute your JavaScript code.
+                    No output yet. Click "Run" to execute your Python code.
                   </div>
                 )}
               </div>

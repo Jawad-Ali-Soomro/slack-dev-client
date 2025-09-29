@@ -1,16 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { useChat } from '../contexts/ChatContext';
-import { useAuth } from '../contexts/AuthContext';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Label } from './ui/label';
-import { Textarea } from './ui/textarea';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Badge } from './ui/badge';
-import { Checkbox } from './ui/checkbox';
-import { Search, Users, User, X, MessageCircle } from 'lucide-react';
-import { userService } from '../services/userService';
+import React, { useState, useEffect } from "react";
+import { useChat } from "../contexts/ChatContext";
+import { useAuth } from "../contexts/AuthContext";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Label } from "./ui/label";
+import { Textarea } from "./ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Badge } from "./ui/badge";
+import { Checkbox } from "./ui/checkbox";
+import {
+  Search,
+  Users,
+  User,
+  X,
+  MessageCircle,
+  ArrowBigUp,
+} from "lucide-react";
+import { userService } from "../services/userService";
 
 const CreateChatModal = ({ isOpen, onClose }) => {
   const { createChat } = useChat();
@@ -19,18 +26,18 @@ const CreateChatModal = ({ isOpen, onClose }) => {
   const getAvatarUrl = (avatar) => {
     if (!avatar) return null;
     // If avatar is already a full URL, return as is
-    if (avatar.startsWith('http')) return avatar;
+    if (avatar.startsWith("http")) return avatar;
     // If avatar is a relative path, prefix with server URL
-    return `http://localhost:4000${avatar.startsWith('/') ? '' : '/'}${avatar}`;
+    return `http://localhost:4000${avatar.startsWith("/") ? "" : "/"}${avatar}`;
   };
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const [users, setUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
-  const [chatType, setChatType] = useState('direct');
-  const [chatName, setChatName] = useState('');
-  const [chatDescription, setChatDescription] = useState('');
+  const [chatType, setChatType] = useState("direct");
+  const [chatName, setChatName] = useState("");
+  const [chatDescription, setChatDescription] = useState("");
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (isOpen) {
@@ -42,79 +49,86 @@ const CreateChatModal = ({ isOpen, onClose }) => {
     try {
       setLoading(true);
       const response = await userService.getUsers();
-      const filteredUsers = response.users.filter(u => u.id !== user?.id);
+      const filteredUsers = response.users.filter((u) => u.id !== user?.id);
       setUsers(filteredUsers);
     } catch (err) {
-      setError('Failed to load users');
-      console.error('Error loading users:', err);
+      setError("Failed to load users");
+      console.error("Error loading users:", err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleUserSelect = (userId) => {
-    if (chatType === 'direct') {
-      setSelectedUsers([userId]);
-    } else {
-      setSelectedUsers(prev => 
-        prev.includes(userId) 
-          ? prev.filter(id => id !== userId)
-          : [...prev, userId]
-      );
-    }
+    // if (chatType === 'direct') {
+    //   setSelectedUsers([userId]);
+    // } else {
+    setSelectedUsers((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId]
+    );
+    // }
   };
 
   const handleCreateChat = async () => {
     if (selectedUsers.length === 0) {
-      setError('Please select at least one user');
+      setError("Please select at least one user");
       return;
     }
 
-    if (chatType === 'group' && !chatName.trim()) {
-      setError('Please enter a group name');
+    if (chatType === "group" && !chatName.trim()) {
+      setError("Please enter a group name");
       return;
     }
 
     try {
       setLoading(true);
-      setError('');
-      
+      setError("");
+
       await createChat(
         selectedUsers,
         chatType,
-        chatType === 'group' ? chatName : null,
-        chatType === 'group' ? chatDescription : null
+        chatType === "group" ? chatName : null,
+        chatType === "group" ? chatDescription : null
       );
-      
+
       onClose();
       resetForm();
     } catch (err) {
-      setError('Failed to create chat');
-      console.error('Error creating chat:', err);
+      setError("Failed to create chat");
+      console.error("Error creating chat:", err);
     } finally {
       setLoading(false);
     }
   };
 
   const resetForm = () => {
-    setSearchTerm('');
+    setSearchTerm("");
     setSelectedUsers([]);
-    setChatType('direct');
-    setChatName('');
-    setChatDescription('');
-    setError('');
+    setChatType("direct");
+    setChatName("");
+    setChatDescription("");
+    setError("");
   };
 
-  const filteredUsers = users.filter(u => 
-    u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    u.email.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter(
+    (u) =>
+      u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-100000 backdrop-blur-sm" onClick={onClose}>
-      <Card className="w-full max-w-md mx-4" onClick={(e) => e.stopPropagation()}>
+    <div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-100000 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <Card
+        className="w-full max-w-md mx-4 bg-white drak:bg-black"
+        onClick={(e) => e.stopPropagation()}
+      >
         <CardHeader>
           <div className="flex items-center justify-between">
             <CardTitle>Create New Chat</CardTitle>
@@ -123,7 +137,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
             </Button>
           </div>
         </CardHeader>
-        
+
         <CardContent className="space-y-4">
           {error && (
             <div className="p-3 bg-destructive/10 text-destructive text-sm rounded">
@@ -133,23 +147,22 @@ const CreateChatModal = ({ isOpen, onClose }) => {
 
           {/* Chat Type Selection */}
           <div className="space-y-2">
-            <Label>Chat Type</Label>
             <div className="grid grid-cols-2 gap-2 mt-3">
               <Button
                 type="button"
-                variant={chatType === 'direct' ? 'default' : 'outline'}
+                variant={chatType === "direct" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setChatType('direct')}
+                onClick={() => setChatType("direct")}
                 className="flex items-center gap-2 w-full"
               >
-                <MessageCircle className="h-4 w-4" />
+                <ArrowBigUp className="h-4 w-4" />
                 Direct Message
               </Button>
               <Button
                 type="button"
-                variant={chatType === 'group' ? 'default' : 'outline'}
+                variant={chatType === "group" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setChatType('group')}
+                onClick={() => setChatType("group")}
                 className="flex items-center gap-2 w-full"
               >
                 <Users className="h-4 w-4" />
@@ -159,10 +172,9 @@ const CreateChatModal = ({ isOpen, onClose }) => {
           </div>
 
           {/* Group Chat Fields */}
-          {chatType === 'group' && (
+          {chatType === "group" && (
             <div className="space-y-4">
               <div>
-                <Label htmlFor="chatName">Group Name</Label>
                 <Input
                   id="chatName"
                   value={chatName}
@@ -171,7 +183,6 @@ const CreateChatModal = ({ isOpen, onClose }) => {
                 />
               </div>
               <div>
-                <Label htmlFor="chatDescription">Description (Optional)</Label>
                 <Textarea
                   id="chatDescription"
                   value={chatDescription}
@@ -185,7 +196,6 @@ const CreateChatModal = ({ isOpen, onClose }) => {
 
           {/* User Search */}
           <div>
-            <Label>Select Users</Label>
             <div className="relative mt-2">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
@@ -202,10 +212,14 @@ const CreateChatModal = ({ isOpen, onClose }) => {
             <div>
               <Label>Selected Users</Label>
               <div className="flex flex-wrap gap-2 mt-2">
-                {selectedUsers.map(userId => {
-                  const user = users.find(u => u.id === userId);
+                {selectedUsers.map((userId) => {
+                  const user = users.find((u) => u.id === userId);
                   return (
-                    <Badge key={userId} variant="secondary" className="flex items-center gap-1">
+                    <Badge
+                      key={userId}
+                      variant="secondary"
+                      className="flex items-center gap-1 py-2"
+                    >
                       <Avatar className="h-4 w-4">
                         <AvatarImage src={getAvatarUrl(user?.avatar)} />
                         <AvatarFallback className="text-xs">
@@ -240,7 +254,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
                 <p className="text-sm">No users found</p>
               </div>
             ) : (
-              filteredUsers.map(user => (
+              filteredUsers.map((user) => (
                 <div
                   key={user.id}
                   className="flex items-center space-x-3 p-2 rounded hover:bg-muted cursor-pointer"
@@ -258,7 +272,9 @@ const CreateChatModal = ({ isOpen, onClose }) => {
                   </Avatar>
                   <div className="flex-1">
                     <p className="text-sm font-medium">{user.username}</p>
-                    <p className="text-xs text-muted-foreground">{user.email}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {user.email}
+                    </p>
                   </div>
                 </div>
               ))
@@ -270,11 +286,12 @@ const CreateChatModal = ({ isOpen, onClose }) => {
             <Button variant="outline" onClick={onClose}>
               Cancel
             </Button>
-            <Button 
+            <Button
               onClick={handleCreateChat}
               disabled={selectedUsers.length === 0 || loading}
+              className={"w-[150px] font-bold"}
             >
-              {loading ? 'Creating...' : 'Create Chat'}
+              {loading ? "Creating..." : "Create Chat"}
             </Button>
           </div>
         </CardContent>
