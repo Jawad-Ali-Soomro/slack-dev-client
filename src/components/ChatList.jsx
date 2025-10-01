@@ -64,14 +64,7 @@ const ChatList = () => {
     <div className="flex flex-col h-full border-r icon">
       {/* Header */}
       <div className="p-4 border-b icon">
-        <div className="flex items-center justify-end mb-4">
-          <div className="flex items-center gap-2">
-            <Badge variant="secondary" className="text-xs px-5 py-2">
-              {unreadCount}
-            </Badge>
-           
-          </div>
-        </div>
+      
         
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -113,7 +106,7 @@ const ChatList = () => {
                   <CardContent className="p-3">
                     <div className="flex items-center gap-3">
                       <div className="relative">
-                        <Avatar className="h-10 w-10">
+                        <Avatar className="h-10 w-10 border border-gray-300 dark:border-gray-700">
                           <AvatarImage src={getAvatarUrl(chatAvatar)} />
                           <AvatarFallback>
                             {chatName.charAt(0).toUpperCase()}
@@ -134,9 +127,13 @@ const ChatList = () => {
                           </span>
                         </div>
                         
-                        <div className="flex items-center justify-between mt-1">
+                        <div className="flex items-center gap-2 mt-2">
+                            {/* <img className='w-6 h-6 rounded-full' src={getAvatarUrl(chat.lastMessage?.sender?.avatar)} alt="" /> */}
                           <p className="text-xs text-muted-foreground truncate">
                             {chat.lastMessage?.content || 'No messages yet'}
+                            {
+                              // console.log(chat.lastMessage)
+                            }
                           </p>
                           {chat.unreadCount > 0 && (
                             <Badge variant="destructive" className="h-5 w-5 p-0 text-xs flex items-center justify-center">
@@ -145,14 +142,14 @@ const ChatList = () => {
                           )}
                         </div>
                         
-                        {chat.type === 'group' && (
+                        {/* {chat.type === 'group' && (
                           <div className="flex items-center gap-1 mt-1">
                             <Users className="h-3 w-3 text-muted-foreground" />
                             <span className="text-xs text-muted-foreground">
                               {chat.participants.length} members
                             </span>
                           </div>
-                        )}
+                        )} */}
                       </div>
                     </div>
                   </CardContent>

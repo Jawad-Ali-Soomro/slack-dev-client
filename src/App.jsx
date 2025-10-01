@@ -5,7 +5,6 @@ import { AuthProvider } from './contexts/AuthContext'
 import { SidebarProvider } from './contexts/SidebarContext'
 import { NotificationProvider } from './contexts/NotificationContext'
 import { ChatProvider } from './contexts/ChatContext'
-import { CodeCollaborationProvider } from './contexts/CodeCollaborationContext'
 import ProtectedRoute from './components/ProtectedRoute'
 import Indexing from './pages/Indexing'
 import About from './pages/About'
@@ -21,8 +20,6 @@ import Tasks from './pages/Tasks'
 import Meetings from './pages/Meetings'
 import Projects from './pages/Projects'
 import Chat from './pages/Chat'
-import CodeCollaboration from './pages/CodeCollaboration'
-import CompilationDashboard from './components/CompilationDashboard'
 import NotFound from './pages/NotFound'
 import { Toaster } from 'sonner'
 
@@ -31,7 +28,7 @@ function App() {
    <div className='bg-gray-100 dark:bg-gray-900'>
      <Router>
       <Toaster 
-        position="top-center"
+        position="top-right"
         richColors
         closeButton
         toastOptions={{
@@ -48,7 +45,6 @@ function App() {
       <AuthProvider>
         <NotificationProvider>
           <ChatProvider>
-            <CodeCollaborationProvider>
               <SidebarProvider>
           <ThemeToggle className="fixed bottom-25 right-10 z-50" />
           <div className="relative">
@@ -141,29 +137,18 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        <Route 
-          path="/dashboard/code" 
-          element={
-            <ProtectedRoute requireAuth={true}>
-              <CodeCollaboration />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/dashboard/compiler" 
-          element={
-            <ProtectedRoute requireAuth={true}>
-              <CompilationDashboard />
-            </ProtectedRoute>
-          } 
-        />
+       
+       
+       
+       
+      
+       
         
         {/* 404 Route - Must be last */}
         <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
         </SidebarProvider>
-        </CodeCollaborationProvider>
         </ChatProvider>
         </NotificationProvider>
       </AuthProvider>

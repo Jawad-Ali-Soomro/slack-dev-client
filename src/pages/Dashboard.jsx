@@ -404,7 +404,7 @@ const Dashboard = () => {
             )}
           </div>
           <div
-            className={`p-3 rounded-xl ${color} shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}
+            className={`p-3 rounded-lg ${color} shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}
           >
             <Icon className="w-6 h-6 text-white" />
           </div>
@@ -532,7 +532,7 @@ const Dashboard = () => {
                   whileHover={{ scale: 1 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={loadDashboardData}
-                  className="flex items-center cursor-pointer space-x-2 px-10 py-4 bg-black dark:bg-white rounded-xl dark:border-gray-700 transition-all duration-200"
+                  className="flex items-center cursor-pointer space-x-2 px-10 py-4 bg-black dark:bg-white rounded-lg dark:border-gray-700 transition-all duration-200"
                 >
                   <RefreshCw className="w-4 h-4 text-white dark:text-black" />
                   <span className="text-sm font-medium text-white dark:text-black">
@@ -549,7 +549,7 @@ const Dashboard = () => {
               transition={{ delay: 0.5 }}
               className="grid grid-cols-2 md:grid-cols-4 gap-4"
             >
-              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-lg p-4 border border-gray-200/50 dark:border-gray-700/50">
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-black dark:bg-white rounded-full animate-pulse"></div>
                   <div>
@@ -563,7 +563,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-lg p-4 border border-gray-200/50 dark:border-gray-700/50">
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                   <div>
@@ -577,7 +577,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-lg p-4 border border-gray-200/50 dark:border-gray-700/50">
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
                   <div>
@@ -591,7 +591,7 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-xl p-4 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-lg p-4 border border-gray-200/50 dark:border-gray-700/50">
                 <div className="flex items-center space-x-3">
                   <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
                   <div>
@@ -699,7 +699,7 @@ const Dashboard = () => {
                   transition={{ delay: 1.0 }}
                   className="flex items-center space-x-3 mb-3"
                 >
-                  <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
+                  <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
                     <BarChart3 className="w-6 h-6 text-white" />
                   </div>
                   <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
@@ -732,7 +732,7 @@ const Dashboard = () => {
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="p-2 bg-gray-100 dark:bg-black rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                  className="p-2 bg-gray-100 dark:bg-black rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                 >
                   <MoreHorizontal className="w-5 h-5 text-gray-600 dark:text-gray-400" />
                 </motion.button>
@@ -889,7 +889,7 @@ const Dashboard = () => {
               <div className="bg-gradient-to-br from-white/60 to-gray-50/60 dark:from-gray-800/60 dark:to-gray-900/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl">
+                    <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg">
                       <Target className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -944,7 +944,7 @@ const Dashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.5 + index * 0.1 }}
-                      className="flex items-center p-3 bg-white/50 dark:bg-black/50 rounded-xl"
+                      className="flex items-center p-3 bg-white/50 dark:bg-black/50 rounded-lg"
                     >
                       <div
                         className="w-4 h-4 rounded-full mr-3 shadow-sm"
@@ -967,7 +967,7 @@ const Dashboard = () => {
               <div className="bg-gradient-to-br from-white/60 to-gray-50/60 dark:from-gray-800/60 dark:to-gray-900/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200/50 dark:border-gray-700/50">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl">
+                    <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg">
                       <Video className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -1022,7 +1022,7 @@ const Dashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.6 + index * 0.1 }}
-                      className="flex items-center p-3 bg-white/50 dark:bg-black/50 rounded-xl"
+                      className="flex items-center p-3 bg-white/50 dark:bg-black/50 rounded-lg"
                     >
                       <div
                         className="w-4 h-4 rounded-full mr-3 shadow-sm"
@@ -1213,7 +1213,7 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="bg-white dark:bg-black rounded-lg shadow-lg border-2 border-gray-200 dark:border-gray-700 p-6 mt-10"
+          className="bg-white dark:bg-black rounded-lg shadow-lg  dark:border-gray-700 mt-10"
         >
           <div className="flex items-center justify-between mb-8">
             <div>

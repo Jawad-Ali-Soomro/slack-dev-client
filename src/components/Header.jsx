@@ -67,7 +67,7 @@ const Header = () => {
           {/* Login Button - Responsive sizing */}
           <button 
             onClick={() => navigate("/login")}
-            className="font-bold text-xs md:text-sm w-[200px] rounded-xl md:w-[160px] py-5 md:py-4 rounded-full cursor-pointer bg-black text-white uppercase hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
+            className="font-bold text-xs md:text-sm w-[200px] rounded-[25px] md:w-[160px] py-5 md:py-4 rounded-full cursor-pointer bg-black text-white uppercase hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
           >
             Login
           </button>

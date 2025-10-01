@@ -49,9 +49,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: UserIcon },
-    { id: 'projects', label: 'Projects', icon: Briefcase },
-    { id: 'teams', label: 'Teams', icon: Users },
-    { id: 'activities', label: 'Activities', icon: CheckCircle }
+    { id: 'projects', label: 'Projects', icon: Briefcase }
   ]
 
   const formatDate = (dateString) => {
@@ -311,7 +309,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Statistics</h3>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 rounded-xl border border-blue-200/50 dark:border-blue-700/50 hover:shadow-lg transition-shadow duration-200">
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 rounded-lg border border-blue-200/50 dark:border-blue-700/50 hover:shadow-lg transition-shadow duration-200">
                         <div className="flex items-center gap-3 text-blue-600 dark:text-blue-400 mb-3">
                           <div className="p-2 bg-blue-500/10 rounded-lg">
                             <Briefcase className="w-5 h-5" />
@@ -322,7 +320,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                           {user.projects?.length || 0}
                         </p>
                       </div>
-                      <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-6 rounded-xl border border-purple-200/50 dark:border-purple-700/50 hover:shadow-lg transition-shadow duration-200">
+                      <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-6 rounded-lg border border-purple-200/50 dark:border-purple-700/50 hover:shadow-lg transition-shadow duration-200">
                         <div className="flex items-center gap-3 text-purple-600 dark:text-purple-400 mb-3">
                           <div className="p-2 bg-purple-500/10 rounded-lg">
                             <Users className="w-5 h-5" />
@@ -333,28 +331,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                           {user.teams?.length || 0}
                         </p>
                       </div>
-                      <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20 p-6 rounded-xl border border-emerald-200/50 dark:border-emerald-700/50 hover:shadow-lg transition-shadow duration-200">
-                        <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400 mb-3">
-                          <div className="p-2 bg-emerald-500/10 rounded-lg">
-                            <CheckCircle className="w-5 h-5" />
-                          </div>
-                          <span className="font-semibold">Tasks</span>
-                        </div>
-                        <p className="text-3xl font-bold text-emerald-700 dark:text-emerald-300">
-                          {user.tasks?.length || 0}
-                        </p>
-                      </div>
-                      <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 p-6 rounded-xl border border-orange-200/50 dark:border-orange-700/50 hover:shadow-lg transition-shadow duration-200">
-                        <div className="flex items-center gap-3 text-orange-600 dark:text-orange-400 mb-3">
-                          <div className="p-2 bg-orange-500/10 rounded-lg">
-                            <Clock className="w-5 h-5" />
-                          </div>
-                          <span className="font-semibold">Meetings</span>
-                        </div>
-                        <p className="text-3xl font-bold text-orange-700 dark:text-orange-300">
-                          {user.meetings?.length || 0}
-                        </p>
-                      </div>
+                    
                     </div>
                   </div>
                 </div>
@@ -366,14 +343,14 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                   {user.projects && user.projects.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {user.projects.map((project, index) => (
-                        <div key={index} className="bg-white dark:bg-black p-5 rounded-xl border border-gray-200/50 dark:border-gray-700/50 hover:shadow-lg transition-all duration-200 hover:border-blue-300 dark:hover:border-blue-600">
+                        <div key={index} className="bg-white dark:bg-black p-5 rounded-lg border border-gray-200/50 dark:border-gray-700/50 hover:shadow-lg transition-all duration-200 hover:border-blue-300 dark:hover:border-blue-600">
                           <div className="flex items-start gap-4">
                             {project.logo && (
                               <div className="relative">
                                 <img
                                   src={project.logo.startsWith('http') ? project.logo : `http://localhost:4000${project.logo}`}
                                   alt={project.name}
-                                  className="w-12 h-12 rounded-xl object-cover border-2 border-gray-200 dark:border-gray-700 shadow-sm"
+                                  className="w-12 h-12 rounded-lg object-cover border-2 border-gray-200 dark:border-gray-700 shadow-sm"
                                 />
                                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
                               </div>
@@ -412,144 +389,9 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                 </div>
               )}
 
-              {activeTab === 'teams' && (
-                <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Teams</h3>
-                  {user.teams && user.teams.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {user.teams.map((team, index) => (
-                        <div key={index} className="bg-gray-50 dark:bg-black p-4 rounded-lg">
-                          <div className="flex items-start gap-3">
-                            <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-lg flex items-center justify-center">
-                              <Users className="w-5 h-5 text-gray-500" />
-                            </div>
-                            <div className="flex-1">
-                              <h4 className="font-medium text-gray-900 dark:text-white">{team.name}</h4>
-                              <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                                {team.description}
-                              </p>
-                              <div className="flex items-center gap-2 mt-2">
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(team.role)}`}>
-                                  {team.role}
-                                </span>
-                                <span className="text-xs text-gray-500 dark:text-gray-400">
-                                  {team.members} members
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                      <Users className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                      <p>No teams found</p>
-                    </div>
-                  )}
-                </div>
-              )}
+              
 
-              {activeTab === 'activities' && (
-                <div className="space-y-6">
-                  {/* Tasks */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 ml-5">Recent Tasks</h3>
-                    {user.tasks && user.tasks.length > 0 ? (
-                      <div className="space-y-3">
-                        {user.tasks.slice(0, 5).map((task, index) => (
-                          <div key={index} className="bg-gray-50 dark:bg-black p-4 rounded-lg">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <h4 className="font-medium text-gray-900 dark:text-white">{task.title}</h4>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
-                                  {task.projectName && `Project: ${task.projectName}`}
-                                </p>
-                                <div className="flex items-center gap-2 mt-2">
-                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    task.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                                    task.status === 'in_progress' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
-                                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                  }`}>
-                                    {task.status}
-                                  </span>
-                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    task.priority === 'high' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
-                                    task.priority === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                                    'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-                                  }`}>
-                                    {task.priority}
-                                  </span>
-                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(task.role)}`}>
-                                    {task.role}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="text-xs text-gray-500 dark:text-gray-400">
-                                {formatDate(task.createdAt)}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                        <CheckCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                        <p>No tasks found</p>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Meetings */}
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 ml-5">Recent Meetings</h3>
-                    {user.meetings && user.meetings.length > 0 ? (
-                      <div className="space-y-3">
-                        {user.meetings.slice(0, 5).map((meeting, index) => (
-                          <div key={index} className="bg-gray-50 dark:bg-black p-4 rounded-lg">
-                            <div className="flex items-start justify-between">
-                              <div className="flex-1">
-                                <h4 className="font-medium text-gray-900 dark:text-white">{meeting.title}</h4>
-                                <p className="text-sm text-gray-600 dark:text-gray-400">
-                                  {meeting.projectName && `Project: ${meeting.projectName}`}
-                                  {meeting.startDate && ` • ${formatDate(meeting.startDate)}`}
-                                </p>
-                                <div className="flex items-center gap-2 mt-2">
-                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    meeting.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                                    meeting.status === 'scheduled' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
-                                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                  }`}>
-                                    {meeting.status}
-                                  </span>
-                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                                    meeting.type === 'online' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
-                                    meeting.type === 'in-person' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                                    'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                                  }`}>
-                                    {meeting.type}
-                                  </span>
-                                  <span className={`px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(meeting.role)}`}>
-                                    {meeting.role}
-                                  </span>
-                                </div>
-                              </div>
-                              <div className="text-xs text-gray-500 dark:text-gray-400">
-                                {formatDate(meeting.createdAt)}
-                              </div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                        <Clock className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                        <p>No meetings found</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
+       
             </div>
           </>
         ) : (

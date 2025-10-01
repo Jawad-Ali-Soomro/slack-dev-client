@@ -55,32 +55,25 @@ const NotFound = () => {
         </motion.div>
 
         {/* Loader animation */}
-        <motion.div 
-          variants={itemVariants} 
-          className="mb-8 flex justify-center"
-        >
-          <span className="loader w-8 h-8"></span>
-        </motion.div>
+     
 
         {/* Action Buttons */}
         <motion.div 
           variants={itemVariants} 
-          className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4"
+          className="flex flex-col  gap-3 sm:gap-4 justify-center items-center px-4 w-full"
         >
           <Button
             onClick={() => navigate('/')}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-black text-white hover:bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-colors"
+            className="w-[300px] flex items-center justify-center gap-2 px-6 py-3 bg-black text-white hover:bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-colors"
           >
-            <Home className="w-4 h-4" />
             Go Home
           </Button>
           
           <Button
             onClick={() => navigate(-1)}
             variant="outline"
-            className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black transition-colors"
+            className="flex items-center w-[300px] justify-center gap-2 px-6 py-3 border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
             Go Back
           </Button>
         </motion.div>

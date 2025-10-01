@@ -25,13 +25,12 @@ export const AuthProvider = ({ children }) => {
     try {
       setLoading(true)
       const storedToken = localStorage.getItem('authToken')
-      const userData = localStorage.getItem('userData')
-      console.log('Checking auth status:', { token: !!storedToken, userData: !!userData })
       
-      if (storedToken && userData) {
+      if (storedToken) {
         setToken(storedToken)
         setIsAuthenticated(true)
-        setUser(JSON.parse(userData))
+        const userProfile = await authService.getCurrentUser()
+        setUser(userProfile.user)
         console.log('User authenticated from localStorage')
       } else {
         console.log('No valid auth data found')
@@ -63,8 +62,6 @@ export const AuthProvider = ({ children }) => {
         // Store in localStorage only if we have a token (successful login)
         if (result.token) {
           localStorage.setItem('authToken', result.token)
-          localStorage.setItem('userData', JSON.stringify(result.user))
-          
           setToken(result.token)
           setUser(result.user)
           setIsAuthenticated(true)

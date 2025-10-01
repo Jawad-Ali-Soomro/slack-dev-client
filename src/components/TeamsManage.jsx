@@ -18,7 +18,10 @@ import {
   CheckCircle,
   Calendar,
   Target,
-  Activity
+  Activity,
+  Settings,
+  ChevronDown,
+  Trash
 } from 'lucide-react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
@@ -31,9 +34,12 @@ import teamService from '../services/teamService'
 import friendService from '../services/friendService'
 import { getAvatarProps } from '../utils/avatarUtils'
 import { useAuth } from '../contexts/AuthContext'
+import { useNotifications } from '../contexts/NotificationContext'
+import { BsTools } from 'react-icons/bs'
 
 const TeamsManage = () => {
   const { user } = useAuth()
+  const { markAsReadByType } = useNotifications()
   const [teams, setTeams] = useState([])
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false)
@@ -43,6 +49,9 @@ const TeamsManage = () => {
   const [showTeamDetails, setShowTeamDetails] = useState(false)
   const [showMembersModal, setShowMembersModal] = useState(false)
   const [selectedTeam, setSelectedTeam] = useState(null)
+  const [refreshKey, setRefreshKey] = useState(0)
+  const [showProjects, setShowProjects] = useState(false)
+  console.log(selectedTeam)
   const [newTeam, setNewTeam] = useState({
     name: '',
     description: '',
@@ -56,6 +65,9 @@ const TeamsManage = () => {
     userId: '',
     role: 'member'
   })
+  const [memberSearch, setMemberSearch] = useState('')
+  const [memberSuggestions, setMemberSuggestions] = useState([])
+  const [showMemberSuggestions, setShowMemberSuggestions] = useState(false)
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 12,
@@ -63,7 +75,6 @@ const TeamsManage = () => {
     pages: 0
   })
 
-  // Load teams
   const loadTeams = useCallback(async () => {
     try {
       setLoading(true)
@@ -76,6 +87,7 @@ const TeamsManage = () => {
       
       setTeams(response.teams || [])
       setPagination(response.pagination || pagination)
+      console.log('Teams loaded:', response.teams)
     } catch (error) {
       toast.error('Failed to load teams')
       console.error('Error loading teams:', error)
@@ -117,6 +129,27 @@ const TeamsManage = () => {
   useEffect(() => {
     loadUsers()
   }, [loadUsers])
+
+  // Mark team notifications as read when user visits this page
+  useEffect(() => {
+    if (user && user.id) {
+      markAsReadByType('teams')
+    }
+  }, [user, markAsReadByType])
+
+  // Close suggestions when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (showMemberSuggestions && !event.target.closest('.member-search-container')) {
+        setShowMemberSuggestions(false)
+      }
+    }
+
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [showMemberSuggestions])
 
   // Create new team
   const handleCreateTeam = async (e) => {
@@ -164,21 +197,55 @@ const TeamsManage = () => {
     }
   }
 
+  // Handle member search
+  const handleMemberSearch = (value) => {
+    setMemberSearch(value)
+    if (value.length > 0) {
+      const filtered = users.filter(user => 
+        user.username.toLowerCase().includes(value.toLowerCase()) &&
+        !selectedTeam.members?.some(member => member.user?.id === user.id)
+      )
+      setMemberSuggestions(filtered)
+      setShowMemberSuggestions(true)
+    } else {
+      setMemberSuggestions([])
+      setShowMemberSuggestions(false)
+    }
+  }
+
   // Add member to team
-  const handleAddMember = async (e) => {
-    e.preventDefault()
-    if (!newMember.userId) {
+  const handleAddMember = async (userId, role) => {
+    if (!userId) {
       toast.error('Please select a user')
       return
     }
 
     try {
       setLoading(true)
-      await teamService.addMember(selectedTeam.id, newMember)
-      await loadTeams() // Reload teams to get updated data
-      setNewMember({ userId: '', role: 'member' })
+      console.log('Adding member:', userId, 'to team:', selectedTeam.id)
+      
+      await teamService.addMember(selectedTeam.id, { userId, role })
+      
+      // Reload teams to get updated data
+      console.log('Reloading teams after adding member...')
+      await loadTeams()
+      
+      // Update selected team if it's the current team
+      if (selectedTeam) {
+        console.log('Fetching updated team data for:', selectedTeam.id)
+        const response = await teamService.getTeamById(selectedTeam.id)
+        console.log('Updated team data:', response.team)
+        console.log('Updated team members count:', response.team.members.length)
+        setSelectedTeam(response.team)
+        setRefreshKey(prev => prev + 1)
+      }
+      
+      setMemberSearch('')
+      setShowMemberSuggestions(false)
+      setMemberSuggestions([])
       toast.success('Member added successfully')
     } catch (error) {
+      console.error('Error adding member:', error)
       toast.error(error.message || 'Failed to add member')
     } finally {
       setLoading(false)
@@ -191,10 +258,41 @@ const TeamsManage = () => {
 
     try {
       setLoading(true)
+      console.log('Removing member:', userId, 'from team:', selectedTeam.id)
+      
       await teamService.removeMember(selectedTeam.id, { userId })
-      await loadTeams() // Reload teams to get updated data
+      
+      // Reload teams to get updated data
+      console.log('Reloading teams after removing member...')
+      await loadTeams()
+      
+      // Update selected team if it's the current team
+      if (selectedTeam) {
+        console.log('Fetching updated team data for:', selectedTeam.id)
+        const response = await teamService.getTeamById(selectedTeam.id)
+        console.log('Updated team data:', response.team)
+        console.log('Updated team members count:', response.team.members.length)
+        console.log('Updated team members:', response.team.members)
+        console.log('Previous selectedTeam members count:', selectedTeam.members.length)
+        setSelectedTeam(response.team)
+        
+        // Force a re-render by updating the refresh key
+        setRefreshKey(prev => prev + 1)
+        
+        // Force a re-render by updating the state
+        setTimeout(() => {
+          console.log('After timeout - selectedTeam members:', selectedTeam.members.length)
+        }, 100)
+      }
+      
+      // Clear member search and suggestions
+      setMemberSearch('')
+      setShowMemberSuggestions(false)
+      setMemberSuggestions([])
+      
       toast.success('Member removed successfully')
     } catch (error) {
+      console.error('Error removing member:', error)
       toast.error(error.message || 'Failed to remove member')
     } finally {
       setLoading(false)
@@ -206,7 +304,17 @@ const TeamsManage = () => {
     try {
       setLoading(true)
       await teamService.updateMemberRole(selectedTeam.id, { userId, role })
-      await loadTeams() // Reload teams to get updated data
+      
+      // Reload teams to get updated data
+      await loadTeams()
+      
+      // Update selected team if it's the current team
+      if (selectedTeam) {
+        const response = await teamService.getTeamById(selectedTeam.id)
+        setSelectedTeam(response.team)
+        setRefreshKey(prev => prev + 1)
+      }
+      
       toast.success('Member role updated successfully')
     } catch (error) {
       toast.error(error.message || 'Failed to update member role')
@@ -227,7 +335,7 @@ const TeamsManage = () => {
   // Get role icon
   const getRoleIcon = (role) => {
     switch (role) {
-      case 'owner': return <Crown className="w-4 h-4 text-yellow-600 dark:text-yellow-400 icon p2" />
+      case 'owner': return <Crown className="w-4 h-4 text-yellow-600 icon p2" />
       case 'admin': return <Shield className="w-4 h-4 text-blue-500 icon" />
       default: return null
     }
@@ -236,9 +344,9 @@ const TeamsManage = () => {
   // Get role color
   const getRoleColor = (role) => {
     switch (role) {
-      case 'owner': return 'bg-yellow-500 text-yellow-900 dark:bg-yellow-600 dark:text-yellow-100'
+      case 'owner': return 'bg-yellow-500 text-white dark:bg-yellow-600'
       case 'admin': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+      default: return 'bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
     }
   }
 
@@ -247,6 +355,11 @@ const TeamsManage = () => {
     return isActive 
       ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
       : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+  }
+
+  // Check if current user is team owner
+  const isTeamOwner = (team) => {
+    return team.createdBy?.id === user?.id || team.createdBy?._id === user?.id
   }
 
   const containerVariants = {
@@ -282,7 +395,7 @@ const TeamsManage = () => {
         </div>
         <Button
           onClick={() => setShowNewTeamModal(true)}
-            className={'w-[200px] rounded-xl h-12'}
+            className={'w-[200px] rounded-lg h-12'}
         >
           <Plus className="w-4 h-4 mr-2 icon" />
           Create Team
@@ -321,7 +434,7 @@ const TeamsManage = () => {
         </div>
       ) : filteredTeams.length === 0 ? (
         <div className="text-center py-12">
-          <Users className="w-16 h-16 text-gray-400 mx-auto mb-4 icon" />
+          {/* <Users className="w-16 h-16 text-gray-400 mx-auto mb-4 icon" /> */}
           <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
             No teams found
           </h3>
@@ -329,7 +442,7 @@ const TeamsManage = () => {
             {searchTerm ? 'Try adjusting your search terms' : 'Get started by creating your first team'}
           </p>
           {!searchTerm && (
-            <Button onClick={() => setShowNewTeamModal(true)}>
+            <Button onClick={() => setShowNewTeamModal(true)} className={'w-[200px]'}>
               <Plus className="w-4 h-4 mr-2 icon" />
               Create Team
             </Button>
@@ -366,38 +479,41 @@ const TeamsManage = () => {
                       setSelectedTeam(team)
                       setShowTeamDetails(true)
                     }}
-                    className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                    className="p-2 text-gray-400 w-12 hover:text-gray-600 dark:hover:text-gray-300"
                   >
                     <Eye className="w-4 h-4 icon" />
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="p-2">
+                      <Button variant="ghost" size="sm" className="p-2 w-12">
                         <MoreVertical className="w-4 h-4 icon" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => {
+                      <DropdownMenuItem className={'h-10 px-5 cursor-pointer'} onClick={() => {
                         setSelectedTeam(team)
                         setShowTeamDetails(true)
                       }}>
                         <Eye className="w-4 h-4 mr-2 icon" />
                         View Details
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => {
+                      {isTeamOwner(team) && (
+                        <>
+                      <DropdownMenuItem className={'h-10 px-5 cursor-pointer'} onClick={() => {
                         setSelectedTeam(team)
                         setShowMembersModal(true)
                       }}>
-                        <Users className="w-4 h-4 mr-2 icon" />
-                        Manage Members
+                            <Settings className="w-4 h-4 mr-2 icon" />
+                            Edit Members
                       </DropdownMenuItem>
-                      <DropdownMenuItem 
+                      <DropdownMenuItem className={'h-10 px-5 cursor-pointer'} 
                         onClick={() => handleDeleteTeam(team.id)}
-                        className="text-red-600"
                       >
                         <Trash2 className="w-4 h-4 mr-2" />
                         Delete
                       </DropdownMenuItem>
+                        </>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -405,22 +521,18 @@ const TeamsManage = () => {
 
               {/* Status and Members */}
               <div className="flex gap-2 mb-4">
-                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(team.isActive)}`}>
+                <span className={`inline-flex items-center px-4 py-2 rounded-full text-xs uppercase font-bold ${getStatusColor(team.isActive)}`}>
                   {team.isActive ? 'Active' : 'Inactive'}
                 </span>
-                <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium bg-gray-100 dark:bg-black text-gray-700 dark:text-gray-300">
-                  <Users className="w-3 h-3 icon" />
-                  {team.memberCount || team.members?.length || 0} members
-                </span>
+               
               </div>
 
               {/* Team Stats */}
               <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                  <Target className="w-4 h-4 icon" />
-                  <span>{team.projects?.length || 0} projects</span>
+                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 col-span-1">
+                
                 </div>
-                <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
+                <div className="flex items-center justify-end gap-2 text-gray-600 dark:text-gray-400">
                   <Activity className="w-4 h-4 icon" />
                   <span>Created {new Date(team.createdAt).toLocaleDateString()}</span>
                 </div>
@@ -428,7 +540,7 @@ const TeamsManage = () => {
 
               {/* Team Members Preview */}
               <div className="mb-4">
-                <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Members</h4>
+                {/* <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Members</h4> */}
                 <div className="flex -space-x-1">
                         {team.members?.slice(0, 3).map((member, index) => (
                           <div key={index} className="relative">
@@ -437,9 +549,13 @@ const TeamsManage = () => {
                               alt={member.user?.username}
                               className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-gray-900"
                             />
-                            <div className="absolute -bottom-1 -right-1 bg-white">
+                           {
+                            member.role ===  "owner" && 
+                              <div className="absolute -bottom-2 -right-1 p-1 rounded-full bg-white ">
                               {getRoleIcon(member.role)}
                             </div>
+                            
+                           }
                           </div>
                         ))}
                   {team.members?.length > 3 && (
@@ -455,18 +571,20 @@ const TeamsManage = () => {
                 <div className="text-xs text-gray-500 dark:text-gray-400">
                   Created by {team.createdBy?.username}
                 </div>
-                <Button
+                {
+                  team.createdBy._id === user?.id &&  <Button
                   variant="outline"
                   size="sm"
                   onClick={() => {
                     setSelectedTeam(team)
                     setShowMembersModal(true)
                   }}
-                  className={'w-[200px] h-12 rounded-lg'}
+                  className={'w-12 h-12 rounded-lg'}
                 >
-                  <UserPlus className="w-4 h-4 mr-1 icon" />
-                  Manage
+                  <Settings />
                 </Button>
+                }
+               
               </div>
             </motion.div>
           ))}
@@ -587,7 +705,10 @@ const TeamsManage = () => {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-50"
-          onClick={() => setShowTeamDetails(false)}
+          onClick={() => {
+            setShowTeamDetails(false)
+            setShowProjects(false)
+          }}
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
@@ -607,7 +728,10 @@ const TeamsManage = () => {
                   </p>
                 </div>
                 <button
-                  onClick={() => setShowTeamDetails(false)}
+                  onClick={() => {
+                    setShowTeamDetails(false)
+                    setShowProjects(false)
+                  }}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                 >
                   <X className="w-6 h-6 icon" />
@@ -626,17 +750,11 @@ const TeamsManage = () => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Status</h4>
-                      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedTeam.isActive)}`}>
+                      <span className={`inline-flex items-center px-4 py-2 uppercase rounded-full text-xs font-medium ${getStatusColor(selectedTeam.isActive)}`}>
                         {selectedTeam.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </div>
-                    <div>
-                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Members</h4>
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {selectedTeam.memberCount || selectedTeam.members?.length || 0}
-                      </span>
-                    </div>
+                  
                   </div>
 
                   <div>
@@ -657,9 +775,9 @@ const TeamsManage = () => {
                 {/* Members */}
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Members ({selectedTeam.members?.length || 0})</h3>
-                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                  <div className="space-y-2 max-h-60 overflow-y-auto" key={refreshKey}>
                     {selectedTeam.members?.map((member, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
+                      <div key={`${member.user?.id || member.user?._id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
                         <div className="flex items-center gap-3">
                           <img
                             {...getAvatarProps(member.user?.avatar, member.user?.username)}
@@ -670,14 +788,14 @@ const TeamsManage = () => {
                             <p className="text-sm font-medium text-gray-900 dark:text-white">
                               {member.user?.username}
                             </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {/* <p className="text-xs text-gray-500 dark:text-gray-400">
                               {member.user?.email}
-                            </p>
+                            </p> */}
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getRoleColor(member.role)}`}>
-                            {getRoleIcon(member.role)}
+                          <span className={`inline-flex items-center gap-1 w-[70px] h-7 flex items-center justify-center uppercase rounded-full text-[10px] font-medium ${getRoleColor(member.role)}`}>
+                            {/* {getRoleIcon(member.role)} */}
                             {member.role}
                           </span>
                         </div>
@@ -687,19 +805,119 @@ const TeamsManage = () => {
                 </div>
               </div>
 
-              <div className="flex gap-3 mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+              {/* Projects Section */}
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <button
+                  onClick={() => setShowProjects(!showProjects)}
+                  className="flex items-center justify-between w-full text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border cursor-pointer rounded-lg transition-colors"
+                >
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    Projects ({selectedTeam.projects?.length || 0})
+                  </h3>
+                  <ChevronDown 
+                    className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
+                      showProjects ? 'rotate-180' : ''
+                    }`} 
+                  />
+                </button>
+                
+                {showProjects && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="overflow-hidden"
+                  >
+                    {selectedTeam.projects?.length === 0 ? (
+                      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                        <Target className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+                        <p>No projects in this team yet</p>
+                        <p className="text-sm">Projects will appear here when created</p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-6">
+                        {selectedTeam.projects?.map((project, index) => (
+                          <motion.div 
+                            key={index} 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: index * 0.1 }}
+                            className="p-4 bg-gray-50 dark:bg-black rounded-lg border"
+                          >
+                            <div className="flex items-start justify-between mb-3">
+                              <div className="flex-1">
+                                <h4 className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
+                                  {project.name}
+                                </h4>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 line-clamp-2 mt-1">
+                                  {project.description || 'No description'}
+                                </p>
+                              </div>
+                              {/* {project.logo && (
+                                <img
+                                  src={project.logo}
+                                  alt={project.name}
+                                  className="w-8 h-8 rounded-lg object-cover ml-2"
+                                />
+                              )} */}
+                            </div>
+                            
+                            <div className="flex items-center justify-between text-xs">
+                              <div className="flex items-center gap-2">
+                                <span className={`px-2 py-1 rounded-full text-xs uppercase font-medium ${
+                                  project.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                                  project.status === 'completed' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
+                                  project.status === 'on_hold' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                                  'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                                }`}>
+                                  {project.status || 'planning'}
+                                </span>
+                                <span className={`px-2 py-1 rounded-full text-xs uppercase font-medium ${
+                                  project.priority === 'urgent' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
+                                  project.priority === 'high' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
+                                  project.priority === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                                  'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                                }`}>
+                                  {project.priority || 'low'}
+                                </span>
+                              </div>
+                              {project.progress !== undefined && (
+                                <div className="text-xs text-gray-500 dark:text-gray-400">
+                                  {project.progress}%
+                                </div>
+                              )}
+                            </div>
+                            
+                            {project.startDate && (
+                              <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+                                <Calendar className="w-3 h-3 inline mr-1" />
+                                Started {new Date(project.startDate).toLocaleDateString()}
+                              </div>
+                            )}
+                          </motion.div>
+                        ))}
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+              </div>
+
+              {isTeamOwner(selectedTeam) && (
+                <div className="flex gap-3 mt-6 pt-4 border-t border-gray-200 justify-end w-full dark:border-gray-700">
                 <Button
                   variant="outline"
                   onClick={() => {
                     setShowTeamDetails(false)
                     setShowMembersModal(true)
                   }}
-                  className="flex-1"
+                    className="w-1/2 bg-black dark:bg-gray-900 text-white hover:bg-black dark:hover:bg-gray-900 border-none hover:border-none hover:text-white"
                 >
-                  <Users className="w-4 h-4 mr-2 icon" />
-                  Manage Members
+                    <Settings className="w-4 h-4 mr-2 icon" />
+                    Edit Members
                 </Button>
               </div>
+              )}
             </div>
           </motion.div>
         </motion.div>
@@ -735,66 +953,58 @@ const TeamsManage = () => {
               </div>
 
               {/* Add Member Form */}
-              <form onSubmit={handleAddMember} className="mb-6 p-4 bg-gray-50 dark:bg-black rounded-lg">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Add New Member</h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Select Friend
-                    </label>
-                    <Select value={newMember.userId} onValueChange={(value) => setNewMember({...newMember, userId: value})}>
-                      <SelectTrigger className={'w-full'}>
-                        <SelectValue placeholder="Choose a friend" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {users.map((user) => (
-                          <SelectItem key={user.id} value={user.id} className="flex items-center gap-3">
-                            <div className="flex items-center gap-2">
-                              {user.avatar ? (
+              <div className="mb-6 rounded-lg">
+                {/* <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Add New Member</h3> */}
+                <div className="flex gap-2">
+                  <div className="relative flex-1 member-search-container">
+                    <Input
+                      value={memberSearch}
+                      onChange={(e) => handleMemberSearch(e.target.value)}
+                      placeholder="Search users..."
+                      className="w-full h-12 rounded-lg"
+                    />
+                    {showMemberSuggestions && memberSuggestions.length > 0 && (
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                        {memberSuggestions.map((user) => (
+                          <div
+                            key={user.id}
+                            onClick={() => handleAddMember(user.id, newMember.role)}
+                            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                          >
+                            <div className="flex items-center gap-3">
                                 <img
                                   {...getAvatarProps(user.avatar, user.username)}
                                   alt={user.username}
-                                  className="w-6 h-6 rounded-full object-cover"
-                                />
-                              ) : (
-                                <div className="w-6 h-6 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-700 dark:text-gray-300">
-                                  {user.username?.charAt(0).toUpperCase()}
+                                className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                              />
+                              <div>
+                                <div className="font-medium text-gray-900 dark:text-white">{user.username}</div>
+                                <div className="text-sm text-gray-500 dark:text-gray-400">{user.email}</div>
                                 </div>
-                              )}
-                              <span>{user.username} ({user.email})</span>
                             </div>
-                          </SelectItem>
+                          </div>
                         ))}
-                      </SelectContent>
-                    </Select>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Role
-                    </label>
+                    )}
+                  </div>
                     <Select value={newMember.role} onValueChange={(value) => setNewMember({...newMember, role: value})}>
-                      <SelectTrigger className={'w-full'}>
-                        <SelectValue />
+                    <SelectTrigger className="w-50 px-5 cursor-pointer">
+                      <SelectValue placeholder="Role" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="member">Member</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem className={'cursor-pointer px-5'} value="member">Member</SelectItem>
+                      <SelectItem className={'cursor-pointer px-5'} value="admin">Admin</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
-                <Button type="submit" disabled={loading} className="mt-4 w-full">
-                  <UserPlus className="w-4 h-4 mr-2 icon" />
-                  Add Member
-                </Button>
-              </form>
 
               {/* Current Members */}
               <div>
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Current Members</h3>
-                <div className="space-y-2 max-h-60 overflow-y-auto">
+                <div className="space-y-2 max-h-60 overflow-y-auto" key={refreshKey}>
                   {selectedTeam.members?.map((member, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
+                    <div key={`${member.user?.id || member.user?._id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
                       <div className="flex items-center gap-3">
                         <img
                           {...getAvatarProps(member.user?.avatar, member.user?.username)}
@@ -811,26 +1021,19 @@ const TeamsManage = () => {
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        <Select
-                          value={member.role}
-                          onValueChange={(role) => handleUpdateMemberRole(member.user.id, role)}
-                        >
-                          <SelectTrigger className="w-24">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="member">Member</SelectItem>
-                            <SelectItem value="admin">Admin</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => handleRemoveMember(member.user.id)}
-                          className="text-red-600 hover:text-red-700"
-                        >
-                          <UserMinus className="w-4 h-4 icon" />
-                        </Button>
+                        
+                       {
+                        member.role !== "owner" && (
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleRemoveMember(member.user._id)}
+                            className="text-red-600 w-12 hover:text-red-700"
+                          >
+                            <Trash className="w-4 h-4 icon" />
+                          </Button>
+                        )
+                       }
                       </div>
                     </div>
                   ))}

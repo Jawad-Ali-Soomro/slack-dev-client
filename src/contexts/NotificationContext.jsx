@@ -187,6 +187,82 @@ export const NotificationProvider = ({ children }) => {
     }
   }
 
+  // Mark notifications as read by type
+  const markAsReadByType = async (type) => {
+    try {
+      // Get unread notifications of this type
+      const unreadNotifications = notifications.filter(notif => {
+        if (notif.isRead) return false
+        
+        const notificationType = notif.type || notif.notificationType || 'general'
+        
+        switch (type) {
+          case 'tasks':
+            return ['task', 'task_assigned', 'task_updated', 'task_completed', 'TASK_ASSIGNED', 'TASK_UPDATED', 'TASK_COMPLETED'].includes(notificationType)
+          case 'meetings':
+            return ['meeting', 'meeting_invite', 'meeting_reminder', 'MEETING_INVITE', 'MEETING_REMINDER'].includes(notificationType)
+          case 'projects':
+            return ['project', 'project_invite', 'project_updated', 'PROJECT_INVITE', 'PROJECT_UPDATED'].includes(notificationType)
+          case 'teams':
+            return ['team', 'team_invite', 'team_updated', 'TEAM_INVITE', 'TEAM_UPDATED'].includes(notificationType)
+          case 'messages':
+            return ['message', 'chat', 'MESSAGE', 'CHAT'].includes(notificationType)
+          case 'code':
+            return ['code', 'code_invite', 'code_session', 'CODE_INVITE', 'CODE_SESSION'].includes(notificationType)
+          default:
+            return false
+        }
+      })
+
+      if (unreadNotifications.length === 0) return
+
+      // Mark each notification as read
+      const promises = unreadNotifications.map(notif => 
+        notificationService.markAsRead(notif.id || notif._id)
+      )
+      
+      await Promise.all(promises)
+      
+      // Update local state
+      setNotifications(prev => {
+        const updated = prev.map(notif => {
+          const notificationType = notif.type || notif.notificationType || 'general'
+          let shouldMarkAsRead = false
+          
+          switch (type) {
+            case 'tasks':
+              shouldMarkAsRead = ['task', 'task_assigned', 'task_updated', 'task_completed', 'TASK_ASSIGNED', 'TASK_UPDATED', 'TASK_COMPLETED'].includes(notificationType)
+              break
+            case 'meetings':
+              shouldMarkAsRead = ['meeting', 'meeting_invite', 'meeting_reminder', 'MEETING_INVITE', 'MEETING_REMINDER'].includes(notificationType)
+              break
+            case 'projects':
+              shouldMarkAsRead = ['project', 'project_invite', 'project_updated', 'PROJECT_INVITE', 'PROJECT_UPDATED'].includes(notificationType)
+              break
+            case 'teams':
+              shouldMarkAsRead = ['team', 'team_invite', 'team_updated', 'TEAM_INVITE', 'TEAM_UPDATED'].includes(notificationType)
+              break
+            case 'messages':
+              shouldMarkAsRead = ['message', 'chat', 'MESSAGE', 'CHAT'].includes(notificationType)
+              break
+            case 'code':
+              shouldMarkAsRead = ['code', 'code_invite', 'code_session', 'CODE_INVITE', 'CODE_SESSION'].includes(notificationType)
+              break
+          }
+          
+          return shouldMarkAsRead ? { ...notif, isRead: true } : notif
+        })
+        
+        updateUnreadCount(updated)
+        return updated
+      })
+      
+      console.log(`Marked ${unreadNotifications.length} ${type} notifications as read`)
+    } catch (error) {
+      console.error(`Failed to mark ${type} notifications as read:`, error)
+    }
+  }
+
   // Delete notification
   const deleteNotification = async (notificationId) => {
     try {
@@ -262,6 +338,7 @@ export const NotificationProvider = ({ children }) => {
     addNotification,
     markAsRead,
     markAllAsRead,
+    markAsReadByType,
     deleteNotification,
     deleteAllNotifications,
   }

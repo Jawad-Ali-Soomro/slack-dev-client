@@ -22,18 +22,18 @@ import friendService from '../services/friendService'
 import { useAuth } from '../contexts/AuthContext'
 import { getAvatarProps } from '../utils/avatarUtils'
 import UserDetailsModal from '../components/UserDetailsModal'
+import FindFriendsModal from '../components/FindFriendsModal'
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
 
 const Friends = () => {
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState('friends')
-  const [searchTerm, setSearchTerm] = useState('')
   const [selectedUserId, setSelectedUserId] = useState(null)
   const [showUserDetails, setShowUserDetails] = useState(false)
+  const [showFindFriendsModal, setShowFindFriendsModal] = useState(false)
   const [loading, setLoading] = useState(false)
   const [friends, setFriends] = useState([])
   const [friendRequests, setFriendRequests] = useState([])
-  const [searchResults, setSearchResults] = useState([])
   const [stats, setStats] = useState(null)
 
   // Load friends
@@ -79,21 +79,6 @@ const Friends = () => {
     }
   }
 
-  // Search users
-  const searchUsers = async () => {
-    if (!searchTerm.trim()) {
-      setSearchResults([])
-      return
-    }
-
-    try {
-      const response = await friendService.searchUsersForFriends(searchTerm)
-      setSearchResults(response.users || [])
-    } catch (error) {
-      console.error('Error searching users:', error)
-      toast.error('Failed to search users')
-    }
-  }
 
   // Send friend request
   const handleSendFriendRequest = async (userId) => {
@@ -143,14 +128,6 @@ const Friends = () => {
     loadStats()
   }, [])
 
-  // Search users when search term changes
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      searchUsers()
-    }, 500)
-
-    return () => clearTimeout(timeoutId)
-  }, [searchTerm])
 
   const pendingReceivedRequests = friendRequests.filter(req => 
     req.receiver.id === user?.id && req.status === 'pending'
@@ -206,9 +183,20 @@ const Friends = () => {
           </div>
         )}
 
+        {/* Find Friends Button */}
+        <div className="mb-6 flex justify-end">
+          <Button
+            onClick={() => setShowFindFriendsModal(true)}
+            className={getButtonClasses('primary', 'md', 'w-[200px]')}
+          >
+            <UserPlus className={ICON_SIZES.md} />
+            Find Friends
+          </Button>
+        </div>
+
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-15">
-          <TabsList className="grid w-full grid-cols-4 h-15">
+          <TabsList className="grid w-full grid-cols-3 h-15">
             <TabsTrigger className={"h-13 cursor-pointer"} value="friends">Friends ({friends.length})</TabsTrigger>
             <TabsTrigger className={"h-13 cursor-pointer"} value="received">
               Received ({pendingReceivedRequests.length})
@@ -216,7 +204,6 @@ const Friends = () => {
             <TabsTrigger className={"h-13 cursor-pointer"} value="sent">
               Sent ({pendingSentRequests.length})
             </TabsTrigger>
-            <TabsTrigger className={"h-13 cursor-pointer"} value="search">Find Friends</TabsTrigger>
           </TabsList>
 
           {/* Friends Tab */}
@@ -266,7 +253,7 @@ const Friends = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleRemoveFriend(friendship.friend.id)}
-                          className="text-red-600 hover:text-red-700"
+                          className="text-red-600 hover:text-red-700 w-12"
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -293,7 +280,7 @@ const Friends = () => {
                     No pending friend requests
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {pendingReceivedRequests.map((request) => (
                       <motion.div
                         key={request.id}
@@ -324,17 +311,15 @@ const Friends = () => {
                         <div className="flex space-x-2">
                           <Button
                             onClick={() => handleRespondToRequest(request.id, 'accept')}
-                            className={getButtonClasses('primary', 'sm', '')}
+                            className={getButtonClasses('primary', 'sm', 'w-12')}
                           >
                             <Check className={ICON_SIZES.sm} />
-                            Accept
                           </Button>
                           <Button
                             onClick={() => handleRespondToRequest(request.id, 'reject')}
-                            className={getButtonClasses('danger', 'sm', '')}
+                            className={getButtonClasses('danger', 'sm', 'w-12')}
                           >
                             <X className={ICON_SIZES.sm} />
-                            Decline
                           </Button>
                         </div>
                       </motion.div>
@@ -347,7 +332,7 @@ const Friends = () => {
 
           {/* Sent Requests Tab */}
           <TabsContent value="sent" className="mt-6">
-            <Card className={'bg-white dark:bg-black'}>
+            <Card className={'bg-white dark:bg-black '}>
               <CardHeader>
                 <CardTitle>Sent Requests</CardTitle>
                 <CardDescription>
@@ -360,7 +345,7 @@ const Friends = () => {
                     No pending sent requests
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {pendingSentRequests.map((request) => (
                       <motion.div
                         key={request.id}
@@ -388,7 +373,7 @@ const Friends = () => {
                             </p>
                           </div>
                         </div>
-                        <Badge variant="outline" className="text-yellow-600">
+                        <Badge variant="outline" className="text-yellow-600 px-4 py-2 bg-gray-100">
                           <Clock className="h-3 w-3 mr-1" />
                           Pending
                         </Badge>
@@ -400,76 +385,13 @@ const Friends = () => {
             </Card>
           </TabsContent>
 
-          {/* Search Tab */}
-          <TabsContent value="search" className="mt-6">
-            <Card className={'bg-white dark:bg-black'}>
-              <CardHeader>
-                <CardTitle>Find Friends</CardTitle>
-                <CardDescription>
-                  Search for people to connect with
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="mb-6">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                    <Input
-                      placeholder="Search by username or email..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className={getInputClasses('default', 'md', 'pl-10')}
-                    />
-                  </div>
-                </div>
-
-                {searchResults.length === 0 && searchTerm ? (
-                  <div className="text-center py-8 text-gray-500">
-                    No users found matching "{searchTerm}"
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    {searchResults.map((user) => (
-                      <motion.div
-                        key={user.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center justify-between p-4 border rounded-lg"
-                      >
-                        <div className="flex items-center space-x-4">
-                          <Avatar 
-                            className="cursor-pointer hover:scale-110 transition-transform"
-                            onClick={() => handleUserAvatarClick(user.id)}
-                            title={`View ${user.username}'s profile`}
-                          >
-                            <AvatarImage {...getAvatarProps(user.avatar, user.username)} />
-                            <AvatarFallback>
-                              {user.username.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">
-                              {user.username}
-                            </p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              {user.email}
-                            </p>
-                          </div>
-                        </div>
-                        <Button
-                          onClick={() => handleSendFriendRequest(user.id)}
-                          className={getButtonClasses('primary', 'sm', '')}
-                        >
-                          <UserPlus className={ICON_SIZES.sm} />
-                          Add Friend
-                        </Button>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
         </Tabs>
+
+        {/* Find Friends Modal */}
+        <FindFriendsModal
+          isOpen={showFindFriendsModal}
+          onClose={() => setShowFindFriendsModal(false)}
+        />
 
         {/* User Details Modal */}
         <UserDetailsModal

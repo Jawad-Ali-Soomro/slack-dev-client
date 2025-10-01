@@ -14,6 +14,7 @@ import projectService from "../services/projectService"
 import teamService from "../services/teamService"
 import friendService from "../services/friendService"
 import { useAuth } from "../contexts/AuthContext"
+import { useNotifications } from "../contexts/NotificationContext"
 import { getAvatarProps } from "../utils/avatarUtils"
 import MeetingEditModal from "../components/MeetingEditModal"
 import UserDetailsModal from "../components/UserDetailsModal"
@@ -21,6 +22,7 @@ import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from "../u
 
 const Meetings = () => {
   const { user } = useAuth()
+  const { markAsReadByType } = useNotifications()
   const [searchTerm, setSearchTerm] = useState("")
   const [showNewMeetingPopup, setShowNewMeetingPopup] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
@@ -111,6 +113,13 @@ const Meetings = () => {
       loadMeetings()
     }
   }, [filterStatus, filterType, user])
+
+  // Mark meeting notifications as read when user visits this page
+  useEffect(() => {
+    if (user && user.id) {
+      markAsReadByType('meetings')
+    }
+  }, [user, markAsReadByType])
 
   // Load friends from API
   const loadUsers = async () => {
@@ -510,7 +519,7 @@ const Meetings = () => {
               )}
               <Button
                 onClick={() => setShowNewMeetingPopup(true)}
-                className={'w-[200px] rounded-xl h-12'}
+                className={'w-[200px] rounded-lg h-12'}
 
               >
                 <Plus className={ICON_SIZES.sm} />
@@ -658,20 +667,20 @@ const Meetings = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center rounded-full text-xs font-bold truncate ${getTypeColor(meeting.type)}`}>
-                        {meeting.type === 'online' && <Video className="w-3 h-3 mr-1 icon" />}
-                        {meeting.type === 'in-person' && <MapPin className="w-3 h-3 mr-1 icon" />}
-                        {meeting.type === 'hybrid' && <Calendar className="w-3 h-3 mr-1 icon" />}
-                        {meeting.type}
+                      <span className={`inline-flex items-center rounded-full uppercase text-xs font-bold truncate ${getTypeColor(meeting.type)}`}>
+                        {meeting.type === 'online' && <Video className="w-4 h-4 mr-1 icon" />}
+                        {meeting.type === 'in-person' && <MapPin className="w-4 h-4 mr-1 icon" />}
+                        {meeting.type === 'hybrid' && <Calendar className="w-4 h-4 mr-1 icon" />}
+                        {meeting.type.replaceAll("-", " ")}
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1 rounded-full text-xs font-bold truncate ${getStatusColor(meeting.status)}`}>
+                      <span className={`inline-flex items-center gap-1 rounded-full text-xs font-bold truncate uppercase ${getStatusColor(meeting.status)}`}>
                         {getStatusIcon(meeting.status)}
-                        {meeting.status}
+                          {meeting.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-xl">
+                    <td className="px-6 py-4 w-[200px] rounded-lg">
                       <div className="flex items-center gap-3">
                         <img 
                           {...getAvatarProps(
@@ -691,7 +700,7 @@ const Meetings = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-xl">
+                    <td className="px-6 py-4 w-[200px] rounded-lg">
                       <div className="flex flex-wrap gap-1">
                         {meeting.attendees && meeting.attendees.length > 0 ? (
                           meeting.attendees.slice(0, 3).map((attendee, index) => (
@@ -717,7 +726,7 @@ const Meetings = () => {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-xl">
+                    <td className="px-6 py-4 w-[200px] rounded-lg">
                       {meeting.project ? (
                         <div className="flex items-center gap-2">
                           {/* {meeting.project.logo && (
@@ -1150,7 +1159,7 @@ const Meetings = () => {
               <div className="flex gap-3 mt-6 text-white dark:text-black">
                 <Button
                   onClick={() => setShowNewMeetingPopup(false)}
-                  className={getButtonClasses('outline', 'md', 'flex-1')}
+                  className={getButtonClasses('outline', 'md', 'flex-1 text-black bg-white dark:bg-black')}
                 >
                   Cancel
                 </Button>

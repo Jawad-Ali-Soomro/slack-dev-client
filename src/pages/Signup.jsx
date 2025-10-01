@@ -11,7 +11,8 @@ const Signup = () => {
   const [formData, setFormData] = useState({
     username: "",
     email: "",
-    password: ""
+    password: "",
+    role: "user"
   })
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)

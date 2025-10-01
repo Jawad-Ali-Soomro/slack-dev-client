@@ -27,7 +27,9 @@ import {
   ArrowUp,
   Minus,
   AlertTriangle,
-  Camera
+  Camera,
+  ArrowUpRight,
+  ArrowUpRightSquare
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '../components/ui/button'
@@ -39,12 +41,14 @@ import projectService from '../services/projectService'
 import friendService from '../services/friendService'
 import teamService from '../services/teamService'
 import { useAuth } from '../contexts/AuthContext'
+import { useNotifications } from '../contexts/NotificationContext'
 import { getAvatarProps } from '../utils/avatarUtils'
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
 import UserDetailsModal from '../components/UserDetailsModal'
 
 const Projects = () => {
   const { user } = useAuth()
+  const { markAsReadByType } = useNotifications()
   const [searchTerm, setSearchTerm] = useState('')
   const [showNewProjectPopup, setShowNewProjectPopup] = useState(false)
   const [selectedProjects, setSelectedProjects] = useState([])
@@ -68,6 +72,12 @@ const Projects = () => {
   const [memberSuggestions, setMemberSuggestions] = useState([])
   const [showMemberSuggestions, setShowMemberSuggestions] = useState(false)
   const [memberRole, setMemberRole] = useState('member')
+  
+  // Separate state for project details modal member search
+  const [projectMemberSearch, setProjectMemberSearch] = useState('')
+  const [projectMemberSuggestions, setProjectMemberSuggestions] = useState([])
+  const [showProjectMemberSuggestions, setShowProjectMemberSuggestions] = useState(false)
+  const [projectMemberRole, setProjectMemberRole] = useState('member')
   const [newLink, setNewLink] = useState({ title: '', url: '', type: 'other' })
   const [newTag, setNewTag] = useState('')
   const [loading, setLoading] = useState(false)
@@ -83,6 +93,10 @@ const Projects = () => {
   const [projectProgress, setProjectProgress] = useState(0)
   const [selectedUserId, setSelectedUserId] = useState(null)
   const [showUserDetails, setShowUserDetails] = useState(false)
+  const [refreshKey, setRefreshKey] = useState(0)
+  const [showTasks, setShowTasks] = useState(false)
+  const [showMeetings, setShowMeetings] = useState(false)
+  const [showLinks, setShowLinks] = useState(false)
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 12,
@@ -170,7 +184,33 @@ const Projects = () => {
     loadStats()
   }, [loadProjects, loadUsers, loadTeams, loadStats])
 
-  // Handle member search
+  // Mark project notifications as read when user visits this page
+  useEffect(() => {
+    if (user && user.id) {
+      markAsReadByType('projects')
+    }
+  }, [user, markAsReadByType])
+
+  // Debug selectedProject changes
+  useEffect(() => {
+    if (selectedProject) {
+      console.log('selectedProject updated:', selectedProject)
+      console.log('selectedProject members count:', selectedProject.members?.length)
+      console.log('selectedProject members:', selectedProject.members)
+    }
+  }, [selectedProject])
+
+  // Debug projects list changes
+  useEffect(() => {
+    if (projects.length > 0) {
+      console.log('Projects list updated:', projects.length, 'projects')
+      projects.forEach(project => {
+        console.log(`Project ${project.name} (${project.id}) members:`, project.members?.length)
+      })
+    }
+  }, [projects])
+
+  // Handle member search for new project form
   const handleMemberSearch = (value) => {
     setMemberSearch(value)
     if (value.length > 0) {
@@ -183,6 +223,22 @@ const Projects = () => {
     } else {
       setMemberSuggestions([])
       setShowMemberSuggestions(false)
+    }
+  }
+
+  // Handle member search for project details modal
+  const handleProjectMemberSearch = (value) => {
+    setProjectMemberSearch(value)
+    if (value.length > 0) {
+      const filtered = users.filter(user => 
+        user.username.toLowerCase().includes(value.toLowerCase()) &&
+        !selectedProject?.members?.some(member => member.user?._id === user.id)
+      )
+      setProjectMemberSuggestions(filtered)
+      setShowProjectMemberSuggestions(true)
+    } else {
+      setProjectMemberSuggestions([])
+      setShowProjectMemberSuggestions(false)
     }
   }
 
@@ -351,6 +407,11 @@ const Projects = () => {
     console.log('Modal should open now')
   }
 
+  // Check if current user is project owner
+  const isProjectOwner = (project) => {
+    return project.createdBy?.id === user?.id || project.createdBy?._id === user?.id
+  }
+
   // Update project progress
   const handleUpdateProgress = async () => {
     if (!selectedProject) return
@@ -380,44 +441,94 @@ const Projects = () => {
     if (!selectedProject) return
 
     try {
+      setLoading(true)
+      console.log('Adding member:', userId, 'to project:', selectedProject.id)
+      
       await projectService.addMember(selectedProject.id, { userId, role })
       
-      // Reload project details
-      const response = await projectService.getProjectById(selectedProject.id)
-      setSelectedProject(response.project)
+      // Reload projects to get updated data
+      console.log('Reloading projects after adding member...')
+      await loadProjects()
       
-      // Update projects list
-      setProjects(prev => prev.map(project => 
-        project.id === selectedProject.id ? response.project : project
-      ))
+      // Update selected project if it's the current project
+      if (selectedProject) {
+        console.log('Fetching updated project data for:', selectedProject.id)
+        const response = await projectService.getProjectById(selectedProject.id)
+        console.log('Updated project data:', response.project)
+        console.log('Updated project members count:', response.project.members.length)
+        console.log('Updated project members:', response.project.members)
+        
+        // Check if the project in the projects list has the same data
+        const projectInList = projects.find(p => p.id === selectedProject.id)
+        console.log('Project in list members count:', projectInList?.members?.length)
+        console.log('Project in list members:', projectInList?.members)
+        
+        setSelectedProject(response.project)
+        setRefreshKey(prev => prev + 1)
+      }
       
+      setProjectMemberSearch('')
+      setShowProjectMemberSuggestions(false)
+      setProjectMemberSuggestions([])
       toast.success('Member added successfully!')
     } catch (error) {
       console.error('Error adding member:', error)
       toast.error(error.message || 'Failed to add member')
+    } finally {
+      setLoading(false)
     }
   }
 
   // Remove member from project
   const handleRemoveMemberFromProject = async (userId) => {
-    if (!selectedProject) return
+    if (!confirm('Are you sure you want to remove this member?')) return
 
     try {
+      setLoading(true)
+      console.log('Removing member:', userId, 'from project:', selectedProject.id)
+      
       await projectService.removeMember(selectedProject.id, { userId })
       
-      // Reload project details
-      const response = await projectService.getProjectById(selectedProject.id)
-      setSelectedProject(response.project)
+      // Reload projects to get updated data
+      console.log('Reloading projects after removing member...')
+      await loadProjects()
       
-      // Update projects list
-      setProjects(prev => prev.map(project => 
-        project.id === selectedProject.id ? response.project : project
-      ))
+      // Update selected project if it's the current project
+      if (selectedProject) {
+        console.log('Fetching updated project data for:', selectedProject.id)
+        const response = await projectService.getProjectById(selectedProject.id)
+        console.log('Updated project data:', response.project)
+        console.log('Updated project members count:', response.project.members.length)
+        console.log('Updated project members:', response.project.members)
+        console.log('Previous selectedProject members count:', selectedProject.members.length)
+        
+        // Check if the project in the projects list has the same data
+        const projectInList = projects.find(p => p.id === selectedProject.id)
+        console.log('Project in list members count:', projectInList?.members?.length)
+        console.log('Project in list members:', projectInList?.members)
+        
+        setSelectedProject(response.project)
+        
+        // Force a re-render by updating the refresh key
+        setRefreshKey(prev => prev + 1)
+        
+        // Force a re-render by updating the state
+        setTimeout(() => {
+          console.log('After timeout - selectedProject members:', selectedProject.members.length)
+        }, 100)
+      }
+      
+      // Clear project member search and suggestions
+      setProjectMemberSearch('')
+      setShowProjectMemberSuggestions(false)
+      setProjectMemberSuggestions([])
       
       toast.success('Member removed successfully!')
     } catch (error) {
       console.error('Error removing member:', error)
       toast.error(error.message || 'Failed to remove member')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -577,7 +688,7 @@ const Projects = () => {
             
             <Button
               onClick={() => setShowNewProjectPopup(true)}
-            className={'w-[200px] rounded-xl rounded-xl h-12'}
+            className={'w-[200px] rounded-lg rounded-lg h-12'}
 
             >
               <Plus className={ICON_SIZES.sm} />
@@ -703,20 +814,19 @@ const Projects = () => {
             ))
           ) : filteredProjects.length === 0 ? (
             <div className="col-span-full text-center py-12">
-              <div className="text-gray-400 dark:text-gray-600 mb-4">
-                <CheckCircle className="w-16 h-16 mx-auto icon" />
-              </div>
+             
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No projects found</h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">Get started by creating your first project</p>
               <Button
                 onClick={() => setShowNewProjectPopup(true)}
+                className={'w-[200px]'}
               >
                 <Plus className="w-4 h-4 mr-2 icon" />
                 Create Project
               </Button>
             </div>
           ) : (
-            filteredProjects.map((project) => (
+          filteredProjects.map((project) => (
               <motion.div
                 key={project.id}
                 variants={itemVariants}
@@ -730,7 +840,7 @@ const Projects = () => {
                         <img
                           src={project.logo.startsWith('http') ? project.logo : `http://localhost:4000${project.logo}`}
                           alt={project.name}
-                          className="w-8 h-8 rounded object-cover border border-gray-200 dark:border-gray-700"
+                          className="w-8 h-8 rounded object-cover rounded-full bg-gray-100  border border-gray-200 dark:border-gray-700"
                         />
                       )}
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-1">
@@ -764,7 +874,7 @@ const Projects = () => {
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="p-2">
+                        <Button variant="ghost" size="sm" className="p-2 w-12">
                           <MoreVertical className="w-4 h-4 icon" />
                         </Button>
                       </DropdownMenuTrigger>
@@ -773,43 +883,46 @@ const Projects = () => {
                           <Eye className="w-4 h-4 mr-2 icon" />
                           View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="h-10 px-5 cursor-pointer">
-                          <Edit className="w-4 h-4 mr-2 icon" />
-                          Edit Project
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => {
-                          setSelectedProject(project)
-                          setShowMembersModal(true)
-                        }}>
-                          <Users className="w-4 h-4 mr-2 icon" />
-                          Manage Members
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => {
-                          setSelectedProject(project)
-                          setShowLinksModal(true)
-                        }}>
-                          <Link className="w-4 h-4 mr-2 icon" />
-                          Manage Links
-                        </DropdownMenuItem>
-                        <DropdownMenuItem className="h-10 px-5 cursor-pointer text-red-600" 
-                          onClick={() => handleDeleteProject(project.id)}
-                       
-                        >
-                          <Trash2 className="w-4 h-4 mr-2" />
-                          Delete
-                        </DropdownMenuItem>
+                        {isProjectOwner(project) && (
+                          <>
+                            <DropdownMenuItem className="h-10 px-5 cursor-pointer">
+                              <Edit className="w-4 h-4 mr-2 icon" />
+                              Edit Project
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => {
+                              setSelectedProject(project)
+                              setShowMembersModal(true)
+                            }}>
+                              <Settings className="w-4 h-4 mr-2 icon" />
+                              Edit Members
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => {
+                              setSelectedProject(project)
+                              setShowLinksModal(true)
+                            }}>
+                              <Link className="w-4 h-4 mr-2 icon" />
+                              Manage Links
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="h-10 px-5 cursor-pointer text-red-600" 
+                              onClick={() => handleDeleteProject(project.id)}
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" />
+                              Delete
+                            </DropdownMenuItem>
+                          </>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
                 </div>
 
                 {/* Status and Priority */}
-                <div className="flex gap-2 mb-4">
-                  <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(project.status)}`}>
+                <div className="flex gap-2 mb-4 mt-10">
+                  <span className={`inline-flex items-center border gap-1 uppercase px-4 py-2 rounded-full text-[10px] font-medium ${getStatusColor(project.status)}`}>
                     {getStatusIcon(project.status)}
                     {project.status.replace('_', ' ')}
                   </span>
-                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(project.priority)}`}>
+                  <span className={`inline-flex items-center  px-4 py-2 border uppercase rounded-full text-[10px] font-medium ${getPriorityColor(project.priority)}`}>
                     {project.priority}
                   </span>
                 </div>
@@ -829,20 +942,19 @@ const Projects = () => {
                 </div>
 
                 {/* Team Info */}
-                {project.teamId && (
+                {/* {project.teamId && (
                   <div className="mb-4">
                     <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm">
                       <Users className="w-4 h-4 icon" />
                       <span>Team: {project.teamId.name}</span>
                     </div>
                   </div>
-                )}
+                )} */}
 
                 {/* Project Stats */}
-                <div className="grid grid-cols-3 gap-4 mb-4 text-sm">
-                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <Users className="w-4 h-4" />
-                    <span>{project?.members.length || 0} members</span>
+                <div className="grid grid-cols-4 gap-4 mb-4 text-sm">
+                  <div className="flex items-center gap-2 text-gray-600 col-span-2 dark:text-gray-400">
+                    
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
                     <CheckCircle className="w-4 h-4 icon" />
@@ -1015,7 +1127,7 @@ const Projects = () => {
                       />
                       <label
                         htmlFor="logo-upload"
-                        className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-gray-700"
+                        className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-gray-700"
                       >
                         <Camera className="w-4 h-4 mr-2" />
                         {newProject.logo ? 'Change Logo' : 'Upload Logo'}
@@ -1283,7 +1395,16 @@ const Projects = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-100000"
-            onClick={() => setShowProjectDetails(false)}
+            onClick={() => {
+              setShowProjectDetails(false)
+              setShowTasks(false)
+              setShowMeetings(false)
+              setShowLinks(false)
+              // Clear project member search state
+              setProjectMemberSearch('')
+              setShowProjectMemberSuggestions(false)
+              setProjectMemberSuggestions([])
+            }}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
@@ -1303,7 +1424,16 @@ const Projects = () => {
                     </p>
                   </div>
                   <button
-                    onClick={() => setShowProjectDetails(false)}
+                    onClick={() => {
+                      setShowProjectDetails(false)
+                      setShowTasks(false)
+                      setShowMeetings(false)
+                      setShowLinks(false)
+                      // Clear project member search state
+                      setProjectMemberSearch('')
+                      setShowProjectMemberSuggestions(false)
+                      setProjectMemberSuggestions([])
+                    }}
                     className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
                   >
                     <X className="w-6 h-6 icon" />
@@ -1322,30 +1452,20 @@ const Projects = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Status</h4>
-                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedProject.status)}`}>
+                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase font-bold rounded-full text-xs font-medium ${getStatusColor(selectedProject.status)}`}>
                           {getStatusIcon(selectedProject.status)}
                           {selectedProject.status}
                         </span>
                       </div>
                       <div>
-                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300">Priority</h4>
-                        <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(selectedProject.priority)}`}>
+                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase font-bold rounded-full text-xs font-medium ${getPriorityColor(selectedProject.priority)}`}>
                           {getPriorityIcon(selectedProject.priority)}
                           {selectedProject.priority}
                         </span>
                       </div>
                     </div>
 
-                    {selectedProject.teamId && (
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Team</h4>
-                        <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                          <Users className="w-4 h-4 icon" />
-                          <span>{selectedProject.teamId.name}</span>
-                        </div>
-                      </div>
-                    )}
+                  
 
                     <div>
                       <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Progress</h4>
@@ -1381,9 +1501,10 @@ const Projects = () => {
                   <div className="space-y-4">
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Members ({selectedProject.members?.length || 0})</h3>
-                      <div className="space-y-2 max-h-40 overflow-y-auto">
-                        {selectedProject.members?.map((member, index) => (
-                          <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-lg">
+                      {console.log('Rendering members:', selectedProject.members)}
+                      <div className="space-y-2 max-h-45overflow-y-auto" key={refreshKey}>
+                        {selectedProject.members && selectedProject.members.length > 0 ? selectedProject.members.map((member, index) => (
+                          <div key={`${member.user?._id || member.user?.id}-${index}-${refreshKey}`} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-lg">
                             <div className="flex items-center gap-2">
                               <img
                                 {...getAvatarProps(member.user?.avatar, member.user?.username)}
@@ -1402,172 +1523,269 @@ const Projects = () => {
                               </div>
                             </div>
                           </div>
-                        ))}
+                        )) : (
+                          <div className="text-center py-4 text-gray-500 dark:text-gray-400">
+                            No members yet
+                          </div>
+                        )}
                       </div>
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Links ({selectedProject.links?.length || 0})</h3>
-                      <div className="space-y-2 max-h-40 overflow-y-auto">
-                        {selectedProject.links?.map((link, index) => (
-                          <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-lg">
-                            <div className="flex items-center gap-2">
-                              <Link className="w-4 h-4 text-gray-500" />
-                              <div>
-                                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                  {link.title}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                  {link.type}
-                                </p>
+                      <button
+                        onClick={() => setShowLinks(!showLinks)}
+                        className="flex items-center justify-between w-full cursor-pointer  text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border rounded-lg transition-colors"
+                      >
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                          <Link className="w-5 h-5" />
+                          Links ({selectedProject.links?.length || 0})
+                        </h3>
+                        <ChevronDown 
+                          className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
+                            showLinks ? 'rotate-180' : ''
+                          }`} 
+                        />
+                      </button>
+                      
+                      {showLinks && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: 'auto' }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="overflow-hidden"
+                        >
+                          <div className="space-y-2 max-h-40 overflow-y-auto p-6">
+                            {selectedProject.links?.length > 0 ? (
+                              selectedProject.links.map((link, index) => (
+                                <motion.div 
+                                  key={index} 
+                                  initial={{ opacity: 0, y: 20 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ delay: index * 0.1 }}
+                                  className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-lg"
+                                >
+                                  <div className="flex items-center gap-2">
+                                    <Link className="w-4 h-4 text-gray-500" />
+                                    <div>
+                                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                        {link.title}
+                                      </p>
+                                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                                        {link.type}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <a
+                                    href={link.url}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="text-gray-500 hover:text-gray-600 text-sm w-[50px] h-[50px] border flex items-center justify-center rounded-lg"
+                                  >
+                                    <ArrowUpRightSquare className="w-4 h-4" />
+                                  </a>
+                                </motion.div>
+                              ))
+                            ) : (
+                              <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                                <Link className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                                <p>No links added to this project</p>
                               </div>
-                            </div>
-                            <a
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-gray-500 hover:text-gray-600 text-sm"
-                            >
-                              Open
-                            </a>
+                            )}
                           </div>
-                        ))}
-                      </div>
+                        </motion.div>
+                      )}
                     </div>
                   </div>
                 </div>
 
                 {/* Tasks and Meetings Section */}
-                <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div className="mt-6 grid grid-cols-1 lg:grid-cols-1 gap-6">
                   {/* Tasks */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                      <CheckCircle className="w-5 h-5" />
-                      Tasks ({selectedProject.tasks?.length || 0})
-                    </h3>
-                    <div className="space-y-2 max-h-60 overflow-y-auto">
-                      {selectedProject.tasks?.length > 0 ? (
-                        selectedProject.tasks.map((task, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-3 h-3 rounded-full ${
-                                task.status === 'completed' ? 'bg-green-500' :
-                                task.status === 'in_progress' ? 'bg-gray-500' :
-                                task.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
-                              }`}></div>
-                              <div>
-                                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                  {task.title || 'Untitled Task'}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                  Assigned to {task.assignTo?.username || 'Unknown'} • {task.priority || 'Unknown'}
-                                </p>
-                              </div>
+                    <button
+                      onClick={() => setShowTasks(!showTasks)}
+                      className="flex items-center justify-between w-full text-left hover:bg-gray-50 cursor-pointer dark:hover:bg-gray-800 p-4 border rounded-lg transition-colors"
+                    >
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5" />
+                        Tasks ({selectedProject.tasks?.length || 0})
+                      </h3>
+                      <ChevronDown 
+                        className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
+                          showTasks ? 'rotate-180' : ''
+                        }`} 
+                      />
+                    </button>
+                    
+                    {showTasks && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="space-y-2 max-h-60 overflow-y-auto p-6">
+                          {selectedProject.tasks?.length > 0 ? (
+                            selectedProject.tasks.map((task, index) => (
+                              <motion.div 
+                                key={index} 
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.1 }}
+                                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className={`w-3 h-3 rounded-full ${
+                                    task.status === 'completed' ? 'bg-green-500' :
+                                    task.status === 'in_progress' ? 'bg-gray-500' :
+                                    task.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
+                                  }`}></div>
+                                  <div>
+                                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                      {task.title || 'Untitled Task'}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                      Assigned to {task.assignTo?.username || 'Unknown'} • {task.priority || 'Unknown'}
+                                    </p>
+                                  </div>
+                                </div>
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  task.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                                  task.status === 'in_progress' ? 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200' :
+                                  task.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                                  'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                                }`}>
+                                  {task.status ? task.status.replace('_', ' ') : 'Unknown'}
+                                </span>
+                              </motion.div>
+                            ))
+                          ) : (
+                            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                              <CheckCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                              <p>No tasks assigned to this project</p>
                             </div>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              task.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                              task.status === 'in_progress' ? 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200' :
-                              task.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                              'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                            }`}>
-                              {task.status ? task.status.replace('_', ' ') : 'Unknown'}
-                            </span>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                          <CheckCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                          <p>No tasks assigned to this project</p>
+                          )}
                         </div>
-                      )}
-                    </div>
+                      </motion.div>
+                    )}
                   </div>
 
                   {/* Meetings */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
-                      <Calendar className="w-5 h-5 icon" />
-                      Meetings ({selectedProject.meetings?.length || 0})
-                    </h3>
-                    <div className="space-y-2 max-h-60 overflow-y-auto">
-                      {selectedProject.meetings?.length > 0 ? (
-                        selectedProject.meetings.map((meeting, index) => (
-                          <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-3 h-3 rounded-full ${
-                                meeting.status === 'completed' ? 'bg-green-500' :
-                                meeting.status === 'scheduled' ? 'bg-gray-500' :
-                                meeting.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
-                              }`}></div>
-                              <div>
-                                <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                  {meeting.title || 'Untitled Meeting'}
-                                </p>
-                                <p className="text-xs text-gray-500 dark:text-gray-400">
-                                  {meeting.type || 'Unknown'} • {formatDate(meeting.startDate)}
-                                </p>
-                              </div>
+                    <button
+                      onClick={() => setShowMeetings(!showMeetings)}
+                      className="flex items-center justify-between w-full text-left cursor-pointer mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border rounded-lg transition-colors"
+                    >
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                        <Calendar className="w-5 h-5 icon" />
+                        Meetings ({selectedProject.meetings?.length || 0})
+                      </h3>
+                      <ChevronDown 
+                        className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
+                          showMeetings ? 'rotate-180' : ''
+                        }`} 
+                      />
+                    </button>
+                    
+                    {showMeetings && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <div className="space-y-2 max-h-60 overflow-y-auto p-6">
+                          {selectedProject.meetings?.length > 0 ? (
+                            selectedProject.meetings.map((meeting, index) => (
+                              <motion.div 
+                                key={index} 
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.1 }}
+                                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg"
+                              >
+                                <div className="flex items-center gap-3">
+                                  <div className={`w-3 h-3 rounded-full ${
+                                    meeting.status === 'completed' ? 'bg-green-500' :
+                                    meeting.status === 'scheduled' ? 'bg-gray-500' :
+                                    meeting.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
+                                  }`}></div>
+                                  <div>
+                                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                      {meeting.title || 'Untitled Meeting'}
+                                    </p>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                                      {meeting.type || 'Unknown'} • {formatDate(meeting.startDate)}
+                                    </p>
+                                  </div>
+                                </div>
+                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                  meeting.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
+                                  meeting.status === 'scheduled' ? 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200' :
+                                  meeting.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
+                                  'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+                                }`}>
+                                  {meeting.status || 'Unknown'}
+                                </span>
+                              </motion.div>
+                            ))
+                          ) : (
+                            <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                              <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                              <p>No meetings scheduled for this project</p>
                             </div>
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                              meeting.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
-                              meeting.status === 'scheduled' ? 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200' :
-                              meeting.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
-                              'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-                            }`}>
-                              {meeting.status || 'Unknown'}
-                            </span>
-                          </div>
-                        ))
-                      ) : (
-                        <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                          <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                          <p>No meetings scheduled for this project</p>
+                          )}
                         </div>
-                      )}
-                    </div>
+                      </motion.div>
+                    )}
                   </div>
                 </div>
 
-                <div className="flex gap-3 mt-6 pt-4  icon border-gray-200 dark:border-gray-700">
-                  <Button
-                    onClick={() => {
-                      setProjectProgress(selectedProject.progress || 0)
-                      setShowProgressModal(true)
-                    }}
-                    className="flex-1 h-12 rounded-lg"
-                  >
-                    <TrendingUp className="w-4 h-4 mr-2" />
-                    Update Progress
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setShowMembersModal(true)
-                    }}
-                    className="flex-1 h-12 rounded-lg"
-                  >
-                    <Users className="w-4 h-4 mr-2" />
-                    Manage Members
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setShowLinksModal(true)
-                    }}
-                    className="flex-1 h-12 rounded-lg"
-                  >
-                    <Link className="w-4 h-4 mr-2" />
-                    Manage Links
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => handleViewProject(selectedProject)}
-                    className="flex-1 h-12 rounded-lg"
-                  >
-                    <RefreshCw className="w-4 h-4 mr-2" />
-                    Refresh
-                  </Button>
-                </div>
+                {isProjectOwner(selectedProject) && (
+                  <div className="flex gap-3 mt-6 pt-4  icon border-gray-200 dark:border-gray-700">
+                    <Button
+                      onClick={() => {
+                        setProjectProgress(selectedProject.progress || 0)
+                        setShowProgressModal(true)
+                      }}
+                      className="flex-1 h-12 rounded-lg"
+                    >
+                      <TrendingUp className="w-4 h-4 mr-2" />
+                      Update Progress
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowMembersModal(true)
+                      }}
+                      className="flex-1 h-12 rounded-lg"
+                    >
+                      <Settings className="w-4 h-4 mr-2" />
+                      Edit Members
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowLinksModal(true)
+                      }}
+                      className="flex-1 h-12 rounded-lg"
+                    >
+                      <Link className="w-4 h-4 mr-2" />
+                      Manage Links
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => handleViewProject(selectedProject)}
+                      className="flex-1 h-12 rounded-lg"
+                    >
+                      <RefreshCw className="w-4 h-4 mr-2" />
+                      Refresh
+                    </Button>
+                  </div>
+                )}
               </div>
             </motion.div>
           </motion.div>
@@ -1655,7 +1873,7 @@ const Projects = () => {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                    Manage Members
+                    Manage Members - {selectedProject.name}
                   </h2>
                   <button
                     onClick={() => setShowMembersModal(false)}
@@ -1668,27 +1886,15 @@ const Projects = () => {
                 <div className="space-y-4">
                   {/* Add Member */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Add Member</h3>
+                    {/* <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Add Member</h3> */}
                     <div className="flex gap-2">
                       <Input
-                        value={memberSearch}
-                        onChange={(e) => {
-                          setMemberSearch(e.target.value)
-                          if (e.target.value.length > 0) {
-                            const filtered = users.filter(user => 
-                              user.username.toLowerCase().includes(e.target.value.toLowerCase()) &&
-                              !selectedProject.members?.some(member => member.user?.id === user.id)
-                            )
-                            setMemberSuggestions(filtered)
-                            setShowMemberSuggestions(true)
-                          } else {
-                            setShowMemberSuggestions(false)
-                          }
-                        }}
+                        value={projectMemberSearch}
+                        onChange={(e) => handleProjectMemberSearch(e.target.value)}
                         placeholder="Search users..."
                         className="flex-1 h-12 rounded-lg"
                       />
-                      <Select value={memberRole} onValueChange={setMemberRole}>
+                      <Select value={projectMemberRole} onValueChange={setProjectMemberRole}>
                         <SelectTrigger className="w-32">
                           <SelectValue placeholder="Role" />
                         </SelectTrigger>
@@ -1700,24 +1906,27 @@ const Projects = () => {
                       </Select>
                     </div>
                     
-                    {showMemberSuggestions && memberSuggestions.length > 0 && (
+                    {showProjectMemberSuggestions && projectMemberSuggestions.length > 0 && (
                       <div className="mt-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-black max-h-40 overflow-y-auto">
-                        {memberSuggestions.map((user) => (
+                        {projectMemberSuggestions.map((user) => (
                           <div
                             key={user.id}
                             onClick={() => {
-                              handleAddMemberToProject(user.id, memberRole)
-                              setMemberSearch('')
-                              setShowMemberSuggestions(false)
+                              handleAddMemberToProject(user.id, projectMemberRole)
+                              setProjectMemberSearch('')
+                              setShowProjectMemberSuggestions(false)
                             }}
                             className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                           >
                             <img
                               {...getAvatarProps(user.avatar, user.username)}
                               alt={user.username}
-                              className="w-6 h-6 rounded-full"
+                              className="w-10 h-10 rounded-full"
                             />
-                            <span className="text-sm text-gray-900 dark:text-white">{user.username}</span>
+                           <div className="flex flex-col">
+                           <span className="text-sm text-gray-900 dark:text-white font-bold">{user.username}</span>
+                           <span className="text-sm text-gray-900 dark:text-white">{user.email}</span>
+                           </div>
                           </div>
                         ))}
                       </div>
@@ -1727,9 +1936,9 @@ const Projects = () => {
                   {/* Current Members */}
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Current Members</h3>
-                    <div className="space-y-2 max-h-60 overflow-y-auto">
+                    <div className="space-y-2 max-h-60 overflow-y-auto" key={refreshKey}>
                       {selectedProject.members?.map((member, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
+                        <div key={`${member.user?._id || member.user?.id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
                           <div className="flex items-center gap-3">
                             <img
                               {...getAvatarProps(member.user?.avatar, member.user?.username)}
@@ -1743,18 +1952,20 @@ const Projects = () => {
                                 {member.user?.username}
                               </p>
                               <p className="text-xs text-gray-500 dark:text-gray-400">
-                                {member.role} • Joined {new Date(member.joinedAt).toLocaleDateString()}
+                               {member.role == "owner" ? "Created" : "Joined"} {new Date(member.joinedAt).toLocaleDateString()}
                               </p>
                             </div>
                           </div>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleRemoveMemberFromProject(member.user?.id)}
-                            className="text-red-500 hover:text-red-700"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
+                        {
+                          member.role !== "owner" &&   <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRemoveMemberFromProject(member.user?._id)}
+                          className="text-red-500 hover:text-red-700 w-12 border"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                        }
                         </div>
                       ))}
                     </div>

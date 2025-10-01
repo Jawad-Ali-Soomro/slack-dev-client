@@ -144,7 +144,7 @@ const DashboardHeader = () => {
   return (
     <>
       {/* Dashboard Header */}
-      <header className="bg-white dark:bg-black z-50 icon  border-gray-200 dark:border-gray-700 px-6 py-5 border-b fixed w-full">
+      <header className="bg-white dark:bg-black z-50 icon  border-gray-200 dark:border-gray-700 px-6 py-2 border-b fixed w-full">
         <div className="flex items-center justify-end">
         
           
@@ -158,9 +158,6 @@ const DashboardHeader = () => {
                 <div className="text-sm font-medium text-gray-900 dark:text-white">
                   {user?.username || 'User'}
                 </div>
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                  {user?.role || 'Team Member'}
-                </div>
               </div>
               
               {/* Avatar Button */}
@@ -168,7 +165,7 @@ const DashboardHeader = () => {
                 onClick={handleOpenProfileModal}
                 className="relative group"
               >
-                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
+                <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
                   <img
                     {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
                     alt={user?.username || 'User'}
@@ -233,14 +230,14 @@ const DashboardHeader = () => {
             {/* Avatar Section */}
             <div className="flex flex-col items-center mb-6">
               <div className="relative group mb-4">
-                <div className="w-20 h-20 rounded-full overflow-hidden border-4 border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
+                <div className="w-20 h-20 rounded-full overflow-hidden border-1 border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
                   <img
                     {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
                     alt={user?.username || 'User'}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <label className="absolute -bottom-1 -right-1 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer transition-colors">
+                <label className="absolute -bottom-1 bg-black dark:bg-white text-white dark:text-black -right-1 w-6 h-6 rounded-full flex items-center justify-center cursor-pointer transition-colors">
                   <Camera className="w-3 h-3" />
                   <input
                     type="file"

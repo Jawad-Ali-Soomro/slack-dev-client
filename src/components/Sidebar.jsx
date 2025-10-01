@@ -5,21 +5,20 @@ import {
   Calendar, 
   Code, 
   FolderOpen, 
-  PenTool, 
-  Settings,
   LayoutDashboard,
-  MessageCircle,
   LogOut,
   Users,
-  UserCheck,
-  MessageSquare
+  CheckSquare2,
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSidebar } from '../contexts/SidebarContext'
 import { useAuth } from '../contexts/AuthContext'
-import { useNotifications } from '../contexts/NotificationContext'
-import { BsChatSquareText } from "react-icons/bs";
-import { PiCrown, PiUserCheck } from "react-icons/pi";
+  import { useNotifications } from '../contexts/NotificationContext'
+import { HiOutlineRectangleGroup } from "react-icons/hi2";
+import { IoFolderOpenOutline } from "react-icons/io5";
+import { PiCrown, PiUserCheck, PiCheckSquare } from "react-icons/pi";
+import { BiMessageSquare, BiMessageSquareDetail } from "react-icons/bi";
+import { GoCalendar } from "react-icons/go";
 
 const Sidebar = () => {
   const { isOpen, closeSidebar, openSidebar } = useSidebar()
@@ -28,6 +27,9 @@ const Sidebar = () => {
   const location = useLocation()
   
   console.log('Sidebar unreadCounts:', unreadCounts)
+  
+  // Handle premium navigation
+ 
   
   const sidebarItems = [
     {
@@ -46,28 +48,21 @@ const Sidebar = () => {
     },
     {
       title: 'Meetings',
-      icon: Calendar,
+      icon: GoCalendar,
       path: '/dashboard/meetings',
       color: 'text-black dark:text-white',
       badgeCount: unreadCounts.meetings
     },  
-    {
-      title: 'Code',
-      icon: Code,
-      path: '/dashboard/code',
-      color: 'text-black dark:text-white',
-      badgeCount: unreadCounts.code || 0
-    },  
       {
       title: 'Projects',
-      icon: FolderOpen,
+      icon: IoFolderOpenOutline,
       path: '/dashboard/projects',
       color: 'text-black dark:text-white',
       badgeCount: unreadCounts.projects
     },
     {
       title: 'Teams',
-      icon: Users,
+      icon: HiOutlineRectangleGroup,
       path: '/dashboard/teams',
       color: 'text-black dark:text-white',
       badgeCount: unreadCounts.teams
@@ -81,18 +76,12 @@ const Sidebar = () => {
     },
     {
       title: 'Messages',
-      icon: BsChatSquareText,
+      icon: BiMessageSquareDetail,
       path: '/dashboard/chat',
       color: 'text-black dark:text-white',
       badgeCount: unreadCounts.messages
     },
-    {
-      title: 'Premium',
-      icon: PiCrown,
-      path: '/premium',
-      color: 'text-white',
-      bg: 'bg-yellow-500 dark:bg-yellow-600'
-    },
+   
   ]
 
   const isActive = (path) => location.pathname === path
@@ -101,7 +90,7 @@ const Sidebar = () => {
   useEffect(() => {
     if (isAuthenticated) {
       const handleResize = () => {
-        if (window.innerWidth >= 1024) { // lg breakpoint
+        if (window.innerWidth >= 768) { // lg breakpoint
           openSidebar()
         }
       }
@@ -172,7 +161,7 @@ const Sidebar = () => {
             initial="open"
             animate="open"
             exit="closed"
-            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-10 lg:hidden"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-100 md:hidden"
             onClick={closeSidebar}
           />
           
@@ -182,15 +171,11 @@ const Sidebar = () => {
             initial="open"
             animate="open"
             exit="open"
-            className="fixed icon left-0 top-0 h-full w-60 bg-white dark:bg-black z-50 border-r border-gray-200 dark:border-gray-700 lg:z-50"
+            className="fixed icon left-0 top-0 h-full w-[70px] bg-white dark:bg-black z-110 border-r border-gray-200 dark:border-gray-700 lg:z-50"
           >
             {/* Header */}
-            <div className="flex items-center py-5 justify-start p-4 border-b icon gap-2 border-gray-200 dark:border-gray-700">
-              <div className="w-12 h-12 bg-gray-200 p-2 rounded-lg gap-2 flex flex items-center justify-center dark:bg-black">
-                {/* <User className="w-5 h-5 text-white dark:text-black" /> */}
-                <img src="/logo.png" alt="" />
-              </div>
-                <h1 className=" font-bold ">Slack Developers</h1>
+            <div className="flex items-center py-2 justify-center flex items-center justify-center border-b icon gap-2 border-gray-200 dark:border-gray-700">
+              <img src="/logo.png" className='w-[50px] ' alt="" />
             </div>
 
             {/* Navigation */}
@@ -210,19 +195,18 @@ const Sidebar = () => {
                     >
                       <Link
                         to={item.path}
-                        onClick={closeSidebar}
+                       
                         title={item.title}
-                        className={`relative flex items-center justify-start px-4 gap-4 ${item.title == 'Premium' && 'bg-yellow-500 dark:bg-yellow-600 text-white hover:bg-yellow-600 dark:hover:bg-yellow-700'} relative w-50 h-[50px] rounded-lg transition-all duration-200 group ${
+                          className={`relative flex items-center justify-center px-4 gap-4 ${item.title == 'Premium' && 'bg-orange-500 dark:bg-orange-600 text-white hover:bg-orange-600 dark:hover:bg-orange-700'} relative w-[50px] h-[50px] rounded-lg transition-all duration-200 group ${
                           active
-                            ? 'shadow-none bg-black  text-white dark:bg-white  px-5  dark:text-black shadow-lg '
-                            : item.title == 'Premium' ? '' : 'hover:bg-gray-100 dark:hover:bg-black text-gray-700 dark:text-gray-300'
+                            ? `{shadow-none bg-black  text-white dark:bg-white dark:text-black shadow-lg ${item.title == 'Premium' && 'bg-orange-500 dark:bg-orange-600 text-white hover:bg-orange-600 dark:hover:bg-orange-700'} }`
+                            : item.title == 'Premium' ? 'bg-orange-500 dark:bg-orange-600 text-white hover:bg-orange-600 dark:hover:bg-orange-700' : 'hover:bg-gray-100 dark:hover:bg-black text-gray-700 dark:text-gray-300'
                         }`} 
                       >
                         <div className="relative">
                           <Icon className={`w-5 h-5 icon transition-transform ${active ? 'text-white dark:text-black' : item.color}`} />
                          
                         </div>
-                        {item.title}
 
                          {item.badgeCount > 0 && (
                             <span className="absolute  right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold z-10">
@@ -242,11 +226,11 @@ const Sidebar = () => {
                     </motion.div>
                   )
                 })}
-                <div className="flex items-center justify-center text-white gap-2 w-50 h-[50px] rounded-lg transition-all duration-200 group absolute bottom-5  bg-red-500 cursor-pointer" onClick={() => {
+                <div className="flex items-center justify-center text-white gap-2 w-[50px] h-[50px] rounded-lg transition-all duration-200 group absolute bottom-5  bg-red-500 cursor-pointer" onClick={() => {
                   logout()
                 }}>
                   <LogOut className="w-5 h-5 transition-transform icon" />
-                  Logout
+                  {/* Logout */}
                 </div>
               </div>
 

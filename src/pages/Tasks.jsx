@@ -14,6 +14,7 @@ import projectService from "../services/projectService"
 import teamService from "../services/teamService"
 import friendService from "../services/friendService"
 import { useAuth } from "../contexts/AuthContext"
+import { useNotifications } from "../contexts/NotificationContext"
 import { getAvatarProps } from "../utils/avatarUtils"
 import TaskEditModal from "../components/TaskEditModal"
 import UserDetailsModal from "../components/UserDetailsModal"
@@ -21,6 +22,7 @@ import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from "../u
 
 const Tasks = () => {
   const { user } = useAuth()
+  const { markAsReadByType } = useNotifications()
   const [searchTerm, setSearchTerm] = useState("")
   const [showNewTaskPopup, setShowNewTaskPopup] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
@@ -106,6 +108,13 @@ const Tasks = () => {
       loadTasks()
     }
   }, [filterStatus, filterPriority, user])
+
+  // Mark task notifications as read when user visits this page
+  useEffect(() => {
+    if (user && user.id) {
+      markAsReadByType('tasks')
+    }
+  }, [user, markAsReadByType])
 
   // Load friends from API
   const loadUsers = async () => {
@@ -449,7 +458,7 @@ const Tasks = () => {
               <Button
                 onClick={() => setShowNewTaskPopup(true)}
                 // className={getButtonClasses('primary', 'md', 'flex items-center gap-2 px-20 py-6')}
-                className={'w-[200px] rounded-xl h-12'}
+                className={'w-[200px] rounded-lg h-12'}
               >
                 <Plus className={ICON_SIZES.sm} />
                 New Task
@@ -636,7 +645,7 @@ const Tasks = () => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-xl">
+                    <td className="px-6 py-4 w-[200px] rounded-lg">
                       <div className="flex items-center gap-3">
                         <img 
                           {...getAvatarProps(task.assignTo?.avatar, task.assignTo?.username)}
@@ -652,7 +661,7 @@ const Tasks = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-xl">
+                    <td className="px-6 py-4 w-[200px] rounded-lg">
                       <div className="flex items-center gap-3">
                         <img 
                           {...getAvatarProps(task.assignedBy?.avatar, task.assignedBy?.username)}
@@ -668,7 +677,7 @@ const Tasks = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-xl">
+                    <td className="px-6 py-4 w-[200px] rounded-lg">
                       {task.project ? (
                         <div className="flex items-center gap-2">
                           {/* {task.project.logo && (

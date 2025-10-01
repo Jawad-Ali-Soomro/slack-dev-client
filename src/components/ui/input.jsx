@@ -9,7 +9,7 @@ function Input({
   ...props
 }) {
   const sizeVariants = {
-    sm: "h-12 px-2.5 text-sm rounded-md",
+    sm: "h-12 px-2.5 text-sm rounded-lg",
     default: "h-12 px-3 text-sm rounded-lg",
     lg: "h-12 px-4 text-base rounded-lg",
     xl: "h-12 px-4 text-base rounded-lg"

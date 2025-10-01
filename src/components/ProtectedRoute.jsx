@@ -14,9 +14,9 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
   // Show loading spinner while checking auth status
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-slate-900 dark:to-indigo-950 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <motion.div
-          className="glass-card p-5 md:p-8 shadow-none border-none rounded-2xl md:shadow-2xl md:border md:border-black md:dark:border-white"
+          className="p-5 md:p-8 shadow-none border-none rounded-2xl  "
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
@@ -50,9 +50,10 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
           <ChevronRight />
         </div>
 
-        <div className={`flex-1 ${ !isMobile &&  isOpen  ? 'md:pl-65 md:pr-10 pt-20 overflow-hidden' : 'md:pl-65 md:pr-10 pt-20 p-5 overflow-hidden'}`}>
-          {children}
-        </div>
+        <div className="flex-1 md:pl-25 pr-10 md:pt-20 pt-25 pl-10 overflow-hidden">
+  {children}
+</div>
+
       </div>
     </div>
   )

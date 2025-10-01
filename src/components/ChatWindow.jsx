@@ -253,7 +253,7 @@ const ChatWindow = () => {
       </div>
 
       {/* Messages Container - Takes remaining space */}
-      <div className="flex-1 flex flex-col min-h-0 pb-26">
+      <div className="flex-1 flex flex-col min-h-0 pb-26 relative">
         {/* Messages - Scrollable Area */}
         <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 relative">
         {loading ? (
@@ -381,23 +381,7 @@ const ChatWindow = () => {
         
         <div ref={messagesEndRef} />
 
-        {replyTo && (
-          <div className="border-t p-2 icon bg-muted/50 absolute w-[100%] bottom-0 left-0 right-0">
-            <div className="flex items-center justify-between">
-              <div className="text-sm">
-                <p className="font-medium">Replying to {replyTo.sender.name}</p>
-                <p className="text-muted-foreground truncate">{replyTo.content}</p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setReplyTo(null)}
-              >
-                ×
-              </Button>
-            </div>
-          </div>
-        )}
+      
         </div>
 
         {/* Reply indicator */}

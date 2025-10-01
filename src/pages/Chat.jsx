@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useChat } from '../contexts/ChatContext';
+import { useNotifications } from '../contexts/NotificationContext';
 import ChatList from '../components/ChatList';
 import ChatWindow from '../components/ChatWindow';
 import CreateChatModal from '../components/CreateChatModal';
 import { Button } from '../components/ui/button';
-import { Plus, MessageCircle, Wifi, WifiOff } from 'lucide-react';
+import { Plus, Wifi, WifiOff } from 'lucide-react';
 
 const Chat = () => {
   const { isConnected, unreadCount, error } = useChat();
+  const { markAsReadByType } = useNotifications();
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -21,19 +23,17 @@ const Chat = () => {
 
   }, []);
 
+  // Mark message notifications as read when user visits this page
+  useEffect(() => {
+    markAsReadByType('messages');
+  }, [markAsReadByType]);
+
   return (
     <div className='max-h-[90vh]'>
       {/* Header */}
       <div className="border-b backdrop-blur icon pt-2">
         <div className="flex h-14 items-center px-4">
-          <div className="flex items-center gap-2">
-            <h1 className="text-lg font-semibold">Messages</h1>
-            {unreadCount > 0 && (
-              <span className="bg-primary text-primary-foreground text-xs px-2 py-1 rounded-full">
-                {unreadCount}
-              </span>
-            )}
-          </div>
+         
           
           <div className="ml-auto flex items-center gap-2">
             <div className="flex items-center gap-1 text-sm">
