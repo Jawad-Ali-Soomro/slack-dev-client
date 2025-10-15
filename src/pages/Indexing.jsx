@@ -61,7 +61,7 @@ const Indexing = () => {
           animate="visible"
         >
           {/* Hero Background Image */}
-        
+{/*         
 {floatingIcons.map(({ Icon, color, top, left, right, delay }, index) => (
           <motion.div
             key={index}
@@ -85,11 +85,11 @@ const Indexing = () => {
           >
             <Icon size={48} />
           </motion.div>
-        ))}
+        ))} */}
 
             <motion.span 
               variants={itemVariants}
-              className="p-3 text-[9px] font-bold bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded-full px-5 "
+              className="p-3 text-[9px] font-bold bg-gray-200 dark:bg-gray-700 text-black dark:text-white rounded-lg px-5 "
             >
               From Developer to Developers
             </motion.span>
@@ -116,7 +116,7 @@ const Indexing = () => {
               className="flex gap-6 mt-10"
             >
                 <motion.button 
-                  className="w-[300px] font-bold py-4 bg-black text-white z-50 rounded-full text-sm cursor-pointer hover:bg-black transition-colors shadow-lg dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                  className="w-[300px] font-bold py-4 bg-black text-white z-50 rounded-lg text-sm cursor-pointer hover:bg-black transition-colors shadow-lg dark:bg-white dark:text-black dark:hover:bg-gray-200"
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                 >
@@ -132,21 +132,21 @@ const Indexing = () => {
                   className="flex items-center gap-2 font-bold hidden md:flex"
                   whileHover={{ scale: 1.05 }}
                 >
-                    <span className="w-2 h-2 bg-green-500 rounded-full"></span>
+                    <span className="w-2 h-2 bg-green-500 rounded-lg"></span>
                     Free Forever
                 </motion.div>
                 <motion.div 
                   className="flex items-center gap-2 font-bold"
                   whileHover={{ scale: 1.05 }}
                 >
-                    <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
+                    <span className="w-2 h-2 bg-blue-500 rounded-lg"></span>
                     No Credit Card Required
                 </motion.div>
                 <motion.div 
                   className="flex items-center gap-2 font-bold"
                   whileHover={{ scale: 1.05 }}
                 >
-                    <span className="w-2 h-2 bg-purple-500 rounded-full"></span>
+                    <span className="w-2 h-2 bg-purple-500 rounded-lg"></span>
                     Setup in Minutes
                 </motion.div>
             </motion.div>
@@ -243,7 +243,7 @@ const Indexing = () => {
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
-                <div className="w-[80px] h-[80px] bg-[rgba(0,0,0,0.1)] rounded-full flex items-center justify-center mb-4 dark:bg-[rgba(255,255,255,0.1)]">
+                <div className="w-[80px] h-[80px] bg-[rgba(0,0,0,0.1)] rounded-lg flex items-center justify-center mb-4 dark:bg-[rgba(255,255,255,0.1)]">
                   <div className="w-12 h-12 text-black dark:text-white flex items-center justify-center ">
                     {feature.icon}
                   </div>
@@ -254,7 +254,7 @@ const Indexing = () => {
                 <p className="text-[10px] font-bold text-gray-600 dark:text-gray-300  leading-relaxed">
                   {feature.description}
                 </p>
-                <button className="text-[10px] font-bold text-white  leading-relaxed w-[50px] h-12 bg-black border-black dark:border-white rounded-full mt-4 flex items-center justify-center dark:bg-white dark:text-black" style={{
+                <button className="text-[10px] font-bold text-white  leading-relaxed w-[50px] h-12 bg-black border-black dark:border-white rounded-lg mt-4 flex items-center justify-center dark:bg-white dark:text-black" style={{
                     marginLeft: 'calc(100% - 50px)'
                 }}><ArrowRight /></button>
               </motion.div>
@@ -362,7 +362,7 @@ const Indexing = () => {
                   <img 
                     src={testimonial.avatar} 
                     alt={testimonial.author}
-                    className="w-12 h-12 rounded-full mr-4 object-cover"
+                    className="w-12 h-12 rounded-lg mr-4 object-cover"
                   />
                   <div>
                     <div className="font-bold text-gray-900 dark:text-white text-sm ">
@@ -475,7 +475,7 @@ How It Works
               Join thousands of developers who trust our platform
             </motion.p>
             <motion.button 
-              className="w-[400px] font-bold py-4 bg-white text-black rounded-full text-lg  transition-colors shadow-lg dark:bg-white dark:text-black "
+              className="w-[400px] font-bold py-4 bg-white text-black rounded-lg text-lg  transition-colors shadow-lg dark:bg-white dark:text-black "
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.6 }}

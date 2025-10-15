@@ -278,6 +278,24 @@ export const ChatProvider = ({ children }) => {
   const createChat = async (participants, type = 'direct', name = null, description = null) => {
     try {
       setLoading(true);
+      
+      // For direct chats, check if a chat already exists with the same participants
+      if (type === 'direct' && participants.length === 1) {
+        const currentUserId = user?.id || user?._id;
+        const existingChat = chats.find(chat => {
+          if (chat.type !== 'direct' || chat.participants.length !== 2) return false;
+          
+          const participantIds = chat.participants.map(p => p._id || p.id);
+          return participantIds.includes(currentUserId) && participantIds.includes(participants[0]);
+        });
+        
+        if (existingChat) {
+          console.log('Chat already exists, switching to existing chat');
+          setCurrentChat(existingChat);
+          return existingChat;
+        }
+      }
+      
       const response = await chatService.createChat({
         participants,
         type,
@@ -285,7 +303,21 @@ export const ChatProvider = ({ children }) => {
         description
       });
       
-      setChats(prev => [response.data, ...prev]);
+      // Check if chat already exists in the current chats list
+      const existingChatInList = chats.find(chat => chat._id === response.data._id);
+      
+      if (!existingChatInList) {
+        // Only add to chats if it doesn't already exist
+        setChats(prev => [response.data, ...prev]);
+      } else {
+        // If chat exists, update it with the latest data
+        setChats(prev => 
+          prev.map(chat => 
+            chat._id === response.data._id ? response.data : chat
+          )
+        );
+      }
+      
       setCurrentChat(response.data);
       return response.data;
     } catch (err) {

@@ -200,7 +200,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                         <img
                           {...getAvatarProps(assignedUser.avatar, assignedUser.username)}
                           alt={assignedUser.username}
-                          className="w-5 h-5 rounded-full"
+                          className="w-5 h-5 rounded-lg"
                         />
                         <span>{assignedUser.username}</span>
                       </div>
@@ -215,7 +215,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                         <img
                           {...getAvatarProps(user.avatar, user.username)}
                           alt={user.username}
-                          className="w-5 h-5 rounded-full"
+                          className="w-5 h-5 rounded-lg"
                         />
                         <span>{user.username}</span>
                       </div>
@@ -254,7 +254,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                 {formData.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-black text-blue-800 dark:text-blue-200 rounded-full text-sm"
+                    className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-black text-blue-800 dark:text-blue-200 rounded-lg text-sm"
                   >
                     {tag}
                     <button

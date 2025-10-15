@@ -9,6 +9,12 @@ import {
   LogOut,
   Users,
   CheckSquare2,
+  Wifi,
+  Github,
+  WifiCog,
+  Network,
+  WifiHigh,
+  WifiIcon,
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSidebar } from '../contexts/SidebarContext'
@@ -16,9 +22,11 @@ import { useAuth } from '../contexts/AuthContext'
   import { useNotifications } from '../contexts/NotificationContext'
 import { HiOutlineRectangleGroup } from "react-icons/hi2";
 import { IoFolderOpenOutline } from "react-icons/io5";
-import { PiCrown, PiUserCheck, PiCheckSquare } from "react-icons/pi";
-import { BiMessageSquare, BiMessageSquareDetail } from "react-icons/bi";
+import { PiCrown, PiUserCheck, PiCheckSquare, PiGithubLogo } from "react-icons/pi";
+import { BiMessageSquare, BiMessageSquareDetail, BiNews } from "react-icons/bi";
 import { GoCalendar } from "react-icons/go";
+import { MdRssFeed } from "react-icons/md";
+import { BsGithub } from 'react-icons/bs'
 
 const Sidebar = () => {
   const { isOpen, closeSidebar, openSidebar } = useSidebar()
@@ -36,6 +44,20 @@ const Sidebar = () => {
       title: 'Dashboard',
       icon: LayoutDashboard,
       path: '/dashboard',
+      color: 'text-black dark:text-white',
+      badgeCount: 0
+    },
+    {
+      title: 'Posts',
+      icon: WifiIcon,
+      path: '/dashboard/posts',
+      color: 'text-black dark:text-white',
+      badgeCount: 0
+    },
+    {
+      title: 'Github Repos',
+      icon: Github,
+      path: '/dashboard/github',
       color: 'text-black dark:text-white',
       badgeCount: 0
     },
@@ -60,6 +82,7 @@ const Sidebar = () => {
       color: 'text-black dark:text-white',
       badgeCount: unreadCounts.projects
     },
+   
     {
       title: 'Teams',
       icon: HiOutlineRectangleGroup,
@@ -74,6 +97,7 @@ const Sidebar = () => {
       color: 'text-black dark:text-white',
       badgeCount: 0
     },
+  
     {
       title: 'Messages',
       icon: BiMessageSquareDetail,
@@ -171,10 +195,10 @@ const Sidebar = () => {
             initial="open"
             animate="open"
             exit="open"
-            className="fixed icon left-0 top-0 h-full w-[70px] bg-white dark:bg-black z-110 border-r border-gray-200 dark:border-gray-700 lg:z-50"
+            className="fixed icon left-0 top-0 h-full w-[80px] bg-white dark:bg-black z-110 border-r border-gray-200 dark:border-gray-700 lg:z-50"
           >
             {/* Header */}
-            <div className="flex items-center py-2 justify-center flex items-center justify-center border-b icon gap-2 border-gray-200 dark:border-gray-700">
+            <div className="flex items-center py-4 justify-center flex items-center justify-center border-b icon gap-2 border-gray-200 dark:border-gray-700">
               <img src="/logo.png" className='w-[50px] ' alt="" />
             </div>
 
@@ -209,14 +233,14 @@ const Sidebar = () => {
                         </div>
 
                          {item.badgeCount > 0 && (
-                            <span className="absolute  right-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold z-10">
+                            <span className="absolute  right-2 bg-red-500 text-white text-xs rounded-lg h-5 w-5 flex items-center justify-center font-bold z-10">
                               {item.badgeCount > 99 ? '99+' : item.badgeCount}
                             </span>
                           )}
                         {active && (
                           <motion.div
                             layoutId="activeIndicator"
-                            className="absolute -right-2 top-1/2 -translate-y-1/2 w-1 h-8 bg-black dark:bg-white rounded-full"
+                            className="absolute -right-2 top-1/2 -translate-y-1/2 w-1 h-8 bg-black dark:bg-white rounded-lg"
                             initial={{ x: 0 }}
                             animate={{ x: 0 }}
                             exit={{ x: 0 }}

@@ -183,7 +183,7 @@ const VerifyEmail = () => {
           {/* Header */}
           <div className="text-center mb-8">
             <motion.div variants={itemVariants} className="mb-4">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-white rounded-full flex items-center justify-center mx-auto">
+              <div className="w-16 h-16 bg-gray-100 dark:bg-white rounded-lg flex items-center justify-center mx-auto">
                 <Mail className="w-8 h-8 text-black" />
               </div>
             </motion.div>

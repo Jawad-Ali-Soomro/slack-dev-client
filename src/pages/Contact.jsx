@@ -80,7 +80,7 @@ const Contact = () => {
                   className="glass-card p-6 rounded-2xl flex items-center space-x-4"
                   whileHover={{ y: -5 }}
                 >
-                  <div className="w-[60px] h-[60px] bg-black rounded-full flex items-center justify-center dark:bg-white">
+                  <div className="w-[60px] h-[60px] bg-black rounded-lg flex items-center justify-center dark:bg-white">
                     <div className="w-8 h-8 text-white dark:text-black flex items-center justify-center">
                       {contact.icon}
                     </div>

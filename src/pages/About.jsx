@@ -152,7 +152,7 @@ const About = () => {
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
-                <div className="w-[80px] h-[80px] bg-black rounded-full flex items-center justify-center mb-6 dark:bg-white">
+                <div className="w-[80px] h-[80px] bg-black rounded-lg flex items-center justify-center mb-6 dark:bg-white">
                   <div className="w-12 h-12 text-white dark:text-black flex items-center justify-center">
                     {value.icon}
                   </div>

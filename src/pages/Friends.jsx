@@ -137,6 +137,8 @@ const Friends = () => {
     req.sender.id === user?.id && req.status === 'pending'
   )
 
+
+  document.title = "Friends - Manage Your Friends"
   return (
     <div className="min-h-screen bg-white dark:bg-black p-6">
       <div className="mx-auto">
@@ -153,7 +155,7 @@ const Friends = () => {
         {/* Stats Cards */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className={'bg-gray-100 dark:bg-gray-900'}>
+            <Card className={'bg-gray-100 border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Friends</CardTitle>
                 <Users className="h-4 w-4 text-muted-foreground" />
@@ -162,7 +164,7 @@ const Friends = () => {
                 <div className="text-2xl font-bold">{stats.totalFriends}</div>
               </CardContent>
             </Card>
-            <Card className={'bg-gray-100 dark:bg-gray-900'}>
+            <Card className={'bg-gray-100 border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Pending Received</CardTitle>
                 <Clock className="h-4 w-4 text-muted-foreground" />
@@ -171,7 +173,7 @@ const Friends = () => {
                 <div className="text-2xl font-bold">{stats.pendingReceivedRequests}</div>
               </CardContent>
             </Card>
-            <Card className={'bg-gray-100 dark:bg-gray-900'}>
+            <Card className={'bg-gray-100 border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Pending Sent</CardTitle>
                 <Send className="h-4 w-4 text-muted-foreground" />
@@ -229,7 +231,7 @@ const Friends = () => {
                         key={friendship.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-black"
+                        className="flex items-center space-x-4 p-4 border rounded-lg hover:bg-gray-50 dark:bg-[rgba(255,255,255,.1)] bg-gray-100"
                       >
                         <Avatar 
                           className="cursor-pointer hover:scale-110 transition-transform"

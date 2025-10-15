@@ -13,16 +13,26 @@ import {
   Globe,
   Phone,
   Briefcase,
-  Award
+  Award,
+  FileText,
+  Heart,
+  MessageCircle,
+  UserCircle,
+  UsersRoundIcon,
+  UsersRound
 } from 'lucide-react'
 import { Button } from './ui/button'
 import { getAvatarProps } from '../utils/avatarUtils'
 import { userService } from '../services/userService'
+import postService from '../services/postService'
+import { PiUsersDuotone } from "react-icons/pi";
 
 const UserDetailsModal = ({ userId, isOpen, onClose }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(false)
   const [activeTab, setActiveTab] = useState('overview')
+  const [userPosts, setUserPosts] = useState([])
+  const [loadingPosts, setLoadingPosts] = useState(false)
 
   useEffect(() => {
     console.log('UserDetailsModal useEffect:', { isOpen, userId })
@@ -30,6 +40,12 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
       loadUserDetails()
     }
   }, [isOpen, userId])
+
+  useEffect(() => {
+    if (activeTab === 'posts' && userId) {
+      loadUserPosts()
+    }
+  }, [activeTab, userId])
 
   const loadUserDetails = async () => {
     try {
@@ -45,11 +61,24 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
     }
   }
 
+  const loadUserPosts = async () => {
+    try {
+      setLoadingPosts(true)
+      const response = await postService.getUserPosts(userId, { limit: 10 })
+      setUserPosts(response.posts || [])
+    } catch (error) {
+      console.error('Failed to load user posts:', error)
+    } finally {
+      setLoadingPosts(false)
+    }
+  }
+
   if (!isOpen) return null
 
   const tabs = [
-    { id: 'overview', label: 'Overview', icon: UserIcon },
-    { id: 'projects', label: 'Projects', icon: Briefcase }
+    { id: 'overview', label: 'Overview', icon: UserCircle },
+    { id: 'projects', label: 'Projects', icon: Briefcase },
+    { id: 'posts', label: 'Posts', icon: FileText }
   ]
 
   const formatDate = (dateString) => {
@@ -103,13 +132,13 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
               <div className="relative flex items-start justify-between">
                 <div className="flex items-center gap-6">
                   <div className="relative group">
-                    <div className="absolute -inset-1  rounded-full opacity-75 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
+                    <div className="absolute -inset-1  rounded-lg opacity-75 group-hover:opacity-100 transition-opacity duration-300 blur-sm"></div>
                     <img
                       {...getAvatarProps(user.avatar, user.username)}
                       alt={user.username}
-                      className="relative w-20 h-20 rounded-full border-4 border-white dark:border-gray-900 shadow-lg"
+                      className="relative w-20 h-20 rounded-lg border-4 border-white dark:border-gray-900 shadow-lg"
                     />
-                    <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-3 border-white dark:border-gray-900 shadow-lg ${
+                    <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-lg border-3 border-white dark:border-gray-900 shadow-lg ${
                       user.isActive ? 'bg-emerald-500' : 'bg-gray-400'
                     }`}></div>
                   </div>
@@ -119,10 +148,10 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                     </h2>
                     <p className=" text-black dark:text-white text-lg mb-3">{user.email}</p>
                     <div className="flex items-center gap-3">
-                      {/* <span className={`px-3 py-1.5 rounded-full text-sm font-semibold shadow-sm ${getRoleColor(user.role)}`}>
+                      {/* <span className={`px-3 py-1.5 rounded-lg text-sm font-semibold shadow-sm ${getRoleColor(user.role)}`}>
                         {user.emailVerified}
                       </span> */}
-                      <span className={`px-3 py-1.5 rounded-full text-sm font-semibold shadow-sm ${getStatusColor(user.status || 'active')}`}>
+                      <span className={`px-3 py-1.5 rounded-lg text-sm font-semibold shadow-sm ${getStatusColor(user.status || 'active')}`}>
                         {user.status || 'active'}
                       </span>
                     </div>
@@ -130,7 +159,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                 </div>
                 <button
                   onClick={onClose}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200 p-2 hover:bg-gray-100 dark:hover:bg-black rounded-full"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200 p-2 hover:bg-gray-100 dark:hover:bg-black rounded-lg"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -151,7 +180,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                     }`}
                   >
                     <tab.icon className="w-4 h-4 icon" />
-                    {tab.label}
+                    {/* {tab.label} */}
                   </button>
                 ))}
               </nav>
@@ -164,7 +193,6 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                   {/* Basic Info */}
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div className="space-y-6">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Contact Information</h3>
                       <div className="space-y-4">
                         <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-lg">
                           <Mail className="w-5 h-5 text-blue-500" />
@@ -267,7 +295,6 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                     </div>
 
                     <div className="space-y-6">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Profile Information</h3>
                       <div className="space-y-4">
                         {/* <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-lg">
                           <Calendar className="w-5 h-5 text-orange-500" />
@@ -323,7 +350,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                       <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-6 rounded-lg border border-purple-200/50 dark:border-purple-700/50 hover:shadow-lg transition-shadow duration-200">
                         <div className="flex items-center gap-3 text-purple-600 dark:text-purple-400 mb-3">
                           <div className="p-2 bg-purple-500/10 rounded-lg">
-                            <Users className="w-5 h-5" />
+                            <PiUsersDuotone className="w-5 h-5" />
                           </div>
                           <span className="font-semibold">Teams</span>
                         </div>
@@ -352,7 +379,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                                   alt={project.name}
                                   className="w-12 h-12 rounded-lg object-cover border-2 border-gray-200 dark:border-gray-700 shadow-sm"
                                 />
-                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
+                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg"></div>
                               </div>
                             )}
                             <div className="flex-1">
@@ -361,17 +388,17 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                                 {project.description}
                               </p>
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${
+                                <span className={`px-3 py-1 rounded-lg text-xs font-semibold shadow-sm ${
                                   project.status === 'active' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300' :
                                   project.status === 'completed' ? 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200' :
                                   'bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-300'
                                 }`}>
                                   {project.status}
                                 </span>
-                                <span className={`px-3 py-1 rounded-full text-xs font-semibold shadow-sm ${getRoleColor(project.role)}`}>
+                                <span className={`px-3 py-1 rounded-lg text-xs font-semibold shadow-sm ${getRoleColor(project.role)}`}>
                                   {project.role}
                                 </span>
-                                <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-full">
+                                <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg">
                                   {project.progress}% complete
                                 </span>
                               </div>
@@ -384,6 +411,80 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                     <div className="text-center py-8 text-gray-500 dark:text-gray-400">
                       <Briefcase className="w-12 h-12 mx-auto mb-2 opacity-50" />
                       <p>No projects found</p>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'posts' && (
+                <div className="space-y-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Posts</h3>
+                  {loadingPosts ? (
+                    <div className="space-y-4">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="bg-white dark:bg-black p-5 rounded-lg border border-gray-200/50 dark:border-gray-700/50 animate-pulse">
+                          <div className="flex items-start gap-4">
+                            <div className="w-12 h-12 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+                            <div className="flex-1">
+                              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-2"></div>
+                              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
+                              <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : userPosts.length > 0 ? (
+                    <div className="space-y-4">
+                      {userPosts.map((post) => (
+                        <div key={post._id} className="bg-white dark:bg-black p-5 rounded-lg border border-gray-200/50 dark:border-gray-700/50 hover:shadow-lg transition-all duration-200 hover:border-blue-300 dark:hover:border-blue-600">
+                          <div className="flex items-start gap-4">
+                            <div className="relative">
+                              <img
+                                {...getAvatarProps(post.author?.avatar, post.author?.username)}
+                                alt={post.author?.username}
+                                className="w-12 h-12 rounded-lg object-cover border-2 border-gray-200 dark:border-gray-700 shadow-sm"
+                              />
+                              {/* <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg"></div> */}
+                            </div>
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-2">
+                                <h4 className="font-semibold text-gray-900 dark:text-white text-lg">{post.title}</h4>
+                                <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-lg">
+                                  {new Date(post.createdAt).toLocaleDateString()}
+                                </span>
+                              </div>
+                              <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
+                                {post.content}
+                              </p>
+                              {/* <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                                  <Heart className="w-4 h-4" />
+                                  <span>{post.likes?.length || 0}</span>
+                                </div>
+                                <div className="flex items-center gap-1 text-sm text-gray-500 dark:text-gray-400">
+                                  <MessageCircle className="w-4 h-4" />
+                                  <span>{post.comments?.length || 0}</span>
+                                </div>
+                                {post.tags && post.tags.length > 0 && (
+                                  <div className="flex items-center gap-1">
+                                    {post.tags.slice(0, 2).map((tag, index) => (
+                                      <span key={index} className="text-xs bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 px-2 py-1 rounded-lg">
+                                        #{tag}
+                                      </span>
+                                    ))}
+                                  </div>
+                                )}
+                              </div> */}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                      <FileText className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                      <p>No posts found</p>
                     </div>
                   )}
                 </div>

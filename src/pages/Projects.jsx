@@ -590,6 +590,8 @@ const Projects = () => {
     }
   }
 
+  document.title = "Projects - Manage Projects at ease!"
+
   // Get priority color
   const getPriorityColor = (priority) => {
     switch (priority) {
@@ -698,58 +700,7 @@ const Projects = () => {
         </motion.div>
 
         {/* Stats Cards */}
-        {stats && (
-          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div className="bg-white dark:bg-black rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Projects</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalProjects}</p>
-                </div>
-                <div className="p-3 bg-gray-100 dark:bg-black rounded-full">
-                  <CheckCircle className="w-6 h-6 text-gray-600 dark:text-gray-400 icon" />
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white dark:bg-black rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Projects</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.activeProjects}</p>
-                </div>
-                <div className="p-3 bg-green-100 dark:bg-green-900 rounded-full">
-                  <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400 icon" />
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white dark:bg-black rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Completed</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.completedProjects}</p>
-                </div>
-                <div className="p-3 bg-gray-100 dark:bg-black rounded-full">
-                  <CheckCircle className="w-6 h-6 text-gray-600 dark:text-gray-400 icon" />
-                </div>
-              </div>
-            </div>
-            
-            <div className="bg-white dark:bg-black rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Avg Progress</p>
-                  <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.averageProgress}%</p>
-                </div>
-                <div className="p-3 bg-purple-100 dark:bg-purple-900 rounded-full">
-                  <Clock className="w-6 h-6 text-purple-600 dark:text-purple-400 icon" />
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
+    
         {/* Filters */}
         <motion.div variants={itemVariants} className="flex flex-wrap justify-start items-center gap-4 mb-6">
           <div className="">
@@ -830,7 +781,7 @@ const Projects = () => {
               <motion.div
                 key={project.id}
                 variants={itemVariants}
-                className="dark:bg-gray-900 rounded-lg bg-white border  p-6 transition-shadow duration-300"
+                className="dark:bg-[rgba(255,255,255,.1)] rounded-lg bg-white dark:border-none border  p-6 transition-shadow duration-300"
               >
                 {/* Project Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -840,7 +791,7 @@ const Projects = () => {
                         <img
                           src={project.logo.startsWith('http') ? project.logo : `http://localhost:4000${project.logo}`}
                           alt={project.name}
-                          className="w-8 h-8 rounded object-cover rounded-full bg-gray-100  border border-gray-200 dark:border-gray-700"
+                          className="w-8 h-8 rounded object-cover rounded-lg bg-gray-100  border border-gray-200 dark:border-gray-700"
                         />
                       )}
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-1">
@@ -918,11 +869,11 @@ const Projects = () => {
 
                 {/* Status and Priority */}
                 <div className="flex gap-2 mb-4 mt-10">
-                  <span className={`inline-flex items-center border gap-1 uppercase px-4 py-2 rounded-full text-[10px] font-medium ${getStatusColor(project.status)}`}>
+                  <span className={`inline-flex items-center border gap-1 uppercase px-4 py-2 rounded-lg text-[10px] font-medium ${getStatusColor(project.status)}`}>
                     {getStatusIcon(project.status)}
                     {project.status.replace('_', ' ')}
                   </span>
-                  <span className={`inline-flex items-center  px-4 py-2 border uppercase rounded-full text-[10px] font-medium ${getPriorityColor(project.priority)}`}>
+                  <span className={`inline-flex items-center  px-4 py-2 border uppercase rounded-lg text-[10px] font-medium ${getPriorityColor(project.priority)}`}>
                     {project.priority}
                   </span>
                 </div>
@@ -933,9 +884,9 @@ const Projects = () => {
                     <span>Progress</span>
                     <span>{project.progress}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-lg h-2">
                     <div 
-                      className="bg-black dark:bg-white h-2 rounded-full transition-all duration-300"
+                      className="bg-black dark:bg-white h-2 rounded-lg transition-all duration-300"
                       style={{ width: `${project.progress}%` }}
                     ></div>
                   </div>
@@ -972,7 +923,7 @@ const Projects = () => {
                     {project.tags.slice(0, 3).map((tag, index) => (
                       <span
                         key={index}
-                        className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-black text-gray-700 dark:text-gray-300 rounded-full text-xs"
+                        className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-black text-gray-700 dark:text-gray-300 rounded-lg text-xs"
                       >
                         <Tag className="w-3 h-3 mr-1 icon" />
                         {tag}
@@ -993,7 +944,7 @@ const Projects = () => {
                       {project.members?.slice(0, 3).map((member, index) => (
                         <div
                           key={index}
-                          className="w-10 h-10 rounded-full border-2 border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:scale-110 transition-transform"
+                          className="w-10 h-10 rounded-lg border-2 border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:scale-110 transition-transform"
                           onClick={() => handleUserAvatarClick(member.user._id)}
                           title={member.user.username}
                         >
@@ -1006,7 +957,7 @@ const Projects = () => {
                         </div>
                       ))}
                       {project.members?.length > 3 && (
-                        <div className="w-6 h-6 rounded-full border-2 border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
+                        <div className="w-6 h-6 rounded-lg border-2 border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
                           +{project.members.length - 3}
                         </div>
                       )}
@@ -1102,7 +1053,7 @@ const Projects = () => {
                         <button
                           type="button"
                           onClick={() => setNewProject({...newProject, logo: null})}
-                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600"
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-lg flex items-center justify-center text-xs hover:bg-red-600"
                         >
                           <X className="w-3 h-3" />
                         </button>
@@ -1213,7 +1164,7 @@ const Projects = () => {
                               <img 
                                 {...getAvatarProps(user.avatar, user.username)}
                                 alt={user.username}
-                                className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                                className="w-8 h-8 rounded-lg object-cover border-2 border-gray-200 dark:border-gray-700"
                               />
                               <div>
                                 <div className="font-medium text-gray-900 dark:text-white">{user.username}</div>
@@ -1231,12 +1182,12 @@ const Projects = () => {
                       {newProject.members.map((member) => (
                         <span
                           key={member.id}
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200 rounded-full text-sm"
+                          className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200 rounded-lg text-sm"
                         >
                           <img
                             {...getAvatarProps(member.avatar, member.username)}
                             alt={member.username}
-                            className="w-4 h-4 rounded-full"
+                            className="w-4 h-4 rounded-lg"
                           />
                           {member.username}
                           <button
@@ -1325,7 +1276,7 @@ const Projects = () => {
                       {newProject.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm"
+                          className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-lg text-sm"
                         >
                           <Tag className="w-3 h-3" />
                           {tag}
@@ -1452,13 +1403,13 @@ const Projects = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase font-bold rounded-full text-xs font-medium ${getStatusColor(selectedProject.status)}`}>
+                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase font-bold rounded-lg text-xs font-medium ${getStatusColor(selectedProject.status)}`}>
                           {getStatusIcon(selectedProject.status)}
                           {selectedProject.status}
                         </span>
                       </div>
                       <div>
-                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase font-bold rounded-full text-xs font-medium ${getPriorityColor(selectedProject.priority)}`}>
+                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase font-bold rounded-lg text-xs font-medium ${getPriorityColor(selectedProject.priority)}`}>
                           {getPriorityIcon(selectedProject.priority)}
                           {selectedProject.priority}
                         </span>
@@ -1469,9 +1420,9 @@ const Projects = () => {
 
                     <div>
                       <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Progress</h4>
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-lg h-2">
                         <div 
-                          className="bg-green-500 h-2 rounded-full transition-all duration-300"
+                          className="bg-green-500 h-2 rounded-lg transition-all duration-300"
                           style={{ width: `${selectedProject.progress || 0}%` }}
                         ></div>
                       </div>
@@ -1487,7 +1438,7 @@ const Projects = () => {
                           {selectedProject.tags.map((tag, index) => (
                             <span
                               key={index}
-                              className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200 rounded-full text-xs"
+                              className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200 rounded-lg text-xs"
                             >
                               {tag}
                             </span>
@@ -1509,7 +1460,7 @@ const Projects = () => {
                               <img
                                 {...getAvatarProps(member.user?.avatar, member.user?.username)}
                                 alt={member.user?.username}
-                                className="w-8 h-8 rounded-full cursor-pointer hover:scale-110 transition-transform"
+                                className="w-8 h-8 rounded-lg cursor-pointer hover:scale-110 transition-transform"
                                 onClick={() => handleUserAvatarClick(member.user?.id)}
                                 title={`View ${member.user?.username}'s profile`}
                               />
@@ -1637,7 +1588,7 @@ const Projects = () => {
                                 className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg"
                               >
                                 <div className="flex items-center gap-3">
-                                  <div className={`w-3 h-3 rounded-full ${
+                                  <div className={`w-3 h-3 rounded-lg ${
                                     task.status === 'completed' ? 'bg-green-500' :
                                     task.status === 'in_progress' ? 'bg-gray-500' :
                                     task.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
@@ -1651,7 +1602,7 @@ const Projects = () => {
                                     </p>
                                   </div>
                                 </div>
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
                                   task.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                                   task.status === 'in_progress' ? 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200' :
                                   task.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
@@ -1708,7 +1659,7 @@ const Projects = () => {
                                 className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg"
                               >
                                 <div className="flex items-center gap-3">
-                                  <div className={`w-3 h-3 rounded-full ${
+                                  <div className={`w-3 h-3 rounded-lg ${
                                     meeting.status === 'completed' ? 'bg-green-500' :
                                     meeting.status === 'scheduled' ? 'bg-gray-500' :
                                     meeting.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
@@ -1722,7 +1673,7 @@ const Projects = () => {
                                     </p>
                                   </div>
                                 </div>
-                                <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                                <span className={`px-2 py-1 rounded-lg text-xs font-medium ${
                                   meeting.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                                   meeting.status === 'scheduled' ? 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200' :
                                   meeting.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
@@ -1921,7 +1872,7 @@ const Projects = () => {
                             <img
                               {...getAvatarProps(user.avatar, user.username)}
                               alt={user.username}
-                              className="w-10 h-10 rounded-full"
+                              className="w-10 h-10 rounded-lg"
                             />
                            <div className="flex flex-col">
                            <span className="text-sm text-gray-900 dark:text-white font-bold">{user.username}</span>
@@ -1943,7 +1894,7 @@ const Projects = () => {
                             <img
                               {...getAvatarProps(member.user?.avatar, member.user?.username)}
                               alt={member.user?.username}
-                              className="w-8 h-8 rounded-full cursor-pointer hover:scale-110 transition-transform"
+                              className="w-8 h-8 rounded-lg cursor-pointer hover:scale-110 transition-transform"
                               onClick={() => handleUserAvatarClick(member.user?.id)}
                               title={`View ${member.user?.username}'s profile`}
                             />

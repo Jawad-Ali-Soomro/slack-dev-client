@@ -49,6 +49,9 @@ import projectService from "../services/projectService";
 import { toast } from "sonner";
 
 const Dashboard = () => {
+
+  document.title = "Dashboard"
+
   const { user } = useAuth();
   const [stats, setStats] = useState({
     totalTasks: 0,
@@ -383,13 +386,13 @@ const Dashboard = () => {
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ duration: 0.5, delay }}
       whileHover={{ scale: 1.02, y: -2 }}
-      className="group relative bg-white dark:bg-black rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-6 overflow-hidden"
+      className="group relative bg-white dark:bg-[rgba(255,255,255,.1)] rounded-2xl shadow-xl border dark:border-none border-gray-200 dark:border-gray-700 p-6 overflow-hidden"
     >
       {/* Background gradient overlay */}
       <div className="absolute inset-0 bg-gray-100/20 dark:bg-gray-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
       {/* Animated background pattern */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gray-200/20 dark:bg-gray-600/20 rounded-full -translate-y-16 translate-x-16 group-hover:scale-110 transition-transform duration-500" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-gray-200/20 dark:bg-gray-600/20 rounded-lg -translate-y-16 translate-x-16 group-hover:scale-110 transition-transform duration-500" />
 
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-4">
@@ -549,57 +552,57 @@ const Dashboard = () => {
               transition={{ delay: 0.5 }}
               className="grid grid-cols-2 md:grid-cols-4 gap-4"
             >
-              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-lg p-4 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="bg-white/60 dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm rounded-lg p-4 dark:border-none border border-gray-200 dark:border-gray-700/50">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-black dark:bg-white rounded-full animate-pulse"></div>
+                  <div className="w-2 h-2 bg-black dark:bg-white rounded-lg animate-pulse"></div>
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       Status
                     </p>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
                       All Systems Active
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-lg p-4 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="bg-white/60 dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm rounded-lg p-4 dark:border-none border border-gray-200 dark:border-gray-700/50">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-blue-500 rounded-lg"></div>
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       Last Updated
                     </p>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      Just now
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                     Updated Just now
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-lg p-4 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="bg-white/60 dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm rounded-lg p-4 dark:border-none border border-gray-200 dark:border-gray-700/50">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-purple-500 rounded-lg"></div>
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       Performance
                     </p>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      Excellent
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Extra Excellent
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-white/60 dark:bg-black/60 backdrop-blur-sm rounded-lg p-4 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="bg-white/60 dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm rounded-lg p-4 dark:border-none border border-gray-200 dark:border-gray-700/50">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-orange-500 rounded-full"></div>
+                  <div className="w-2 h-2 bg-orange-500 rounded-lg"></div>
                   <div>
                     <p className="text-xs text-gray-500 dark:text-gray-400">
                       Sync Status
                     </p>
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
-                      Real-time
+                    <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Real Time Sync
                     </p>
                   </div>
                 </div>
@@ -699,9 +702,9 @@ const Dashboard = () => {
                   transition={{ delay: 1.0 }}
                   className="flex items-center space-x-3 mb-3"
                 >
-                  <div className="p-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
+                  {/* <div className="p-5 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg">
                     <BarChart3 className="w-6 h-6 text-white" />
-                  </div>
+                  </div> */}
                   <h3 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
                     Analytics Dashboard
                   </h3>
@@ -722,8 +725,8 @@ const Dashboard = () => {
                 transition={{ delay: 1.2 }}
                 className="flex items-center space-x-4"
               >
-                <div className="flex items-center space-x-2 px-4 py-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-full">
-                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
+                <div className="flex items-center space-x-2 px-4 py-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-lg animate-pulse"></div>
                   <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
                     Live Data
                   </span>
@@ -757,19 +760,19 @@ const Dashboard = () => {
                 </div>
                 <div className="flex items-center space-x-6">
                   <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
+                    <div className="w-4 h-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg"></div>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Tasks
                     </span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4 bg-gradient-to-r from-purple-500 to-purple-600 rounded-full"></div>
+                    <div className="w-4 h-4 bg-gradient-to-r from-purple-500 to-purple-600 rounded-lg"></div>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Meetings
                     </span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-full"></div>
+                    <div className="w-4 h-4 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-lg"></div>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Projects
                     </span>
@@ -947,7 +950,7 @@ const Dashboard = () => {
                       className="flex items-center p-3 bg-white/50 dark:bg-black/50 rounded-lg"
                     >
                       <div
-                        className="w-4 h-4 rounded-full mr-3 shadow-sm"
+                        className="w-4 h-4 rounded-lg mr-3 shadow-sm"
                         style={{ backgroundColor: item.color }}
                       ></div>
                       <div>
@@ -1025,7 +1028,7 @@ const Dashboard = () => {
                       className="flex items-center p-3 bg-white/50 dark:bg-black/50 rounded-lg"
                     >
                       <div
-                        className="w-4 h-4 rounded-full mr-3 shadow-sm"
+                        className="w-4 h-4 rounded-lg mr-3 shadow-sm"
                         style={{ backgroundColor: item.color }}
                       ></div>
                       <div>
@@ -1051,7 +1054,7 @@ const Dashboard = () => {
             className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8"
           >
             {/* Project Status Distribution */}
-            <div className="bg-gray-50 dark:bg-black rounded-lg p-6">
+            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-lg p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Project Status Distribution
@@ -1090,7 +1093,7 @@ const Dashboard = () => {
                 {projectStatusData.map((item, index) => (
                   <div key={index} className="flex items-center">
                     <div
-                      className="w-3 h-3 rounded-full mr-2"
+                      className="w-3 h-3 rounded-lg mr-2"
                       style={{ backgroundColor: item.color }}
                     ></div>
                     <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -1102,7 +1105,7 @@ const Dashboard = () => {
             </div>
 
             {/* Project Priority Distribution */}
-            <div className="bg-gray-50 dark:bg-black rounded-lg p-6">
+            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-lg p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Project Priority Breakdown
@@ -1132,7 +1135,7 @@ const Dashboard = () => {
                 {projectPriorityData.map((item, index) => (
                   <div key={index} className="flex items-center">
                     <div
-                      className="w-3 h-3 rounded-full mr-2"
+                      className="w-3 h-3 rounded-lg mr-2"
                       style={{ backgroundColor: item.color }}
                     ></div>
                     <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -1147,7 +1150,7 @@ const Dashboard = () => {
           {/* Combined Priority & Type Distribution */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
             {/* Task Priority Distribution */}
-            <div className="bg-gray-50 dark:bg-black rounded-lg p-6">
+            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-lg p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Task Priority Breakdown
@@ -1176,7 +1179,7 @@ const Dashboard = () => {
             </div>
 
             {/* Meeting Type Distribution */}
-            <div className="bg-gray-50 dark:bg-black rounded-lg p-6">
+            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-lg p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Meeting Format Analysis
@@ -1229,7 +1232,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
-            <div className="bg-gray-50 dark:bg-black rounded-lg p-6 text-center">
+            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-lg p-6 text-center">
               <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
                 {stats.tasksThisWeek}
               </div>
@@ -1240,7 +1243,7 @@ const Dashboard = () => {
                 Development Velocity
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-black rounded-lg p-6 text-center">
+            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-lg p-6 text-center">
               <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
                 {stats.tasksThisMonth}
               </div>
@@ -1251,7 +1254,7 @@ const Dashboard = () => {
                 Monthly Throughput
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-black rounded-lg p-6 text-center">
+            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-lg p-6 text-center">
               <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
                 {stats.completionRate}%
               </div>
@@ -1262,7 +1265,7 @@ const Dashboard = () => {
                 Quality Metric
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-black rounded-lg p-6 text-center">
+            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-lg p-6 text-center">
               <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
                 {stats.meetingsThisWeek}
               </div>
@@ -1273,7 +1276,7 @@ const Dashboard = () => {
                 Collaboration
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-black rounded-lg p-6 text-center">
+            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-lg p-6 text-center">
               <div className="text-3xl font-bold text-pink-600 dark:text-pink-400 mb-2">
                 {stats.meetingsThisMonth}
               </div>
@@ -1284,7 +1287,7 @@ const Dashboard = () => {
                 Team Sync
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-black rounded-lg p-6 text-center">
+            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-lg p-6 text-center">
               <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
                 {stats.meetingCompletionRate}%
               </div>

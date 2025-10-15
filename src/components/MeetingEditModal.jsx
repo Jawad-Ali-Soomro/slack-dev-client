@@ -280,7 +280,7 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
                           <img
                             {...getAvatarProps(assignedUser.avatar, assignedUser.username)}
                             alt={assignedUser.username}
-                            className="w-5 h-5 rounded-full"
+                            className="w-5 h-5 rounded-lg"
                           />
                           <span>{assignedUser.username}</span>
                         </div>
@@ -295,7 +295,7 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
                           <img
                             {...getAvatarProps(user.avatar, user.username)}
                             alt={user.username}
-                            className="w-5 h-5 rounded-full"
+                            className="w-5 h-5 rounded-lg"
                           />
                           <span>{user.username}</span>
                         </div>
@@ -370,7 +370,7 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
                 {formData.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full text-sm"
+                    className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-lg text-sm"
                   >
                     {tag}
                     <button

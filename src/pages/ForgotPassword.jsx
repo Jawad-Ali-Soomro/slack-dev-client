@@ -310,7 +310,7 @@ const ForgotPassword = () => {
                         autoComplete="off"
                       />
                       {index < 3 && (
-                        <div className="absolute -right-2 top-1/2 transform -translate-y-1/2 w-1 h-1 bg-gray-400 rounded-full"></div>
+                        <div className="absolute -right-2 top-1/2 transform -translate-y-1/2 w-1 h-1 bg-gray-400 rounded-lg"></div>
                       )}
                     </div>
                   ))}

@@ -8,6 +8,9 @@ import { Button } from '../components/ui/button';
 import { Plus, Wifi, WifiOff } from 'lucide-react';
 
 const Chat = () => {
+
+  document.title = "Chat - Message Your Friends"
+
   const { isConnected, unreadCount, error } = useChat();
   const { markAsReadByType } = useNotifications();
   const [showCreateModal, setShowCreateModal] = useState(false);

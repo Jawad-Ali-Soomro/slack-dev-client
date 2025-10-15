@@ -60,15 +60,17 @@ const CreateChatModal = ({ isOpen, onClose }) => {
   };
 
   const handleUserSelect = (userId) => {
-    // if (chatType === 'direct') {
-    //   setSelectedUsers([userId]);
-    // } else {
-    setSelectedUsers((prev) =>
-      prev.includes(userId)
-        ? prev.filter((id) => id !== userId)
-        : [...prev, userId]
-    );
-    // }
+    if (chatType === 'direct') {
+      // For direct chats, only allow one user
+      setSelectedUsers([userId]);
+    } else {
+      // For group chats, allow multiple users
+      setSelectedUsers((prev) =>
+        prev.includes(userId)
+          ? prev.filter((id) => id !== userId)
+          : [...prev, userId]
+      );
+    }
   };
 
   const handleCreateChat = async () => {
@@ -152,7 +154,10 @@ const CreateChatModal = ({ isOpen, onClose }) => {
                 type="button"
                 variant={chatType === "direct" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setChatType("direct")}
+                onClick={() => {
+                  setChatType("direct");
+                  setSelectedUsers([]); // Clear selection when switching
+                }}
                 className="flex items-center gap-2 w-full"
               >
                 <ArrowBigUp className="h-4 w-4" />
@@ -162,7 +167,10 @@ const CreateChatModal = ({ isOpen, onClose }) => {
                 type="button"
                 variant={chatType === "group" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setChatType("group")}
+                onClick={() => {
+                  setChatType("group");
+                  setSelectedUsers([]); // Clear selection when switching
+                }}
                 className="flex items-center gap-2 w-full"
               >
                 <Users className="h-4 w-4" />
@@ -246,7 +254,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
           <div className="max-h-60 overflow-y-auto space-y-2">
             {loading ? (
               <div className="flex items-center justify-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary"></div>
+                <div className="animate-spin rounded-lg h-6 w-6 border-b-2 border-primary"></div>
               </div>
             ) : filteredUsers.length === 0 ? (
               <div className="text-center py-4 text-muted-foreground">

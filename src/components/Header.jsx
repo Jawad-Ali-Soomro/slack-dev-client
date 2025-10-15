@@ -20,7 +20,7 @@ const Header = () => {
   }
   
   return (
-    <header className="bg-gray-50 dark:bg-black w-[90%] mx-auto border h-20  rounded-full flex items-center justify-between px-5 fixed top-10 left-1/2 -translate-x-1/2 z-100" style={{
+    <header className="bg-gray-50 dark:bg-black w-[90%] mx-auto border h-20  rounded-lg flex items-center justify-between px-5 fixed top-10 left-1/2 -translate-x-1/2 z-100" style={{
         backdropFilter: "blur(10px)"
     }}>
 
@@ -28,7 +28,7 @@ const Header = () => {
         {/* Menu button for authenticated users - only on mobile */}
      
         
-        <div className="p-3 bg-gray-200 dark:bg-black rounded-full">
+        <div className="p-3 bg-gray-200 dark:bg-black rounded-lg">
           <img src="/logo.png" alt="logo" className="w-8 h-8 cursor-pointer" onClick={() => navigate("/")} />
         </div>
       <Link className={getLinkClasses("/")} style={{fontWeight: 700}} to="/">Home</Link>
@@ -42,7 +42,7 @@ const Header = () => {
               href="https://github.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="p-2 rounded-full hover:bg-gray-200 icon dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-lg hover:bg-gray-200 icon dark:hover:bg-gray-700 transition-colors"
             >
               <Github className="w-5 h-5 text-gray-600 icon dark:text-gray-300" />
             </a>
@@ -50,7 +50,7 @@ const Header = () => {
               href="https://linkedin.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="p-2 rounded-full hover:bg-gray-200 icon dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-lg hover:bg-gray-200 icon dark:hover:bg-gray-700 transition-colors"
             >
               <Linkedin className="w-5 h-5 text-gray-600 icon dark:text-gray-300" />
             </a>
@@ -58,7 +58,7 @@ const Header = () => {
               href="https://instagram.com" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+              className="p-2 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
             >
               <Instagram className="w-5 h-5 text-gray-600 icon dark:text-gray-300" />
             </a>
@@ -67,7 +67,7 @@ const Header = () => {
           {/* Login Button - Responsive sizing */}
           <button 
             onClick={() => navigate("/login")}
-            className="font-bold text-xs md:text-sm w-[200px] rounded-[25px] md:w-[160px] py-5 md:py-4 rounded-full cursor-pointer bg-black text-white uppercase hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
+            className="font-bold text-xs md:text-sm w-[200px] rounded-lg md:w-[160px] py-5 md:py-4 rounded-lg cursor-pointer bg-black text-white uppercase hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
           >
             Login
           </button>

@@ -5,6 +5,7 @@ import Sidebar from './Sidebar'
 import DashboardHeader from './DashboardHeader'
 import { useSidebar } from '../contexts/SidebarContext'
 import { ChevronLeft, ChevronRight, SidebarOpen } from 'lucide-react'
+import { useState } from 'react'
 
 const ProtectedRoute = ({ children, requireAuth = true }) => {
   const { isAuthenticated, loading } = useAuth()
@@ -22,7 +23,7 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
           transition={{ duration: 0.3 }}
         >
           <div className="flex flex-col items-center space-y-4">
-            <div className="w-8 h-8 border-4 border-black border-t-transparent rounded-full animate-spin dark:border-white"></div>
+            <div className="w-8 h-8 border-4 border-black border-t-transparent rounded-lg animate-spin dark:border-white"></div>
             <p className="text-gray-600 dark:text-gray-300 font-bold">Loading...</p>
           </div>
         </motion.div>
@@ -46,7 +47,7 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
       <div className="flex">
         <Sidebar />
         
-        <div className={`flex absolute left-2 top-20 p-3 hover:bg-gray-100 cursor-pointer rounded-full hover:text-black z-10`} onClick={() => toggleSidebar()}>
+        <div className={`flex absolute left-2 top-20 p-3 hover:bg-gray-100 cursor-pointer rounded-lg hover:text-black z-10`} onClick={() => toggleSidebar()}>
           <ChevronRight />
         </div>
 

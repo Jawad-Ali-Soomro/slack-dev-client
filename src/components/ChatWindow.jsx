@@ -203,7 +203,7 @@ const ChatWindow = () => {
     return (
       <div className="flex items-center justify-center h-full bg-muted/20">
         <div className="text-center">
-          <div className="h-16 w-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+          <div className="h-16 w-16 mx-auto mb-4 rounded-lg bg-muted flex items-center justify-center">
             <Send className="h-8 w-8 text-muted-foreground" />
           </div>
           <h3 className="text-lg font-medium mb-2">Select a chat</h3>
@@ -227,7 +227,7 @@ const ChatWindow = () => {
                 </AvatarFallback>
               </Avatar>
               {isOnline && (
-                <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-full"></div>
+                <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-lg"></div>
               )}
             </div>
             <div>
@@ -258,7 +258,7 @@ const ChatWindow = () => {
         <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 relative">
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            <div className="animate-spin rounded-lg h-8 w-8 border-b-2 border-primary"></div>
           </div>
         ) : messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-muted-foreground">
@@ -281,8 +281,8 @@ const ChatWindow = () => {
               >
                 <div className={`flex gap-2 max-w-[70%] ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
                   {!isOwn && (
-                    <Avatar className="h-8 w-8 mt-1">
-                      <AvatarImage src={getAvatarUrl(message.sender.avatar)} />
+                    <Avatar className="h-10 w-10 mt-1 border border-gray-200 dark:border-gray-600 p-1 rounded-lg">
+                      <AvatarImage src={getAvatarUrl(message.sender.avatar)} className='rounded-lg' />
                       <AvatarFallback>
                         {(message.sender.name || message.sender.username || 'U').charAt(0).toUpperCase()}
                       </AvatarFallback>
@@ -291,23 +291,25 @@ const ChatWindow = () => {
                   
                   <div className={`space-y-1 ${isOwn ? 'items-end' : 'items-start'}`}>
                     <div
-                      className={`px-5 py-3 rounded-lg ${
+                      className={`px-5 py-3 rounded-lg relative ${
                         isOwn
                           ? 'bg-primary text-primary-foreground'
-                          : 'bg-muted'
+                          : 'dark:bg-[rgba(255,255,255,.1)] bg-muted'
                       } ${isDeleted ? 'opacity-60' : ''}`}
                     >
-                      {message.replyTo && (
-                        <div className="text-xs opacity-70 mb-1 p-2 bg-black/10 rounded">
-                          Replying to: {message.replyTo.content}
+                      
+                      <p className={`text-sm `}>{message.content}</p>
+                      
+                     <div className="flex justify-between pt-1">
+                     {message.replyTo && (
+                        <div className="text-xs opacity-70 mb-1 rounded">
+                         (replied)
                         </div>
                       )}
-                      
-                      <p className="text-sm">{message.content}</p>
-                      
                       {message.isEdited && (
                         <p className="text-xs opacity-70">(edited)</p>
-                      )}
+                      )} 
+                     </div>
                     </div>
                     
                     <div className={`flex items-center gap-2 text-xs text-muted-foreground ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -358,7 +360,7 @@ const ChatWindow = () => {
             <Button
               onClick={scrollToBottomLocal}
               size="sm"
-              className="rounded-full shadow-lg bg-primary hover:bg-primary/90"
+              className="rounded-lg shadow-lg bg-primary hover:bg-primary/90"
             >
               <ArrowDown className="h-4 w-4" />
             </Button>
@@ -369,9 +371,9 @@ const ChatWindow = () => {
         {typingUsers.length > 0 && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <div className="flex space-x-1">
-              <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce"></div>
-              <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-              <div className="w-2 h-2 bg-muted-foreground rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              <div className="w-2 h-2 bg-muted-foreground rounded-lg animate-bounce"></div>
+              <div className="w-2 h-2 bg-muted-foreground rounded-lg animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+              <div className="w-2 h-2 bg-muted-foreground rounded-lg animate-bounce" style={{ animationDelay: '0.2s' }}></div>
             </div>
             <span>
               {typingUsers.map(u => u.userName).join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
@@ -423,7 +425,7 @@ const ChatWindow = () => {
             value={messageText}
             onChange={handleTyping}
             onKeyPress={handleKeyPress}
-            placeholder={editingMessage ? "Edit message..." : replyTo ? "Reply to message..." : "Type a message..."}
+            placeholder={editingMessage ? "Edit message..." : replyTo ? "Aa" : "Aa"}
             className="flex-1"
             disabled={loading}
           />

@@ -423,6 +423,8 @@ const Tasks = () => {
     }
   }
 
+  document.title = "Tasks - Schedule & Manage"
+
   return (
     <div className="overflow-hidden pt-6 pl-6">
       <motion.div
@@ -509,18 +511,12 @@ const Tasks = () => {
         </motion.div>
 
         {/* Tasks Table */}
-        <motion.div variants={itemVariants} className="bg-white dark:bg-black rounded-lg shadow-xl border-2 border-gray-200 dark:border-gray-700 overflow-hidden">
+        <motion.div variants={itemVariants} className="bg-white dark:bg-black rounded-lg shadow-xl overflow-hidden">
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
-              <thead className="bg-gray-100 dark:bg-black border-b-2 border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+              <thead className="bg-gray-100 dark:bg-gray-900 border-b dark:border-gray-700 sticky top-0 z-10">
                 <tr>
-                      <th className="px-6 py-4 text-left">
-                        <Checkbox
-                          checked={selectedTasks.length === filteredTasks.length && filteredTasks.length > 0}
-                          onCheckedChange={handleSelectAll}
-                          className="border-2 border-gray-300 dark:border-gray-600"
-                        />
-                      </th>
+                     
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     Task
                   </th>
@@ -543,7 +539,7 @@ const Tasks = () => {
                     Due Date
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                    Actions
+                    
                   </th>
                 </tr>
               </thead>
@@ -552,7 +548,7 @@ const Tasks = () => {
                       <tr>
                         <td colSpan="7" className="px-6 py-8 text-center">
                           <div className="flex items-center justify-center">
-                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
+                            <div className="animate-spin rounded-lg h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
                             <span className="ml-2 text-gray-600 dark:text-gray-400">Loading tasks...</span>
                           </div>
                         </td>
@@ -572,21 +568,15 @@ const Tasks = () => {
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2 }}
                   >
-                        <td className="px-6 py-4">
-                          <Checkbox
-                            checked={selectedTasks.includes(task.id)}
-                            onCheckedChange={() => handleSelectTask(task.id)}
-                            className="border-2 border-gray-300 dark:border-gray-600"
-                          />
-                        </td>
+                        
                     <td className="px-6 py-4">
                       <div>
                         <div className="flex items-center gap-2">
-                          <div className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                          <div className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                             {task.title}
                           </div>
                           {user && user.id && (
-                            <span className={`text-xs px-2 py-1 rounded-full uppercase font-bold truncate ${
+                            <span className={`text-xs px-2 py-1 rounded-lg uppercase font-bold truncate ${
                               task.assignTo?.id === user.id 
                                 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
                                 : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
@@ -601,14 +591,14 @@ const Tasks = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center justify-center uppercase px-2.5 py-0.5 rounded-full text-[9px] font-bold font-bold ${getPriorityColor(task.priority)}`}>
+                      <span className={`inline-flex items-center justify-center uppercase px-2.5 py-0.5 rounded-lg text-[9px] font-bold font-bold ${getPriorityColor(task.priority)}`}>
                         {task.priority}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className={`inline-flex items-center gap-1 rounded-full text-[9px] font-bold uppercase cursor-pointer hover:opacity-80 transition-opacity ${getStatusColor(task.status)}`}>
+                          <button className={`inline-flex items-center gap-1 rounded-lg text-[9px] font-bold uppercase cursor-pointer hover:opacity-80 transition-opacity ${getStatusColor(task.status)}`}>
                             {getStatusIcon(task.status)}
                             {task.status}
                           </button>
@@ -650,7 +640,7 @@ const Tasks = () => {
                         <img 
                           {...getAvatarProps(task.assignTo?.avatar, task.assignTo?.username)}
                           alt={task.assignTo?.username || "User"}
-                          className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                          className="w-8 h-8 rounded-lg object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                           onClick={() => task.assignTo?.id && handleUserAvatarClick(task.assignTo.id)}
                           title={task.assignTo?.username ? `View ${task.assignTo.username}'s profile` : ''}
                         />
@@ -666,7 +656,7 @@ const Tasks = () => {
                         <img 
                           {...getAvatarProps(task.assignedBy?.avatar, task.assignedBy?.username)}
                           alt={task.assignedBy?.username || "User"}
-                          className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                          className="w-8 h-8 rounded-lg object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                           onClick={() => task.assignedBy?.id && handleUserAvatarClick(task.assignedBy.id)}
                           title={task.assignedBy?.username ? `View ${task.assignedBy.username}'s profile` : ''}
                         />
@@ -909,7 +899,7 @@ const Tasks = () => {
                                   <img 
                                     {...getAvatarProps(user.avatar, user.username || user.name)}
                                     alt={user.username || user.name}
-                                    className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                                    className="w-8 h-8 rounded-lg object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                                     onClick={(e) => {
                                       e.stopPropagation()
                                       handleUserAvatarClick(user.id)

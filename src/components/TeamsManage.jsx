@@ -38,6 +38,9 @@ import { useNotifications } from '../contexts/NotificationContext'
 import { BsTools } from 'react-icons/bs'
 
 const TeamsManage = () => {
+
+  document.title = "Teams - Manage Your Teams"
+
   const { user } = useAuth()
   const { markAsReadByType } = useNotifications()
   const [teams, setTeams] = useState([])
@@ -430,7 +433,7 @@ const TeamsManage = () => {
       {/* Teams Grid */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-lg h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
       ) : filteredTeams.length === 0 ? (
         <div className="text-center py-12">
@@ -459,7 +462,7 @@ const TeamsManage = () => {
             <motion.div
               key={team.id}
               variants={itemVariants}
-              className="bg-white dark:bg-gray-900 rounded-lg border p-6  transition-shadow duration-300"
+              className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-lg border dark:border-none p-6  transition-shadow duration-300"
             >
               {/* Team Header */}
               <div className="flex items-start justify-between mb-4">
@@ -521,7 +524,7 @@ const TeamsManage = () => {
 
               {/* Status and Members */}
               <div className="flex gap-2 mb-4">
-                <span className={`inline-flex items-center px-4 py-2 rounded-full text-xs uppercase font-bold ${getStatusColor(team.isActive)}`}>
+                <span className={`inline-flex items-center px-4 py-2 rounded-lg text-xs uppercase font-bold ${getStatusColor(team.isActive)}`}>
                   {team.isActive ? 'Active' : 'Inactive'}
                 </span>
                
@@ -547,11 +550,11 @@ const TeamsManage = () => {
                             <img
                               {...getAvatarProps(member.user?.avatar, member.user?.username)}
                               alt={member.user?.username}
-                              className="w-10 h-10 rounded-full object-cover border-2 border-white dark:border-gray-900"
+                              className="w-10 h-10 rounded-lg object-cover border-2 border-white dark:border-gray-900"
                             />
                            {
                             member.role ===  "owner" && 
-                              <div className="absolute -bottom-2 -right-1 p-1 rounded-full bg-white ">
+                              <div className="absolute -bottom-2 -right-1 p-1 rounded-lg bg-white ">
                               {getRoleIcon(member.role)}
                             </div>
                             
@@ -559,7 +562,7 @@ const TeamsManage = () => {
                           </div>
                         ))}
                   {team.members?.length > 3 && (
-                    <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400 border-2 border-white dark:border-gray-900">
+                    <div className="w-8 h-8 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400 border-2 border-white dark:border-gray-900">
                       +{team.members.length - 3}
                     </div>
                   )}
@@ -750,7 +753,7 @@ const TeamsManage = () => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <span className={`inline-flex items-center px-4 py-2 uppercase rounded-full text-xs font-medium ${getStatusColor(selectedTeam.isActive)}`}>
+                      <span className={`inline-flex items-center px-4 py-2 uppercase rounded-lg text-xs font-medium ${getStatusColor(selectedTeam.isActive)}`}>
                         {selectedTeam.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </div>
@@ -782,7 +785,7 @@ const TeamsManage = () => {
                           <img
                             {...getAvatarProps(member.user?.avatar, member.user?.username)}
                             alt={member.user?.username}
-                            className="w-8 h-8 rounded-full object-cover"
+                            className="w-8 h-8 rounded-lg object-cover"
                           />
                           <div>
                             <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -794,7 +797,7 @@ const TeamsManage = () => {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className={`inline-flex items-center gap-1 w-[70px] h-7 flex items-center justify-center uppercase rounded-full text-[10px] font-medium ${getRoleColor(member.role)}`}>
+                          <span className={`inline-flex items-center gap-1 w-[70px] h-7 flex items-center justify-center uppercase rounded-lg text-[10px] font-medium ${getRoleColor(member.role)}`}>
                             {/* {getRoleIcon(member.role)} */}
                             {member.role}
                           </span>
@@ -865,7 +868,7 @@ const TeamsManage = () => {
                             
                             <div className="flex items-center justify-between text-xs">
                               <div className="flex items-center gap-2">
-                                <span className={`px-2 py-1 rounded-full text-xs uppercase font-medium ${
+                                <span className={`px-2 py-1 rounded-lg text-xs uppercase font-medium ${
                                   project.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                                   project.status === 'completed' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
                                   project.status === 'on_hold' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
@@ -873,7 +876,7 @@ const TeamsManage = () => {
                                 }`}>
                                   {project.status || 'planning'}
                                 </span>
-                                <span className={`px-2 py-1 rounded-full text-xs uppercase font-medium ${
+                                <span className={`px-2 py-1 rounded-lg text-xs uppercase font-medium ${
                                   project.priority === 'urgent' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
                                   project.priority === 'high' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
                                   project.priority === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
@@ -911,7 +914,7 @@ const TeamsManage = () => {
                     setShowTeamDetails(false)
                     setShowMembersModal(true)
                   }}
-                    className="w-1/2 bg-black dark:bg-gray-900 text-white hover:bg-black dark:hover:bg-gray-900 border-none hover:border-none hover:text-white"
+                    className="w-1/2 bg-black dark:bg-black text-white hover:bg-black dark:hover:bg-black border-none hover:border-none hover:text-white"
                 >
                     <Settings className="w-4 h-4 mr-2 icon" />
                     Edit Members
@@ -975,7 +978,7 @@ const TeamsManage = () => {
                                 <img
                                   {...getAvatarProps(user.avatar, user.username)}
                                   alt={user.username}
-                                className="w-8 h-8 rounded-full object-cover border-2 border-gray-200 dark:border-gray-700"
+                                className="w-8 h-8 rounded-lg object-cover border-2 border-gray-200 dark:border-gray-700"
                               />
                               <div>
                                 <div className="font-medium text-gray-900 dark:text-white">{user.username}</div>
@@ -1009,7 +1012,7 @@ const TeamsManage = () => {
                         <img
                           {...getAvatarProps(member.user?.avatar, member.user?.username)}
                           alt={member.user?.username}
-                          className="w-8 h-8 rounded-full object-cover"
+                          className="w-8 h-8 rounded-lg object-cover"
                         />
                         <div>
                           <p className="text-sm font-medium text-gray-900 dark:text-white">
