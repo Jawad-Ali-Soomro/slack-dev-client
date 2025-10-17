@@ -90,7 +90,7 @@ const FindFriendsModal = ({ isOpen, onClose }) => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="bg-white dark:bg-black rounded-lg border-2 shadow-xl w-full max-w-xl max-h-[80vh] overflow-hidden"
+          className="bg-white dark:bg-black rounded-[25px] border-2 shadow-xl w-full max-w-xl max-h-[80vh] overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -140,7 +140,7 @@ const FindFriendsModal = ({ isOpen, onClose }) => {
                     key={user.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800"
+                    className="flex items-center justify-between p-4 border rounded-[25px] hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <div className="flex items-center space-x-4">
                       <Avatar 

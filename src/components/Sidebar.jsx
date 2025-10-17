@@ -48,14 +48,14 @@ const Sidebar = () => {
       badgeCount: 0
     },
     {
-      title: 'Posts',
+      title: 'Latest Feed',
       icon: WifiIcon,
       path: '/dashboard/posts',
       color: 'text-black dark:text-white',
       badgeCount: 0
     },
     {
-      title: 'Github Repos',
+      title: 'Version Control',
       icon: Github,
       path: '/dashboard/github',
       color: 'text-black dark:text-white',
@@ -195,11 +195,12 @@ const Sidebar = () => {
             initial="open"
             animate="open"
             exit="open"
-            className="fixed icon left-0 top-0 h-full w-[80px] bg-white dark:bg-black z-110 border-r border-gray-200 dark:border-gray-700 lg:z-50"
+            className="fixed icon left-0 top-0 h-full w-[70px] bg-white dark:bg-black z-110 border-r border-gray-200 dark:border-gray-700 lg:z-50"
           >
             {/* Header */}
-            <div className="flex items-center py-4 justify-center flex items-center justify-center border-b icon gap-2 border-gray-200 dark:border-gray-700">
+            <div className="flex items-center py-4 justify-center flex items-center justify-center border-b icon border-gray-200 dark:border-gray-700">
               <img src="/logo.png" className='w-[50px] ' alt="" />
+              
             </div>
 
             {/* Navigation */}
@@ -221,26 +222,26 @@ const Sidebar = () => {
                         to={item.path}
                        
                         title={item.title}
-                          className={`relative flex items-center justify-center px-4 gap-4 ${item.title == 'Premium' && 'bg-orange-500 dark:bg-orange-600 text-white hover:bg-orange-600 dark:hover:bg-orange-700'} relative w-[50px] h-[50px] rounded-lg transition-all duration-200 group ${
+                          className={`relative flex items-center justify-start px-4 gap-4 ${item.title == 'Premium' && 'bg-orange-500 dark:bg-orange-600 text-white hover:bg-orange-600 dark:hover:bg-orange-700'} relative w-[50px] h-[50px] rounded-[25px] transition-all duration-200 group ${
                           active
-                            ? `{shadow-none bg-black  text-white dark:bg-white dark:text-black shadow-lg ${item.title == 'Premium' && 'bg-orange-500 dark:bg-orange-600 text-white hover:bg-orange-600 dark:hover:bg-orange-700'} }`
+                            ? `{shadow-none bg-[#fe914d]  text-white ${item.title == 'Premium' && 'bg-orange-500 dark:bg-orange-600 text-white hover:bg-orange-600 dark:hover:bg-orange-700'} }`
                             : item.title == 'Premium' ? 'bg-orange-500 dark:bg-orange-600 text-white hover:bg-orange-600 dark:hover:bg-orange-700' : 'hover:bg-gray-100 dark:hover:bg-black text-gray-700 dark:text-gray-300'
                         }`} 
                       >
-                        <div className="relative">
-                          <Icon className={`w-5 h-5 icon transition-transform ${active ? 'text-white dark:text-black' : item.color}`} />
-                         
+                        <div className="relative flex items-center gap-4">
+                          <Icon className={`w-5 h-5 icon transition-transform ${active ? '' : item.color}`} />
+                          
                         </div>
 
                          {item.badgeCount > 0 && (
-                            <span className="absolute  right-2 bg-red-500 text-white text-xs rounded-lg h-5 w-5 flex items-center justify-center font-bold z-10">
+                            <span className="absolute  right-2 bg-red-500 text-white text-xs rounded-[25px] h-5 w-5 flex items-center justify-center font-bold z-10">
                               {item.badgeCount > 99 ? '99+' : item.badgeCount}
                             </span>
                           )}
                         {active && (
                           <motion.div
                             layoutId="activeIndicator"
-                            className="absolute -right-2 top-1/2 -translate-y-1/2 w-1 h-8 bg-black dark:bg-white rounded-lg"
+                            className="absolute -right-2 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#fe914d] rounded-[25px]"
                             initial={{ x: 0 }}
                             animate={{ x: 0 }}
                             exit={{ x: 0 }}
@@ -250,11 +251,11 @@ const Sidebar = () => {
                     </motion.div>
                   )
                 })}
-                <div className="flex items-center justify-center text-white gap-2 w-[50px] h-[50px] rounded-lg transition-all duration-200 group absolute bottom-5  bg-red-500 cursor-pointer" onClick={() => {
+                <div className="flex items-center justify-center text-white gap-2 w-[50px] h-[50px] rounded-[25px] transition-all duration-200 group absolute bottom-5  bg-red-500 cursor-pointer" onClick={() => {
                   logout()
                 }}>
                   <LogOut className="w-5 h-5 transition-transform icon" />
-                  {/* Logout */}
+                 
                 </div>
               </div>
 

@@ -1,9 +1,24 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
 import { githubService } from '../services/githubService'
 import { Button } from '../components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
-import { Badge } from '../components/ui/badge'
+import { 
+  BarChart, 
+  Bar, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid, 
+  Tooltip, 
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+  ScatterChart,
+  Scatter
+} from 'recharts'
 import { 
   Plus, 
   Github, 
@@ -14,335 +29,331 @@ import {
   TrendingUp,
   Clock,
   CheckCircle,
-  XCircle
+  XCircle,
+  Search,
+  Bell,
+  Settings,
+  User,
+  Menu,
+  RefreshCw,
+  Eye,
+  Filter,
+  MoreHorizontal,
+  Star,
+  Award,
+  BarChart3,
+  PieChart as PieChartIcon,
+  Code,
+  GitBranch,
+  Bug,
+  FileText
 } from 'lucide-react'
 import { toast } from 'sonner'
 
 const GitHubDashboard = () => {
-  const [stats, setStats] = useState(null)
+  const navigate = useNavigate()
+  const [loading, setLoading] = useState(true)
+  const [stats, setStats] = useState({
+    totalRepositories: 0,
+    totalPullRequests: 0,
+    totalIssues: 0,
+    openPullRequests: 0,
+    closedPullRequests: 0,
+    openIssues: 0,
+    resolvedIssues: 0
+  })
   const [repositories, setRepositories] = useState([])
   const [recentPRs, setRecentPRs] = useState([])
   const [recentIssues, setRecentIssues] = useState([])
-  const [loading, setLoading] = useState(true)
-  const navigate = useNavigate()
 
-  useEffect(() => {
-    fetchDashboardData()
-  }, [])
+  console.log(recentIssues)
 
-  const fetchDashboardData = async () => {
+  // Load dashboard data
+  const loadDashboardData = async () => {
     try {
       setLoading(true)
-      const [statsResponse, reposResponse, prsResponse, issuesResponse] = await Promise.all([
-        githubService.getStats(),
-        githubService.getRepositories({ limit: 5 }),
-        githubService.getPullRequests({ limit: 5 }),
-        githubService.getIssues({ limit: 5 })
+      
+      const [reposResponse, prsResponse, issuesResponse] = await Promise.all([
+        githubService.getRepositories(),
+        githubService.getPullRequests(),
+        githubService.getIssues()
       ])
 
-      setStats(statsResponse.stats)
-      setRepositories(reposResponse.repositories || [])
-      setRecentPRs(prsResponse.pullRequests || [])
-      setRecentIssues(issuesResponse.issues || [])
+      const repositories = reposResponse.repositories || []
+      const pullRequests = prsResponse.pullRequests || []
+      const issues = issuesResponse.issues || []
+
+      setRepositories(repositories)
+      setRecentPRs(pullRequests.slice(0, 5))
+      setRecentIssues(issues.slice(0, 5))
+
+      setStats({
+        totalRepositories: repositories.length,
+        totalPullRequests: pullRequests.length,
+        totalIssues: issues.length,
+        openPullRequests: pullRequests.filter(pr => pr.status === 'open').length,
+        closedPullRequests: pullRequests.filter(pr => pr.status === 'closed' || pr.status === 'merged').length,
+        openIssues: issues.filter(issue => issue.status === 'open').length,
+        resolvedIssues: issues.filter(issue => issue.status === 'resolved' || issue.status === 'closed').length
+      })
     } catch (error) {
-      console.error('Error fetching dashboard data:', error)
+      console.error('Error loading dashboard data:', error)
       toast.error('Failed to load dashboard data')
     } finally {
       setLoading(false)
     }
   }
 
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case 'open':
-        return <CheckCircle className="h-4 w-4 text-green-500" />
-      case 'closed':
-      case 'merged':
-        return <XCircle className="h-4 w-4 text-gray-500" />
-      case 'draft':
-        return <Clock className="h-4 w-4 text-yellow-500" />
-      default:
-        return <Clock className="h-4 w-4 text-gray-500" />
-    }
-  }
+  useEffect(() => {
+    loadDashboardData()
+  }, [])
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'open':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-      case 'closed':
-      case 'merged':
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
-      case 'draft':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
-    }
-  }
+  // Chart data based on real data
+  const repositoryTypeData = [
+    { name: 'Public', value: repositories.filter(repo => !repo.isPrivate).length, color: '#3B82F6' },
+    { name: 'Private', value: repositories.filter(repo => repo.isPrivate).length, color: '#F59E0B' },
+    ]
 
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'critical':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
-      case 'high':
-        return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
-      case 'medium':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-      case 'low':
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
-      default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
-    }
-  }
+  const priorityData = [
+    { name: 'Critical', value: recentIssues.filter(issue => issue.priority === 'critical').length, x: 5, y: 12, color: '#EF4444' },
+    { name: 'High', value: recentIssues.filter(issue => issue.priority === 'high').length, x: 10, y: 8, color: '#F59E0B' },
+    { name: 'Medium', value: recentIssues.filter(issue => issue.priority === 'medium').length, x: 15, y: 5, color: '#3B82F6' },
+    { name: 'Low', value: recentIssues.filter(issue => issue.priority === 'low').length, x: 20, y: 3, color: '#10B981' }
+  ]
+
+ 
+
+  const activityData = [
+    { name: 'Total Pulls', value: stats.openPullRequests, color: '#3B82F6' },
+    { name: 'Total Issues', value: stats.openIssues, color: '#F59E0B' },
+    { name: 'Total Activity', value: stats.totalPullRequests + stats.totalIssues, color: '#8B5CF6' }
+  ]
 
   if (loading) {
     return (
-      <div className="p-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          {[...Array(4)].map((_, index) => (
-            <Card key={index} className="p-6">
-              <div className="animate-pulse">
-                <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-8 bg-gray-200 rounded w-1/2"></div>
-              </div>
-            </Card>
-          ))}
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 dark:text-white">Loading GitHub dashboard...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="p-6">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold mb-2">GitHub Management</h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Manage your GitHub repositories, pull requests, and issues
-        </p>
-      </div>
+    <div className="">
+      {/* Top Navigation Bar */}
+   
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        <Card className={'dark:bg-[rgba(255,255,255,.1)]'}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Repositories</p>
-                <p className="text-2xl font-bold">{stats?.repositories || 0}</p>
+      <div className="p-6">
+        {/* Header */}
+   
+
+        {/* Summary Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+          >
+            <div className="text-center">
+              <div className="bg-blue-500 text-white rounded-t-[25px] py-2 px-4 -mx-6 -mt-6 mb-4">
+                <span className="text-sm font-semibold">Repositories</span>
               </div>
-              <FolderOpen className="h-8 w-8 text-blue-500" />
+              <div className="text-6xl font-bold text-gray-900 dark:text-white mt-8">{stats.totalRepositories}</div>
+               
             </div>
-          </CardContent>
-        </Card>
+          </motion.div>
 
-        <Card className={'dark:bg-[rgba(255,255,255,.1)]'}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Pull Requests</p>
-                <p className="text-2xl font-bold">{stats?.pullRequests?.total || 0}</p>
-                <p className="text-xs text-gray-500">
-                  {stats?.pullRequests?.open || 0} open, {stats?.pullRequests?.closed || 0} closed
-                </p>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+          >
+            <div className="text-center">
+              <div className="bg-green-500 text-white rounded-t-[25px] py-2 px-4 -mx-6 -mt-6 mb-4">
+                <span className="text-sm font-semibold">Pull Requests</span>
               </div>
-              <GitPullRequest className="h-8 w-8 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
 
-        <Card className={'dark:bg-[rgba(255,255,255,.1)]'}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Issues</p>
-                <p className="text-2xl font-bold">{stats?.issues?.total || 0}</p>
-                <p className="text-xs text-gray-500">
-                  {stats?.issues?.open || 0} open, {stats?.issues?.resolved || 0} resolved
-                </p>
+              <div className="text-6xl font-bold text-gray-900 dark:text-white mt-8">{stats.totalPullRequests}</div>
+              
+            </div>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+          >
+            <div className="text-center">
+              <div className="bg-orange-500 text-white rounded-t-[25px] py-2 px-4 -mx-6 -mt-6 mb-4">
+                <span className="text-sm font-semibold">Issues</span>
               </div>
-              <AlertCircle className="h-8 w-8 text-orange-500" />
-            </div>
-          </CardContent>
-        </Card>
 
-        {/* <Card className={'dark:bg-[rgba(255,255,255,.1)]'}>
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-600 dark:text-gray-400">Activity</p>
-                <p className="text-2xl font-bold">
-                  {(stats?.pullRequests?.total || 0) + (stats?.issues?.total || 0)}
-                </p>
-                <p className="text-xs text-gray-500">Total items</p>
-              </div>
-              <TrendingUp className="h-8 w-8 text-purple-500" />
+              <div className="text-6xl font-bold text-gray-900 dark:text-white mt-8">{stats.totalIssues}</div>
+               
             </div>
-          </CardContent>
-        </Card> */}
-      </div>
+          </motion.div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <Card className="cursor-pointer hover:shadow-lg dark:bg-[rgba(255,255,255,.1)] transition-shadow" onClick={() => navigate('/dashboard/github/repositories')}>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <FolderOpen className="h-12 w-12 text-blue-500" />
-              <div>
-                <h3 className="font-semibold text-lg">Repositories</h3>
-                <p className="text-gray-600 dark:text-gray-400">Manage your GitHub repositories</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+   
+        </div>
 
-        <Card className="cursor-pointer hover:shadow-lg dark:bg-[rgba(255,255,255,.1)] transition-shadow" onClick={() => navigate('/dashboard/github/pull-requests')}>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <GitPullRequest className="h-12 w-12 text-green-500" />
-              <div>
-                <h3 className="font-semibold text-lg">Pull Requests</h3>
-                <p className="text-gray-600 dark:text-gray-400">Track your PRs and progress</p>
+        {/* Data Distribution Sections */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Repository Type Distribution */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+          >
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Repository Type Distribution</h3>
+            <div className="flex justify-between items-center mb-4">
+              <div className="space-y-2">
+                <div className="text-sm text-gray-600 dark:text-white">Public - {repositories.filter(repo => !repo.isPrivate).length}</div>
+                <div className="text-sm text-gray-600 dark:text-white">Private - {repositories.filter(repo => repo.isPrivate).length}</div>
+               </div>
+              <div className="text-right">
+                <div className="text-sm text-gray-500 dark:text-white">Total Repositories - {stats.totalRepositories}</div>
               </div>
             </div>
-          </CardContent>
-        </Card>
+            <div className="h-48 mb-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={repositoryTypeData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={40}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {repositoryTypeData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip  contentStyle={{
+                      border: "none",
+                      borderRadius: "12px",
+                      color: "white",
+                      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+                      backdropFilter: "blur(10px)",
+                    }} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {repositoryTypeData.map((item, index) => (
+                <div key={index} className="flex items-center space-x-1">
+                  <div 
+                    className="w-3 h-3 rounded-full" 
+                    style={{ backgroundColor: item.color }}
+                  ></div>
+                  <span className="text-xs text-gray-600 dark:text-white">{item.name}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
 
-        <Card className="cursor-pointer hover:shadow-lg dark:bg-[rgba(255,255,255,.1)] transition-shadow" onClick={() => navigate('/dashboard/github/issues')}>
-          <CardContent className="p-6">
-            <div className="flex items-center gap-4">
-              <AlertCircle className="h-12 w-12 text-orange-500" />
-              <div>
-                <h3 className="font-semibold text-lg">Issues</h3>
-                <p className="text-gray-600 dark:text-gray-400">Track bugs and feature requests</p>
+          {/* Priority Level Distribution */}
+    
+
+          {/* Programming Language Distribution */}
+   
+
+          {/* Activity Distribution */}
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7 }}
+            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+          >
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activity Distribution</h3>
+            <div className="flex justify-between items-center mb-4">
+              <div className="space-y-2">
+                <div className="text-sm text-gray-600 dark:text-white">Total Pulls - {stats.openPullRequests}</div>
+                <div className="text-sm text-gray-600 dark:text-white">Total Issues - {stats.openIssues}</div>
+              </div>
+              <div className="text-right">
+                <div className="text-sm text-gray-500 dark:text-white">Total Activity - {stats.totalPullRequests + stats.totalIssues}</div>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+            <div className="h-48 mb-4">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={activityData}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={40}
+                    outerRadius={80}
+                    paddingAngle={5}
+                    dataKey="value"
+                  >
+                    {activityData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{
+                      border: "none",
+                      borderRadius: "12px",
+                      color: "white",
+                      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+                      backdropFilter: "blur(10px)",
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {activityData.map((item, index) => (
+                <div key={index} className="flex items-center space-x-1">
+                  <div 
+                    className="w-3 h-3 rounded-full" 
+                    style={{ backgroundColor: item.color }}
+                  ></div>
+                  <span className="text-xs text-gray-600 dark:text-white">{item.name}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
 
-      {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Recent Pull Requests */}
-        <Card className={'dark:bg-[rgba(255,255,255,.1)]'}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <GitPullRequest className="h-5 w-5" />
-              Recent Pull Requests
-            </CardTitle>
-            <CardDescription>
-              Your latest pull request activity
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {recentPRs.length === 0 ? (
-              <div className="text-center py-8">
-                <GitPullRequest className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                <p className="text-gray-600 dark:text-gray-400">No pull requests yet</p>
-                <Button 
-                  className="mt-4" 
-                  onClick={() => navigate('/dashboard/github/pull-requests')}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Pull Request
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {recentPRs.map((pr) => (
-                  <div key={pr._id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        {getStatusIcon(pr.status)}
-                        <h4 className="font-medium">{pr.title}</h4>
-                        <Badge className={getStatusColor(pr.status)}>
-                          {pr.status}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {pr.repository?.name} • {pr.priority} priority
-                      </p>
-                    </div>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => window.open(pr.githubUrl, '_blank')}
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => navigate('/dashboard/github/pull-requests')}
-                >
-                  View All Pull Requests
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Recent Issues */}
-        <Card className={'dark:bg-[rgba(255,255,255,.1)]'}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <AlertCircle className="h-5 w-5" />
-              Recent Issues
-            </CardTitle>
-            <CardDescription>
-              Your latest issue activity
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {recentIssues.length === 0 ? (
-              <div className="text-center py-8">
-                <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                <p className="text-gray-600 dark:text-gray-400">No issues yet</p>
-                <Button 
-                  className="mt-4" 
-                  onClick={() => navigate('/dashboard/github/issues')}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Issue
-                </Button>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {recentIssues.map((issue) => (
-                  <div key={issue._id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-1">
-                        {getStatusIcon(issue.status)}
-                        <h4 className="font-medium">{issue.title}</h4>
-                        <Badge className={getStatusColor(issue.status)}>
-                          {issue.status}
-                        </Badge>
-                      </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        {issue.repository?.name} • {issue.type} • {issue.priority} priority
-                      </p>
-                    </div>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      onClick={() => window.open(issue.githubUrl, '_blank')}
-                    >
-                      <ExternalLink className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ))}
-                <Button 
-                  variant="outline" 
-                  className="w-full"
-                  onClick={() => navigate('/dashboard/github/issues')}
-                >
-                  View All Issues
-                </Button>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+        {/* Quick Actions */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.8 }}
+          className="mt-8"
+        >
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Button 
+              onClick={() => navigate('/dashboard/github/repositories')}
+              className="flex items-center justify-center space-x-2 p-4 bg-gray-100 text-black hover:bg-gray-100 h-auto"
+            >
+              <FolderOpen className="w-5 h-5" />
+              <span>Manage Repositories</span>
+            </Button>
+            <Button 
+              onClick={() => navigate('/dashboard/github/pull-requests')}
+              className="flex items-center justify-center space-x-2 p-4 bg-gray-100 text-black hover:bg-gray-100 h-auto"
+            >
+              <GitPullRequest className="w-5 h-5" />
+              <span>Track Pull Requests</span>
+            </Button>
+            <Button 
+              onClick={() => navigate('/dashboard/github/issues')}
+              className="flex items-center justify-center space-x-2 p-4 bg-gray-100 text-black hover:bg-gray-100 h-auto"
+            >
+              <AlertCircle className="w-5 h-5" />
+              <span>Manage Issues</span>
+            </Button>
+          </div>
+        </motion.div>
       </div>
     </div>
   )

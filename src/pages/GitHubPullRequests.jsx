@@ -30,6 +30,7 @@ import { toast } from 'sonner'
 const GitHubPullRequests = () => {
   const [pullRequests, setPullRequests] = useState([])
   const [repositories, setRepositories] = useState([])
+  const [friends, setFriends] = useState([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -61,17 +62,19 @@ const GitHubPullRequests = () => {
   const fetchData = async () => {
     try {
       setLoading(true)
-      const [prsResponse, reposResponse] = await Promise.all([
+      const [prsResponse, reposResponse, friendsResponse] = await Promise.all([
         githubService.getPullRequests({
           search: searchTerm,
           status: statusFilter === 'all' ? undefined : statusFilter,
           repository: repositoryFilter === 'all' ? undefined : repositoryFilter,
           priority: priorityFilter === 'all' ? undefined : priorityFilter
         }),
-        githubService.getRepositories()
+        githubService.getRepositories(),
+        githubService.getFriends()
       ])
       setPullRequests(prsResponse.pullRequests || [])
       setRepositories(reposResponse.repositories || [])
+      setFriends(friendsResponse.friends || [])
     } catch (error) {
       console.error('Error fetching data:', error)
       toast.error('Failed to fetch data')
@@ -92,6 +95,7 @@ const GitHubPullRequests = () => {
     try {
       const prData = {
         ...formData,
+        assignedTo: formData.assignedTo === 'none' ? undefined : formData.assignedTo,
         labels: formData.labels.filter(label => label.trim() !== ''),
         estimatedHours: formData.estimatedHours ? parseFloat(formData.estimatedHours) : undefined,
         dueDate: formData.dueDate ? new Date(formData.dueDate) : undefined
@@ -112,6 +116,7 @@ const GitHubPullRequests = () => {
     try {
       const updateData = {
         ...formData,
+        assignedTo: formData.assignedTo === 'none' ? undefined : formData.assignedTo,
         labels: formData.labels.filter(label => label.trim() !== ''),
         estimatedHours: formData.estimatedHours ? parseFloat(formData.estimatedHours) : undefined,
         dueDate: formData.dueDate ? new Date(formData.dueDate) : undefined
@@ -259,16 +264,16 @@ const GitHubPullRequests = () => {
               Track and manage your GitHub pull requests
             </p>
           </div>
-          <Button onClick={() => setIsCreateDialogOpen(true)}>
+          <Button onClick={() => setIsCreateDialogOpen(true)} className={'w-[200px]'}>
             <Plus className="h-4 w-4 mr-2" />
-            Add Pull Request
+            New Pull Request
           </Button>
         </div>
 
         {/* Custom Create Modal */}
         {isCreateDialogOpen && (
           <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsCreateDialogOpen(false)}>
-            <div className="bg-white dark:bg-black border rounded-lg p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white dark:bg-black border rounded-[25px] p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-xl font-semibold">Add New Pull Request</h2>
@@ -280,13 +285,13 @@ const GitHubPullRequests = () => {
                   variant="ghost" 
                   size="sm" 
                   onClick={() => setIsCreateDialogOpen(false)}
+                  className='w-12'
                 >
                   <XCircle className="h-4 w-4" />
                 </Button>
               </div>
               <div className="space-y-4">
                 <div>
-                  <Label htmlFor="title">Title</Label>
                   <Input
                     id="title"
                     value={formData.title}
@@ -295,7 +300,6 @@ const GitHubPullRequests = () => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="description">Description</Label>
                   <Textarea
                     id="description"
                     value={formData.description}
@@ -305,7 +309,6 @@ const GitHubPullRequests = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="githubUrl">GitHub URL</Label>
                     <Input
                       id="githubUrl"
                       value={formData.githubUrl}
@@ -314,7 +317,6 @@ const GitHubPullRequests = () => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="githubHash">PR Number/Hash</Label>
                     <Input
                       id="githubHash"
                       value={formData.githubHash}
@@ -325,7 +327,6 @@ const GitHubPullRequests = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="repository">Repository</Label>
                     <Select value={formData.repository} onValueChange={(value) => setFormData(prev => ({ ...prev, repository: value }))}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select repository" />
@@ -340,7 +341,6 @@ const GitHubPullRequests = () => {
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="priority">Priority</Label>
                     <Select value={formData.priority} onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}>
                       <SelectTrigger>
                         <SelectValue />
@@ -356,7 +356,6 @@ const GitHubPullRequests = () => {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label htmlFor="estimatedHours">Estimated Hours</Label>
                     <Input
                       id="estimatedHours"
                       type="number"
@@ -366,7 +365,6 @@ const GitHubPullRequests = () => {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="dueDate">Due Date</Label>
                     <Input
                       id="dueDate"
                       type="date"
@@ -376,7 +374,33 @@ const GitHubPullRequests = () => {
                   </div>
                 </div>
                 <div>
-                  <Label>Labels</Label>
+                  <Select 
+                    value={formData.assignedTo} 
+                    onValueChange={(value) => setFormData(prev => ({ ...prev, assignedTo: value }))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select assigned user" />
+                    </SelectTrigger>
+                    <SelectContent className="z-[60]">
+                      <SelectItem value="none">No one assigned</SelectItem>
+                      {friends.map((friend) => (
+                        <SelectItem key={friend._id} value={friend._id}>
+                          <div className="flex items-center gap-2">
+                            {friend.avatar ? (
+                              <img src={`http://localhost:4000${friend.avatar}`} alt={friend.username} className="w-5 h-5 rounded-full" />
+                            ) : (
+                              <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs">
+                                {friend.username?.charAt(0)?.toUpperCase() || 'U'}
+                              </div>
+                            )}
+                            <span>{friend.username} ({friend.email})</span>
+                          </div>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
                   <div className="flex gap-2 mb-2">
                     <Input
                       value={labelInput}
@@ -384,7 +408,7 @@ const GitHubPullRequests = () => {
                       placeholder="Add a label"
                       onKeyPress={(e) => e.key === 'Enter' && addLabel()}
                     />
-                    <Button type="button" onClick={addLabel}>Add</Button>
+                    <Button type="button" className={'w-12'} onClick={addLabel}><Plus /></Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {formData.labels.map((label, index) => (
@@ -408,7 +432,7 @@ const GitHubPullRequests = () => {
         )}
 
         <div className="flex gap-4 mb-6">
-          <div className="relative flex-1">
+          <div className="relative flex-1 max-w-[600px]">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
             <Input
               placeholder="Search pull requests..."
@@ -486,82 +510,90 @@ const GitHubPullRequests = () => {
           </Button>
         </div>
       ) : (
-        <div className="bg-white dark:bg-gray-800 rounded-lg border shadow-sm">
-          <div className="overflow-x-auto">
+        <div className="bg-white dark:bg-black rounded-[25px] shadow-xl overflow-hidden">
+          <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <Table>
-              <TableHeader>
+              <TableHeader className="bg-gray-100 dark:bg-gray-900 dark:border-gray-700 sticky top-0 z-10">
                 <TableRow>
-                  <TableHead>Pull Request</TableHead>
-                  <TableHead>Repository</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Assigned To</TableHead>
-                  <TableHead>Due Date</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Pull Request
+                  </TableHead>
+                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Pull Hash
+                  </TableHead>
+                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Repository
+                  </TableHead>
+                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Status
+                  </TableHead>
+                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Priority
+                  </TableHead>
+                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Assigned To
+                  </TableHead>
+                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    Due Date
+                  </TableHead>
+                  <TableHead className="px-6 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                    
+                  </TableHead>
                 </TableRow>
               </TableHeader>
-              <TableBody>
+              <TableBody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {pullRequests.map((pr) => (
-                  <TableRow key={pr._id}>
-                    <TableCell>
+                  <TableRow key={pr._id} className="hover:bg-gray-50 dark:hover:bg-black transition-colors">
+                    <TableCell className="px-6 py-4">
                       <div className="flex items-center">
-                        <div className="flex-shrink-0 h-10 w-10">
-                          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-sm">
-                            {pr.title?.charAt(0)?.toUpperCase() || 'P'}
-                          </div>
-                        </div>
-                        <div className="ml-4">
+                        
                           <div className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
                             {getStatusIcon(pr.status)}
                             {pr.title}
                           </div>
-                          <div className="text-sm text-gray-500 dark:text-gray-400">
-                            #{pr.githubHash}
-                          </div>
-                          {pr.description && (
-                            <div className="text-sm text-gray-500 dark:text-gray-400 truncate max-w-xs">
-                              {pr.description}
-                            </div>
-                          )}
-                        </div>
+                        
+                          
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="px-6 py-4">
                       <div className="text-sm text-gray-900 dark:text-gray-100">
-                        {pr.repository?.owner?.username || 'Unknown'}/{pr.repository?.name || 'Unknown'}
+                        {pr.githubHash}
                       </div>
                     </TableCell>
-                    <TableCell>
-                      <Badge className={getStatusColor(pr.status)}>
+                    <TableCell className="px-6 py-4">
+                      <div className="text-sm text-gray-900 dark:text-gray-100">
+                        {pr.repository?.name || 'Unknown'}
+                      </div>
+                    </TableCell>
+                    <TableCell className="px-6 py-4">
+                      <Badge className={getStatusColor(pr.status) + ' px-3 py-2'}>
                         {pr.status}
                       </Badge>
                     </TableCell>
-                    <TableCell>
-                      <Badge className={getPriorityColor(pr.priority)}>
+                    <TableCell className="px-6 py-4">
+                      <Badge className={getPriorityColor(pr.priority) + ' px-3 py-2'}>
                         {pr.priority}
                       </Badge>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="px-6 py-4">
                       <div className="flex -space-x-2">
-                        {pr.assignedTo?.slice(0, 3).map((user, index) => (
-                          <div key={index} className="relative">
-                            {user.avatar ? (
-                              <img className="h-8 w-8 rounded-full border-2 border-white dark:border-gray-800" src={`http://localhost:4000${user.avatar}`} alt={user.username} />
+                          <div  className="relative">
+                            {pr?.assignedTo?.avatar ? (
+                              <img className="h-8 w-8 rounded-full border-2 border-white dark:border-gray-800" src={`http://localhost:4000${pr?.assignedTo?.avatar}`} alt={pr?.assignedTo?.username} />
                             ) : (
                               <div className="h-8 w-8 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-white font-semibold text-xs border-2 border-white dark:border-gray-800">
-                                {user.username?.charAt(0)?.toUpperCase() || 'U'}
+                                {pr?.assignedTo?.username?.charAt(0)?.toUpperCase() || 'U'}
                               </div>
                             )}
                           </div>
-                        ))}
-                        {pr.assignedTo?.length > 3 && (
+                        {pr?.assignedTo?.length > 3 && (
                           <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300 border-2 border-white dark:border-gray-800">
-                            +{pr.assignedTo.length - 3}
+                            +{pr?.assignedTo.length - 3}
                           </div>
                         )}
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="px-6 py-4">
                       {pr.dueDate ? (
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
@@ -571,13 +603,13 @@ const GitHubPullRequests = () => {
                         <span className="text-gray-400 dark:text-gray-500">-</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <Button 
                           variant="ghost" 
                           size="sm"
                           onClick={() => window.open(pr.githubUrl, '_blank')}
-                          className="hover:bg-blue-100 dark:hover:bg-blue-900/20"
+                          className="w-12 hover:bg-blue-100 dark:hover:bg-blue-900/20"
                         >
                           <ExternalLink className="h-4 w-4 text-blue-500" />
                         </Button>
@@ -585,7 +617,7 @@ const GitHubPullRequests = () => {
                           variant="ghost" 
                           size="sm" 
                           onClick={() => handleEditPullRequest(pr)}
-                          className="hover:bg-gray-100 dark:hover:bg-gray-700"
+                          className="w-12 hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -593,7 +625,7 @@ const GitHubPullRequests = () => {
                           variant="ghost" 
                           size="sm" 
                           onClick={() => handleDeletePullRequest(pr._id)}
-                          className="hover:bg-red-100 dark:hover:bg-red-900/20"
+                          className="w-12 hover:bg-red-100 dark:hover:bg-red-900/20"
                         >
                           <Trash2 className="h-4 w-4 text-red-500" />
                         </Button>
@@ -610,7 +642,7 @@ const GitHubPullRequests = () => {
       {/* Custom Edit Modal */}
       {isEditDialogOpen && (
         <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsEditDialogOpen(false)}>
-          <div className="bg-white dark:bg-gray-800 rounded-lg border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white dark:bg-black rounded-[25px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-semibold">Edit Pull Request</h2>
@@ -622,6 +654,7 @@ const GitHubPullRequests = () => {
                 variant="ghost" 
                 size="sm" 
                 onClick={() => setIsEditDialogOpen(false)}
+                className={'w-12'}
               >
                 <XCircle className="h-4 w-4" />
               </Button>

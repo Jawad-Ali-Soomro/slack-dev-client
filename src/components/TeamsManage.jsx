@@ -398,7 +398,7 @@ const TeamsManage = () => {
         </div>
         <Button
           onClick={() => setShowNewTeamModal(true)}
-            className={'w-[200px] rounded-lg h-12'}
+            className={'w-[200px] rounded-[25px] h-12'}
         >
           <Plus className="w-4 h-4 mr-2 icon" />
           Create Team
@@ -433,7 +433,7 @@ const TeamsManage = () => {
       {/* Teams Grid */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-lg h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-[25px] h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
       ) : filteredTeams.length === 0 ? (
         <div className="text-center py-12">
@@ -462,7 +462,7 @@ const TeamsManage = () => {
             <motion.div
               key={team.id}
               variants={itemVariants}
-              className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-lg border dark:border-none p-6  transition-shadow duration-300"
+              className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[25px] border dark:border-none p-6  transition-shadow duration-300"
             >
               {/* Team Header */}
               <div className="flex items-start justify-between mb-4">
@@ -524,7 +524,7 @@ const TeamsManage = () => {
 
               {/* Status and Members */}
               <div className="flex gap-2 mb-4">
-                <span className={`inline-flex items-center px-4 py-2 rounded-lg text-xs uppercase font-bold ${getStatusColor(team.isActive)}`}>
+                <span className={`inline-flex items-center px-4 py-2 rounded-[25px] text-xs uppercase font-bold ${getStatusColor(team.isActive)}`}>
                   {team.isActive ? 'Active' : 'Inactive'}
                 </span>
                
@@ -550,11 +550,11 @@ const TeamsManage = () => {
                             <img
                               {...getAvatarProps(member.user?.avatar, member.user?.username)}
                               alt={member.user?.username}
-                              className="w-10 h-10 rounded-lg object-cover border-2 border-white dark:border-gray-900"
+                              className="w-10 h-10 rounded-[25px] object-cover border-2 border-white dark:border-gray-900"
                             />
                            {
                             member.role ===  "owner" && 
-                              <div className="absolute -bottom-2 -right-1 p-1 rounded-lg bg-white ">
+                              <div className="absolute -bottom-2 -right-1 p-1 rounded-[25px] bg-white ">
                               {getRoleIcon(member.role)}
                             </div>
                             
@@ -562,7 +562,7 @@ const TeamsManage = () => {
                           </div>
                         ))}
                   {team.members?.length > 3 && (
-                    <div className="w-8 h-8 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400 border-2 border-white dark:border-gray-900">
+                    <div className="w-8 h-8 rounded-[25px] bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400 border-2 border-white dark:border-gray-900">
                       +{team.members.length - 3}
                     </div>
                   )}
@@ -582,7 +582,7 @@ const TeamsManage = () => {
                     setSelectedTeam(team)
                     setShowMembersModal(true)
                   }}
-                  className={'w-12 h-12 rounded-lg'}
+                  className={'w-12 h-12 rounded-[25px]'}
                 >
                   <Settings />
                 </Button>
@@ -607,7 +607,7 @@ const TeamsManage = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full"
+            className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
@@ -717,7 +717,7 @@ const TeamsManage = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
@@ -753,7 +753,7 @@ const TeamsManage = () => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <span className={`inline-flex items-center px-4 py-2 uppercase rounded-lg text-xs font-medium ${getStatusColor(selectedTeam.isActive)}`}>
+                      <span className={`inline-flex items-center px-4 py-2 uppercase rounded-[25px] text-xs font-medium ${getStatusColor(selectedTeam.isActive)}`}>
                         {selectedTeam.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </div>
@@ -780,12 +780,12 @@ const TeamsManage = () => {
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Members ({selectedTeam.members?.length || 0})</h3>
                   <div className="space-y-2 max-h-60 overflow-y-auto" key={refreshKey}>
                     {selectedTeam.members?.map((member, index) => (
-                      <div key={`${member.user?.id || member.user?._id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
+                      <div key={`${member.user?.id || member.user?._id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[25px]">
                         <div className="flex items-center gap-3">
                           <img
                             {...getAvatarProps(member.user?.avatar, member.user?.username)}
                             alt={member.user?.username}
-                            className="w-8 h-8 rounded-lg object-cover"
+                            className="w-8 h-8 rounded-[25px] object-cover"
                           />
                           <div>
                             <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -797,7 +797,7 @@ const TeamsManage = () => {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className={`inline-flex items-center gap-1 w-[70px] h-7 flex items-center justify-center uppercase rounded-lg text-[10px] font-medium ${getRoleColor(member.role)}`}>
+                          <span className={`inline-flex items-center gap-1 w-[70px] h-7 flex items-center justify-center uppercase rounded-[25px] text-[10px] font-medium ${getRoleColor(member.role)}`}>
                             {/* {getRoleIcon(member.role)} */}
                             {member.role}
                           </span>
@@ -812,7 +812,7 @@ const TeamsManage = () => {
               <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <button
                   onClick={() => setShowProjects(!showProjects)}
-                  className="flex items-center justify-between w-full text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border cursor-pointer rounded-lg transition-colors"
+                  className="flex items-center justify-between w-full text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border cursor-pointer rounded-[25px] transition-colors"
                 >
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                     Projects ({selectedTeam.projects?.length || 0})
@@ -846,7 +846,7 @@ const TeamsManage = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
-                            className="p-4 bg-gray-50 dark:bg-black rounded-lg border"
+                            className="p-4 bg-gray-50 dark:bg-black rounded-[25px] border"
                           >
                             <div className="flex items-start justify-between mb-3">
                               <div className="flex-1">
@@ -861,14 +861,14 @@ const TeamsManage = () => {
                                 <img
                                   src={project.logo}
                                   alt={project.name}
-                                  className="w-8 h-8 rounded-lg object-cover ml-2"
+                                  className="w-8 h-8 rounded-[25px] object-cover ml-2"
                                 />
                               )} */}
                             </div>
                             
                             <div className="flex items-center justify-between text-xs">
                               <div className="flex items-center gap-2">
-                                <span className={`px-2 py-1 rounded-lg text-xs uppercase font-medium ${
+                                <span className={`px-2 py-1 rounded-[25px] text-xs uppercase font-medium ${
                                   project.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                                   project.status === 'completed' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
                                   project.status === 'on_hold' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
@@ -876,7 +876,7 @@ const TeamsManage = () => {
                                 }`}>
                                   {project.status || 'planning'}
                                 </span>
-                                <span className={`px-2 py-1 rounded-lg text-xs uppercase font-medium ${
+                                <span className={`px-2 py-1 rounded-[25px] text-xs uppercase font-medium ${
                                   project.priority === 'urgent' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
                                   project.priority === 'high' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
                                   project.priority === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
@@ -939,7 +939,7 @@ const TeamsManage = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
@@ -956,7 +956,7 @@ const TeamsManage = () => {
               </div>
 
               {/* Add Member Form */}
-              <div className="mb-6 rounded-lg">
+              <div className="mb-6 rounded-[25px]">
                 {/* <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Add New Member</h3> */}
                 <div className="flex gap-2">
                   <div className="relative flex-1 member-search-container">
@@ -964,10 +964,10 @@ const TeamsManage = () => {
                       value={memberSearch}
                       onChange={(e) => handleMemberSearch(e.target.value)}
                       placeholder="Search users..."
-                      className="w-full h-12 rounded-lg"
+                      className="w-full h-12 rounded-[25px]"
                     />
                     {showMemberSuggestions && memberSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[25px] shadow-lg max-h-48 overflow-y-auto">
                         {memberSuggestions.map((user) => (
                           <div
                             key={user.id}
@@ -978,7 +978,7 @@ const TeamsManage = () => {
                                 <img
                                   {...getAvatarProps(user.avatar, user.username)}
                                   alt={user.username}
-                                className="w-8 h-8 rounded-lg object-cover border-2 border-gray-200 dark:border-gray-700"
+                                className="w-8 h-8 rounded-[25px] object-cover border-2 border-gray-200 dark:border-gray-700"
                               />
                               <div>
                                 <div className="font-medium text-gray-900 dark:text-white">{user.username}</div>
@@ -1007,12 +1007,12 @@ const TeamsManage = () => {
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Current Members</h3>
                 <div className="space-y-2 max-h-60 overflow-y-auto" key={refreshKey}>
                   {selectedTeam.members?.map((member, index) => (
-                    <div key={`${member.user?.id || member.user?._id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-lg">
+                    <div key={`${member.user?.id || member.user?._id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[25px]">
                       <div className="flex items-center gap-3">
                         <img
                           {...getAvatarProps(member.user?.avatar, member.user?.username)}
                           alt={member.user?.username}
-                          className="w-8 h-8 rounded-lg object-cover"
+                          className="w-8 h-8 rounded-[25px] object-cover"
                         />
                         <div>
                           <p className="text-sm font-medium text-gray-900 dark:text-white">

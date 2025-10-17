@@ -55,7 +55,7 @@ const ChatList = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-lg h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-[25px] h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -113,7 +113,7 @@ const ChatList = () => {
                           </AvatarFallback>
                         </Avatar>
                         {isOnline && (
-                          <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-lg"></div>
+                          <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-[25px]"></div>
                         )}
                       </div>
                       
@@ -128,7 +128,7 @@ const ChatList = () => {
                         </div>
                         
                         <div className="flex items-center gap-2 mt-2">
-                            {/* <img className='w-6 h-6 rounded-lg' src={getAvatarUrl(chat.lastMessage?.sender?.avatar)} alt="" /> */}
+                            {/* <img className='w-6 h-6 rounded-[25px]' src={getAvatarUrl(chat.lastMessage?.sender?.avatar)} alt="" /> */}
                           <p className="text-xs text-muted-foreground truncate">
                             {chat.lastMessage?.content || 'No messages yet'}
                             {

@@ -59,7 +59,7 @@ export const COLOR_THEME = {
 
 // Standard button classes
 export const getButtonClasses = (variant = 'primary', size = 'md', additionalClasses = '') => {
-  const baseClasses = 'inline-flex items-center justify-center rounded-lg font-medium transition-colors focus:outline-none focus:ring-1 focus:ring-offset-1 disabled:opacity-50 disabled:pointer-events-none'
+  const baseClasses = 'inline-flex items-center justify-center rounded-[25px] font-medium transition-colors focus:outline-none focus:ring-1 focus:ring-offset-1 disabled:opacity-50 disabled:pointer-events-none'
   const variantClasses = BUTTON_VARIANTS[variant] || BUTTON_VARIANTS.primary
   const sizeClasses = BUTTON_SIZES[size] || BUTTON_SIZES.md
   
@@ -68,7 +68,7 @@ export const getButtonClasses = (variant = 'primary', size = 'md', additionalCla
 
 // Standard input classes
 export const getInputClasses = (variant = 'default', size = 'md', additionalClasses = '') => {
-  const baseClasses = 'w-full rounded-lg transition-colors focus:outline-none focus:ring-1 focus:ring-offset-1'
+  const baseClasses = 'w-full rounded-[25px] transition-colors focus:outline-none focus:ring-1 focus:ring-offset-1'
   const variantClasses = INPUT_VARIANTS[variant] || INPUT_VARIANTS.default
   const sizeClasses = INPUT_SIZES[size] || INPUT_SIZES.md
   

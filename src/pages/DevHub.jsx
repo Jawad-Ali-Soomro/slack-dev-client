@@ -87,7 +87,7 @@ const DevHub = () => {
               className="glass-card p-8 rounded-2xl text-center"
               whileHover={{ y: -5 }}
             >
-              <div className="w-[80px] h-[80px] bg-black rounded-lg flex items-center justify-center mb-6 mx-auto dark:bg-white">
+              <div className="w-[80px] h-[80px] bg-black rounded-[25px] flex items-center justify-center mb-6 mx-auto dark:bg-white">
                 <div className="w-12 h-12 text-white flex items-center justify-center">
                   {category.icon}
                 </div>
@@ -152,7 +152,7 @@ const DevHub = () => {
                   <span className="text-xs font-bold text-gray-500 dark:text-gray-400 ">
                     {resource.readTime}
                   </span>
-                  <button className="text-xs font-bold text-white  w-[40px] h-10 bg-black rounded-lg flex items-center justify-center dark:bg-white dark:text-black">
+                  <button className="text-xs font-bold text-white  w-[40px] h-10 bg-black rounded-[25px] flex items-center justify-center dark:bg-white dark:text-black">
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
@@ -204,7 +204,7 @@ const DevHub = () => {
             Start learning, sharing, and building with thousands of developers worldwide
           </p>
           <motion.button 
-            className="px-12 py-4 bg-black text-white rounded-lg font-bold text-lg  hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
+            className="px-12 py-4 bg-black text-white rounded-[25px] font-bold text-lg  hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

@@ -227,7 +227,7 @@ const GitHubRepositories = () => {
         {/* Custom Create Modal */}
         {isCreateDialogOpen && (
           <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsCreateDialogOpen(false)}>
-            <div className="bg-white dark:bg-gray-800 rounded-lg border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white dark:bg-black rounded-[25px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-xl font-semibold">Add New Repository</h2>
@@ -239,6 +239,7 @@ const GitHubRepositories = () => {
                   variant="ghost" 
                   size="sm" 
                   onClick={() => setIsCreateDialogOpen(false)}
+                  className={'w-12'}
                 >
                   <XCircle className="h-4 w-4" />
                 </Button>
@@ -265,7 +266,7 @@ const GitHubRepositories = () => {
                     placeholder="Repository Description"
                   />
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <div>
                     <Input
                       value={formData.language}
@@ -273,18 +274,9 @@ const GitHubRepositories = () => {
                       placeholder="Language (JavaScript, Python, etc.)"
                     />
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id="isPrivate"
-                      checked={formData.isPrivate}
-                      onChange={(e) => setFormData(prev => ({ ...prev, isPrivate: e.target.checked }))}
-                    />
-                    <Label htmlFor="isPrivate">Private Repository</Label>
-                  </div>
+                  
                 </div>
                 <div>
-                  <Label>Contributors</Label>
                   <Select 
                     value="" 
                     onValueChange={(value) => {
@@ -302,7 +294,16 @@ const GitHubRepositories = () => {
                     <SelectContent className="z-[60]">
                       {friends.map((friend) => (
                         <SelectItem key={friend._id} value={friend._id}>
-                          {friend.username} ({friend.email})
+                          <div className="flex items-center gap-2">
+                            {friend.avatar ? (
+                              <img src={`http://localhost:4000${friend.avatar}`} alt={friend.username} className="w-5 h-5 rounded-full" />
+                            ) : (
+                              <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs">
+                                {friend.username?.charAt(0)?.toUpperCase() || 'U'}
+                              </div>
+                            )}
+                            <span>{friend.username} ({friend.email})</span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -311,12 +312,19 @@ const GitHubRepositories = () => {
                     {formData.contributors.map((contributorId) => {
                       const contributor = friends.find(f => f._id === contributorId)
                       return (
-                        <Badge key={contributorId} variant="secondary" className="cursor-pointer" onClick={() => {
+                        <Badge key={contributorId} variant="secondary" className="cursor-pointer flex items-center gap-1" onClick={() => {
                           setFormData(prev => ({
                             ...prev,
                             contributors: prev.contributors.filter(id => id !== contributorId)
                           }))
                         }}>
+                          {contributor?.avatar ? (
+                            <img src={`http://localhost:4000${contributor.avatar}`} alt={contributor.username} className="w-4 h-4 rounded-full" />
+                          ) : (
+                            <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs">
+                              {contributor?.username?.charAt(0)?.toUpperCase() || 'U'}
+                            </div>
+                          )}
                           {contributor?.username} ×
                         </Badge>
                       )
@@ -324,7 +332,6 @@ const GitHubRepositories = () => {
                   </div>
                 </div>
                 <div>
-                  <Label>Tags</Label>
                   <div className="flex gap-2 mb-2">
                     <Input
                       value={tagInput}
@@ -332,7 +339,7 @@ const GitHubRepositories = () => {
                       placeholder="Add a tag"
                       onKeyPress={(e) => e.key === 'Enter' && addTag()}
                     />
-                    <Button type="button" onClick={addTag}>Add</Button>
+                    <Button type="button" className={'w-12'} onClick={addTag}><Plus /></Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {formData.tags.map((tag, index) => (
@@ -380,7 +387,8 @@ const GitHubRepositories = () => {
       </div>
 
       {loading ? (
-        <Loader />
+        // <Loader />
+        null
       ) : filteredRepositories.length === 0 ? (
         <div className="text-center py-12">
           <FolderOpen className="h-12 w-12 mx-auto mb-4 text-gray-400" />
@@ -394,7 +402,7 @@ const GitHubRepositories = () => {
           </Button>
         </div>
       ) : (
-        <div className="bg-white dark:bg-black rounded-lg shadow-xl overflow-hidden">
+        <div className="bg-white dark:bg-black rounded-[25px] shadow-xl overflow-hidden">
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <Table>
               <TableHeader className="bg-gray-100 dark:bg-gray-900 dark:border-gray-700 sticky top-0 z-10">
@@ -552,7 +560,7 @@ const GitHubRepositories = () => {
       {/* Custom Edit Modal */}
       {isEditDialogOpen && (
         <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsEditDialogOpen(false)}>
-          <div className="bg-white dark:bg-gray-800 rounded-lg border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white dark:bg-gray-800 rounded-[25px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-semibold">Edit Repository</h2>
@@ -610,7 +618,6 @@ const GitHubRepositories = () => {
               </div>
             </div>
             <div>
-              <Label>Contributors</Label>
               <Select 
                 value="" 
                 onValueChange={(value) => {
@@ -628,7 +635,16 @@ const GitHubRepositories = () => {
                 <SelectContent className="z-[60]">
                   {friends.map((friend) => (
                     <SelectItem key={friend._id} value={friend._id}>
-                      {friend.username} ({friend.email})
+                      <div className="flex items-center gap-2">
+                        {friend.avatar ? (
+                          <img src={`http://localhost:4000${friend.avatar}`} alt={friend.username} className="w-5 h-5 rounded-full" />
+                        ) : (
+                          <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs">
+                            {friend.username?.charAt(0)?.toUpperCase() || 'U'}
+                          </div>
+                        )}
+                        <span>{friend.username} ({friend.email})</span>
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -637,12 +653,19 @@ const GitHubRepositories = () => {
                 {formData.contributors.map((contributorId) => {
                   const contributor = friends.find(f => f._id === contributorId)
                   return (
-                    <Badge key={contributorId} variant="secondary" className="cursor-pointer" onClick={() => {
+                    <Badge key={contributorId} variant="secondary" className="cursor-pointer flex items-center gap-1" onClick={() => {
                       setFormData(prev => ({
                         ...prev,
                         contributors: prev.contributors.filter(id => id !== contributorId)
                       }))
                     }}>
+                      {contributor?.avatar ? (
+                        <img src={`http://localhost:4000${contributor.avatar}`} alt={contributor.username} className="w-4 h-4 rounded-full" />
+                      ) : (
+                        <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs">
+                          {contributor?.username?.charAt(0)?.toUpperCase() || 'U'}
+                        </div>
+                      )}
                       {contributor?.username} ×
                     </Badge>
                   )
@@ -658,7 +681,7 @@ const GitHubRepositories = () => {
                   placeholder="Add a tag"
                   onKeyPress={(e) => e.key === 'Enter' && addTag()}
                 />
-                <Button type="button" onClick={addTag}>Add</Button>
+                <Button type="button" onClick={addTag}><Plus /></Button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {formData.tags.map((tag, index) => (

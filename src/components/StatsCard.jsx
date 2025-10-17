@@ -25,14 +25,14 @@ const StatsCard = ({ title, value, icon: Icon, color = 'gray' }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="bg-white dark:bg-black rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6"
+      className="bg-white dark:bg-black rounded-[25px] border-2 border-gray-200 dark:border-gray-700 p-6"
     >
       <div className="flex items-center justify-between">
         <div>
           <p className="text-sm font-medium text-gray-600 dark:text-gray-400">{title}</p>
           <p className="text-3xl font-bold text-gray-900 dark:text-white">{value}</p>
         </div>
-        <div className={cn("p-3 rounded-lg", colorClasses[color])}>
+        <div className={cn("p-3 rounded-[25px]", colorClasses[color])}>
           {Icon && <Icon className={cn("w-6 h-6", iconColorClasses[color])} />}
         </div>
       </div>

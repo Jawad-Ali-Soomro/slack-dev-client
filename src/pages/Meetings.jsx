@@ -512,7 +512,7 @@ const Meetings = () => {
               {selectedMeetings.length > 0 && (
                 <motion.button
                   onClick={handleBulkDelete}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-[25px] font-bold hover:bg-red-700 transition-colors"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
@@ -522,7 +522,7 @@ const Meetings = () => {
               )}
               <Button
                 onClick={() => setShowNewMeetingPopup(true)}
-                className={'w-[200px] rounded-lg h-12'}
+                className={'w-[200px] rounded-[25px] h-12'}
 
               >
                 <Plus className={ICON_SIZES.sm} />
@@ -574,7 +574,7 @@ const Meetings = () => {
         </motion.div>
 
         {/* Meetings Table */}
-        <motion.div variants={itemVariants} className="bg-white dark:bg-black rounded-lg shadow-xl overflow-hidden">
+        <motion.div variants={itemVariants} className="bg-white dark:bg-black rounded-[25px] shadow-xl overflow-hidden">
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
               <thead className="bg-gray-100 dark:bg-gray-900 border-gray-200 dark:border-gray-700 sticky top-0 z-10">
@@ -614,7 +614,7 @@ const Meetings = () => {
                   <tr>
                     <td colSpan="10" className="px-6 py-8 text-center">
                       <div className="flex items-center justify-center">
-                        <div className="animate-spin rounded-lg h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
+                        <div className="animate-spin rounded-[25px] h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
                         <span className="ml-2 text-gray-600 dark:text-gray-400">Loading meetings...</span>
                       </div>
                     </td>
@@ -648,7 +648,7 @@ const Meetings = () => {
                             {meeting.tags.map((tag, index) => (
                               <span
                                 key={index}
-                                className="inline-flex items-center px-2 py-1 rounded-lg text-xs font-medium bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200"
+                                className="inline-flex items-center px-2 py-1 rounded-[25px] text-xs font-medium bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200"
                               >
                                 {tag}
                               </span>
@@ -658,7 +658,7 @@ const Meetings = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center rounded-lg uppercase text-xs font-bold truncate ${getTypeColor(meeting.type)}`}>
+                      <span className={`inline-flex items-center rounded-[25px] uppercase text-xs font-bold truncate ${getTypeColor(meeting.type)}`}>
                         {meeting.type === 'online' && <Video className="w-4 h-4 mr-1 icon" />}
                         {meeting.type === 'in-person' && <MapPin className="w-4 h-4 mr-1 icon" />}
                         {meeting.type === 'hybrid' && <Calendar className="w-4 h-4 mr-1 icon" />}
@@ -666,12 +666,12 @@ const Meetings = () => {
                       </span>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center gap-1 rounded-lg text-xs font-bold truncate uppercase ${getStatusColor(meeting.status)}`}>
+                      <span className={`inline-flex items-center gap-1 rounded-[25px] text-xs font-bold truncate uppercase ${getStatusColor(meeting.status)}`}>
                         {getStatusIcon(meeting.status)}
                           {meeting.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-lg">
+                    <td className="px-6 py-4 w-[200px] rounded-[25px]">
                       <div className="flex items-center gap-3">
                         <img 
                           {...getAvatarProps(
@@ -679,7 +679,7 @@ const Meetings = () => {
                             meeting.assignedTo?.username
                           )}
                           alt={meeting.assignedTo?.username || "User"}
-                          className="w-8 h-8 rounded-lg object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                          className="w-8 h-8 rounded-[25px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                           onClick={() => meeting.assignedTo?.id && handleUserAvatarClick(meeting.assignedTo.id)}
                           title={meeting.assignedTo?.username ? `View ${meeting.assignedTo.username}'s profile` : ''}
                         />
@@ -691,7 +691,7 @@ const Meetings = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-lg">
+                    <td className="px-6 py-4 w-[200px] rounded-[25px]">
                       <div className="flex flex-wrap gap-1">
                         {meeting.attendees && meeting.attendees.length > 0 ? (
                           meeting.attendees.slice(0, 3).map((attendee, index) => (
@@ -699,7 +699,7 @@ const Meetings = () => {
                               <img 
                                 {...getAvatarProps(attendee.avatar, attendee.username)}
                                 alt={attendee.username || "User"}
-                                className="w-6 h-6 rounded-lg object-cover border border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                                className="w-6 h-6 rounded-[25px] object-cover border border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                                 onClick={() => attendee.id && handleUserAvatarClick(attendee.id)}
                                 title={attendee.username ? `View ${attendee.username}'s profile` : ''}
                               />
@@ -709,7 +709,7 @@ const Meetings = () => {
                           <span className="text-xs text-gray-500 dark:text-gray-400">No attendees</span>
                         )}
                         {meeting.attendees && meeting.attendees.length > 3 && (
-                          <div className="w-6 h-6 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                          <div className="w-6 h-6 rounded-[25px] bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
                             <span className="text-xs text-gray-600 dark:text-gray-300">
                               +{meeting.attendees.length - 3}
                             </span>
@@ -717,14 +717,14 @@ const Meetings = () => {
                         )}
                       </div>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-lg">
+                    <td className="px-6 py-4 w-[200px] rounded-[25px]">
                       {meeting.project ? (
                         <div className="flex items-center gap-2">
                           {/* {meeting.project.logo && (
                             <img 
                             {...getAvatarProps(meeting.project.logo, meeting.project.name)}
                             alt={meeting.project.name || "User"}
-                            className="w-6 h-6 rounded-lg object-cover border border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                            className="w-6 h-6 rounded-[25px] object-cover border border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                             onClick={() => attendee.id && handleUserAvatarClick(attendee.id)}
                             title={meeting.attendees.username ? `View ${meeting.attendees.username}'s profile` : ''}
                           />
@@ -854,7 +854,7 @@ const Meetings = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className=" bg-white dark:bg-black rounded-lg shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+              className=" bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-3xl font-bold text-black dark:text-white mb-6">
@@ -937,7 +937,7 @@ const Meetings = () => {
                       placeholder="Assign To Person"
                     />
                     {showAssignedToSuggestions && assignedToSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[25px] shadow-lg max-h-48 overflow-y-auto">
                         {assignedToSuggestions.map((user) => (
                           <div
                             key={user.id}
@@ -948,7 +948,7 @@ const Meetings = () => {
                               <img 
                                 {...getAvatarProps(user.avatar, user.username || user.name)}
                                 alt={user.name}
-                                className="w-8 h-8 rounded-lg object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                                className="w-8 h-8 rounded-[25px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   handleUserAvatarClick(user.id)
@@ -1024,7 +1024,7 @@ const Meetings = () => {
                       className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
                     />
                     {showAttendeeSuggestions && attendeeSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[25px] shadow-lg max-h-48 overflow-y-auto">
                         {attendeeSuggestions.map((user) => (
                           <div
                             key={user.id}
@@ -1035,7 +1035,7 @@ const Meetings = () => {
                               <img 
                                 {...getAvatarProps(user.avatar, user.username || user.name)}
                                 alt={user.name}
-                                className="w-8 h-8 rounded-lg object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                                className="w-8 h-8 rounded-[25px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   handleUserAvatarClick(user.id)
@@ -1060,12 +1060,12 @@ const Meetings = () => {
                         {newMeeting.attendees.map((attendee) => (
                           <div
                             key={attendee.id}
-                            className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg"
+                            className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-[25px]"
                           >
                             <img 
                               {...getAvatarProps(attendee.avatar, attendee.username || attendee.name)}
                               alt={attendee.name}
-                              className="w-6 h-6 rounded-lg object-cover cursor-pointer hover:scale-110 transition-transform"
+                              className="w-6 h-6 rounded-[25px] object-cover cursor-pointer hover:scale-110 transition-transform"
                               onClick={() => attendee.id && handleUserAvatarClick(attendee.id)}
                               title={attendee.username || attendee.name ? `View ${attendee.username || attendee.name}'s profile` : ''}
                             />
@@ -1113,7 +1113,7 @@ const Meetings = () => {
                         {newMeeting.tags.map((tag, index) => (
                           <div
                             key={index}
-                            className="flex items-center gap-2 bg-gray-100 dark:bg-black px-3 py-1 rounded-lg"
+                            className="flex items-center gap-2 bg-gray-100 dark:bg-black px-3 py-1 rounded-[25px]"
                           >
                             <span className="text-sm text-gray-900 dark:text-gray-100">{tag}</span>
                             <button

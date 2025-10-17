@@ -254,7 +254,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
           <div className="max-h-60 overflow-y-auto space-y-2">
             {loading ? (
               <div className="flex items-center justify-center py-4">
-                <div className="animate-spin rounded-lg h-6 w-6 border-b-2 border-primary"></div>
+                <div className="animate-spin rounded-[25px] h-6 w-6 border-b-2 border-primary"></div>
               </div>
             ) : filteredUsers.length === 0 ? (
               <div className="text-center py-4 text-muted-foreground">

@@ -400,7 +400,7 @@ const Posts = () => {
                 {/* Create Post Button */}
                 <Button
                   onClick={() => setShowCreateModal(true)}
-                  className="px-6 py-2 rounded-lg flex items-center gap-2 w-12"
+                  className="px-6 py-2 rounded-[25px] flex items-center gap-2 w-12"
                 >
                   <Plus className="w-4 h-4" />
                   {/* Create Post */}
@@ -434,8 +434,8 @@ const Posts = () => {
                 <div className="p-4 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] border-gray-200 dark:border-gray-700">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <Avatar className="w-10 h-10 border p-1 rounded-lg border dark:border-[rgba(255,255,255,.2)]">
-                        <AvatarImage className={'rounded-lg'} {...getAvatarProps(post.author.avatar, post.author.username)} />
+                      <Avatar className="w-10 h-10 border p-1 rounded-[25px] border dark:border-[rgba(255,255,255,.2)]">
+                        <AvatarImage className={'rounded-[25px]'} {...getAvatarProps(post.author.avatar, post.author.username)} />
                         <AvatarFallback>{post.author.username[0]}</AvatarFallback>
                       </Avatar>
                       <div className='flex gap-5'>
@@ -464,7 +464,7 @@ const Posts = () => {
                           {/* <span >{formatTime(post.createdAt)}</span> */}
                           {/* <span>•</span> */}
                           {/* <div className="flex items-center gap-1">
-                            <span className="capitalize px-4 py-2 bg-white text-[10px] font-bold text-black rounded-lg">{post.visibility}</span>
+                            <span className="capitalize px-4 py-2 bg-white text-[10px] font-bold text-black rounded-[25px]">{post.visibility}</span>
                           </div> */}
                         </div>
                       </div>
@@ -562,7 +562,7 @@ const Posts = () => {
                             <img
                               src={image}
                               alt={`Post image ${index + 1}`}
-                              className="w-full h-48 object-cover rounded-lg border-2 cursor-pointer hover:opacity-90 transition-opacity"
+                              className="w-full h-48 object-cover rounded-[25px] border-2 cursor-pointer hover:opacity-90 transition-opacity"
                               onError={(e) => {
                                 console.error('Image failed to load:', image, e)
                                 e.target.style.display = 'none'
@@ -574,7 +574,7 @@ const Posts = () => {
                             />
                             {post.images.length > 4 && index === 3 && (
                               <div 
-                                className="absolute inset-0 bg-[rgba(0,0,0,.7)] dark:bg-[rgba(0,0,0,.2)] bg-opacity-50 rounded-lg flex items-center justify-center cursor-pointer"
+                                className="absolute inset-0 bg-[rgba(0,0,0,.7)] dark:bg-[rgba(0,0,0,.2)] bg-opacity-50 rounded-[25px] flex items-center justify-center cursor-pointer"
                                 onClick={() => navigate(`/post/${post._id}`)}
                               >
                                 <span className="text-white font-semibold">
@@ -592,7 +592,7 @@ const Posts = () => {
                   {post.tags.length > 0 && (
                     <div className="flex flex-wrap gap-2 mt-4">
                       {post.tags.map((tag, index) => (
-                        <Badge key={index} variant="outline" className="text-xs bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 text-blue-800 dark:text-blue-200 rounded-lg  px-4 py-2">
+                        <Badge key={index} variant="outline" className="text-xs bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 text-blue-800 dark:text-blue-200 rounded-[25px]  px-4 py-2">
                           #{tag}
                         </Badge>
                       ))}
@@ -611,7 +611,7 @@ const Posts = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleToggleLike(post._id)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg w-[50px] border transition-all duration-200 ${
+                        className={`flex items-center gap-2 px-4 py-2 rounded-[25px] w-[50px] border transition-all duration-200 ${
                           isLiked(post) 
                             ? 'text-red-500 bg-red-50 hover:bg-red-100 shadow-sm' 
                             : 'text-gray-500 hover:text-red-500 hover:bg-red-50 hover:shadow-sm'
@@ -625,7 +625,7 @@ const Posts = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => navigate(`/post/${post._id}`)}
-                        className="flex w-[50px] border  items-center gap-2 px-4 py-2 rounded-lg text-gray-500 hover:text-blue-500 hover:bg-blue-50 hover:shadow-sm transition-all duration-200"
+                        className="flex w-[50px] border  items-center gap-2 px-4 py-2 rounded-[25px] text-gray-500 hover:text-blue-500 hover:bg-blue-50 hover:shadow-sm transition-all duration-200"
                       >
                         <MessageCircle className="w-4 h-4" />
                         {/* <span className="font-medium">{post.comments.length}</span> */}
@@ -635,7 +635,7 @@ const Posts = () => {
                         variant="ghost"
                         size="sm"
                         onClick={() => handleSharePost(post._id)}
-                        className="flex w-[50px] border  items-center gap-2 px-4 py-2 rounded-lg text-gray-500 hover:text-green-500 hover:bg-green-50 hover:shadow-sm transition-all duration-200"
+                        className="flex w-[50px] border  items-center gap-2 px-4 py-2 rounded-[25px] text-gray-500 hover:text-green-500 hover:bg-green-50 hover:shadow-sm transition-all duration-200"
                       >
                         <Share2 className="w-4 h-4" />
                        {/* <span className="font-medium">{post.shares.length}</span> */}
@@ -661,7 +661,7 @@ const Posts = () => {
                         {/* Add Comment */}
                         <div className="flex gap-3 items-center mb-10">
                           <Avatar className="w-12 h-12 border border-gray-200 dark:border-gray-700 p-1">
-                            <AvatarImage className={'rounded-lg'} {...getAvatarProps(user.avatar, user.username)} />
+                            <AvatarImage className={'rounded-[25px]'} {...getAvatarProps(user.avatar, user.username)} />
                             <AvatarFallback>{user.username[0]}</AvatarFallback>
                           </Avatar>
                           <div className="flex-1 flex gap-2">
@@ -684,17 +684,17 @@ const Posts = () => {
 
                         {/* Comments List */}
                         {post.comments.slice(0, visibleComments[post._id] || 3).map((comment) => (
-                          <div key={comment._id} className="flex gap-3 relative overflow-hidden rounded-lg">
+                          <div key={comment._id} className="flex gap-3 relative overflow-hidden rounded-[25px]">
                             <div className="absolute h-[30%]  border border-gray-200 dark:border-gray-600 w-[30px] top-[40px] left-[20px]" style={{
                               borderWidth: '0px 0 1px 1px',
                               borderBottomLeftRadius: "10px"
                             }}></div>
                             <Avatar className="w-10 h-10 border border-gray-200 dark:border-gray-700">
-                              <AvatarImage className={'p-1 rounded-lg border border-gray-100 dark:border-gray-700'} {...getAvatarProps(comment.user.avatar, comment.user.username)} />
+                              <AvatarImage className={'p-1 rounded-[25px] border border-gray-100 dark:border-gray-700'} {...getAvatarProps(comment.user.avatar, comment.user.username)} />
                               <AvatarFallback>{comment.user.username[0]}</AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
-                              <div className="bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-lg p-3 px-5 mt-8">
+                              <div className="bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-3 px-5 mt-8">
                                 <div className="flex items-center gap-2 mb-1">
                                   <span className="font-medium text-sm text-gray-900 dark:text-white">
                                     {comment.user.username}
@@ -803,7 +803,7 @@ const Posts = () => {
                     />
                     <label
                       htmlFor="image-upload"
-                      className="flex-1 p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:border-blue-500 transition-colors"
+                      className="flex-1 p-3 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-[25px] cursor-pointer hover:border-blue-500 transition-colors"
                     >
                       <div className="text-center">
                         <ImageIcon className="w-8 h-8 mx-auto mb-2 text-gray-400" />
@@ -832,7 +832,7 @@ const Posts = () => {
                     
                       <div className="flex flex-wrap gap-2 mt-3">
                         {selectedFiles.map((file, index) => (
-                          <div key={index} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-lg">
+                          <div key={index} className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-[25px]">
                             <span className="text-sm text-gray-600 dark:text-gray-300">
                               {file.name}
                             </span>
@@ -858,11 +858,11 @@ const Posts = () => {
                             <img
                               src={image}
                               alt={`Upload ${index + 1}`}
-                              className="w-full h-24 object-cover rounded-lg"
+                              className="w-full h-24 object-cover rounded-[25px]"
                             />
                             <button
                               onClick={() => handleRemoveImage(index)}
-                              className="absolute top-2 right-2 bg-red-500 text-white rounded-lg p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="absolute top-2 right-2 bg-red-500 text-white rounded-[25px] p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                             >
                               <X className="w-3 h-3" />
                             </button>
