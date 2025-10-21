@@ -47,6 +47,7 @@ import taskService from "../services/taskService";
 import meetingService from "../services/meetingService";
 import projectService from "../services/projectService";
 import { toast } from "sonner";
+import StatsCard from "../components/StatsCard";
 
 const Dashboard = () => {
 
@@ -371,77 +372,7 @@ const Dashboard = () => {
     },
   ];
 
-  const StatCard = ({
-    title,
-    value,
-    icon: Icon,
-    color,
-    trend,
-    trendValue,
-    subtitle,
-    delay = 0,
-  }) => (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.5, delay }}
-      whileHover={{ scale: 1.02, y: -2 }}
-      className="group relative bg-white dark:bg-[rgba(255,255,255,.1)] rounded-2xl shadow-xl border dark:border-none border-gray-200 dark:border-gray-700 p-6 overflow-hidden"
-    >
-      {/* Background gradient overlay */}
-      <div className="absolute inset-0 bg-gray-100/20 dark:bg-gray-700/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-      {/* Animated background pattern */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-gray-200/20 dark:bg-gray-600/20 rounded-[25px] -translate-y-16 translate-x-16 group-hover:scale-110 transition-transform duration-500" />
-
-      <div className="relative z-10">
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex-1">
-            <p className="text-sm font-semibold uppercase tracking-wide">
-              {title}
-            </p>
-            {subtitle && (
-              <p className="text-xs text-white mt-1">
-                {subtitle}
-              </p>
-            )}
-          </div>
-          <div
-            className={`p-3 rounded-[25px] ${color} shadow-lg group-hover:shadow-xl transition-all duration-300 group-hover:scale-110`}
-          >
-            <Icon className="w-6 h-6 text-white" />
-          </div>
-        </div>
-
-        <div className="flex items-end justify-between">
-          <div>
-            <p className="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-              {value}
-            </p>
-            {trend && (
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-                className={`flex items-center text-sm font-medium ${
-                  trend === "up"
-                    ? "text-emerald-600 dark:text-emerald-400"
-                    : "text-red-600 dark:text-red-400"
-                }`}
-              >
-                {trend === "up" ? (
-                  <ArrowUp className="w-4 h-4 mr-1" />
-                ) : (
-                  <ArrowDown className="w-4 h-4 mr-1" />
-                )}
-                {trendValue}% from last period
-              </motion.div>
-            )}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  );
+ 
 
   if (loading) {
     return (
@@ -484,7 +415,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen">
-      <div className="p-6 mx-auto">
+      <div className="mt-10 mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -524,7 +455,7 @@ const Dashboard = () => {
                   whileHover={{ scale: 1 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={loadDashboardData}
-                  className="flex items-center cursor-pointer space-x-2 px-10 py-4 bg-black dark:bg-white rounded-[25px] dark:border-gray-700 transition-all duration-200"
+                  className="flex items-center cursor-pointer space-x-2 px-10 py-4 bg-black dark:bg-white rounded-none dark:border-gray-700 transition-all duration-200"
                 >
                   <RefreshCw className="w-4 h-4 text-white dark:text-black" />
                   <span className="text-sm font-medium text-white dark:text-black">
@@ -535,145 +466,145 @@ const Dashboard = () => {
             </div>
 
             {/* Quick stats bar */}
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
               className="grid grid-cols-2 md:grid-cols-4 gap-4"
             >
-              <div className="bg-blue-500 text-white backdrop-blur-sm rounded-[25px] p-4">
+              <div className="backdrop-blur-sm rounded-none p-4 dark:bg-[rgba(255,255,255,.1)] border">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-white rounded-[25px] animate-pulse"></div>
+                  <div className="w-2 h-2 bg-black dark:bg-white rounded-none animate-pulse"></div>
                   <div>
-                    <p className="text-xs text-white">
+                    <p className="text-xs">
                       Status
                     </p>
-                    <p className="text-lg font-semibold text-white">
+                    <p className="text-lg font-semibold">
                       All Systems Active
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-green-500 text-white backdrop-blur-sm rounded-[25px] p-4">
+              <div className="text-white backdrop-blur-sm dark:bg-[rgba(255,255,255,.1)] border rounded-none p-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-white rounded-[25px] animate-pulse"></div>
+                  <div className="w-2 h-2 bg-black dark:bg-white rounded-none animate-pulse"></div>
                   <div>
-                    <p className="text-xs text-white">
+                    <p className="text-xs text-black dark:text-white">
                       Last Updated
                     </p>
-                    <p className="text-lg font-semibold text-white">
+                    <p className="text-lg font-semibold text-black dark:text-white">
                      Updated Just now
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-orange-500 text-white backdrop-blur-sm rounded-[25px] p-4">
+              <div className=" text-black dark:text-white backdrop-blur-sm dark:bg-[rgba(255,255,255,.1)] border rounded-none p-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-white rounded-[25px] animate-pulse"></div>
+                  <div className="w-2 h-2 bg-black dark:bg-white rounded-none animate-pulse"></div>
                   <div>
-                    <p className="text-xs text-white">
+                    <p className="text-xs text-black dark:text-white">
                       Performance
                     </p>
-                    <p className="text-lg font-semibold text-white">
+                    <p className="text-lg font-semibold text-black dark:text-white">
                       Extra Excellent
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-red-500 text-white backdrop-blur-sm rounded-[25px] p-4">
+              <div className="text-black dark:text-white backdrop-blur-sm dark:bg-[rgba(255,255,255,.1)] border rounded-none p-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-white rounded-[25px] animate-pulse"></div>
+                  <div className="w-2 h-2 bg-black dark:bg-white rounded-none animate-pulse"></div>
                   <div>
-                    <p className="text-xs text-white">
+                    <p className="text-xs text-black dark:text-white">
                       Sync Status
                     </p>
-                    <p className="text-lg font-semibold text-white">
+                    <p className="text-lg font-semibold text-black dark:text-white">
                       Real Time Sync
                     </p>
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </motion.div> */}
           </div>
 
           {/* Main Metrics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <StatCard
+            <StatsCard
               title="Active Tasks"
               value={stats.totalTasks}
               icon={Target}
-              color="bg-gradient-to-br from-blue-500 to-blue-600"
+              color="blue"
               subtitle="Currently in progress"
               delay={0.1}
             />
-            <StatCard
+            <StatsCard
               title="Completed"
               value={stats.completedTasks}
               icon={CheckCircle}
-              color="bg-gradient-to-br from-emerald-500 to-emerald-600"
+              color="green"
               trend="up"
               trendValue={stats.completionRate}
               subtitle="Successfully delivered"
               delay={0.2}
             />
-            <StatCard
+            <StatsCard
               title="Team Meetings"
               value={stats.totalMeetings}
               icon={Video}
-              color="bg-gradient-to-br from-purple-500 to-purple-600"
+              color="purple"
               subtitle="Collaboration sessions"
               delay={0.3}
             />
-            <StatCard
+            <StatsCard
               title="Active Projects"
               value={stats.activeProjects}
               icon={Activity}
-              color="bg-gradient-to-br from-indigo-500 to-indigo-600"
+              color="red"
               subtitle="Currently running"
               delay={0.4}
             />
           </div>
 
           {/* Secondary Metrics Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <StatCard
+          {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            <StatsCard
               title="In Progress"
               value={stats.inProgressTasks}
               icon={Clock}
-              color="bg-gradient-to-br from-amber-500 to-amber-600"
+              color="purple"
               subtitle="Being worked on"
               delay={0.5}
             />
-            <StatCard
+            <StatsCard
               title="Scheduled"
               value={stats.scheduledMeetings}
               icon={Calendar}
-              color="bg-gradient-to-br from-cyan-500 to-cyan-600"
+              color="cyan"
               subtitle="Upcoming meetings"
               delay={0.6}
             />
-            <StatCard
+            <StatsCard
               title="Concluded"
               value={stats.completedMeetings}
               icon={Award}
-              color="bg-gradient-to-br from-green-500 to-green-600"
+              color="orange"
               trend="up"
               trendValue={stats.meetingCompletionRate}
               subtitle="Successfully completed"
               delay={0.7}
             />
-            <StatCard
+            <StatsCard
               title="Avg Progress"
               value={`${stats.averageProgress}%`}
               icon={TrendingUp}
-              color="bg-gradient-to-br from-orange-500 to-orange-600"
+              color="purple"
               subtitle="Overall completion"
               delay={0.8}
             />
-          </div>
+          </div> */}
 
           {/* Analytics Dashboard */}
           <motion.div
@@ -696,26 +627,26 @@ const Dashboard = () => {
                
                 <div className="flex items-center space-x-6">
                   <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-[25px]"></div>
+                    <div className="w-4 h-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-none"></div>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Tasks
                     </span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4 bg-gradient-to-r from-purple-500 to-purple-600 rounded-[25px]"></div>
+                    <div className="w-4 h-4 bg-gradient-to-r from-purple-500 to-purple-600 rounded-none"></div>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Meetings
                     </span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-[25px]"></div>
+                    <div className="w-4 h-4 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-none"></div>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Projects
                     </span>
                   </div>
                 </div>
               </div>
-              <div className="bg-gray-50/50 dark:bg-black/50 rounded-2xl p-6">
+              <div className="rounded-none p-6 pt-20 pr-20 border dark:border-gray-700   dark:bg-[rgba(255,255,255,.1)] ">
                 <ResponsiveContainer width="100%" height={400}>
                   <LineChart data={weeklyData}>
                     <CartesianGrid
@@ -825,10 +756,10 @@ const Dashboard = () => {
               className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12 pt-8 border-t border-gray-200/50 dark:border-gray-700/50"
             >
               {/* Task Status Distribution */}
-              <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm rounded-2xl p-6">
+              <div className="border  dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm rounded-none p-6">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-[25px]">
+                    <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-none">
                       <Target className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -867,7 +798,7 @@ const Dashboard = () => {
                     <Tooltip
                       contentStyle={{
                         border: "none",
-                        borderRadius: "12px",
+                        borderRadius: "0px",
                         color: "white",
                         boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
                         backdropFilter: "blur(10px)",
@@ -883,10 +814,10 @@ const Dashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.5 + index * 0.1 }}
-                      className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[25px]"
+                      className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-none"
                     >
                       <div
-                        className="w-4 h-4 rounded-[25px] mr-3 shadow-sm"
+                        className="w-4 h-4 rounded-none mr-3 shadow-sm"
                         style={{ backgroundColor: item.color }}
                       ></div>
                       <div>
@@ -903,10 +834,10 @@ const Dashboard = () => {
               </div>
 
               {/* Meeting Status Distribution */}
-              <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm rounded-2xl p-6">
+              <div className="border  dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm rounded-none p-6">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-[25px]">
+                    <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-none">
                       <Video className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -945,7 +876,7 @@ const Dashboard = () => {
                     <Tooltip
                       contentStyle={{
                         border: "none",
-                        borderRadius: "12px",
+                        borderRadius: "0px",
                         color: "white",
                         boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
                         backdropFilter: "blur(10px)",
@@ -961,10 +892,10 @@ const Dashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.6 + index * 0.1 }}
-                      className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[25px]"
+                      className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-none"
                     >
                       <div
-                        className="w-4 h-4 rounded-[25px] mr-3 shadow-sm"
+                        className="w-4 h-4 rounded-none mr-3 shadow-sm"
                         style={{ backgroundColor: item.color }}
                       ></div>
                       <div>
@@ -990,7 +921,7 @@ const Dashboard = () => {
             className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8"
           >
             {/* Project Status Distribution */}
-            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Project Status Distribution
@@ -1017,7 +948,7 @@ const Dashboard = () => {
                   <Tooltip
                     contentStyle={{
                       border: "none",
-                      borderRadius: "12px",
+                      borderRadius: "0px",
                       color: "white",
                       boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
                       backdropFilter: "blur(10px)",
@@ -1029,7 +960,7 @@ const Dashboard = () => {
                 {projectStatusData.map((item, index) => (
                   <div key={index} className="flex items-center">
                     <div
-                      className="w-3 h-3 rounded-[25px] mr-2"
+                      className="w-3 h-3 rounded-none mr-2"
                       style={{ backgroundColor: item.color }}
                     ></div>
                     <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -1041,7 +972,7 @@ const Dashboard = () => {
             </div>
 
             {/* Project Priority Distribution */}
-            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Project Priority Breakdown
@@ -1058,8 +989,8 @@ const Dashboard = () => {
                   <Tooltip
                     contentStyle={{
                       border: "none",
-                      borderRadius: "12px",
-                      // color: 'white',
+                      borderRadius: "0px",
+                      padding: '10px 30px',
                       boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
                       backdropFilter: "blur(10px)",
                     }}
@@ -1071,12 +1002,12 @@ const Dashboard = () => {
                 {projectPriorityData.map((item, index) => (
                   <div key={index} className="flex items-center">
                     <div
-                      className="w-3 h-3 rounded-[25px] mr-2"
+                      className="w-3 h-3 rounded-none mr-2"
                       style={{ backgroundColor: item.color }}
                     ></div>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {/* <span className="text-sm text-gray-600 dark:text-gray-400">
                       {item.name}: {item.value}
-                    </span>
+                    </span> */}
                   </div>
                 ))}
               </div>
@@ -1086,7 +1017,7 @@ const Dashboard = () => {
           {/* Combined Priority & Type Distribution */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
             {/* Task Priority Distribution */}
-            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Task Priority Breakdown
@@ -1103,8 +1034,8 @@ const Dashboard = () => {
                   <Tooltip
                     contentStyle={{
                       border: "none",
-                      borderRadius: "12px",
-                      // color: 'white',
+                      borderRadius: "0px",
+                      padding: '10px 30px',
                       boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
                       backdropFilter: "blur(10px)",
                     }}
@@ -1115,7 +1046,7 @@ const Dashboard = () => {
             </div>
 
             {/* Meeting Type Distribution */}
-            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Meeting Format Analysis
@@ -1132,8 +1063,9 @@ const Dashboard = () => {
                   <Tooltip
                     contentStyle={{
                       border: "none",
-                      borderRadius: "12px",
+                      borderRadius: "0px",
                       // color: 'white',
+                      padding: '10px 30px',
                       boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
                       backdropFilter: "blur(10px)",
                     }}
@@ -1152,7 +1084,7 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="bg-white dark:bg-black rounded-[25px] shadow-lg  dark:border-gray-700 mt-10"
+          className="bg-white dark:bg-black rounded-none shadow-lg  dark:border-gray-700 mt-10 pb-10"
         >
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -1168,7 +1100,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
-            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6 text-center">
               <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
                 {stats.tasksThisWeek}
               </div>
@@ -1179,7 +1111,7 @@ const Dashboard = () => {
                 Development Velocity
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6 text-center">
               <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
                 {stats.tasksThisMonth}
               </div>
@@ -1190,7 +1122,7 @@ const Dashboard = () => {
                 Monthly Throughput
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6 text-center">
               <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
                 {stats.completionRate}%
               </div>
@@ -1201,7 +1133,7 @@ const Dashboard = () => {
                 Quality Metric
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6 text-center">
               <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
                 {stats.meetingsThisWeek}
               </div>
@@ -1212,7 +1144,7 @@ const Dashboard = () => {
                 Collaboration
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6 text-center">
               <div className="text-3xl font-bold text-pink-600 dark:text-pink-400 mb-2">
                 {stats.meetingsThisMonth}
               </div>
@@ -1223,7 +1155,7 @@ const Dashboard = () => {
                 Team Sync
               </div>
             </div>
-            <div className="bg-gray-50 dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6 text-center">
               <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
                 {stats.meetingCompletionRate}%
               </div>

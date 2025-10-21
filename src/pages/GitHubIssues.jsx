@@ -27,9 +27,11 @@ import {
   Lightbulb,
   FileText,
   HelpCircle,
-  Zap
+  Zap,
+  Github
 } from 'lucide-react'
 import { toast } from 'sonner'
+import GitHubIssuesModal from '../components/GitHubIssuesModal'
 
 const GitHubIssues = () => {
   const [issues, setIssues] = useState([])
@@ -43,6 +45,7 @@ const GitHubIssues = () => {
   const [typeFilter, setTypeFilter] = useState('all')
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isGitHubIssuesModalOpen, setIsGitHubIssuesModalOpen] = useState(false)
   const [editingIssue, setEditingIssue] = useState(null)
   const [formData, setFormData] = useState({
     title: '',
@@ -116,6 +119,18 @@ const GitHubIssues = () => {
     } catch (error) {
       console.error('Error creating issue:', error)
       toast.error(error.message || 'Failed to create issue')
+    }
+  }
+
+  const handleCreateFromGitHub = async (issueData) => {
+    try {
+      await githubService.createIssue(issueData)
+      toast.success('Issue imported successfully')
+      fetchData()
+    } catch (error) {
+      console.error('Error importing issue:', error)
+      toast.error(error.message || 'Failed to import issue')
+      throw error
     }
   }
 
@@ -307,16 +322,26 @@ const GitHubIssues = () => {
               Track and manage your GitHub issues
             </p>
           </div>
-          <Button onClick={() => setIsCreateDialogOpen(true)} className={'w-[200px]'}>
-            <Plus className="h-4 w-4 mr-2" />
-            New Issue
-          </Button>
+          <div className="flex gap-3">
+            <Button onClick={() => setIsCreateDialogOpen(true)} className={'w-[200px]'}>
+              <Plus className="h-4 w-4 mr-2" />
+              New Issue
+            </Button>
+            <Button 
+              onClick={() => setIsGitHubIssuesModalOpen(true)} 
+              variant="outline"
+              className={'w-[200px]'}
+            >
+              <Github className="h-4 w-4 mr-2" />
+              Import from GitHub
+            </Button>
+          </div>
         </div>
 
         {/* Custom Create Modal */}
         {isCreateDialogOpen && (
           <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsCreateDialogOpen(false)}>
-            <div className="bg-white dark:bg-black rounded-[25px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white dark:bg-black rounded-none border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-xl font-semibold">Add New Issue</h2>
@@ -551,23 +576,7 @@ const GitHubIssues = () => {
         </div>
       </div>
 
-      {loading ? (
-        <div className="space-y-4">
-          {[...Array(5)].map((_, index) => (
-            <Card key={index} className="p-6">
-              <div className="animate-pulse">
-                <div className="h-6 bg-gray-200 rounded w-3/4 mb-2"></div>
-                <div className="h-4 bg-gray-200 rounded w-full mb-4"></div>
-                <div className="flex gap-2 mb-4">
-                  <div className="h-6 bg-gray-200 rounded w-16"></div>
-                  <div className="h-6 bg-gray-200 rounded w-16"></div>
-                </div>
-                <div className="h-4 bg-gray-200 rounded w-24"></div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      ) : issues.length === 0 ? (
+      {loading ? null : issues.length === 0 ? (
         <div className="text-center py-12">
           <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
           <h3 className="text-lg font-semibold mb-2">No issues found</h3>
@@ -580,7 +589,7 @@ const GitHubIssues = () => {
           </Button>
         </div>
       ) : (
-        <div className="bg-white dark:bg-black rounded-[25px] shadow-xl overflow-hidden">
+        <div className="bg-white dark:bg-black rounded-none shadow-xl overflow-hidden">
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <Table>
               <TableHeader className="bg-gray-100 dark:bg-gray-900 dark:border-gray-700 sticky top-0 z-10">
@@ -717,7 +726,7 @@ const GitHubIssues = () => {
       {/* Custom Edit Modal */}
       {isEditDialogOpen && (
         <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsEditDialogOpen(false)}>
-          <div className="bg-white dark:bg-gray-800 rounded-[25px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white dark:bg-gray-800 rounded-none border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-semibold">Edit Issue</h2>
@@ -865,6 +874,13 @@ const GitHubIssues = () => {
           </div>
         </div>
       )}
+
+      {/* GitHub Issues Modal */}
+      <GitHubIssuesModal
+        isOpen={isGitHubIssuesModalOpen}
+        onClose={() => setIsGitHubIssuesModalOpen(false)}
+        onCreateIssue={handleCreateFromGitHub}
+      />
     </div>
   )
 }

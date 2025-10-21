@@ -17,13 +17,13 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <motion.div
-          className="p-5 md:p-8 shadow-none border-none rounded-2xl  "
+          className="p-5 md:p-8 shadow-none border-none rounded-none  "
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
         >
           <div className="flex flex-col items-center space-y-4">
-            <div className="w-8 h-8 border-4 border-black border-t-transparent rounded-[25px] animate-spin dark:border-white"></div>
+            <div className="w-8 h-8 border-4 border-black border-t-transparent rounded-none animate-spin dark:border-white"></div>
             <p className="text-gray-600 dark:text-gray-300 font-bold">
               Loading...
             </p>
@@ -47,16 +47,13 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
     <div className="min-h-screen bg-white dark:bg-black">
       <DashboardHeader />
       <div className="flex">
-        <Sidebar />
+       
+       <div onClick={(e) => e.stopPropagation()}>
+       <Sidebar />
+       </div>
 
-        <div
-          className={`flex absolute left-2 top-20 p-3 hover:bg-gray-100 cursor-pointer rounded-[25px] hover:text-black z-10`}
-          onClick={() => toggleSidebar()}
-        >
-          <ChevronRight />
-        </div>
 
-        <div className="flex-1 md:pl-25 pr-10 md:pt-20 pt-25 pl-10 overflow-hidden">
+        <div className={`${isOpen ? "md:pl-28" : ""} transition-all flex-1 pr-10 md:pt-20 pt-25 pl-10 overflow-hidden`} >
           {children}
         </div>
       </div>

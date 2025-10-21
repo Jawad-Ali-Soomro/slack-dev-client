@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { User, Settings, LogOut, Camera, X, RefreshCw } from 'lucide-react'
+import { User, Settings, LogOut, Camera, X, RefreshCw, Menu } from 'lucide-react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
@@ -9,6 +9,8 @@ import { toast } from 'sonner'
 import profileService from '../services/profileService'
 import { getAvatarProps } from '../utils/avatarUtils'
 import NotificationDropdown from './NotificationDropdown'
+import { useSidebar } from '../contexts/SidebarContext'
+import { RiMenu3Fill } from "react-icons/ri";
 
 const DashboardHeader = () => {
   const { user, logout } = useAuth()
@@ -139,13 +141,26 @@ const DashboardHeader = () => {
     }
   }
 
+
+    const { toggleSidebar, isOpen } = useSidebar();
+
   
 
   return (
     <>
       {/* Dashboard Header */}
       <header className="bg-white dark:bg-black z-50 icon  border-gray-200 dark:border-gray-700 px-6 py-4 border-b fixed w-full">
-        <div className="flex items-center justify-end">
+        <div className={`flex items-center justify-between `}>
+
+          <div className="flex justify-center items-center gap-4">
+              <div
+          className={`flex left-2 top-20 p-3 hover:bg-gray-100 cursor-pointer rounded-none hover:text-black z-10`}
+          onClick={() => toggleSidebar()}
+        >
+          <RiMenu3Fill />
+            </div>
+            <img src="/logo.png" className='w-[50px]' alt="" />
+      </div>
           <div className="flex items-center gap-4">
             {/* Notifications */}
             <NotificationDropdown />
@@ -163,14 +178,14 @@ const DashboardHeader = () => {
                 onClick={handleOpenProfileModal}
                 className="relative group"
               >
-                <div className="w-10 h-10 rounded-[25px] overflow-hidden border border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
+                <div className="w-10 h-10 rounded-none overflow-hidden border border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
                   <img
                     {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
                     alt={user?.username || 'User'}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-[25px] flex items-center justify-center">
+                <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-none flex items-center justify-center">
                   <Camera className="w-2.5 h-2.5 " />
                 </div>
               </button>
@@ -195,7 +210,7 @@ const DashboardHeader = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+            className="bg-white dark:bg-black rounded-none shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
@@ -228,14 +243,14 @@ const DashboardHeader = () => {
             {/* Avatar Section */}
             <div className="flex flex-col items-center mb-6">
               <div className="relative group mb-4">
-                <div className="w-20 h-20 rounded-[25px] overflow-hidden border-1 border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
+                <div className="w-20 h-20 rounded-none overflow-hidden border-1 border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
                   <img
                     {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
                     alt={user?.username || 'User'}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <label className="absolute -bottom-1 bg-black dark:bg-white text-white dark:text-black -right-1 w-6 h-6 rounded-[25px] flex items-center justify-center cursor-pointer transition-colors">
+                <label className="absolute -bottom-1 bg-black dark:bg-white text-white dark:text-black -right-1 w-6 h-6 rounded-none flex items-center justify-center cursor-pointer transition-colors">
                   <Camera className="w-3 h-3" />
                   <input
                     type="file"
@@ -253,7 +268,7 @@ const DashboardHeader = () => {
               {/* User Stats */}
               <div className="flex gap-4 mt-4 text-center">
                 
-                <div className="px-5 py-2 bg-gray-100 dark:bg-black rounded-[25px]">
+                <div className="px-5 py-2 bg-gray-100 dark:bg-black rounded-none">
                   <div className="text-sm font-medium text-green-600 dark:text-green-400">
                     {user?.emailVerified ? 'Verified' : 'Pending'}
                   </div>
@@ -264,7 +279,7 @@ const DashboardHeader = () => {
             {/* Profile Form */}
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-[25px] h-8 w-8 border-b-2 border-blue-500"></div>
+                <div className="animate-spin rounded-none h-8 w-8 border-b-2 border-blue-500"></div>
                 <span className="ml-2 text-gray-500">Loading profile...</span>
               </div>
             ) : (

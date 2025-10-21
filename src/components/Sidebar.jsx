@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { 
   CheckSquare, 
@@ -15,6 +15,14 @@ import {
   Network,
   WifiHigh,
   WifiIcon,
+  ChevronDown,
+  ChevronRight,
+  GitPullRequest,
+  AlertCircle,
+  FolderOpen as RepoIcon,
+  UserPlus,
+  Send,
+  UserCheck
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSidebar } from '../contexts/SidebarContext'
@@ -33,6 +41,8 @@ const Sidebar = () => {
   const { isAuthenticated, logout } = useAuth()
   const { unreadCounts } = useNotifications()
   const location = useLocation()
+  const [githubDropdownOpen, setGithubDropdownOpen] = useState(false)
+  const [friendsDropdownOpen, setFriendsDropdownOpen] = useState(false)
   
   console.log('Sidebar unreadCounts:', unreadCounts)
   
@@ -48,18 +58,45 @@ const Sidebar = () => {
       badgeCount: 0
     },
     {
-      title: 'Latest Feed',
+      title: 'Updates',
       icon: WifiIcon,
       path: '/dashboard/posts',
       color: 'text-black dark:text-white',
       badgeCount: 0
     },
     {
-      title: 'Version Control',
+      title: 'Repositroies',
       icon: Github,
       path: '/dashboard/github',
       color: 'text-black dark:text-white',
-      badgeCount: 0
+      badgeCount: 0,
+      hasDropdown: true,
+      dropdownItems: [
+        {
+          title: 'Dashboard',
+          icon: LayoutDashboard,
+          path: '/dashboard/github',
+          color: 'text-black dark:text-white'
+        },
+        {
+          title: 'Repositories',
+          icon: RepoIcon,
+          path: '/dashboard/github/repositories',
+          color: 'text-black dark:text-white'
+        },
+        {
+          title: 'Pull Requests',
+          icon: GitPullRequest,
+          path: '/dashboard/github/pull-requests',
+          color: 'text-black dark:text-white'
+        },
+        {
+          title: 'Issues',
+          icon: AlertCircle,
+          path: '/dashboard/github/issues',
+          color: 'text-black dark:text-white'
+        }
+      ]
     },
     {
       title: 'Tasks',
@@ -95,7 +132,8 @@ const Sidebar = () => {
       icon: PiUserCheck,
       path: '/dashboard/friends',
       color: 'text-black dark:text-white',
-      badgeCount: 0
+      badgeCount: 0,
+    
     },
   
     {
@@ -115,7 +153,7 @@ const Sidebar = () => {
     if (isAuthenticated) {
       const handleResize = () => {
         if (window.innerWidth >= 768) { // lg breakpoint
-          openSidebar()
+          // openSidebar()
         }
       }
 
@@ -180,82 +218,127 @@ const Sidebar = () => {
       {isOpen && (
         <>
           {/* Overlay */}
-          <motion.div
+          {/* <motion.div
             variants={overlayVariants}
             initial="open"
             animate="open"
             exit="closed"
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-100 md:hidden"
             onClick={closeSidebar}
-          />
+          /> */}
           
           {/* Sidebar */}
           <motion.aside
             variants={sidebarVariants}
-            initial="open"
+            initial="closed"
             animate="open"
-            exit="open"
-            className="fixed icon left-0 top-0 h-full w-[70px] bg-white dark:bg-black z-110 border-r border-gray-200 dark:border-gray-700 lg:z-50"
+            exit="closed"
+            className="fixed icon left-0 top-0 h-[91.5vh] mt-[8.9vh] w-[80px] bg-white dark:bg-black z-110 border-r border-gray-200 dark:border-gray-700 lg:z-50"
           >
             {/* Header */}
-            <div className="flex items-center py-4 justify-center flex items-center justify-center border-b icon border-gray-200 dark:border-gray-700">
-              <img src="/logo.png" className='w-[50px] ' alt="" />
-              
-            </div>
+           
 
             {/* Navigation */}
-            <nav className="flex-1 p-2">
+            <nav className="flex items-center justify-center p-2">
               <div className="space-y-2 flex flex-col items-center justify-start">
                 {sidebarItems.map((item, index) => {
                   const Icon = item.icon
-                  const active = isActive(item.path)
+                  const active = isActive(item.path) || (item.hasDropdown && item.dropdownItems?.some(subItem => isActive(subItem.path)))
                   
                   return (
                     <motion.div
                       key={item.path}
-                      variants={itemVariants}
                       initial="closed"
-                      animate="open"
-                      transition={{ delay: index * 0.1 }}
+                      // animate="open"
+                      // transition={{ delay: index * 0.1 }}
+                      className="w-full cursor-pointer"
                     >
-                      <Link
-                        to={item.path}
-                       
-                        title={item.title}
-                          className={`relative flex items-center justify-start px-4 gap-4 ${item.title == 'Premium' && 'bg-orange-500 dark:bg-orange-600 text-white hover:bg-orange-600 dark:hover:bg-orange-700'} relative w-[50px] h-[50px] rounded-[25px] transition-all duration-200 group ${
-                          active
-                            ? `{shadow-none bg-[#fe914d]  text-white ${item.title == 'Premium' && 'bg-orange-500 dark:bg-orange-600 text-white hover:bg-orange-600 dark:hover:bg-orange-700'} }`
-                            : item.title == 'Premium' ? 'bg-orange-500 dark:bg-orange-600 text-white hover:bg-orange-600 dark:hover:bg-orange-700' : 'hover:bg-gray-100 dark:hover:bg-black text-gray-700 dark:text-gray-300'
-                        }`} 
-                      >
-                        <div className="relative flex items-center gap-4">
-                          <Icon className={`w-5 h-5 icon transition-transform ${active ? '' : item.color}`} />
-                          
-                        </div>
 
-                         {item.badgeCount > 0 && (
-                            <span className="absolute  right-2 bg-red-500 text-white text-xs rounded-[25px] h-5 w-5 flex items-center justify-center font-bold z-10">
-                              {item.badgeCount > 99 ? '99+' : item.badgeCount}
-                            </span>
-                          )}
-                        {active && (
-                          <motion.div
-                            layoutId="activeIndicator"
-                            className="absolute -right-2 top-1/2 -translate-y-1/2 w-1 h-8 bg-[#fe914d] rounded-[25px]"
-                            initial={{ x: 0 }}
-                            animate={{ x: 0 }}
-                            exit={{ x: 0 }}
-                          />
+                      
+                     
+                        {item.hasDropdown && item.title === 'Repositroies' ? (
+                          <div className="w-full">
+                            <button
+                              onClick={() => setGithubDropdownOpen(!githubDropdownOpen)}
+                              className={`relative flex items-center cursor-pointer justify-between px-4 gap-4 w-full h-[50px] rounded-none transition-all duration-200 group ${
+                                active
+                                  ? `{shadow-none bg-[#fe914d]  text-white }`
+                                  : 'hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,.1)] text-gray-700 dark:text-gray-300'
+                              }`}
+                            >
+                              <div className="relative flex items-cenetr justify-cenetr gap-4">
+                                <Icon className={`w-5 h-5 icon transition-transform ${active ? '' : item.color}`} />
+                                {/* {item.title} */}
+                              </div>
+                                {/* {githubDropdownOpen ? (
+                                  <ChevronDown className="w-4 h-4" />
+                                ) : (
+                                  <ChevronRight className="w-4 h-4" />
+                                )} */}
+                            </button>
+                            <AnimatePresence>
+                              {githubDropdownOpen && (
+                                <motion.div
+                                  initial={{ opacity: 0, height: 0 }}
+                                  animate={{ opacity: 1, height: 'auto' }}
+                                  exit={{ opacity: 0, height: 0 }}
+                                  transition={{ duration: 0.2 }}
+                                  className="mt-2 space-y-1"
+                                >
+                                  {item.dropdownItems?.map((subItem) => {
+                                    const SubIcon = subItem.icon
+                                    const subActive = isActive(subItem.path)
+                                    return (
+                                      <Link
+                                        key={subItem.path}
+                                        to={subItem.path}
+                                        className={`flex items-center gap-3 px-4 py-2 h-12 rounded-none transition-all justify-center duration-200 text-sm ${
+                                          subActive
+                                            ? 'bg-[#fe914d] text-white '
+                                            : 'hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,.1)] text-gray-600 dark:text-gray-400'
+                                        }`}
+                                      > 
+                                        <SubIcon className="w-4 h-4" />
+                                        {/* <span>{subItem.title}</span> */}
+                                      </Link>
+                                    )
+                                  })}
+                                </motion.div>
+                              )}
+                            </AnimatePresence>
+                          </div>
+                        ) : (
+                          <Link
+                            to={item.path}
+                            title={item.title}
+                            className={`relative flex items-center cursor-pointer justify-start px-4 gap-4 relative w-[50px] h-[50px] rounded-none transition-all duration-200 group ${
+                              active
+                                ? `{shadow-none bg-[#fe914d]  text-white }`
+                                : 'hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,.1)] text-gray-700 dark:text-gray-300'
+                            }`} 
+                          >
+                            <div className="relative flex items-cenetr justify-center">
+                              <Icon className={`w-5 h-5 icon transition-transform ${active ? '' : item.color}`} />
+                              {/* {
+                                item.title
+                                } */}
+                            </div>
+
+                            {item.badgeCount > 0 && (
+                              <span className="absolute right-2 bg-red-500 text-white text-xs rounded-none h-5 w-5 flex items-center justify-center font-bold z-10">
+                                {item.badgeCount > 99 ? '99+' : item.badgeCount}
+                              </span>
+                            )}
+                          </Link>
                         )}
-                      </Link>
+                     
                     </motion.div>
                   )
                 })}
-                <div className="flex items-center justify-center text-white gap-2 w-[50px] h-[50px] rounded-[25px] transition-all duration-200 group absolute bottom-5  bg-red-500 cursor-pointer" onClick={() => {
+                <div className="flex items-center justify-center text-white gap-2 w-[50px] h-[50px] rounded-none transition-all duration-200 group absolute bottom-5  bg-red-500 cursor-pointer" onClick={() => {
                   logout()
                 }}>
                   <LogOut className="w-5 h-5 transition-transform icon" />
-                 
                 </div>
               </div>
 

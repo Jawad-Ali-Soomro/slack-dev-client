@@ -426,7 +426,7 @@ const Tasks = () => {
   document.title = "Tasks - Schedule & Manage"
 
   return (
-    <div className="overflow-hidden pt-6 pl-6">
+    <div className="overflow-hidden pt-6">
       <motion.div
         className="mx-auto"
         variants={containerVariants}
@@ -449,7 +449,7 @@ const Tasks = () => {
               {selectedTasks.length > 0 && (
                 <motion.button
                   onClick={handleBulkDelete}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-[25px] font-bold hover:bg-red-700 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-none font-bold hover:bg-red-700 transition-colors"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
@@ -460,7 +460,7 @@ const Tasks = () => {
               <Button
                 onClick={() => setShowNewTaskPopup(true)}
                 // className={getButtonClasses('primary', 'md', 'flex items-center gap-2 px-20 py-6')}
-                className={'w-[200px] rounded-[25px] h-12'}
+                className={'w-[200px] rounded-none h-12'}
               >
                 <Plus className={ICON_SIZES.sm} />
                 New Task
@@ -511,7 +511,7 @@ const Tasks = () => {
         </motion.div>
 
         {/* Tasks Table */}
-        <motion.div variants={itemVariants} className="bg-white dark:bg-black rounded-[25px] shadow-xl overflow-hidden">
+        <motion.div variants={itemVariants} className="bg-white dark:bg-black rounded-none shadow-xl overflow-hidden">
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
               <thead className="bg-gray-100 dark:bg-gray-900 border-b dark:border-gray-700 sticky top-0 z-10">
@@ -548,7 +548,7 @@ const Tasks = () => {
                       <tr>
                         <td colSpan="7" className="px-6 py-8 text-center">
                           <div className="flex items-center justify-center">
-                            <div className="animate-spin rounded-[25px] h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
+                            <div className="animate-spin rounded-none h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
                             <span className="ml-2 text-gray-600 dark:text-gray-400">Loading tasks...</span>
                           </div>
                         </td>
@@ -576,7 +576,7 @@ const Tasks = () => {
                             {task.title}
                           </div>
                           {user && user.id && (
-                            <span className={`text-xs px-2 py-1 rounded-[25px] uppercase font-bold truncate ${
+                            <span className={`text-xs px-2 py-1 rounded-none uppercase font-bold truncate ${
                               task.assignTo?.id === user.id 
                                 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
                                 : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
@@ -591,14 +591,14 @@ const Tasks = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center justify-center uppercase px-2.5 py-0.5 rounded-[25px] text-[9px] font-bold font-bold ${getPriorityColor(task.priority)}`}>
+                      <span className={`inline-flex items-center justify-center uppercase px-2.5 py-0.5 rounded-none text-[9px] font-bold font-bold ${getPriorityColor(task.priority)}`}>
                         {task.priority}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className={`inline-flex items-center gap-1 rounded-[25px] text-[9px] font-bold uppercase cursor-pointer hover:opacity-80 transition-opacity ${getStatusColor(task.status)}`}>
+                          <button className={`inline-flex items-center gap-1 rounded-none text-[9px] font-bold uppercase cursor-pointer hover:opacity-80 transition-opacity ${getStatusColor(task.status)}`}>
                             {getStatusIcon(task.status)}
                             {task.status}
                           </button>
@@ -635,12 +635,12 @@ const Tasks = () => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-[25px]">
+                    <td className="px-6 py-4 w-[200px] rounded-none">
                       <div className="flex items-center gap-3">
                         <img 
                           {...getAvatarProps(task.assignTo?.avatar, task.assignTo?.username)}
                           alt={task.assignTo?.username || "User"}
-                          className="w-8 h-8 rounded-[25px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                          className="w-8 h-8 rounded-none object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                           onClick={() => task.assignTo?.id && handleUserAvatarClick(task.assignTo.id)}
                           title={task.assignTo?.username ? `View ${task.assignTo.username}'s profile` : ''}
                         />
@@ -651,12 +651,12 @@ const Tasks = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-[25px]">
+                    <td className="px-6 py-4 w-[200px] rounded-none">
                       <div className="flex items-center gap-3">
                         <img 
                           {...getAvatarProps(task.assignedBy?.avatar, task.assignedBy?.username)}
                           alt={task.assignedBy?.username || "User"}
-                          className="w-8 h-8 rounded-[25px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                          className="w-8 h-8 rounded-none object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                           onClick={() => task.assignedBy?.id && handleUserAvatarClick(task.assignedBy.id)}
                           title={task.assignedBy?.username ? `View ${task.assignedBy.username}'s profile` : ''}
                         />
@@ -667,7 +667,7 @@ const Tasks = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-[25px]">
+                    <td className="px-6 py-4 w-[200px] rounded-none">
                       {task.project ? (
                         <div className="flex items-center gap-2">
                           {/* {task.project.logo && (
@@ -806,7 +806,7 @@ const Tasks = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className=" bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+              className=" bg-white dark:bg-black rounded-none shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-3xl font-bold text-black dark:text-white mb-6">
@@ -888,7 +888,7 @@ const Tasks = () => {
                       placeholder="Type to search users..."
                     />
                     {showAssignedToSuggestions && assignedToSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[25px] shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-none shadow-lg max-h-48 overflow-y-auto">
                         {assignedToSuggestions.map((user) => (
                               <div
                                 key={user.id}
@@ -899,7 +899,7 @@ const Tasks = () => {
                                   <img 
                                     {...getAvatarProps(user.avatar, user.username || user.name)}
                                     alt={user.username || user.name}
-                                    className="w-8 h-8 rounded-[25px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                                    className="w-8 h-8 rounded-none object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                                     onClick={(e) => {
                                       e.stopPropagation()
                                       handleUserAvatarClick(user.id)

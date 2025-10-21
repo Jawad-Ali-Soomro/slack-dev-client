@@ -28,6 +28,7 @@ import {
   Loader
 } from 'lucide-react'
 import { toast } from 'sonner'
+import GitHubUserReposModal from '../components/GitHubUserReposModal'
 
 const GitHubRepositories = () => {
   const [repositories, setRepositories] = useState([])
@@ -37,6 +38,7 @@ const GitHubRepositories = () => {
   const [statusFilter, setStatusFilter] = useState('all')
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false)
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isGitHubUserModalOpen, setIsGitHubUserModalOpen] = useState(false)
   const [editingRepo, setEditingRepo] = useState(null)
   const [formData, setFormData] = useState({
     name: '',
@@ -113,6 +115,18 @@ const GitHubRepositories = () => {
     } catch (error) {
       console.error('Error creating repository:', error)
       toast.error(error.message || 'Failed to create repository')
+    }
+  }
+
+  const handleCreateFromGitHub = async (repoData) => {
+    try {
+      await githubService.createRepository(repoData)
+      toast.success('Repository imported successfully')
+      fetchData()
+    } catch (error) {
+      console.error('Error importing repository:', error)
+      toast.error(error.message || 'Failed to import repository')
+      throw error
     }
   }
 
@@ -218,16 +232,26 @@ const GitHubRepositories = () => {
               Manage your registered GitHub repositories
             </p>
           </div>
-          <Button onClick={() => setIsCreateDialogOpen(true)} className={'w-[200px]'}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Repository
-          </Button>
+          <div className="flex gap-3">
+            <Button onClick={() => setIsCreateDialogOpen(true)} className={'w-[200px]'}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Repository
+            </Button>
+            <Button 
+              onClick={() => setIsGitHubUserModalOpen(true)} 
+              variant="outline"
+              className={'w-[200px]'}
+            >
+              <Github className="h-4 w-4 mr-2" />
+              Import from GitHub
+            </Button>
+          </div>
         </div>
 
         {/* Custom Create Modal */}
         {isCreateDialogOpen && (
           <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsCreateDialogOpen(false)}>
-            <div className="bg-white dark:bg-black rounded-[25px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white dark:bg-black rounded-none border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-xl font-semibold">Add New Repository</h2>
@@ -402,7 +426,7 @@ const GitHubRepositories = () => {
           </Button>
         </div>
       ) : (
-        <div className="bg-white dark:bg-black rounded-[25px] shadow-xl overflow-hidden">
+        <div className="bg-white dark:bg-black rounded-none shadow-xl overflow-hidden">
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <Table>
               <TableHeader className="bg-gray-100 dark:bg-gray-900 dark:border-gray-700 sticky top-0 z-10">
@@ -560,7 +584,7 @@ const GitHubRepositories = () => {
       {/* Custom Edit Modal */}
       {isEditDialogOpen && (
         <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsEditDialogOpen(false)}>
-          <div className="bg-white dark:bg-gray-800 rounded-[25px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white dark:bg-gray-800 rounded-none border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-semibold">Edit Repository</h2>
@@ -703,6 +727,14 @@ const GitHubRepositories = () => {
         </div>
       </div>
     )}
+
+      {/* GitHub User Repos Modal */}
+      <GitHubUserReposModal
+        isOpen={isGitHubUserModalOpen}
+        onClose={() => setIsGitHubUserModalOpen(false)}
+        onCreateRepository={handleCreateFromGitHub}
+        existingRepositories={repositories}
+      />
     </div>
   )
 }

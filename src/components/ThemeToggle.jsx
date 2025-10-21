@@ -8,7 +8,7 @@ export const ThemeToggle = ({ className = '' }) => {
   return (
     <motion.button 
       onClick={toggleTheme} 
-      className={`p-3 border rounded-[25px] cursor-pointer hover:shadow-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-black ${className}`}
+      className={`p-3 border rounded-none cursor-pointer hover:shadow-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-black ${className}`}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       transition={{ type: "spring", stiffness: 400, damping: 17 }}

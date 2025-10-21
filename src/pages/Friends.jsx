@@ -140,7 +140,7 @@ const Friends = () => {
 
   document.title = "Friends - Manage Your Friends"
   return (
-    <div className="min-h-screen bg-white dark:bg-black p-6">
+    <div className="min-h-screen bg-white dark:bg-black pt-10">
       <div className="mx-auto">
         {/* Header */}
         <div className="mb-8">
@@ -231,7 +231,7 @@ const Friends = () => {
                         key={friendship.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center space-x-4 p-4 border rounded-[25px] hover:bg-gray-50 dark:bg-[rgba(255,255,255,.1)] bg-gray-100"
+                        className="flex items-center space-x-4 p-4 border rounded-none hover:bg-gray-50 dark:bg-[rgba(255,255,255,.1)] bg-gray-100"
                       >
                         <Avatar 
                           className="cursor-pointer hover:scale-110 transition-transform"
@@ -288,7 +288,7 @@ const Friends = () => {
                         key={request.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center justify-between p-4 border rounded-[25px]"
+                        className="flex items-center justify-between p-4 border rounded-none"
                       >
                         <div className="flex items-center space-x-4">
                           <Avatar 
@@ -353,7 +353,7 @@ const Friends = () => {
                         key={request.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center justify-between p-4 border rounded-[25px]"
+                        className="flex items-center justify-between p-4 border rounded-none"
                       >
                         <div className="flex items-center space-x-4">
                           <Avatar 

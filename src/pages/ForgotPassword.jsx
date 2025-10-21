@@ -212,7 +212,7 @@ const ForgotPassword = () => {
         {/* Forgot Password Card */}
         <motion.div
           variants={itemVariants}
-          className="p-5 md:p-8 md:shadow-2xl md:border-gray-300 md:rounded-2xl md:dark:border-gray-700 md:border"
+          className="p-5 md:p-8 md:shadow-2xl md:border-gray-300 md:rounded-none md:dark:border-gray-700 md:border"
         >
           {/* Back Button */}
           <motion.div variants={itemVariants} className="mb-6">
@@ -268,7 +268,7 @@ const ForgotPassword = () => {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-[25px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-none focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
                     placeholder="Enter your email"
                     required
                   />
@@ -278,7 +278,7 @@ const ForgotPassword = () => {
               <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 bg-black text-white rounded-[25px] font-bold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className="w-full py-3 bg-black text-white rounded-none font-bold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
                 whileHover={{ scale: isLoading ? 1 : 1.02 }}
                 whileTap={{ scale: isLoading ? 1 : 0.98 }}
               >
@@ -306,11 +306,11 @@ const ForgotPassword = () => {
                         value={digit}
                         onChange={(e) => handleOtpChange(index, e.target.value.replace(/\D/g, ''))}
                         onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                        className="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-200 dark:border-gray-700 rounded-[25px] focus:outline focus:outline-1 focus:outline-black focus:border-black dark:focus:outline-white dark:focus:border-white dark:bg-black dark:text-white"
+                        className="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-200 dark:border-gray-700 rounded-none focus:outline focus:outline-1 focus:outline-black focus:border-black dark:focus:outline-white dark:focus:border-white dark:bg-black dark:text-white"
                         autoComplete="off"
                       />
                       {index < 3 && (
-                        <div className="absolute -right-2 top-1/2 transform -translate-y-1/2 w-1 h-1 bg-gray-400 rounded-[25px]"></div>
+                        <div className="absolute -right-2 top-1/2 transform -translate-y-1/2 w-1 h-1 bg-gray-400 rounded-none"></div>
                       )}
                     </div>
                   ))}
@@ -330,7 +330,7 @@ const ForgotPassword = () => {
               <motion.button
                 type="submit"
                 disabled={isLoading || otp.join("").length !== 4}
-                className="w-full py-3 bg-black text-white rounded-[25px] font-bold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className="w-full py-3 bg-black text-white rounded-none font-bold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
                 whileHover={{ scale: isLoading ? 1 : 1.02 }}
                 whileTap={{ scale: isLoading ? 1 : 0.98 }}
               >
@@ -352,7 +352,7 @@ const ForgotPassword = () => {
                     type={showPassword ? "text" : "password"}
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 rounded-[25px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
+                    className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 rounded-none focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
                     placeholder="Enter new password"
                     required
                   />
@@ -376,7 +376,7 @@ const ForgotPassword = () => {
                     type={showConfirmPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 rounded-[25px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
+                    className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 rounded-none focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
                     placeholder="Confirm new password"
                     required
                   />
@@ -393,7 +393,7 @@ const ForgotPassword = () => {
               <motion.button
                 type="submit"
                 disabled={isLoading || !newPassword || !confirmPassword}
-                className="w-full py-3 bg-black text-white rounded-[25px] font-bold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className="w-full py-3 bg-black text-white rounded-none font-bold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
                 whileHover={{ scale: isLoading ? 1 : 1.02 }}
                 whileTap={{ scale: isLoading ? 1 : 0.98 }}
               >
@@ -419,7 +419,7 @@ const ForgotPassword = () => {
 
               <Link
                 to="/login"
-                className="inline-block w-full py-3 bg-black text-white rounded-[25px] font-bold hover:bg-black transition-colors text-center dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className="inline-block w-full py-3 bg-black text-white rounded-none font-bold hover:bg-black transition-colors text-center dark:bg-white dark:text-black dark:hover:bg-gray-200"
               >
                 Back to Login
               </Link>

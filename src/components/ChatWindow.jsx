@@ -203,7 +203,7 @@ const ChatWindow = () => {
     return (
       <div className="flex items-center justify-center h-full bg-muted/20">
         <div className="text-center">
-          <div className="h-16 w-16 mx-auto mb-4 rounded-[25px] bg-muted flex items-center justify-center">
+          <div className="h-16 w-16 mx-auto mb-4 rounded-none bg-muted flex items-center justify-center">
             <Send className="h-8 w-8 text-muted-foreground" />
           </div>
           <h3 className="text-lg font-medium mb-2">Select a chat</h3>
@@ -227,7 +227,7 @@ const ChatWindow = () => {
                 </AvatarFallback>
               </Avatar>
               {isOnline && (
-                <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-[25px]"></div>
+                <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-none"></div>
               )}
             </div>
             <div>
@@ -258,7 +258,7 @@ const ChatWindow = () => {
         <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 relative">
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <div className="animate-spin rounded-[25px] h-8 w-8 border-b-2 border-primary"></div>
+            <div className="animate-spin rounded-none h-8 w-8 border-b-2 border-primary"></div>
           </div>
         ) : messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-muted-foreground">
@@ -281,8 +281,8 @@ const ChatWindow = () => {
               >
                 <div className={`flex gap-2 max-w-[70%] ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
                   {!isOwn && (
-                    <Avatar className="h-10 w-10 mt-1 border border-gray-200 dark:border-gray-600 p-1 rounded-[25px]">
-                      <AvatarImage src={getAvatarUrl(message.sender.avatar)} className='rounded-[25px]' />
+                    <Avatar className="h-10 w-10 mt-1 border border-gray-200 dark:border-gray-600 p-1 rounded-none">
+                      <AvatarImage src={getAvatarUrl(message.sender.avatar)} className='rounded-none' />
                       <AvatarFallback>
                         {(message.sender.name || message.sender.username || 'U').charAt(0).toUpperCase()}
                       </AvatarFallback>
@@ -291,7 +291,7 @@ const ChatWindow = () => {
                   
                   <div className={`space-y-1 ${isOwn ? 'items-end' : 'items-start'}`}>
                     <div
-                      className={`px-5 py-3 rounded-[25px] relative ${
+                      className={`px-5 py-3 rounded-none relative ${
                         isOwn
                           ? 'bg-primary text-primary-foreground'
                           : 'dark:bg-[rgba(255,255,255,.1)] bg-muted'
@@ -360,7 +360,7 @@ const ChatWindow = () => {
             <Button
               onClick={scrollToBottomLocal}
               size="sm"
-              className="rounded-[25px] shadow-lg bg-primary hover:bg-primary/90"
+              className="rounded-none shadow-lg bg-primary hover:bg-primary/90"
             >
               <ArrowDown className="h-4 w-4" />
             </Button>
@@ -371,9 +371,9 @@ const ChatWindow = () => {
         {typingUsers.length > 0 && (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <div className="flex space-x-1">
-              <div className="w-2 h-2 bg-muted-foreground rounded-[25px] animate-bounce"></div>
-              <div className="w-2 h-2 bg-muted-foreground rounded-[25px] animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-              <div className="w-2 h-2 bg-muted-foreground rounded-[25px] animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              <div className="w-2 h-2 bg-muted-foreground rounded-none animate-bounce"></div>
+              <div className="w-2 h-2 bg-muted-foreground rounded-none animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+              <div className="w-2 h-2 bg-muted-foreground rounded-none animate-bounce" style={{ animationDelay: '0.2s' }}></div>
             </div>
             <span>
               {typingUsers.map(u => u.userName).join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...

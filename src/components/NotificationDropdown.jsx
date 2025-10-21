@@ -69,7 +69,7 @@ const NotificationDropdown = () => {
         >
           <Bell className="w-5 h-5" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-[25px] text-[10px] text-white flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-none text-[10px] text-white flex items-center justify-center">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
@@ -117,7 +117,7 @@ const NotificationDropdown = () => {
         <div className="max-h-96 overflow-y-auto">
           {loading ? (
             <div className="p-4 text-center">
-              <div className="animate-spin rounded-[25px] h-6 w-6 border-b-2 border-gray-900 dark:border-white mx-auto"></div>
+              <div className="animate-spin rounded-none h-6 w-6 border-b-2 border-gray-900 dark:border-white mx-auto"></div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Loading notifications...</p>
             </div>
           ) : notifications.length === 0 ? (

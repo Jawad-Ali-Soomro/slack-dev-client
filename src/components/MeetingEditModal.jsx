@@ -194,7 +194,7 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+        className="bg-white dark:bg-black rounded-none shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6">
@@ -280,7 +280,7 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
                           <img
                             {...getAvatarProps(assignedUser.avatar, assignedUser.username)}
                             alt={assignedUser.username}
-                            className="w-5 h-5 rounded-[25px]"
+                            className="w-5 h-5 rounded-none"
                           />
                           <span>{assignedUser.username}</span>
                         </div>
@@ -295,7 +295,7 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
                           <img
                             {...getAvatarProps(user.avatar, user.username)}
                             alt={user.username}
-                            className="w-5 h-5 rounded-[25px]"
+                            className="w-5 h-5 rounded-none"
                           />
                           <span>{user.username}</span>
                         </div>
@@ -370,7 +370,7 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
                 {formData.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-[25px] text-sm"
+                    className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-none text-sm"
                   >
                     {tag}
                     <button

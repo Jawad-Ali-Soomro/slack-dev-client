@@ -432,13 +432,13 @@ const PostDetails = () => {
         {/* Back Button */}
     
 
-        <div className="flex items-start justify-center gap-8 w-full max-w-7xl mr-50">
+        <div className="flex items-start justify-center gap-8 w-full max-w-7xl md:pr-50">
           {/* Main Post */}
           <div className='w-full max-w-4xl flex-shrink-0'>
             <motion.article
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="dark:bg-black rounded-[25px] shadow-xl border-gray-200 dark:border-gray-700 overflow-hidden"
+              className="dark:bg-black rounded-none shadow-xl border-gray-200 dark:border-gray-700 overflow-hidden"
             >
               {/* Post Header */}
               <div className="p-6 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] border-gray-200 dark:border-gray-700">
@@ -448,13 +448,13 @@ const PostDetails = () => {
                       <img
                         {...getAvatarProps(post.author?.avatar, post.author?.username)}
                         alt={post.author?.username}
-                        className="w-16 h-16 rounded-[25px] object-cover border-4 border-white dark:border-gray-800 shadow-lg hover:shadow-xl transition-shadow"
+                        className="w-16 h-16 rounded-none object-cover border-4 border-white dark:border-gray-800 shadow-lg hover:shadow-xl transition-shadow"
                       />
-                      {/* <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border border-white dark:border-gray-800 rounded-[25px]"></div> */}
+                      {/* <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border border-white dark:border-gray-800 rounded-none"></div> */}
                     </div>
                     <div>
                       <h3 
-                        className="text-xl font-bold text-gray-900 dark:text-white cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                        className="text-xl font-bold text-gray-900 dark:text-white cursor-pointer hover:text-orange-600 dark:hover:text-orange-400 transition-colors"
                         onClick={() => handleUserClick(post.author)}
                       >
                         {post.author?.username}
@@ -493,7 +493,7 @@ const PostDetails = () => {
                     {post.tags.map((tag, index) => (
                       <span
                         key={index}
-                        className="inline-flex items-center px-4 py-2 uppercase bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 text-blue-800 dark:text-blue-200 rounded-[25px] text-sm font-medium shadow-sm hover:shadow-md transition-shadow"
+                        className="inline-flex items-center px-4 py-2 uppercase bg-gradient-to-r from-orange-100 to-purple-100 dark:from-orange-900 dark:to-purple-900 text-orange-800 dark:text-orange-200 rounded-none text-sm font-medium shadow-sm hover:shadow-md transition-shadow"
                       >
                         <Tag className="w-4 h-4 mr-2" />
                         <span className='text-xs'>{tag}</span>
@@ -503,7 +503,7 @@ const PostDetails = () => {
                 )}
               </div>
               {post.images && post.images.length > 0 && (
-                  <div className="mt-8 p-5 rounded-[25px]">
+                  <div className="mt-8 p-5 rounded-none">
                     <div className={`grid gap-4 ${
                       post.images.length === 1 ? 'grid-cols-1' :
                       post.images.length === 2 ? 'grid-cols-2' :
@@ -511,14 +511,14 @@ const PostDetails = () => {
                       'grid-cols-2'
                     }`}>
                       {post.images.map((image, index) => (
-                        <div key={index} className="relative flex dark:border-gray-700 justify-center items-center bg-gray-100 dark:bg-[rgba(255,255,255,.1)] p-4  group overflow-hidden rounded-[25px] shadow-lg hover:shadow-xl transition-shadow" style={{
+                        <div key={index} className="relative flex dark:border-gray-700 justify-center items-center bg-gray-100 dark:bg-[rgba(255,255,255,.1)] p-4  group overflow-hidden rounded-none shadow-lg hover:shadow-xl transition-shadow" style={{
                             border: post?.images?.length <= 1 ? "none" : "" ,
                             padding: post?.images?.length <= 1 ? "0" : "" 
                         }}>
                           <img
                             src={image.startsWith('http') ? image : `http://localhost:4000${image}`}
                             alt={`${post.title} - Image ${index + 1}`}
-                            className="w-full max-h-[400px] h-auto object-cover transition-transform rounded-[25px] "
+                            className="w-full max-h-[400px] h-auto object-cover transition-transform rounded-none "
                           />
                           <div className="absolute  bg-gray-100  bg-opacity-0 group-hover:bg-opacity-10 transition-all duration-300"></div>
                         </div>
@@ -539,7 +539,7 @@ const PostDetails = () => {
                         }}>{post.content.substring(0, 160)}...</span>
                         <button
                           onClick={() => setIsExpanded(true)}
-                          className="capitalize cursor-pointer font-semibold ml-2 px-3 py-1 rounded-[25px] transition-colors"
+                          className="capitalize cursor-pointer font-semibold ml-2 px-3 py-1 rounded-none transition-colors"
                         >
                           Show more
                         </button>
@@ -552,7 +552,7 @@ const PostDetails = () => {
                         {post.content.length > 250 && (
                           <button
                             onClick={() => setIsExpanded(false)}
-                            className="capitalize cursor-pointer font-semibold ml-2 px-3 py-1 rounded-[25px] transition-colors"
+                            className="capitalize cursor-pointer font-semibold ml-2 px-3 py-1 rounded-none transition-colors"
                           >
                             Show less
                           </button>
@@ -566,17 +566,14 @@ const PostDetails = () => {
               </div>
 
               {/* Post Actions */}
-              <div className="px-6 py-4 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] mt-auto" style={{
-                borderBottomLeftRadius: "20px",
-                borderBottomRightRadius: "20px"
-              }}>
+              <div className="px-6 py-4 border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] mt-auto">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-8">
                       <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => handleToggleLike(post._id)}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-[25px] w-[150px] border transition-all duration-200 ${
+                        className={`flex items-center gap-2 px-4 py-2 rounded-none w-[150px] border transition-all duration-200 ${
                           isLiked(post) 
                             ? 'text-red-500 bg-red-50 hover:bg-red-100 shadow-sm' 
                             : 'text-gray-500 hover:text-red-500 hover:bg-red-50 hover:shadow-sm'
@@ -595,7 +592,7 @@ const PostDetails = () => {
                           setSharingPost(post)
                           setShowShareModal(true)
                         }}
-                        className="flex w-[150px] border  items-center gap-2 px-4 py-2 rounded-[25px] text-gray-500 hover:text-green-500 hover:bg-green-50 hover:shadow-sm transition-all duration-200"
+                        className="flex w-[150px] border  items-center gap-2 px-4 py-2 rounded-none text-gray-500 hover:text-green-500 hover:bg-green-50 hover:shadow-sm transition-all duration-200"
                       >
                         <Share2 className="w-4 h-4" />
                         {/* <span className="font-medium">Share</span> */}
@@ -624,7 +621,7 @@ const PostDetails = () => {
                       transition={{ delay: 0.1 }}
                       {...getAvatarProps(user?.avatar, user?.username)}
                       alt={user?.username}
-                      className="w-12 p-1 border border-gray-200 dark:border-gray-700 h-12 rounded-[25px] object-cover"
+                      className="w-12 p-1 border border-gray-200 dark:border-gray-700 h-12 rounded-none object-cover"
                     />
                     <div className="flex-1 flex items-center gap-3">
                       <Input
@@ -635,7 +632,7 @@ const PostDetails = () => {
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         placeholder="Write a comment..."
-                        className="flex-1 px-4 py-3 rounded-[25px] border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-all duration-200"
+                        className="flex-1 px-4 py-3 rounded-none border border-gray-200 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-orange-500 dark:focus:ring-orange-400 transition-all duration-200"
                       />
                       <motion.button
                         initial={{ scale: 0.8, opacity: 0 }}
@@ -645,7 +642,7 @@ const PostDetails = () => {
                         whileTap={{ scale: 0.95 }}
                         onClick={handleAddComment}
                         disabled={!newComment.trim()}
-                        className="w-12 h-12 rounded-[25px] bg-gray-500 text-white flex items-center justify-center hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-12 h-12 rounded-none bg-gray-500 text-white flex items-center justify-center hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Send className="w-4 h-4" />
                       </motion.button>
@@ -659,7 +656,7 @@ const PostDetails = () => {
                     <div className="space-y-4">
                       {[1, 2, 3].map((i) => (
                         <div key={i} className="flex gap-4 ">
-                          <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-[25px]"></div>
+                          <div className="w-10 h-10 bg-gray-200 dark:bg-gray-700 rounded-none"></div>
                           <div className="flex-1">
                             <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/4 mb-2"></div>
                             <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-3/4"></div>
@@ -687,8 +684,8 @@ const PostDetails = () => {
                               borderWidth: '0px 0 1px 1px',
                               borderBottomLeftRadius: "10px"
                             }}></div>
-                            <Avatar className="w-10 h-10 rounded-[25px] border border-gray-200 dark:border-gray-700">
-                              <AvatarImage className={'p-1 rounded-[25px] border border-gray-100 dark:border-gray-700'} {...getAvatarProps(comment.user.avatar, comment.user.username)} />
+                            <Avatar className="w-10 h-10 rounded-none border border-gray-200 dark:border-gray-700">
+                              <AvatarImage className={'p-1 rounded-none border border-gray-100 dark:border-gray-700'} {...getAvatarProps(comment.user.avatar, comment.user.username)} />
                               <AvatarFallback>{comment.user.username[0]}</AvatarFallback>
                             </Avatar>
                             <div className="flex-1">
@@ -696,9 +693,9 @@ const PostDetails = () => {
                                 initial={{ opacity: 0, x: -10 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: index * 0.1 + 0.2 }}
-                                className="rounded-[25px] p-3 px-5 mt-8 hover:shadow-md transition-all duration-300 "
+                                className="rounded-none p-3 px-5 mt-8 hover:shadow-md transition-all duration-300 "
                               >
-                                <div className="bg-gray-100 dark:bg-[rgba(255,255,255,.1)] px-6 py-3 rounded-[25px]">
+                                <div className="bg-gray-100 dark:bg-[rgba(255,255,255,.1)] px-6 py-3 rounded-none">
                                 <div className="flex items-center justify-between mb-2">
                                   <div className="flex items-center gap-2">
                                     <span className="font-medium text-sm text-gray-900 dark:text-white">
@@ -719,7 +716,7 @@ const PostDetails = () => {
                                         variant="ghost"
                                         size="sm"
                                         onClick={() => handleEditComment(comment)}
-                                        className="h-6 w-10 p-5 border hover:text-blue-500 text-blue-500"
+                                        className="h-6 w-10 p-5 "
                                       >
                                         <Edit className="w-3 h-3" />
                                       </Button>
@@ -812,7 +809,7 @@ const PostDetails = () => {
                                       variant="ghost"
                                       size="sm"
                                       onClick={() => handleCommentReaction(comment._id, 'like')}
-                                      className="h-6 w-6 p-0 text-xs text-gray-500 hover:text-blue-500"
+                                      className="h-6 w-6 p-0 text-xs text-gray-500 hover:text-orange-500"
                                     >
                                       <ThumbsUp className="w-3 h-3" />
                                     </Button>
@@ -842,7 +839,7 @@ const PostDetails = () => {
                                     initial={{ opacity: 0, height: 0 }}
                                     animate={{ opacity: 1, height: 'auto' }}
                                     exit={{ opacity: 0, height: 0 }}
-                                    className="mt-3 py-3 rounded-[25px]"
+                                    className="mt-3 py-3 rounded-none"
                                   >
                                     <div className="flex gap-2">
                                       <Input
@@ -881,7 +878,7 @@ const PostDetails = () => {
                                         key={reply._id}
                                         initial={{ opacity: 0, x: -10 }}
                                         animate={{ opacity: 1, x: 0 }}
-                                        className="flex gap-2 p-3 flex items-center justify-center bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[25px]"
+                                        className="flex gap-2 p-3 flex items-center justify-center bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-none"
                                       >
                                         <Avatar className="w-8 h-8 p-1 rounded-full border">
                                           <AvatarImage {...getAvatarProps(reply.user.avatar, reply.user.username)} className='rounded-full' />
@@ -921,7 +918,7 @@ const PostDetails = () => {
                           >
                             {loadingMoreComments ? (
                               <div className="flex items-center gap-2">
-                                <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
+                                <div className="w-4 h-4 border-2 border-gray-300 border-t-orange-500 rounded-full animate-spin"></div>
                                 Loading...
                               </div>
                             ) : (
@@ -955,9 +952,9 @@ const PostDetails = () => {
           </div>
 
           {/* Fixed Right Sidebar - User's Other Posts */}
-          <div className="hidden lg:block w-80 flex-shrink-0">
+          <div className="hidden lg:block w-80 flex-shrink-0 overflow-hidden">
             <div className="fixed top-24 right-8 w-[500px] max-h-[calc(100vh-8rem)] overflow-y-auto">
-              <div className="bg-white dark:bg-black rounded-[25px] ">
+              <div className="bg-white dark:bg-black rounded-none ">
                 
                 {loadingUserPosts ? (
                   <div className="space-y-4">
@@ -978,8 +975,8 @@ const PostDetails = () => {
                         className="group cursor-pointer"
                         onClick={() => navigate(`/post/${userPost._id}`)}
                       >
-                        <div className="p-4 rounded-[25px] border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md transition-all duration-200">
-                          <h4 className="font-medium text-gray-900 dark:text-white line-clamp-1 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        <div className="p-4 rounded-none border border-gray-200 dark:border-gray-700 hover:border-orange-300 dark:hover:border-orange-600 hover:shadow-md transition-all duration-200">
+                          <h4 className="font-medium text-gray-900 dark:text-white line-clamp-1 mb-2 group-hover:text-orange-600 dark:group-hover:text-orange-400 transition-colors">
                             {userPost.title}
                           </h4>
                           <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-1">
@@ -995,10 +992,10 @@ const PostDetails = () => {
                                     <img
                                       src={image.startsWith('http') ? image : `http://localhost:4000${image}`}
                                       alt={`${userPost.title} - Image ${index + 1}`}
-                                      className="w-full h-20 object-cover rounded-[25px]"
+                                      className="w-full h-20 object-cover rounded-none"
                                     />
                                     {userPost.images.length > 2 && index === 1 && (
-                                      <div className="absolute inset-0 bg-black bg-opacity-50 rounded-[25px] flex items-center justify-center">
+                                      <div className="absolute inset-0 bg-black bg-opacity-50 rounded-none flex items-center justify-center">
                                         <span className="text-white text-sm font-medium">
                                           +{userPost.images.length - 2}
                                         </span>
@@ -1022,7 +1019,7 @@ const PostDetails = () => {
                               {userPost.tags.slice(0, 2).map((tag, index) => (
                                 <span
                                   key={index}
-                                  className="inline-flex items-center px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded text-xs"
+                                  className="inline-flex items-center px-2 py-1 bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded text-xs"
                                 >
                                   #{tag}
                                 </span>
@@ -1048,89 +1045,7 @@ const PostDetails = () => {
             </div>
           </div>
 
-          {/* Mobile Suggested Posts */}
-          <div className="lg:hidden w-full mt-8">
-            <div className="bg-white dark:bg-black rounded-[25px] shadow-lg border border-gray-200 dark:border-gray-700 p-6">
-              <div className="flex items-center gap-3 mb-6">
-                <img
-                  {...getAvatarProps(post?.author?.avatar, post?.author?.username)}
-                  alt={post?.author?.username}
-                  className="w-12 h-12 rounded-[25px] object-cover border-2 border-gray-200 dark:border-gray-700"
-                />
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-white">
-                    More from {post?.author?.username}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {userPosts.length} other posts
-                  </p>
-                </div>
-              </div>
-
-              {loadingUserPosts ? (
-                <div className="space-y-4">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="animate-pulse">
-                      <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mb-2"></div>
-                      <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/2"></div>
-                    </div>
-                  ))}
-                </div>
-              ) : userPosts.length > 0 ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {userPosts.slice(0, 4).map((userPost) => (
-                    <motion.div
-                      key={userPost._id}
-                      initial={{ opacity: 0, y: 10 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      className="group cursor-pointer"
-                      onClick={() => navigate(`/post/${userPost._id}`)}
-                    >
-                      <div className="p-4 rounded-[25px] border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md transition-all duration-200">
-                        <h4 className="font-medium text-gray-900 dark:text-white mb-2 line-clamp-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                          {userPost.title}
-                        </h4>
-                        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-                          {userPost.content}
-                        </p>
-                        
-                        {/* Post Images Preview */}
-                        {userPost.images && userPost.images.length > 0 && (
-                          <div className="mb-3">
-                            <img
-                              src={userPost.images[0].startsWith('http') ? userPost.images[0] : `http://localhost:4000${userPost.images[0]}`}
-                              alt={`${userPost.title} - Image`}
-                              className="w-full h-24 object-cover rounded-[25px]"
-                            />
-                          </div>
-                        )}
-
-                        {/* Post Stats */}
-                        <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
-                          <div className="flex items-center gap-3">
-                            <span className="flex items-center gap-1">
-                              <Heart className="w-3 h-3" />
-                              {userPost.likedBy?.length || 0}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <MessageCircle className="w-3 h-3" />
-                              {userPost.comments?.length || 0}
-                            </span>
-                          </div>
-                          <span>{formatTime(userPost.createdAt)}</span>
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                  <User className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p className="text-sm">No other posts yet</p>
-                </div>
-              )}
-            </div>
-          </div>
+      
         
         </div>
       </div>

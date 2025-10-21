@@ -91,7 +91,7 @@ const CompletionTracker = ({
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-[25px] text-xs font-medium"
+          className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-none text-xs font-medium"
         >
           <CheckCircle className="w-3 h-3" />
           Completed
@@ -100,7 +100,7 @@ const CompletionTracker = ({
     }
 
     return (
-      <div className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-[25px] text-xs font-medium">
+      <div className="inline-flex items-center gap-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded-none text-xs font-medium">
         <Clock className="w-3 h-3" />
         Pending
       </div>
@@ -132,7 +132,7 @@ const CompletionTracker = ({
         className="flex items-center gap-2"
       >
         {isLoading ? (
-          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-[25px] animate-spin" />
+          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-none animate-spin" />
         ) : (
           <CheckCircle className="w-4 h-4" />
         )}

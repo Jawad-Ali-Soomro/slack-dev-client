@@ -145,7 +145,7 @@ const GitHubDashboard = () => {
       {/* Top Navigation Bar */}
    
 
-      <div className="p-6">
+      <div className='mt-10'>
         {/* Header */}
    
 
@@ -154,11 +154,11 @@ const GitHubDashboard = () => {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+            className=" rounded-none border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
           >
             <div className="text-center">
-              <div className="bg-blue-500 text-white rounded-t-[25px] py-2 px-4 -mx-6 -mt-6 mb-4">
-                <span className="text-sm font-semibold">Repositories</span>
+              <div className="bg-blue-500 text-white rounded-t-none py-2 px-4 -mx-6 -mt-6 mb-4">
+                <span className="text-[12px] uppercase font-bold">Repositories</span>
               </div>
               <div className="text-6xl font-bold text-gray-900 dark:text-white mt-8">{stats.totalRepositories}</div>
                
@@ -169,11 +169,11 @@ const GitHubDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+            className=" rounded-none border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
           >
             <div className="text-center">
-              <div className="bg-green-500 text-white rounded-t-[25px] py-2 px-4 -mx-6 -mt-6 mb-4">
-                <span className="text-sm font-semibold">Pull Requests</span>
+              <div className="bg-green-500 text-white rounded-t-none py-2 px-4 -mx-6 -mt-6 mb-4">
+                <span className="text-[12px] uppercase font-bold">Pull Requests</span>
               </div>
 
               <div className="text-6xl font-bold text-gray-900 dark:text-white mt-8">{stats.totalPullRequests}</div>
@@ -185,11 +185,11 @@ const GitHubDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+            className=" rounded-none border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
           >
             <div className="text-center">
-              <div className="bg-orange-500 text-white rounded-t-[25px] py-2 px-4 -mx-6 -mt-6 mb-4">
-                <span className="text-sm font-semibold">Issues</span>
+              <div className="bg-orange-500 text-white py-2 px-4 -mx-6 -mt-6 mb-4">
+                <span className="text-[12px] uppercase font-bold">Issues</span>
               </div>
 
               <div className="text-6xl font-bold text-gray-900 dark:text-white mt-8">{stats.totalIssues}</div>
@@ -207,7 +207,7 @@ const GitHubDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+            className=" rounded-none border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Repository Type Distribution</h3>
             <div className="flex justify-between items-center mb-4">
@@ -237,7 +237,7 @@ const GitHubDashboard = () => {
                   </Pie>
                   <Tooltip  contentStyle={{
                       border: "none",
-                      borderRadius: "12px",
+                      borderRadius: "0px",
                       color: "white",
                       boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
                       backdropFilter: "blur(10px)",
@@ -269,7 +269,7 @@ const GitHubDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+            className=" rounded-none border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activity Distribution</h3>
             <div className="flex justify-between items-center mb-4">
@@ -300,7 +300,7 @@ const GitHubDashboard = () => {
                   <Tooltip 
                     contentStyle={{
                       border: "none",
-                      borderRadius: "12px",
+                      borderRadius: "0px",
                       color: "white",
                       boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
                       backdropFilter: "blur(10px)",
@@ -324,7 +324,7 @@ const GitHubDashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <motion.div 
+        {/* <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.8 }}
@@ -353,7 +353,7 @@ const GitHubDashboard = () => {
               <span>Manage Issues</span>
             </Button>
           </div>
-        </motion.div>
+        </motion.div> */}
       </div>
     </div>
   )

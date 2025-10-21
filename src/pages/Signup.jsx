@@ -94,7 +94,7 @@ const Signup = () => {
         {/* Signup Card */}
         <motion.div
           variants={itemVariants}
-          className="p-5 md:p-8 md:shadow-2xl md:border-gray-300 md:rounded-2xl md:dark:border-gray-700 md:border"
+          className="p-5 md:p-8 md:shadow-2xl md:border-gray-300 md:rounded-none md:dark:border-gray-700 md:border"
         >
           {/* Header */}
           <div className="text-center mb-8">
@@ -153,7 +153,7 @@ const Signup = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-[25px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-none focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
                   placeholder="Enter your email"
                   required
                 />
@@ -172,7 +172,7 @@ const Signup = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-[25px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
+                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-none focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
                   placeholder="Create a password"
                   required
                 />
@@ -190,7 +190,7 @@ const Signup = () => {
             <motion.button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-black text-white rounded-[25px] font-bold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
+              className="w-full py-3 bg-black text-white rounded-none font-bold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
