@@ -9,10 +9,10 @@ function Input({
   ...props
 }) {
   const sizeVariants = {
-    sm: "h-12 px-2.5 text-sm rounded-none",
-    default: "h-12 px-3 text-sm rounded-none",
-    lg: "h-12 px-4 text-base rounded-none",
-    xl: "h-12 px-4 text-base rounded-none"
+    sm: "h-12 px-2.5 text-sm rounded-[25px]",
+    default: "h-12 px-3 text-sm rounded-[25px]",
+    lg: "h-12 px-4 text-base rounded-[25px]",
+    xl: "h-12 px-4 text-base rounded-[25px]"
   };
 
   return (

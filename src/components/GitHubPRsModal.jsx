@@ -235,7 +235,7 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white dark:bg-black rounded-none border p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col"
+        className="bg-white dark:bg-black rounded-[25px] border p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">

@@ -154,10 +154,10 @@ const GitHubDashboard = () => {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className=" rounded-none border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
           >
             <div className="text-center">
-              <div className="bg-blue-500 text-white rounded-t-none py-2 px-4 -mx-6 -mt-6 mb-4">
+              <div className="bg-blue-500 text-white rounded-t-[25px] py-2 px-4 -mx-6 -mt-6 mb-4">
                 <span className="text-[12px] uppercase font-bold">Repositories</span>
               </div>
               <div className="text-6xl font-bold text-gray-900 dark:text-white mt-8">{stats.totalRepositories}</div>
@@ -169,10 +169,10 @@ const GitHubDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className=" rounded-none border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
           >
             <div className="text-center">
-              <div className="bg-green-500 text-white rounded-t-none py-2 px-4 -mx-6 -mt-6 mb-4">
+              <div className="bg-green-500 text-white rounded-t-[25px] py-2 px-4 -mx-6 -mt-6 mb-4">
                 <span className="text-[12px] uppercase font-bold">Pull Requests</span>
               </div>
 
@@ -185,7 +185,7 @@ const GitHubDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className=" rounded-none border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
           >
             <div className="text-center">
               <div className="bg-orange-500 text-white py-2 px-4 -mx-6 -mt-6 mb-4">
@@ -207,7 +207,7 @@ const GitHubDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
-            className=" rounded-none border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Repository Type Distribution</h3>
             <div className="flex justify-between items-center mb-4">
@@ -269,7 +269,7 @@ const GitHubDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.7 }}
-            className=" rounded-none border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
+            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activity Distribution</h3>
             <div className="flex justify-between items-center mb-4">

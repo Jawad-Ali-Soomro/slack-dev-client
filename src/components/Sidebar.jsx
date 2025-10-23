@@ -260,7 +260,7 @@ const Sidebar = () => {
                           <div className="w-full">
                             <button
                               onClick={() => setGithubDropdownOpen(!githubDropdownOpen)}
-                              className={`relative flex items-center cursor-pointer justify-between px-4 gap-4 w-full h-[50px] rounded-none transition-all duration-200 group ${
+                              className={`relative flex items-center cursor-pointer justify-between px-4 gap-4 w-full h-[50px] rounded-[25px] transition-all duration-200 group ${
                                 active
                                   ? `{shadow-none bg-[#fe914d]  text-white }`
                                   : 'hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,.1)] text-gray-700 dark:text-gray-300'
@@ -292,7 +292,7 @@ const Sidebar = () => {
                                       <Link
                                         key={subItem.path}
                                         to={subItem.path}
-                                        className={`flex items-center gap-3 px-4 py-2 h-12 rounded-none transition-all justify-center duration-200 text-sm ${
+                                        className={`flex items-center gap-3 px-4 py-2 h-12 rounded-[25px] transition-all justify-center duration-200 text-sm ${
                                           subActive
                                             ? 'bg-[#fe914d] text-white '
                                             : 'hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,.1)] text-gray-600 dark:text-gray-400'
@@ -311,7 +311,7 @@ const Sidebar = () => {
                           <Link
                             to={item.path}
                             title={item.title}
-                            className={`relative flex items-center cursor-pointer justify-start px-4 gap-4 relative w-[50px] h-[50px] rounded-none transition-all duration-200 group ${
+                            className={`relative flex items-center cursor-pointer justify-start px-4 gap-4 relative w-[50px] h-[50px] rounded-[25px] transition-all duration-200 group ${
                               active
                                 ? `{shadow-none bg-[#fe914d]  text-white }`
                                 : 'hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,.1)] text-gray-700 dark:text-gray-300'
@@ -325,7 +325,7 @@ const Sidebar = () => {
                             </div>
 
                             {item.badgeCount > 0 && (
-                              <span className="absolute right-2 bg-red-500 text-white text-xs rounded-none h-5 w-5 flex items-center justify-center font-bold z-10">
+                              <span className="absolute right-2 bg-red-500 text-white text-xs rounded-[25px] h-5 w-5 flex items-center justify-center font-bold z-10">
                                 {item.badgeCount > 99 ? '99+' : item.badgeCount}
                               </span>
                             )}
@@ -335,7 +335,7 @@ const Sidebar = () => {
                     </motion.div>
                   )
                 })}
-                <div className="flex items-center justify-center text-white gap-2 w-[50px] h-[50px] rounded-none transition-all duration-200 group absolute bottom-5  bg-red-500 cursor-pointer" onClick={() => {
+                <div className="flex items-center justify-center text-white gap-2 w-[50px] h-[50px] rounded-[25px] transition-all duration-200 group absolute bottom-5  bg-red-500 cursor-pointer" onClick={() => {
                   logout()
                 }}>
                   <LogOut className="w-5 h-5 transition-transform icon" />

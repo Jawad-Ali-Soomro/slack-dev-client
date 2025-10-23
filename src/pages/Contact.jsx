@@ -77,10 +77,10 @@ const Contact = () => {
               ].map((contact, index) => (
                 <motion.div
                   key={index}
-                  className="glass-card p-6 rounded-none flex items-center space-x-4"
+                  className="glass-card p-6 rounded-[25px] flex items-center space-x-4"
                   whileHover={{ y: -5 }}
                 >
-                  <div className="w-[60px] h-[60px] bg-black rounded-none flex items-center justify-center dark:bg-white">
+                  <div className="w-[60px] h-[60px] bg-black rounded-[25px] flex items-center justify-center dark:bg-white">
                     <div className="w-8 h-8 text-white dark:text-black flex items-center justify-center">
                       {contact.icon}
                     </div>
@@ -108,33 +108,33 @@ const Contact = () => {
                 <input
                   type="text"
                   placeholder="Your Name"
-                  className="w-full p-4 glass-card rounded-none border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400  font-bold text-sm"
+                  className="w-full p-4 glass-card rounded-[25px] border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400  font-bold text-sm"
                 />
               </div>
               <div>
                 <input
                   type="email"
                   placeholder="Your Email"
-                  className="w-full p-4 glass-card rounded-none border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400  font-bold text-sm"
+                  className="w-full p-4 glass-card rounded-[25px] border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400  font-bold text-sm"
                 />
               </div>
               <div>
                 <input
                   type="text"
                   placeholder="Subject"
-                  className="w-full p-4 glass-card rounded-none border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400  font-bold text-sm"
+                  className="w-full p-4 glass-card rounded-[25px] border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400  font-bold text-sm"
                 />
               </div>
               <div>
                 <textarea
                   rows={6}
                   placeholder="Your Message"
-                  className="w-full p-4 glass-card rounded-none border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400  font-bold text-sm resize-none"
+                  className="w-full p-4 glass-card rounded-[25px] border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400  font-bold text-sm resize-none"
                 ></textarea>
               </div>
               <motion.button
                 type="submit"
-                className="w-full p-4 bg-black text-white rounded-none font-bold text-sm  hover:bg-black transition-colors flex items-center justify-center space-x-2 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className="w-full p-4 bg-black text-white rounded-[25px] font-bold text-sm  hover:bg-black transition-colors flex items-center justify-center space-x-2 dark:bg-white dark:text-black dark:hover:bg-gray-200"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >

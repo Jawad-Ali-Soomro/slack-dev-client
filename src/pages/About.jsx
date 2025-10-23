@@ -58,7 +58,7 @@ const About = () => {
             <img 
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1800&h=900&fit=crop" 
               alt="Our team working together"
-              className="rounded-none shadow-lg mx-auto max-w-4xl w-full h-64 object-cover"
+              className="rounded-[25px] shadow-lg mx-auto max-w-4xl w-full h-64 object-cover"
             />
           </motion.div>
         </div>
@@ -76,7 +76,7 @@ const About = () => {
           ].map((stat, index) => (
             <motion.div
               key={index}
-              className="text-center glass-card p-8 rounded-none"
+              className="text-center glass-card p-8 rounded-[25px]"
               whileHover={{ y: -5 }}
             >
               <div className="text-4xl font-bold text-black mb-2 dark:text-white"
@@ -142,17 +142,17 @@ const About = () => {
             ].map((value, index) => (
               <motion.div
                 key={index}
-                className="glass-card p-8 rounded-none overflow-hidden"
+                className="glass-card p-8 rounded-[25px] overflow-hidden"
                 whileHover={{ y: -5 }}
               >
-                <div className="w-full h-48 mb-6 rounded-none overflow-hidden">
+                <div className="w-full h-48 mb-6 rounded-[25px] overflow-hidden">
                   <img 
                     src={value.image} 
                     alt={value.title}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
-                <div className="w-[80px] h-[80px] bg-black rounded-none flex items-center justify-center mb-6 dark:bg-white">
+                <div className="w-[80px] h-[80px] bg-black rounded-[25px] flex items-center justify-center mb-6 dark:bg-white">
                   <div className="w-12 h-12 text-white dark:text-black flex items-center justify-center">
                     {value.icon}
                   </div>

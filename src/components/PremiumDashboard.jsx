@@ -77,7 +77,7 @@ const PremiumDashboard = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
-        <div className="animate-spin rounded-none h-8 w-8 border-b-2 border-orange-500"></div>
+        <div className="animate-spin rounded-[25px] h-8 w-8 border-b-2 border-orange-500"></div>
       </div>
     )
   }
@@ -101,7 +101,7 @@ const PremiumDashboard = () => {
         <CardHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-none flex items-center justify-center">
+              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-red-500 rounded-[25px] flex items-center justify-center">
                 <Crown className="w-6 h-6 text-white" />
               </div>
               <div>

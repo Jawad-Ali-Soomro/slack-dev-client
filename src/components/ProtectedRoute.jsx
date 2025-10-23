@@ -17,13 +17,13 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <motion.div
-          className="p-5 md:p-8 shadow-none border-none rounded-none  "
+          className="p-5 md:p-8 shadow-none border-none rounded-[25px]  "
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
         >
           <div className="flex flex-col items-center space-y-4">
-            <div className="w-8 h-8 border-4 border-black border-t-transparent rounded-none animate-spin dark:border-white"></div>
+            <div className="w-8 h-8 border-4 border-black border-t-transparent rounded-[25px] animate-spin dark:border-white"></div>
             <p className="text-gray-600 dark:text-gray-300 font-bold">
               Loading...
             </p>

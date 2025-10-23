@@ -197,7 +197,7 @@ const Teams = () => {
           <div className="flex items-center gap-4">
             <Button
               onClick={() => setShowNewTeamPopup(true)}
-              className={'w-[200px] rounded-none h-12'}
+              className={'w-[200px] rounded-[25px] h-12'}
             >
               <Plus className={ICON_SIZES.sm} />
               New Team
@@ -286,7 +286,7 @@ const Teams = () => {
               <motion.div
                 key={team.id}
                 variants={itemVariants}
-                className="bg-white dark:bg-black rounded-none border-2 border-gray-200 dark:border-gray-700 p-6 transition-shadow duration-300 hover:shadow-lg"
+                className="bg-white dark:bg-black rounded-[25px] border-2 border-gray-200 dark:border-gray-700 p-6 transition-shadow duration-300 hover:shadow-lg"
               >
                 {/* Team Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -330,7 +330,7 @@ const Teams = () => {
                     <span>{team.members?.length || 0} members</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <span className={`px-2 py-1 rounded-none text-xs font-medium ${getRoleColor(team.role)}`}>
+                    <span className={`px-2 py-1 rounded-[25px] text-xs font-medium ${getRoleColor(team.role)}`}>
                       {getRoleIcon(team.role)}
                       {team.role}
                     </span>
@@ -343,7 +343,7 @@ const Teams = () => {
                     {team.members?.slice(0, 3).map((member, index) => (
                       <div
                         key={index}
-                        className="w-8 h-8 rounded-none border-2 border-white dark:border-gray-900 overflow-hidden"
+                        className="w-8 h-8 rounded-[25px] border-2 border-white dark:border-gray-900 overflow-hidden"
                         title={member.user?.username}
                       >
                         <img
@@ -354,7 +354,7 @@ const Teams = () => {
                       </div>
                     ))}
                     {team.members?.length > 3 && (
-                      <div className="w-8 h-8 rounded-none border-2 border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
+                      <div className="w-8 h-8 rounded-[25px] border-2 border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
                         +{team.members.length - 3}
                       </div>
                     )}
@@ -381,7 +381,7 @@ const Teams = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-none shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+              className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
@@ -400,7 +400,7 @@ const Teams = () => {
                     value={newTeam.name}
                     onChange={(e) => setNewTeam({...newTeam, name: e.target.value})}
                     placeholder="Team name *"
-                    className="w-full h-12 rounded-none"
+                    className="w-full h-12 rounded-[25px]"
                     required
                   />
                 </div>
@@ -410,7 +410,7 @@ const Teams = () => {
                     value={newTeam.description}
                     onChange={(e) => setNewTeam({...newTeam, description: e.target.value})}
                     placeholder="Team description"
-                    className="w-full h-12 rounded-none"
+                    className="w-full h-12 rounded-[25px]"
                     rows="3"
                   />
                 </div>
@@ -433,14 +433,14 @@ const Teams = () => {
                     type="button"
                     variant="outline"
                     onClick={() => setShowNewTeamPopup(false)}
-                    className="flex-1 h-12 rounded-none"
+                    className="flex-1 h-12 rounded-[25px]"
                     disabled={loading}
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-none"
+                    className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[25px]"
                     disabled={loading}
                   >
                     {loading ? (

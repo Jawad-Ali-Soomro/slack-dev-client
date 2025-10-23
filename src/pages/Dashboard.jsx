@@ -455,7 +455,7 @@ const Dashboard = () => {
                   whileHover={{ scale: 1 }}
                   whileTap={{ scale: 0.95 }}
                   onClick={loadDashboardData}
-                  className="flex items-center cursor-pointer space-x-2 px-10 py-4 bg-black dark:bg-white rounded-none dark:border-gray-700 transition-all duration-200"
+                  className="flex items-center cursor-pointer space-x-2 px-10 py-4 bg-black dark:bg-white rounded-[25px] dark:border-gray-700 transition-all duration-200"
                 >
                   <RefreshCw className="w-4 h-4 text-white dark:text-black" />
                   <span className="text-sm font-medium text-white dark:text-black">
@@ -472,9 +472,9 @@ const Dashboard = () => {
               transition={{ delay: 0.5 }}
               className="grid grid-cols-2 md:grid-cols-4 gap-4"
             >
-              <div className="backdrop-blur-sm rounded-none p-4 dark:bg-[rgba(255,255,255,.1)] border">
+              <div className="backdrop-blur-sm rounded-[25px] p-4 dark:bg-[rgba(255,255,255,.1)] border">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-black dark:bg-white rounded-none animate-pulse"></div>
+                  <div className="w-2 h-2 bg-black dark:bg-white rounded-[25px] animate-pulse"></div>
                   <div>
                     <p className="text-xs">
                       Status
@@ -486,9 +486,9 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="text-white backdrop-blur-sm dark:bg-[rgba(255,255,255,.1)] border rounded-none p-4">
+              <div className="text-white backdrop-blur-sm dark:bg-[rgba(255,255,255,.1)] border rounded-[25px] p-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-black dark:bg-white rounded-none animate-pulse"></div>
+                  <div className="w-2 h-2 bg-black dark:bg-white rounded-[25px] animate-pulse"></div>
                   <div>
                     <p className="text-xs text-black dark:text-white">
                       Last Updated
@@ -500,9 +500,9 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className=" text-black dark:text-white backdrop-blur-sm dark:bg-[rgba(255,255,255,.1)] border rounded-none p-4">
+              <div className=" text-black dark:text-white backdrop-blur-sm dark:bg-[rgba(255,255,255,.1)] border rounded-[25px] p-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-black dark:bg-white rounded-none animate-pulse"></div>
+                  <div className="w-2 h-2 bg-black dark:bg-white rounded-[25px] animate-pulse"></div>
                   <div>
                     <p className="text-xs text-black dark:text-white">
                       Performance
@@ -514,9 +514,9 @@ const Dashboard = () => {
                 </div>
               </div>
 
-              <div className="text-black dark:text-white backdrop-blur-sm dark:bg-[rgba(255,255,255,.1)] border rounded-none p-4">
+              <div className="text-black dark:text-white backdrop-blur-sm dark:bg-[rgba(255,255,255,.1)] border rounded-[25px] p-4">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-black dark:bg-white rounded-none animate-pulse"></div>
+                  <div className="w-2 h-2 bg-black dark:bg-white rounded-[25px] animate-pulse"></div>
                   <div>
                     <p className="text-xs text-black dark:text-white">
                       Sync Status
@@ -627,26 +627,26 @@ const Dashboard = () => {
                
                 <div className="flex items-center space-x-6">
                   <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-none"></div>
+                    <div className="w-4 h-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-[25px]"></div>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Tasks
                     </span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4 bg-gradient-to-r from-purple-500 to-purple-600 rounded-none"></div>
+                    <div className="w-4 h-4 bg-gradient-to-r from-purple-500 to-purple-600 rounded-[25px]"></div>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Meetings
                     </span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-none"></div>
+                    <div className="w-4 h-4 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-[25px]"></div>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Projects
                     </span>
                   </div>
                 </div>
               </div>
-              <div className="rounded-none p-6 pt-20 pr-20 border dark:border-gray-700   dark:bg-[rgba(255,255,255,.1)] ">
+              <div className="rounded-[25px] p-6 pt-20 pr-20 border dark:border-gray-700   dark:bg-[rgba(255,255,255,.1)] ">
                 <ResponsiveContainer width="100%" height={400}>
                   <LineChart data={weeklyData}>
                     <CartesianGrid
@@ -756,10 +756,10 @@ const Dashboard = () => {
               className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12 pt-8 border-t border-gray-200/50 dark:border-gray-700/50"
             >
               {/* Task Status Distribution */}
-              <div className="border  dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm rounded-none p-6">
+              <div className="border  dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm rounded-[25px] p-6">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-none">
+                    <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-[25px]">
                       <Target className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -814,10 +814,10 @@ const Dashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.5 + index * 0.1 }}
-                      className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-none"
+                      className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[25px]"
                     >
                       <div
-                        className="w-4 h-4 rounded-none mr-3 shadow-sm"
+                        className="w-4 h-4 rounded-[25px] mr-3 shadow-sm"
                         style={{ backgroundColor: item.color }}
                       ></div>
                       <div>
@@ -834,10 +834,10 @@ const Dashboard = () => {
               </div>
 
               {/* Meeting Status Distribution */}
-              <div className="border  dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm rounded-none p-6">
+              <div className="border  dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm rounded-[25px] p-6">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-none">
+                    <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-[25px]">
                       <Video className="w-5 h-5 text-white" />
                     </div>
                     <div>
@@ -892,10 +892,10 @@ const Dashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.6 + index * 0.1 }}
-                      className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-none"
+                      className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[25px]"
                     >
                       <div
-                        className="w-4 h-4 rounded-none mr-3 shadow-sm"
+                        className="w-4 h-4 rounded-[25px] mr-3 shadow-sm"
                         style={{ backgroundColor: item.color }}
                       ></div>
                       <div>
@@ -921,7 +921,7 @@ const Dashboard = () => {
             className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8"
           >
             {/* Project Status Distribution */}
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Project Status Distribution
@@ -960,7 +960,7 @@ const Dashboard = () => {
                 {projectStatusData.map((item, index) => (
                   <div key={index} className="flex items-center">
                     <div
-                      className="w-3 h-3 rounded-none mr-2"
+                      className="w-3 h-3 rounded-[25px] mr-2"
                       style={{ backgroundColor: item.color }}
                     ></div>
                     <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -972,7 +972,7 @@ const Dashboard = () => {
             </div>
 
             {/* Project Priority Distribution */}
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Project Priority Breakdown
@@ -1002,7 +1002,7 @@ const Dashboard = () => {
                 {projectPriorityData.map((item, index) => (
                   <div key={index} className="flex items-center">
                     <div
-                      className="w-3 h-3 rounded-none mr-2"
+                      className="w-3 h-3 rounded-[25px] mr-2"
                       style={{ backgroundColor: item.color }}
                     ></div>
                     {/* <span className="text-sm text-gray-600 dark:text-gray-400">
@@ -1017,7 +1017,7 @@ const Dashboard = () => {
           {/* Combined Priority & Type Distribution */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
             {/* Task Priority Distribution */}
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Task Priority Breakdown
@@ -1046,7 +1046,7 @@ const Dashboard = () => {
             </div>
 
             {/* Meeting Type Distribution */}
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Meeting Format Analysis
@@ -1084,7 +1084,7 @@ const Dashboard = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.7 }}
-          className="bg-white dark:bg-black rounded-none shadow-lg  dark:border-gray-700 mt-10 pb-10"
+          className="bg-white dark:bg-black rounded-[25px] shadow-lg  dark:border-gray-700 mt-10 pb-10"
         >
           <div className="flex items-center justify-between mb-8">
             <div>
@@ -1100,7 +1100,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6 text-center">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
               <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
                 {stats.tasksThisWeek}
               </div>
@@ -1111,7 +1111,7 @@ const Dashboard = () => {
                 Development Velocity
               </div>
             </div>
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6 text-center">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
               <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
                 {stats.tasksThisMonth}
               </div>
@@ -1122,7 +1122,7 @@ const Dashboard = () => {
                 Monthly Throughput
               </div>
             </div>
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6 text-center">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
               <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
                 {stats.completionRate}%
               </div>
@@ -1133,7 +1133,7 @@ const Dashboard = () => {
                 Quality Metric
               </div>
             </div>
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6 text-center">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
               <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
                 {stats.meetingsThisWeek}
               </div>
@@ -1144,7 +1144,7 @@ const Dashboard = () => {
                 Collaboration
               </div>
             </div>
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6 text-center">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
               <div className="text-3xl font-bold text-pink-600 dark:text-pink-400 mb-2">
                 {stats.meetingsThisMonth}
               </div>
@@ -1155,7 +1155,7 @@ const Dashboard = () => {
                 Team Sync
               </div>
             </div>
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-none p-6 text-center">
+            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
               <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
                 {stats.meetingCompletionRate}%
               </div>
