@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import HorizontalLoader from '../components/HorizontalLoader'
 import { githubService } from '../services/githubService'
 import { Button } from '../components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
@@ -53,8 +54,12 @@ const GitHubRepositories = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    fetchData()
-  }, [])
+    const debounceTimer = setTimeout(() => {
+      fetchData()
+    }, 300)
+
+    return () => clearTimeout(debounceTimer)
+  }, [searchTerm, statusFilter])
 
   const fetchData = async () => {
     try {
@@ -75,30 +80,6 @@ const GitHubRepositories = () => {
       setLoading(false)
     }
   }
-
-  const fetchRepositories = async () => {
-    try {
-      setLoading(true)
-      const response = await githubService.getRepositories({
-        search: searchTerm,
-        status: statusFilter === 'all' ? undefined : statusFilter
-      })
-      setRepositories(response.repositories || [])
-    } catch (error) {
-      console.error('Error fetching repositories:', error)
-      toast.error('Failed to fetch repositories')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      fetchData()
-    }, 300)
-
-    return () => clearTimeout(debounceTimer)
-  }, [searchTerm, statusFilter])
 
   const handleCreateRepository = async () => {
     try {
@@ -217,20 +198,38 @@ const GitHubRepositories = () => {
   }
 
   const filteredRepositories = repositories.filter(repo =>
-    repo.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    repo.owner.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    repo.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    repo.owner?.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     (repo.description && repo.description.toLowerCase().includes(searchTerm.toLowerCase()))
   )
 
   return (
-    <div className="p-6">
+    <div className='mt-10 ambient-light'>
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Repositories</h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Manage your registered GitHub repositories
-            </p>
+          <div className="flex gap-4">
+          <div className="relative flex-1 max-w-[600px]">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Search repositories..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 w-[500px]"
+            />
+          </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-48 px-5 cursor-pointer">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="all">All Status</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="active">Active</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="archived">Archived</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="deprecated">Deprecated</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
           </div>
           <div className="flex gap-3">
             <Button onClick={() => setIsCreateDialogOpen(true)} className={'w-[200px]'}>
@@ -250,14 +249,12 @@ const GitHubRepositories = () => {
 
         {/* Custom Create Modal */}
         {isCreateDialogOpen && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsCreateDialogOpen(false)}>
-            <div className="bg-white dark:bg-black rounded-[25px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 bg-black/50 flex items-center justify-center z-50" onClick={() => setIsCreateDialogOpen(false)}>
+            <div className="bg-white dark:bg-black rounded-[30px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-xl font-semibold">Add New Repository</h2>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    Register a new GitHub repository to track PRs and issues
-                  </p>
+                 
                 </div>
                 <Button 
                   variant="ghost" 
@@ -386,33 +383,16 @@ const GitHubRepositories = () => {
           </div>
         )}
 
-        <div className="flex gap-4 mb-6">
-          <div className="relative flex-1 max-w-[600px]">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search repositories..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="active">Active</SelectItem>
-              <SelectItem value="archived">Archived</SelectItem>
-              <SelectItem value="deprecated">Deprecated</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
+       
       </div>
 
       {loading ? (
-        // <Loader />
-        null
+        <HorizontalLoader 
+          message="Loading repositories..."
+          subMessage="Fetching your GitHub repositories"
+          progress={80}
+          className="py-12"
+        />
       ) : filteredRepositories.length === 0 ? (
         <div className="text-center py-12">
           <FolderOpen className="h-12 w-12 mx-auto mb-4 text-gray-400" />
@@ -426,30 +406,30 @@ const GitHubRepositories = () => {
           </Button>
         </div>
       ) : (
-        <div className="bg-white dark:bg-black rounded-[25px] shadow-xl overflow-hidden">
-          <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+        <div className="bg-white dark:bg-black rounded-[10px] shadow-xl overflow-hidden">
+          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <Table>
-              <TableHeader className="bg-gray-100 dark:bg-gray-900 dark:border-gray-700 sticky top-0 z-10">
+              <TableHeader className="bg-gray-100 text-black dark:border-gray-700 sticky top-0 z-10">
                 <TableRow>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs font-bold  uppercase tracking-wider">
                     Repository
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs font-bold  uppercase tracking-wider">
                     Owner
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs font-bold  uppercase tracking-wider">
                     Contributors
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs font-bold  uppercase tracking-wider">
                     Language
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs font-bold  uppercase tracking-wider">
                     Status
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs font-bold  uppercase tracking-wider">
                     Updated
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs font-bold  uppercase tracking-wider">
                     
                   </TableHead>
                 </TableRow>
@@ -534,7 +514,7 @@ const GitHubRepositories = () => {
                             </>
                           )}
                         </Badge>
-                        <Badge variant="outline" className="bg-gray-200 text-black dark:bg-gray-900 dark:text-white px-3 py-2">
+                        <Badge variant="outline" className="bg-gray-100 text-black dark:bg-gray-900 dark:text-white px-3 py-2">
                           {repo.status}
                         </Badge>
                       </div>
@@ -584,7 +564,7 @@ const GitHubRepositories = () => {
       {/* Custom Edit Modal */}
       {isEditDialogOpen && (
         <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsEditDialogOpen(false)}>
-          <div className="bg-white dark:bg-gray-800 rounded-[25px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white dark:bg-gray-800 rounded-[30px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-semibold">Edit Repository</h2>

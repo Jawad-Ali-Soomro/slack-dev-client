@@ -8,7 +8,7 @@ export const ThemeToggle = ({ className = '' }) => {
   return (
     <motion.button 
       onClick={toggleTheme} 
-      className={`p-3 border rounded-[25px] cursor-pointer hover:shadow-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-black ${className}`}
+      className={`border rounded-[10px] cursor-pointer hover:shadow-lg border-gray-300 dark:border-gray-700 bg-white dark:bg-black ${className}`}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       transition={{ type: "spring", stiffness: 400, damping: 17 }}
@@ -23,7 +23,7 @@ export const ThemeToggle = ({ className = '' }) => {
             exit={{ y: 20, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <Moon />
+            <Moon className='w-4 h-4' />
           </motion.div>
         ) : (
           <motion.div
@@ -33,7 +33,7 @@ export const ThemeToggle = ({ className = '' }) => {
             exit={{ y: 20, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <Sun />
+            <Sun className='w-4 h-4' />
           </motion.div>
         )}
       </AnimatePresence>

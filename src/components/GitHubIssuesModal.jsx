@@ -223,7 +223,7 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white dark:bg-black rounded-[25px] border p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col"
+        className="bg-white dark:bg-black rounded-[30px] border p-6 max-w-3xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-4">
@@ -242,7 +242,7 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
         </div>
 
         {/* Repository Input */}
-        <div className="flex gap-4 mb-6">
+        <div className="flex gap-4 mb-6 items-center">
           <div className="flex-1">
             <Input
               value={username}
@@ -250,6 +250,7 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
               placeholder="GitHub username (e.g., octocat)"
             />
           </div>
+          /
           <div className="flex-1">
             <Input
               value={repoName}
@@ -257,11 +258,10 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
               placeholder="Repository name (e.g., Hello-World)"
             />
           </div>
-          <Button onClick={fetchUserIssues} disabled={loading || !username.trim() || !repoName.trim()} className={'w-[200px]'}>
-            {loading ? <Loader className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
-            {loading ? 'Fetching...' : 'Fetch Issues'}
-          </Button>
         </div>
+          <Button onClick={fetchUserIssues} disabled={loading || !username.trim() || !repoName.trim()} className={'w-full'}>
+            {loading ? 'Fetching...' : <><Search className="h-4 w-4" /> Fetch Issues</>}
+          </Button>
 
         {/* Mode Toggle */}
    
@@ -307,8 +307,7 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
                 Cancel
               </Button>
               <Button onClick={createIssueToGitHub} disabled={loading || !createForm.title.trim()}>
-                {loading ? <Loader className="h-4 w-4 animate-spin mr-2" /> : <Plus className="h-4 w-4 mr-2" />}
-                Create Issue on GitHub
+                {loading ? 'Creating...' : <><Plus className="h-4 w-4 mr-2" /> Create Issue on GitHub</>}
               </Button>
             </div>
           </div>
@@ -317,7 +316,7 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
           <>
             {/* Search and Actions */}
             {userIssues.length > 0 && (
-              <div className="flex items-center justify-between mb-4 gap-4">
+              <div className="flex items-center justify-between mb-4 gap-4 mt-5">
                 <div className="flex-1">
                   <Input
                     value={searchTerm}
@@ -463,4 +462,5 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
 }
 
 export default GitHubIssuesModal
+
 

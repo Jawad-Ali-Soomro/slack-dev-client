@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback } from "react"
+import { useLocation } from "react-router-dom"
 import { motion } from "framer-motion"
+import HorizontalLoader from "../components/HorizontalLoader"
+import { usePermissions } from "../hooks/usePermissions"
 import { Search, Plus, Edit, Trash2, Calendar, User, Clock, CheckCircle, AlertCircle, MoreVertical, Filter, ChevronDown, RefreshCw } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "../components/ui/button"
@@ -23,6 +26,8 @@ import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from "../u
 const Tasks = () => {
   const { user } = useAuth()
   const { markAsReadByType } = useNotifications()
+  const { permissions, loading: permissionsLoading } = usePermissions()
+  const location = useLocation()
   const [searchTerm, setSearchTerm] = useState("")
   const [showNewTaskPopup, setShowNewTaskPopup] = useState(false)
   const [showEditModal, setShowEditModal] = useState(false)
@@ -115,6 +120,18 @@ const Tasks = () => {
       markAsReadByType('tasks')
     }
   }, [user, markAsReadByType])
+
+  // Handle navigation state for opening modal
+  useEffect(() => {
+    if (location.state?.openModal && location.state?.date) {
+      const date = new Date(location.state.date)
+      setNewTask(prev => ({
+        ...prev,
+        dueDate: date.toISOString().split('T')[0]
+      }))
+      setShowNewTaskPopup(true)
+    }
+  }, [location.state])
 
   // Load friends from API
   const loadUsers = async () => {
@@ -437,55 +454,22 @@ const Tasks = () => {
             <motion.div variants={itemVariants} className="mb-8">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                  <h1 className="text-4xl font-bold text-black dark:text-white mb-2">
-                    Tasks
-                  </h1>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    Manage and track your tasks
-                  </p>
-                 
-                </div>
-            <div className="flex items-center gap-3">
-              {selectedTasks.length > 0 && (
-                <motion.button
-                  onClick={handleBulkDelete}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-[25px] font-bold hover:bg-red-700 transition-colors"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                >
-                  <Trash2 className="w-4 h-4 icon" />
-                  Delete ({selectedTasks.length})
-                </motion.button>
-              )}
-              <Button
-                onClick={() => setShowNewTaskPopup(true)}
-                // className={getButtonClasses('primary', 'md', 'flex items-center gap-2 px-20 py-6')}
-                className={'w-[200px] rounded-[25px] h-12'}
-              >
-                <Plus className={ICON_SIZES.sm} />
-                New Task
-              </Button>
-            </div>
-          </div>
-        </motion.div>
-
-        {/* Search and Filters */}
-        <motion.div variants={itemVariants} className="mb-6">
+                <motion.div variants={itemVariants}>
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1 max-w-md">
+            <div className="relative flex-1 max-w-3xl">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-10 icon" />
               <Input
                 type="text"
                 placeholder="Search tasks..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={getInputClasses('default', 'md', 'w-full pl-10 pr-4 h-13')}
+                className={getInputClasses('default', 'md', 'w-full pl-10 w-[500px] pr-4 h-13')}
               />
             </div>
             <div className="flex gap-3">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-[180px] border-2 h-13 h-13 bg-white dark:bg-black cursor-pointer text-black dark:text-white">
-                  <SelectValue placeholder="All Status" />
+                <SelectTrigger className="w-[180px] px-5 border-2 h-13 h-13 bg-white dark:bg-black cursor-pointer text-black dark:text-white">
+                  <SelectValue   placeholder="All Status" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-black border-2">
                   <SelectItem className={'h-10 cursor-pointer px-5'} value="all">All Status</SelectItem>
@@ -496,7 +480,7 @@ const Tasks = () => {
                 </SelectContent>
               </Select>
               <Select value={filterPriority} onValueChange={setFilterPriority}>
-                <SelectTrigger className="w-[180px] h-13 bg-white dark:bg-black cursor-pointer text-black dark:text-white">
+                <SelectTrigger className="w-[180px] px-5 h-13 bg-white dark:bg-black cursor-pointer text-black dark:text-white">
                   <SelectValue placeholder="All Priority" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-black">
@@ -509,36 +493,70 @@ const Tasks = () => {
             </div>
           </div>
         </motion.div>
+                 
+                </div>
+            <div className="flex items-center gap-3">
+              {selectedTasks.length > 0 && (
+                <motion.button
+                  onClick={handleBulkDelete}
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-[30px] font-bold hover:bg-red-700 transition-colors"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                >
+                  <Trash2 className="w-4 h-4 icon" />
+                  Delete ({selectedTasks.length})
+                </motion.button>
+              )}
+              <Button
+                onClick={() => {
+                  if (!permissions.canCreateTask) {
+                    toast.error('You do not have permission to create tasks. Contact an admin.');
+                    return;
+                  }
+                  setShowNewTaskPopup(true);
+                }}
+                disabled={!permissions.canCreateTask}
+                className={'w-[200px] rounded-[10px] h-12'}
+              >
+                <Plus className={ICON_SIZES.sm} />
+                New Task
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Search and Filters */}
+      
 
         {/* Tasks Table */}
-        <motion.div variants={itemVariants} className="bg-white dark:bg-black rounded-[25px] shadow-xl overflow-hidden">
-          <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+        <motion.div variants={itemVariants} className="bg-white dark:bg-black rounded-[10px] shadow-xl overflow-hidden">
+          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
-              <thead className="bg-gray-100 dark:bg-gray-900 border-b dark:border-gray-700 sticky top-0 z-10">
+              <thead className="bg-gray-100 text-black border-b dark:border-gray-700 sticky top-0 z-10">
                 <tr>
                      
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     Task
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     Priority
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     Assigned To
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     Assigned BY
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     Project
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     Due Date
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     
                   </th>
                 </tr>
@@ -547,10 +565,12 @@ const Tasks = () => {
                     {loading ? (
                       <tr>
                         <td colSpan="7" className="px-6 py-8 text-center">
-                          <div className="flex items-center justify-center">
-                            <div className="animate-spin rounded-[25px] h-8 w-8 border-b-2 border-gray-900 dark:border-white"></div>
-                            <span className="ml-2 text-gray-600 dark:text-gray-400">Loading tasks...</span>
-                          </div>
+                          <HorizontalLoader 
+                            message="Loading tasks..."
+                            subMessage="Fetching your task list"
+                            progress={60}
+                            className="py-4"
+                          />
                         </td>
                       </tr>
                     ) : filteredTasks.length === 0 ? (
@@ -576,7 +596,7 @@ const Tasks = () => {
                             {task.title}
                           </div>
                           {user && user.id && (
-                            <span className={`text-xs px-2 py-1 rounded-[25px] uppercase font-bold truncate ${
+                            <span className={`text-xs px-2 py-1 rounded-[30px] uppercase font-bold truncate ${
                               task.assignTo?.id === user.id 
                                 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
                                 : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
@@ -591,14 +611,14 @@ const Tasks = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center justify-center uppercase px-2.5 py-0.5 rounded-[25px] text-[9px] font-bold font-bold ${getPriorityColor(task.priority)}`}>
+                      <span className={`inline-flex items-center justify-center uppercase px-2.5 py-0.5 rounded-[30px] text-[9px] font-bold font-bold ${getPriorityColor(task.priority)}`}>
                         {task.priority}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <button className={`inline-flex items-center gap-1 rounded-[25px] text-[9px] font-bold uppercase cursor-pointer hover:opacity-80 transition-opacity ${getStatusColor(task.status)}`}>
+                          <button className={`inline-flex items-center gap-1 rounded-[30px] text-[9px] font-bold uppercase cursor-pointer hover:opacity-80 transition-opacity ${getStatusColor(task.status)}`}>
                             {getStatusIcon(task.status)}
                             {task.status}
                           </button>
@@ -635,12 +655,12 @@ const Tasks = () => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-[25px]">
+                    <td className="px-6 py-4 w-[200px] rounded-[30px]">
                       <div className="flex items-center gap-3">
                         <img 
                           {...getAvatarProps(task.assignTo?.avatar, task.assignTo?.username)}
                           alt={task.assignTo?.username || "User"}
-                          className="w-8 h-8 rounded-[25px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                          className="w-8 h-8 rounded-[30px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                           onClick={() => task.assignTo?.id && handleUserAvatarClick(task.assignTo.id)}
                           title={task.assignTo?.username ? `View ${task.assignTo.username}'s profile` : ''}
                         />
@@ -651,12 +671,12 @@ const Tasks = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-[25px]">
+                    <td className="px-6 py-4 w-[200px] rounded-[30px]">
                       <div className="flex items-center gap-3">
                         <img 
                           {...getAvatarProps(task.assignedBy?.avatar, task.assignedBy?.username)}
                           alt={task.assignedBy?.username || "User"}
-                          className="w-8 h-8 rounded-[25px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                          className="w-8 h-8 rounded-[30px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                           onClick={() => task.assignedBy?.id && handleUserAvatarClick(task.assignedBy.id)}
                           title={task.assignedBy?.username ? `View ${task.assignedBy.username}'s profile` : ''}
                         />
@@ -667,7 +687,7 @@ const Tasks = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-[25px]">
+                    <td className="px-6 py-4 w-[200px] rounded-[30px]">
                       {task.project ? (
                         <div className="flex items-center gap-2">
                           {/* {task.project.logo && (
@@ -799,19 +819,16 @@ const Tasks = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 icon backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-50"
+            className="fixed inset-0  bg-black/50 icon backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-50"
             onClick={() => setShowNewTaskPopup(false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className=" bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+              className=" bg-white dark:bg-black rounded-[30px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
-              <h2 className="text-3xl font-bold text-black dark:text-white mb-6">
-                New Task
-              </h2>
               
               <div className="space-y-4">
                 <div>
@@ -888,7 +905,7 @@ const Tasks = () => {
                       placeholder="Type to search users..."
                     />
                     {showAssignedToSuggestions && assignedToSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[25px] shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[30px] shadow-lg max-h-48 overflow-y-auto">
                         {assignedToSuggestions.map((user) => (
                               <div
                                 key={user.id}
@@ -899,7 +916,7 @@ const Tasks = () => {
                                   <img 
                                     {...getAvatarProps(user.avatar, user.username || user.name)}
                                     alt={user.username || user.name}
-                                    className="w-8 h-8 rounded-[25px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                                    className="w-8 h-8 rounded-[30px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                                     onClick={(e) => {
                                       e.stopPropagation()
                                       handleUserAvatarClick(user.id)

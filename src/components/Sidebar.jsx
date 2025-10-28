@@ -22,7 +22,10 @@ import {
   FolderOpen as RepoIcon,
   UserPlus,
   Send,
-  UserCheck
+  UserCheck,
+  Link2,
+  Shield,
+  Settings
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSidebar } from '../contexts/SidebarContext'
@@ -30,7 +33,7 @@ import { useAuth } from '../contexts/AuthContext'
   import { useNotifications } from '../contexts/NotificationContext'
 import { HiOutlineRectangleGroup } from "react-icons/hi2";
 import { IoFolderOpenOutline } from "react-icons/io5";
-import { PiCrown, PiUserCheck, PiCheckSquare, PiGithubLogo } from "react-icons/pi";
+import { PiCrown, PiUserCheck, PiCheckSquare, PiGithubLogo, PiUsersDuotone } from "react-icons/pi";
 import { BiMessageSquare, BiMessageSquareDetail, BiNews } from "react-icons/bi";
 import { GoCalendar } from "react-icons/go";
 import { MdRssFeed } from "react-icons/md";
@@ -38,11 +41,12 @@ import { BsGithub } from 'react-icons/bs'
 
 const Sidebar = () => {
   const { isOpen, closeSidebar, openSidebar } = useSidebar()
-  const { isAuthenticated, logout } = useAuth()
+  const { isAuthenticated, logout, user } = useAuth()
   const { unreadCounts } = useNotifications()
   const location = useLocation()
   const [githubDropdownOpen, setGithubDropdownOpen] = useState(false)
   const [friendsDropdownOpen, setFriendsDropdownOpen] = useState(false)
+  const [adminDropdownOpen, setAdminDropdownOpen] = useState(false)
   
   console.log('Sidebar unreadCounts:', unreadCounts)
   
@@ -57,16 +61,16 @@ const Sidebar = () => {
       color: 'text-black dark:text-white',
       badgeCount: 0
     },
+    // {
+    //   title: 'Resources',
+    //   icon: Link2,
+    //   path: '/dashboard/posts',
+    //   color: 'text-black dark:text-white',
+    //   badgeCount: 0
+    // },
     {
-      title: 'Updates',
-      icon: WifiIcon,
-      path: '/dashboard/posts',
-      color: 'text-black dark:text-white',
-      badgeCount: 0
-    },
-    {
-      title: 'Repositroies',
-      icon: Github,
+      title: 'Management',
+      icon: PiGithubLogo,
       path: '/dashboard/github',
       color: 'text-black dark:text-white',
       badgeCount: 0,
@@ -122,7 +126,7 @@ const Sidebar = () => {
    
     {
       title: 'Teams',
-      icon: HiOutlineRectangleGroup,
+      icon: PiUsersDuotone,
       path: '/dashboard/teams',
       color: 'text-black dark:text-white',
       badgeCount: unreadCounts.teams
@@ -143,6 +147,28 @@ const Sidebar = () => {
       color: 'text-black dark:text-white',
       badgeCount: unreadCounts.messages
     },
+    // Admin section - only show if user is admin
+    ...(user?.role === 'admin' ? [{
+      title: 'Administration',
+      icon: Shield,
+      path: '/dashboard/admin',
+      badgeCount: 0,
+      hasDropdown: true,
+      dropdownItems: [
+        {
+          title: 'User Management',
+          icon: PiUsersDuotone,
+          path: '/dashboard/admin/users',
+          color: 'text-black dark:text-white'
+        },
+        {
+          title: 'Permissions',
+          icon: Settings,
+          path: '/dashboard/admin/permissions',
+          color: 'text-black dark:text-white'
+        }
+      ]
+    }] : [])
    
   ]
 
@@ -233,7 +259,7 @@ const Sidebar = () => {
             initial="closed"
             animate="open"
             exit="closed"
-            className="fixed icon left-0 top-0 h-[91.5vh] mt-[8.9vh] w-[80px] bg-white dark:bg-black z-110 border-r border-gray-200 dark:border-gray-700 lg:z-50"
+            className="fixed icon left-0 top-0 h-[91.5vh] mt-[8.9vh] w-[220px] bg-white dark:bg-black z-110 border-r border-gray-200 dark:border-gray-700 lg:z-50"
           >
             {/* Header */}
            
@@ -249,96 +275,101 @@ const Sidebar = () => {
                     <motion.div
                       key={item.path}
                       initial="closed"
-                      // animate="open"
-                      // transition={{ delay: index * 0.1 }}
                       className="w-full cursor-pointer"
                     >
-
-                      
-                     
-                        {item.hasDropdown && item.title === 'Repositroies' ? (
-                          <div className="w-full">
-                            <button
-                              onClick={() => setGithubDropdownOpen(!githubDropdownOpen)}
-                              className={`relative flex items-center cursor-pointer justify-between px-4 gap-4 w-full h-[50px] rounded-[25px] transition-all duration-200 group ${
-                                active
-                                  ? `{shadow-none bg-[#fe914d]  text-white }`
-                                  : 'hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,.1)] text-gray-700 dark:text-gray-300'
-                              }`}
-                            >
-                              <div className="relative flex items-cenetr justify-cenetr gap-4">
-                                <Icon className={`w-5 h-5 icon transition-transform ${active ? '' : item.color}`} />
-                                {/* {item.title} */}
-                              </div>
-                                {/* {githubDropdownOpen ? (
-                                  <ChevronDown className="w-4 h-4" />
-                                ) : (
-                                  <ChevronRight className="w-4 h-4" />
-                                )} */}
-                            </button>
-                            <AnimatePresence>
-                              {githubDropdownOpen && (
-                                <motion.div
-                                  initial={{ opacity: 0, height: 0 }}
-                                  animate={{ opacity: 1, height: 'auto' }}
-                                  exit={{ opacity: 0, height: 0 }}
-                                  transition={{ duration: 0.2 }}
-                                  className="mt-2 space-y-1"
-                                >
-                                  {item.dropdownItems?.map((subItem) => {
-                                    const SubIcon = subItem.icon
-                                    const subActive = isActive(subItem.path)
-                                    return (
-                                      <Link
-                                        key={subItem.path}
-                                        to={subItem.path}
-                                        className={`flex items-center gap-3 px-4 py-2 h-12 rounded-[25px] transition-all justify-center duration-200 text-sm ${
-                                          subActive
-                                            ? 'bg-[#fe914d] text-white '
-                                            : 'hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,.1)] text-gray-600 dark:text-gray-400'
-                                        }`}
-                                      > 
-                                        <SubIcon className="w-4 h-4" />
-                                        {/* <span>{subItem.title}</span> */}
-                                      </Link>
-                                    )
-                                  })}
-                                </motion.div>
-                              )}
-                            </AnimatePresence>
-                          </div>
-                        ) : (
-                          <Link
-                            to={item.path}
-                            title={item.title}
-                            className={`relative flex items-center cursor-pointer justify-start px-4 gap-4 relative w-[50px] h-[50px] rounded-[25px] transition-all duration-200 group ${
+                      {item.hasDropdown ? (
+                        <div className="relative">
+                          <div
+                            onClick={() => {
+                              if (item.title === 'Management') {
+                                setGithubDropdownOpen(!githubDropdownOpen)
+                              } else if (item.title === 'Administration') {
+                                setAdminDropdownOpen(!adminDropdownOpen)
+                              }
+                            }}
+                            className={`relative text-gray-100 flex items-center cursor-pointer justify-between px-4 gap-4 relative w-[200px] h-[50px] rounded-[10px] transition-all duration-200 group ${
                               active
-                                ? `{shadow-none bg-[#fe914d]  text-white }`
-                                : 'hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,.1)] text-gray-700 dark:text-gray-300'
-                            }`} 
+                                ? `{shadow-none border-l-5 border-[black] bg-gray-100 dark:bg-[rgba(255,255,255,.1)]  text-gray-900 dark:border-white dark:text-white  }`
+                                : 'hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,.1)] text-gray-500 dark:text-gray-400'
+                            }`}
                           >
-                            <div className="relative flex items-cenetr justify-center">
+                            <div className="relative flex items-center gap-4 justify-center">
                               <Icon className={`w-5 h-5 icon transition-transform ${active ? '' : item.color}`} />
-                              {/* {
-                                item.title
-                                } */}
-                            </div>
-
-                            {item.badgeCount > 0 && (
-                              <span className="absolute right-2 bg-red-500 text-white text-xs rounded-[25px] h-5 w-5 flex items-center justify-center font-bold z-10">
-                                {item.badgeCount > 99 ? '99+' : item.badgeCount}
+                              <span className="text-sm font-bold">
+                                {item.title}
                               </span>
+                            </div>
+                            <ChevronDown className={`w-4 h-4 transition-transform ${
+                              (item.title === 'Management' && githubDropdownOpen) || 
+                              (item.title === 'Administration' && adminDropdownOpen) 
+                                ? 'rotate-180' : ''
+                            }`} />
+                          </div>
+                          
+                          <AnimatePresence>
+                            {((item.title === 'Management' && githubDropdownOpen) || 
+                              (item.title === 'Administration' && adminDropdownOpen)) && (
+                              <motion.div
+                                initial={{ opacity: 0, height: 0 }}
+                                animate={{ opacity: 1, height: 'auto' }}
+                                exit={{ opacity: 0, height: 0 }}
+                                className="ml-4 mt-2 space-y-1"
+                              >
+                                {item.dropdownItems?.map((subItem, subIndex) => {
+                                  const SubIcon = subItem.icon
+                                  const subActive = isActive(subItem.path)
+                                  
+                                  return (
+                                    <Link
+                                      key={subItem.path}
+                                      to={subItem.path}
+                                      className={`flex items-center gap-3 h-12 px-3 py-2 rounded-[8px] text-sm transition-all duration-200 ${
+                                        subActive
+                                          ? 'bg-gray-100 dark:bg-[rgba(255,255,255,.1)] border-l-3 border-l dark:border-white border-black dark:border-gray-700 text-gray-900 dark:text-white'
+                                          : 'hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,.1)] text-gray-600 dark:text-gray-300'
+                                      }`}
+                                    >
+                                      <SubIcon className="w-4 h-4" />
+                                      <span className="font-medium">{subItem.title}</span>
+                                    </Link>
+                                  )
+                                })}
+                              </motion.div>
                             )}
-                          </Link>
-                        )}
-                     
+                          </AnimatePresence>
+                        </div>
+                      ) : (
+                        <Link
+                          to={item.path}
+                          title={item.title}
+                          className={`relative text-gray-100 flex items-center cursor-pointer justify-start px-4 gap-4 relative w-[200px] h-[50px] rounded-[10px] transition-all duration-200 group ${
+                            active
+                              ? `{shadow-none border-l-5 border-[black] bg-gray-100 dark:bg-[rgba(255,255,255,.1)]  text-gray-900 dark:border-white dark:text-white  }`
+                              : 'hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,.1)] text-gray-500 dark:text-gray-400'
+                          }`} 
+                        >
+                          <div className="relative flex items-center gap-4 justify-center">
+                            <Icon className={`w-5 h-5 icon transition-transform ${active ? '' : item.color}`} />
+                            <span className="text-sm font-bold">
+                              {item.title}
+                            </span>
+                          </div>
+
+                          {item.badgeCount > 0 && (
+                            <span className="absolute right-2 bg-red-500 text-white text-xs rounded-[25px] h-5 w-5 flex items-center justify-center font-bold z-10">
+                              {item.badgeCount > 99 ? '99+' : item.badgeCount}
+                            </span>
+                          )}
+                        </Link>
+                      )}
                     </motion.div>
                   )
                 })}
-                <div className="flex items-center justify-center text-white gap-2 w-[50px] h-[50px] rounded-[25px] transition-all duration-200 group absolute bottom-5  bg-red-500 cursor-pointer" onClick={() => {
+                <div className="flex items-center justify-center text-white gap-2 w-[200px] h-[50px] rounded-[10px] transition-all duration-200 group absolute bottom-5  bg-red-500 cursor-pointer" onClick={() => {
                   logout()
                 }}>
                   <LogOut className="w-5 h-5 transition-transform icon" />
+                  Logout
                 </div>
               </div>
 

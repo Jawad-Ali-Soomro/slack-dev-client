@@ -11,6 +11,7 @@ import { getAvatarProps } from '../utils/avatarUtils'
 import NotificationDropdown from './NotificationDropdown'
 import { useSidebar } from '../contexts/SidebarContext'
 import { RiMenu3Fill } from "react-icons/ri";
+import { ThemeToggle } from './ThemeToggle'
 
 const DashboardHeader = () => {
   const { user, logout } = useAuth()
@@ -154,7 +155,7 @@ const DashboardHeader = () => {
 
           <div className="flex justify-center items-center gap-4">
               <div
-          className={`flex left-2 top-20 p-3 hover:bg-gray-100 cursor-pointer rounded-[25px] hover:text-black z-10`}
+          className={`flex left-2 top-20 p-3 hover:bg-gray-100 cursor-pointer rounded-sm hover:text-black z-10`}
           onClick={() => toggleSidebar()}
         >
           <RiMenu3Fill />
@@ -162,11 +163,14 @@ const DashboardHeader = () => {
             <img src="/logo.png" className='w-[50px]' alt="" />
       </div>
           <div className="flex items-center gap-4">
+
+
+          <ThemeToggle className='border-none text-sm' />
             {/* Notifications */}
             <NotificationDropdown />
 
             {/* User Info */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 ">
               <div className="text-right">
                 <div className="text-sm font-medium text-gray-900 dark:text-white">
                   {user?.username || 'User'}
@@ -178,16 +182,14 @@ const DashboardHeader = () => {
                 onClick={handleOpenProfileModal}
                 className="relative group"
               >
-                <div className="w-10 h-10 rounded-[25px] overflow-hidden border border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
+                <div className="w-10 h-10 p-1 overflow-hidden rounded-full border border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
                   <img
                     {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
                     alt={user?.username || 'User'}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-full"
                   />
                 </div>
-                <div className="absolute -bottom-1 -right-1 w-4 h-4 rounded-[25px] flex items-center justify-center">
-                  <Camera className="w-2.5 h-2.5 " />
-                </div>
+              
               </button>
             </div>
 
@@ -210,7 +212,7 @@ const DashboardHeader = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+            className="bg-white dark:bg-black rounded-sm shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
@@ -243,14 +245,14 @@ const DashboardHeader = () => {
             {/* Avatar Section */}
             <div className="flex flex-col items-center mb-6">
               <div className="relative group mb-4">
-                <div className="w-20 h-20 rounded-[25px] overflow-hidden border-1 border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
+                <div className="w-20 h-20 rounded-full p-2 overflow-hidden border-1 border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
                   <img
                     {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
                     alt={user?.username || 'User'}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-full"
                   />
                 </div>
-                <label className="absolute -bottom-1 bg-black dark:bg-white text-white dark:text-black -right-1 w-6 h-6 rounded-[25px] flex items-center justify-center cursor-pointer transition-colors">
+                <label className="absolute -bottom-1 rounded-full bg-black dark:bg-white text-white dark:text-black -right-1 w-6 h-6 flex items-center justify-center cursor-pointer transition-colors">
                   <Camera className="w-3 h-3" />
                   <input
                     type="file"
@@ -268,7 +270,7 @@ const DashboardHeader = () => {
               {/* User Stats */}
               <div className="flex gap-4 mt-4 text-center">
                 
-                <div className="px-5 py-2 bg-gray-100 dark:bg-black rounded-[25px]">
+                <div className="px-5 py-2 bg-gray-100 dark:bg-black rounded-sm">
                   <div className="text-sm font-medium text-green-600 dark:text-green-400">
                     {user?.emailVerified ? 'Verified' : 'Pending'}
                   </div>
@@ -279,15 +281,13 @@ const DashboardHeader = () => {
             {/* Profile Form */}
             {loading ? (
               <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-[25px] h-8 w-8 border-b-2 border-blue-500"></div>
+                <div className="animate-spin rounded-sm h-8 w-8 border-b-2 border-blue-500"></div>
                 <span className="ml-2 text-gray-500">Loading profile...</span>
               </div>
             ) : (
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Username
-                  </label>
+                 
                   <Input
                     value={profileData.username}
                     onChange={(e) => setProfileData({...profileData, username: e.target.value})}
@@ -297,9 +297,7 @@ const DashboardHeader = () => {
                 </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Bio
-                </label>
+               
                 <Textarea
                   value={profileData.bio}
                   onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
@@ -311,9 +309,7 @@ const DashboardHeader = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Location
-                </label>
+              
                 <Input
                   value={profileData.userLocation}
                   onChange={(e) => setProfileData({...profileData, userLocation: e.target.value})}
@@ -324,9 +320,7 @@ const DashboardHeader = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Website
-                </label>
+              
                 <Input
                   value={profileData.website}
                   onChange={(e) => setProfileData({...profileData, website: e.target.value})}
@@ -337,9 +331,7 @@ const DashboardHeader = () => {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Phone
-                </label>
+              
                 <Input
                   value={profileData.phone}
                   onChange={(e) => setProfileData({...profileData, phone: e.target.value})}

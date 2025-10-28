@@ -20,15 +20,16 @@ import Dashboard from './pages/Dashboard'
 import Tasks from './pages/Tasks'
 import Meetings from './pages/Meetings'
 import Projects from './pages/Projects'
-import Posts from './pages/Posts'
-import PostDetails from './pages/PostDetails'
 import Chat from './pages/Chat'
-import GitHubDashboard from './pages/GitHubDashboard'
+// import GitHubDashboard from './pages/GitHubDashboard'
 import GitHubRepositories from './pages/GitHubRepositories'
 import GitHubPullRequests from './pages/GitHubPullRequests'
 import GitHubIssues from './pages/GitHubIssues'
 import NotFound from './pages/NotFound'
 import { Toaster } from 'sonner'
+import GitHubDashboard from './pages/GitHubDashboard'
+import UserManagement from './pages/admin/UserManagement'
+import PermissionsManagement from './pages/admin/PermissionsManagement'
 
 function App() {
   return (
@@ -54,7 +55,6 @@ function App() {
           <ChatProvider>
             <SearchProvider>
               <SidebarProvider>
-          <ThemeToggle className="fixed bottom-25 right-10 z-50" />
           <div className="relative">
             <Routes>
             {/* Public Routes */}
@@ -121,22 +121,8 @@ function App() {
                     </ProtectedRoute>
                   } 
                 />
-                <Route 
-                  path="/dashboard/posts" 
-                  element={
-                    <ProtectedRoute requireAuth={true}>
-                      <Posts />
-                    </ProtectedRoute>
-                  } 
-                />
-                <Route 
-                  path="/post/:id" 
-                  element={
-                    <ProtectedRoute requireAuth={true}>
-                      <PostDetails />
-                    </ProtectedRoute>
-                  } 
-                />
+             
+              
         <Route 
           path="/dashboard/teams" 
           element={
@@ -190,6 +176,24 @@ function App() {
           element={
             <ProtectedRoute requireAuth={true}>
               <GitHubIssues />
+            </ProtectedRoute>
+          } 
+        />
+        
+        {/* Admin Routes - Require admin role */}
+        <Route 
+          path="/dashboard/admin/users" 
+          element={
+            <ProtectedRoute requireAuth={true}>
+              <UserManagement />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/admin/permissions" 
+          element={
+            <ProtectedRoute requireAuth={true}>
+              <PermissionsManagement />
             </ProtectedRoute>
           } 
         />

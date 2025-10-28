@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
+import HorizontalLoader from './HorizontalLoader'
+import { usePermissions } from '../hooks/usePermissions'
 import { 
   Users, 
   Plus, 
@@ -21,7 +23,10 @@ import {
   Activity,
   Settings,
   ChevronDown,
-  Trash
+  Trash,
+  ArrowUp,
+  ArrowDown,
+  FolderOpen
 } from 'lucide-react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
@@ -36,6 +41,7 @@ import { getAvatarProps } from '../utils/avatarUtils'
 import { useAuth } from '../contexts/AuthContext'
 import { useNotifications } from '../contexts/NotificationContext'
 import { BsTools } from 'react-icons/bs'
+import { PiUserDuotone, PiUsersDuotone } from 'react-icons/pi'
 
 const TeamsManage = () => {
 
@@ -43,6 +49,7 @@ const TeamsManage = () => {
 
   const { user } = useAuth()
   const { markAsReadByType } = useNotifications()
+  const { permissions, loading: permissionsLoading } = usePermissions()
   const [teams, setTeams] = useState([])
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false)
@@ -73,7 +80,7 @@ const TeamsManage = () => {
   const [showMemberSuggestions, setShowMemberSuggestions] = useState(false)
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 12,
+    limit: 6,
     total: 0,
     pages: 0
   })
@@ -335,10 +342,53 @@ const TeamsManage = () => {
     return matchesSearch && matchesStatus
   })
 
+  // Pagination handlers
+  const handlePageChange = (newPage) => {
+    setPagination(prev => ({ ...prev, page: newPage }))
+  }
+
+  const handlePageSizeChange = (newLimit) => {
+    setPagination(prev => ({ ...prev, limit: newLimit, page: 1 }))
+  }
+
+  const getPageNumbers = () => {
+    const { page, pages } = pagination
+    const delta = 2
+    const range = []
+    const rangeWithDots = []
+
+    for (let i = Math.max(2, page - delta); i <= Math.min(pages - 1, page + delta); i++) {
+      range.push(i)
+    }
+
+    if (page - delta > 2) {
+      rangeWithDots.push(1, '...')
+    } else {
+      rangeWithDots.push(1)
+    }
+
+    rangeWithDots.push(...range)
+
+    if (page + delta < pages - 1) {
+      rangeWithDots.push('...', pages)
+    } else if (pages > 1) {
+      rangeWithDots.push(pages)
+    }
+
+    return rangeWithDots
+  }
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    if (pagination.page !== 1) {
+      setPagination(prev => ({ ...prev, page: 1 }))
+    }
+  }, [filterStatus, searchTerm])
+
   // Get role icon
   const getRoleIcon = (role) => {
     switch (role) {
-      case 'owner': return <Crown className="w-4 h-4 text-yellow-600 icon p2" />
+      case 'owner': return <Shield className="w-4 h-4 text-yellow-600 icon p2" />
       case 'admin': return <Shield className="w-4 h-4 text-blue-500 icon" />
       default: return null
     }
@@ -391,22 +441,7 @@ const TeamsManage = () => {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Teams</h1>
-          <p className="text-gray-600 dark:text-gray-400 mt-1">
-            Manage your teams and collaborate with members
-          </p>
-        </div>
-        <Button
-          onClick={() => setShowNewTeamModal(true)}
-            className={'w-[200px] rounded-[25px] h-12'}
-        >
-          <Plus className="w-4 h-4 mr-2 icon" />
-          Create Team
-        </Button>
-      </div>
-
-      {/* Filters */}
-      <div className="flex gap-4 mb-6 justify-start items-center">
+        <div className="flex gap-4 justify-start items-center">
         <div className="bg-white dark:bg-black">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon" />
@@ -414,26 +449,45 @@ const TeamsManage = () => {
               placeholder="Search teams..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-[350px] h-13"
+              className="pl-10 w-[500px] h-13"
             />
           </div>
         </div>
         <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-48 bg-white dark:bg-black h-13">
+          <SelectTrigger className="w-48 bg-white px-5 cursor-pointer dark:bg-black h-13">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem className={'h-10 px-5'} value="all">All Teams</SelectItem>
-            <SelectItem className={'h-10 px-5'} value="active">Active</SelectItem>
-            <SelectItem className={'h-10 px-5'} value="inactive">Inactive</SelectItem>
+            <SelectItem className={'h-10 px-5 cursor-pointer'} value="all">All Teams</SelectItem>
+            <SelectItem className={'h-10 px-5 cursor-pointer'} value="active">Active</SelectItem>
+            <SelectItem className={'h-10 px-5 cursor-pointer'} value="inactive">Inactive</SelectItem>
           </SelectContent>
         </Select>
       </div>
+        </div>
+        <Button
+          onClick={() => {
+            if (!permissions.canCreateTeam) {
+              toast.error('You do not have permission to create teams. Contact an admin.');
+              return;
+            }
+            setShowNewTeamModal(true);
+          }}
+          disabled={!permissions.canCreateTeam}
+          className={'w-[200px] rounded-[10px] h-12'}
+        >
+          <Plus className="w-4 h-4 mr-2 icon" />
+          Create Team
+        </Button>
+      </div>
+
+      {/* Filters */}
+   
 
       {/* Teams Grid */}
       {loading ? (
         <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-[25px] h-8 w-8 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-[10px] h-8 w-8 border-b-2 border-blue-600"></div>
         </div>
       ) : filteredTeams.length === 0 ? (
         <div className="text-center py-12">
@@ -445,7 +499,17 @@ const TeamsManage = () => {
             {searchTerm ? 'Try adjusting your search terms' : 'Get started by creating your first team'}
           </p>
           {!searchTerm && (
-            <Button onClick={() => setShowNewTeamModal(true)} className={'w-[200px]'}>
+            <Button 
+              onClick={() => {
+                if (!permissions.canCreateTeam) {
+                  toast.error('You do not have permission to create teams. Contact an admin.');
+                  return;
+                }
+                setShowNewTeamModal(true);
+              }} 
+              disabled={!permissions.canCreateTeam}
+              className={'w-[200px]'}
+            >
               <Plus className="w-4 h-4 mr-2 icon" />
               Create Team
             </Button>
@@ -462,7 +526,7 @@ const TeamsManage = () => {
             <motion.div
               key={team.id}
               variants={itemVariants}
-              className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[25px] border dark:border-none p-6  transition-shadow duration-300"
+              className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[10px] border dark:border-none p-6  transition-shadow duration-300"
             >
               {/* Team Header */}
               <div className="flex items-start justify-between mb-4">
@@ -524,14 +588,14 @@ const TeamsManage = () => {
 
               {/* Status and Members */}
               <div className="flex gap-2 mb-4">
-                <span className={`inline-flex items-center px-4 py-2 rounded-[25px] text-xs uppercase font-bold ${getStatusColor(team.isActive)}`}>
+                <span className={`inline-flex items-center px-4 py-2 rounded-[10px] text-xs uppercase font-bold ${getStatusColor(team.isActive)}`}>
                   {team.isActive ? 'Active' : 'Inactive'}
                 </span>
                
               </div>
 
               {/* Team Stats */}
-              <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
+              {/* <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                 <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 col-span-1">
                 
                 </div>
@@ -539,7 +603,7 @@ const TeamsManage = () => {
                   <Activity className="w-4 h-4 icon" />
                   <span>Created {new Date(team.createdAt).toLocaleDateString()}</span>
                 </div>
-              </div>
+              </div> */}
 
               {/* Team Members Preview */}
               <div className="mb-4">
@@ -550,19 +614,13 @@ const TeamsManage = () => {
                             <img
                               {...getAvatarProps(member.user?.avatar, member.user?.username)}
                               alt={member.user?.username}
-                              className="w-10 h-10 rounded-[25px] object-cover border-2 border-white dark:border-gray-900"
+                              className="w-10 h-10 rounded-[10px] object-cover border-2 border-white dark:border-gray-900"
                             />
-                           {
-                            member.role ===  "owner" && 
-                              <div className="absolute -bottom-2 -right-1 p-1 rounded-[25px] bg-white ">
-                              {getRoleIcon(member.role)}
-                            </div>
-                            
-                           }
+                         
                           </div>
                         ))}
                   {team.members?.length > 3 && (
-                    <div className="w-8 h-8 rounded-[25px] bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400 border-2 border-white dark:border-gray-900">
+                    <div className="w-8 h-8 rounded-[10px] bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400 border-2 border-white dark:border-gray-900">
                       +{team.members.length - 3}
                     </div>
                   )}
@@ -570,29 +628,87 @@ const TeamsManage = () => {
               </div>
 
               {/* Team Footer */}
-              <div className="flex items-center justify-between pt-4 border-t icon border-gray-200 dark:border-gray-700">
-                <div className="text-xs text-gray-500 dark:text-gray-400">
-                  Created by {team.createdBy?.username}
+              <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
+                <div className="flex items-center gap-2">
+                    <FolderOpen className="w-4 h-4" />
+                    {team.projects?.length || 0} Projects
                 </div>
-                {
-                  team.createdBy._id === user?.id &&  <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => {
-                    setSelectedTeam(team)
-                    setShowMembersModal(true)
-                  }}
-                  className={'w-12 h-12 rounded-[25px]'}
-                >
-                  <Settings />
-                </Button>
-                }
-               
               </div>
+           
             </motion.div>
           ))}
         </motion.div>
       )}
+
+      {/* Pagination Controls - Fixed at Bottom */}
+      <div className="sticky bottom-0  border-t border-gray-200 dark:border-gray-700 p-4 mt-8">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="flex flex-col sm:flex-row items-center justify-end gap-4"
+        >
+          {/* Page Info */}
+         
+
+          {/* Pagination Buttons - Only show if more than 1 page */}
+          {pagination.pages > 1 && (
+            <div className="flex items-center gap-2">
+              {/* Previous Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(pagination.page - 1)}
+                disabled={pagination.page === 1 || loading}
+                className="flex items-center gap-1 h-8 px-3 w-[120px] h-[50px]"
+              >
+                <ArrowUp className="w-4 h-4 rotate-[-90deg]" />
+                Previous
+              </Button>
+
+              {/* Page Numbers */}
+              <div className="flex items-center gap-1">
+                {getPageNumbers().map((pageNum, index) => (
+                  <div key={index}>
+                    {pageNum === '...' ? (
+                      <span className="px-3 py-1 text-gray-500">...</span>
+                    ) : (
+                      <Button
+                        variant={pagination.page === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handlePageChange(pageNum)}
+                        disabled={loading}
+                        className={`h-8 w-8 p-0 ${
+                          pagination.page === pageNum 
+                            ? 'bg-gray-600 text-white hover:bg-gray-700' 
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                        }`}
+                      >
+                        {pageNum}
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Next Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(pagination.page + 1)}
+                disabled={pagination.page === pagination.pages || loading}
+                className="flex items-center gap-1 h-8 px-3 w-[120px] h-[50px]"
+              >
+                Next
+                <ArrowDown className="w-4 h-4 rotate-[-90deg]" />
+              </Button>
+            </div>
+          )}
+        </motion.div>
+      </div>
+
+      {/* Loading Overlay for Pagination */}
+    
 
       {/* New Team Modal */}
       {showNewTeamModal && (
@@ -607,7 +723,7 @@ const TeamsManage = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full"
+            className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
@@ -717,7 +833,7 @@ const TeamsManage = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
@@ -753,7 +869,7 @@ const TeamsManage = () => {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <span className={`inline-flex items-center px-4 py-2 uppercase rounded-[25px] text-xs font-medium ${getStatusColor(selectedTeam.isActive)}`}>
+                      <span className={`inline-flex items-center px-4 py-2 uppercase rounded-[10px] text-xs font-medium ${getStatusColor(selectedTeam.isActive)}`}>
                         {selectedTeam.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </div>
@@ -780,12 +896,12 @@ const TeamsManage = () => {
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Members ({selectedTeam.members?.length || 0})</h3>
                   <div className="space-y-2 max-h-60 overflow-y-auto" key={refreshKey}>
                     {selectedTeam.members?.map((member, index) => (
-                      <div key={`${member.user?.id || member.user?._id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[25px]">
+                      <div key={`${member.user?.id || member.user?._id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]">
                         <div className="flex items-center gap-3">
                           <img
                             {...getAvatarProps(member.user?.avatar, member.user?.username)}
                             alt={member.user?.username}
-                            className="w-8 h-8 rounded-[25px] object-cover"
+                            className="w-8 h-8 rounded-[10px] object-cover"
                           />
                           <div>
                             <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -797,7 +913,7 @@ const TeamsManage = () => {
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
-                          <span className={`inline-flex items-center gap-1 w-[70px] h-7 flex items-center justify-center uppercase rounded-[25px] text-[10px] font-medium ${getRoleColor(member.role)}`}>
+                          <span className={`inline-flex items-center gap-1 w-[70px] h-7 flex items-center justify-center uppercase rounded-[10px] text-[10px] font-medium ${getRoleColor(member.role)}`}>
                             {/* {getRoleIcon(member.role)} */}
                             {member.role}
                           </span>
@@ -812,7 +928,7 @@ const TeamsManage = () => {
               <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
                 <button
                   onClick={() => setShowProjects(!showProjects)}
-                  className="flex items-center justify-between w-full text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border cursor-pointer rounded-[25px] transition-colors"
+                  className="flex items-center justify-between w-full text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border cursor-pointer rounded-[10px] transition-colors"
                 >
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
                     Projects ({selectedTeam.projects?.length || 0})
@@ -846,7 +962,7 @@ const TeamsManage = () => {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: index * 0.1 }}
-                            className="p-4 bg-gray-50 dark:bg-black rounded-[25px] border"
+                            className="p-4 bg-gray-50 dark:bg-black rounded-[10px] border"
                           >
                             <div className="flex items-start justify-between mb-3">
                               <div className="flex-1">
@@ -861,14 +977,14 @@ const TeamsManage = () => {
                                 <img
                                   src={project.logo}
                                   alt={project.name}
-                                  className="w-8 h-8 rounded-[25px] object-cover ml-2"
+                                  className="w-8 h-8 rounded-[10px] object-cover ml-2"
                                 />
                               )} */}
                             </div>
                             
                             <div className="flex items-center justify-between text-xs">
                               <div className="flex items-center gap-2">
-                                <span className={`px-2 py-1 rounded-[25px] text-xs uppercase font-medium ${
+                                <span className={`px-2 py-1 rounded-[10px] text-xs uppercase font-medium ${
                                   project.status === 'active' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                                   project.status === 'completed' ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' :
                                   project.status === 'on_hold' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
@@ -876,7 +992,7 @@ const TeamsManage = () => {
                                 }`}>
                                   {project.status || 'planning'}
                                 </span>
-                                <span className={`px-2 py-1 rounded-[25px] text-xs uppercase font-medium ${
+                                <span className={`px-2 py-1 rounded-[10px] text-xs uppercase font-medium ${
                                   project.priority === 'urgent' ? 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200' :
                                   project.priority === 'high' ? 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200' :
                                   project.priority === 'medium' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
@@ -914,7 +1030,7 @@ const TeamsManage = () => {
                     setShowTeamDetails(false)
                     setShowMembersModal(true)
                   }}
-                    className="w-1/2 bg-black dark:bg-black text-white hover:bg-black dark:hover:bg-black border-none hover:border-none hover:text-white"
+                    className="w-1/3 hover:text-white  bg-black dark:bg-white text-white dark:text-black dark:text-black hover:bg-black dark:hover:bg-white border-none hover:border-none"
                 >
                     <Settings className="w-4 h-4 mr-2 icon" />
                     Edit Members
@@ -939,7 +1055,7 @@ const TeamsManage = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
@@ -956,7 +1072,7 @@ const TeamsManage = () => {
               </div>
 
               {/* Add Member Form */}
-              <div className="mb-6 rounded-[25px]">
+              <div className="mb-6 rounded-[10px]">
                 {/* <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Add New Member</h3> */}
                 <div className="flex gap-2">
                   <div className="relative flex-1 member-search-container">
@@ -964,10 +1080,10 @@ const TeamsManage = () => {
                       value={memberSearch}
                       onChange={(e) => handleMemberSearch(e.target.value)}
                       placeholder="Search users..."
-                      className="w-full h-12 rounded-[25px]"
+                      className="w-full h-12 rounded-[10px]"
                     />
                     {showMemberSuggestions && memberSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[25px] shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[10px] shadow-lg max-h-48 overflow-y-auto">
                         {memberSuggestions.map((user) => (
                           <div
                             key={user.id}
@@ -978,7 +1094,7 @@ const TeamsManage = () => {
                                 <img
                                   {...getAvatarProps(user.avatar, user.username)}
                                   alt={user.username}
-                                className="w-8 h-8 rounded-[25px] object-cover border-2 border-gray-200 dark:border-gray-700"
+                                className="w-8 h-8 rounded-[10px] object-cover border-2 border-gray-200 dark:border-gray-700"
                               />
                               <div>
                                 <div className="font-medium text-gray-900 dark:text-white">{user.username}</div>
@@ -1007,12 +1123,12 @@ const TeamsManage = () => {
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Current Members</h3>
                 <div className="space-y-2 max-h-60 overflow-y-auto" key={refreshKey}>
                   {selectedTeam.members?.map((member, index) => (
-                    <div key={`${member.user?.id || member.user?._id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[25px]">
+                    <div key={`${member.user?.id || member.user?._id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]">
                       <div className="flex items-center gap-3">
                         <img
                           {...getAvatarProps(member.user?.avatar, member.user?.username)}
                           alt={member.user?.username}
-                          className="w-8 h-8 rounded-[25px] object-cover"
+                          className="w-8 h-8 rounded-[10px] object-cover"
                         />
                         <div>
                           <p className="text-sm font-medium text-gray-900 dark:text-white">

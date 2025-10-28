@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import HorizontalLoader from '../components/HorizontalLoader'
 import { githubService } from '../services/githubService'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/ui/button'
@@ -65,8 +66,12 @@ const GitHubIssues = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    fetchData()
-  }, [])
+    const debounceTimer = setTimeout(() => {
+      fetchData()
+    }, 300)
+
+    return () => clearTimeout(debounceTimer)
+  }, [searchTerm, statusFilter, repositoryFilter, priorityFilter, typeFilter])
 
   const fetchData = async () => {
     try {
@@ -92,14 +97,6 @@ const GitHubIssues = () => {
       setLoading(false)
     }
   }
-
-  useEffect(() => {
-    const debounceTimer = setTimeout(() => {
-      fetchData()
-    }, 300)
-
-    return () => clearTimeout(debounceTimer)
-  }, [searchTerm, statusFilter, repositoryFilter, priorityFilter, typeFilter])
 
   const handleCreateIssue = async () => {
     try {
@@ -313,14 +310,59 @@ const GitHubIssues = () => {
   }
 
   return (
-    <div className="p-6">
+    <div className='mt-10 ambient-light'>
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-3xl font-bold mb-2">Issues</h1>
-            <p className="text-gray-600 dark:text-gray-400">
-              Track and manage your GitHub issues
-            </p>
+          <div className="flex gap-4">
+          <div className="relative flex-1 max-w-[600px]">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Search issues..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 w-[500px]"
+            />
+          </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-48 px-5 cursor-pointer">
+              <SelectValue placeholder="Filter by status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="all">All Status</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="open">Open</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="closed">Closed</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="in-progress">In Progress</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="resolved">Resolved</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={repositoryFilter} onValueChange={setRepositoryFilter}>
+            <SelectTrigger className="w-48 px-5 cursor-pointer">
+              <SelectValue placeholder="Filter by repository" />
+            </SelectTrigger>
+            <SelectContent className={'max-h-[400px]'}>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="all">All Repositories</SelectItem>
+              {repositories.map((repo) => (
+                <SelectItem className={'px-5 h-10 cursor-pointer'} key={repo._id} value={repo._id}>
+                  {repo.owner?.username || 'Unknown'}/{repo.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <Select value={priorityFilter} onValueChange={setPriorityFilter}>
+            <SelectTrigger className="w-48 px-5 cursor-pointer">
+              <SelectValue placeholder="Filter by priority" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="all">All Priority</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="critical">Critical</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="high">High</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="medium">Medium</SelectItem>
+              <SelectItem className={'px-5 h-10 cursor-pointer'} value="low">Low</SelectItem>
+            </SelectContent>
+          </Select>
+       
+        </div>
           </div>
           <div className="flex gap-3">
             <Button onClick={() => setIsCreateDialogOpen(true)} className={'w-[200px]'}>
@@ -340,14 +382,12 @@ const GitHubIssues = () => {
 
         {/* Custom Create Modal */}
         {isCreateDialogOpen && (
-          <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsCreateDialogOpen(false)}>
-            <div className="bg-white dark:bg-black rounded-[25px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="fixed inset-0 backdrop-blur-sm bg-black/50 bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsCreateDialogOpen(false)}>
+            <div className="bg-white dark:bg-black rounded-[30px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-xl font-semibold">Add New Issue</h2>
-                  <p className="text-gray-600 dark:text-gray-400 text-sm">
-                    Log a new GitHub issue for tracking
-                  </p>
+                 
                 </div>
                 <Button 
                   variant="ghost" 
@@ -513,70 +553,16 @@ const GitHubIssues = () => {
           </div>
         )}
 
-        <div className="flex gap-4 mb-6">
-          <div className="relative flex-1 max-w-[600px]">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              placeholder="Search issues..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="open">Open</SelectItem>
-              <SelectItem value="closed">Closed</SelectItem>
-              <SelectItem value="in-progress">In Progress</SelectItem>
-              <SelectItem value="resolved">Resolved</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={repositoryFilter} onValueChange={setRepositoryFilter}>
-            <SelectTrigger className="w-48">
-              <SelectValue placeholder="Repository" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Repositories</SelectItem>
-              {repositories.map((repo) => (
-                <SelectItem key={repo._id} value={repo._id}>
-                  {repo.owner?.username || 'Unknown'}/{repo.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Priority" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Priority</SelectItem>
-              <SelectItem value="low">Low</SelectItem>
-              <SelectItem value="medium">Medium</SelectItem>
-              <SelectItem value="high">High</SelectItem>
-              <SelectItem value="critical">Critical</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={typeFilter} onValueChange={setTypeFilter}>
-            <SelectTrigger className="w-32">
-              <SelectValue placeholder="Type" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="bug">Bug</SelectItem>
-              <SelectItem value="feature">Feature</SelectItem>
-              <SelectItem value="enhancement">Enhancement</SelectItem>
-              <SelectItem value="documentation">Documentation</SelectItem>
-              <SelectItem value="question">Question</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
       </div>
 
-      {loading ? null : issues.length === 0 ? (
+      {loading ? (
+        <HorizontalLoader 
+          message="Loading issues..."
+          subMessage="Fetching your GitHub issues"
+          progress={90}
+          className="py-12"
+        />
+      ) : issues.length === 0 ? (
         <div className="text-center py-12">
           <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
           <h3 className="text-lg font-semibold mb-2">No issues found</h3>
@@ -589,34 +575,34 @@ const GitHubIssues = () => {
           </Button>
         </div>
       ) : (
-        <div className="bg-white dark:bg-black rounded-[25px] shadow-xl overflow-hidden">
+        <div className="bg-white dark:bg-black rounded-[10px] shadow-xl overflow-hidden">
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <Table>
-              <TableHeader className="bg-gray-100 dark:bg-gray-900 dark:border-gray-700 sticky top-0 z-10">
+              <TableHeader className="bg-gray-100 text-black dark:border-gray-700 sticky top-0 z-10">
                 <TableRow>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     Issue
                       </TableHead>
-                      <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                      <TableHead className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     Issue Hash
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     Repository
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     Status
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     Priority
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     Assigned To
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
                     Due Date
                   </TableHead>
                   <TableHead className="px-6 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                    Actions
+                    
                   </TableHead>
                 </TableRow>
               </TableHeader>
@@ -726,7 +712,7 @@ const GitHubIssues = () => {
       {/* Custom Edit Modal */}
       {isEditDialogOpen && (
         <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsEditDialogOpen(false)}>
-          <div className="bg-white dark:bg-gray-800 rounded-[25px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white dark:bg-gray-800 rounded-[30px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-semibold">Edit Issue</h2>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import HorizontalLoader from '../components/HorizontalLoader'
 import { githubService } from '../services/githubService'
 import { Button } from '../components/ui/button'
 import { 
@@ -49,6 +50,7 @@ import {
   FileText
 } from 'lucide-react'
 import { toast } from 'sonner'
+import StatsCard from '../components/StatsCard'
 
 const GitHubDashboard = () => {
   const navigate = useNavigate()
@@ -131,113 +133,218 @@ const GitHubDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 border-t-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600 dark:text-white">Loading GitHub dashboard...</p>
-        </div>
-      </div>
+      <HorizontalLoader 
+        message="Loading GitHub dashboard..."
+        subMessage="Fetching your GitHub data"
+        progress={95}
+        className="min-h-screen"
+      />
     )
   }
 
   return (
-    <div className="">
-      {/* Top Navigation Bar */}
-   
-
-      <div className='mt-10'>
-        {/* Header */}
-   
-
-        {/* Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
-          >
-            <div className="text-center">
-              <div className="bg-blue-500 text-white rounded-t-[25px] py-2 px-4 -mx-6 -mt-6 mb-4">
-                <span className="text-[12px] uppercase font-bold">Repositories</span>
-              </div>
-              <div className="text-6xl font-bold text-gray-900 dark:text-white mt-8">{stats.totalRepositories}</div>
-               
-            </div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
-          >
-            <div className="text-center">
-              <div className="bg-green-500 text-white rounded-t-[25px] py-2 px-4 -mx-6 -mt-6 mb-4">
-                <span className="text-[12px] uppercase font-bold">Pull Requests</span>
-              </div>
-
-              <div className="text-6xl font-bold text-gray-900 dark:text-white mt-8">{stats.totalPullRequests}</div>
+    <div className="min-h-screen ambient-light">
+      <div className="mt-10 mx-auto">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
+          {/* Modern GitHub Header */}
+          <div className="mb-16">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-6">
+              <div className="flex-1">
+             
+                
               
-            </div>
-          </motion.div>
-
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
-          >
-            <div className="text-center">
-              <div className="bg-orange-500 text-white py-2 px-4 -mx-6 -mt-6 mb-4">
-                <span className="text-[12px] uppercase font-bold">Issues</span>
               </div>
 
-              <div className="text-6xl font-bold text-gray-900 dark:text-white mt-8">{stats.totalIssues}</div>
-               
+              {/* Action buttons */}
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.4 }}
+                className="flex items-center space-x-3"
+              >
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={loadDashboardData}
+                  className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-white dark:to-gray-100 text-white dark:text-gray-900 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-medium"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                  <span>Refresh Data</span>
+                </motion.button>
+                
+              
+              </motion.div>
             </div>
-          </motion.div>
 
-   
+            {/* GitHub Status Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+              className="grid grid-cols-2 md:grid-cols-3 gap-4"
+            >
+              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center space-x-3">
+                  <div className="w-3 h-3 bg-gray-500 rounded-full animate-pulse"></div>
+                  <div>
+                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                      Repository Status
+                    </p>
+                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                      All Active
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center space-x-3">
+                  <div className="w-3 h-3 bg-gray-500 rounded-full animate-pulse"></div>
+                  <div>
+                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                      Sync Status
+                    </p>
+                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                      Real-time
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center space-x-3">
+                  <div className="w-3 h-3 bg-gray-500 rounded-full animate-pulse"></div>
+                  <div>
+                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+                      Activity Level
+                    </p>
+                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                      High
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+          
+            </motion.div>
+          </div>
+
+          {/* Enhanced Summary Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+           <StatsCard 
+            title="Repositories"
+            value={stats.totalRepositories}
+            color="blue"
+              icon={FolderOpen}
+              subtitle="Total repositories"
+              delay={0.1}
+           />
+         <StatsCard
+          title="Pull Requests"
+          value={stats.totalPullRequests}
+          color="green"
+              icon={GitPullRequest}
+              subtitle="Active pull requests"
+              delay={0.2}
+         />
+         <StatsCard
+          title="Issues"
+          value={stats.totalIssues}
+          color="orange"
+              icon={AlertCircle}
+              subtitle="Open issues"
+              delay={0.3}
+            />
+          </div>
+
+          {/* GitHub Analytics Dashboard */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.9, duration: 0.6 }}
+          >
+            {/* Chart Header */}
+            <div>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="p-3 bg-gradient-to-br from-blue-800 to-blue-900 dark:from-blue-200 dark:to-blue-300 rounded-[30px] shadow-lg">
+                    <BarChart3 className="w-6 h-6 text-white dark:text-blue-800" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-blue-900 dark:text-white">
+                      GitHub Analytics
+                    </h2>
+                    <p className="text-sm text-blue-600 dark:text-blue-400">
+                      Repository and activity distribution overview
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                    Live Data
+                  </span>
+                </div>
+              </div>
         </div>
 
         {/* Data Distribution Sections */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="mt-10">
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Repository Type Distribution */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
-          >
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Repository Type Distribution</h3>
-            <div className="flex justify-between items-center mb-4">
-              <div className="space-y-2">
-                <div className="text-sm text-gray-600 dark:text-white">Public - {repositories.filter(repo => !repo.isPrivate).length}</div>
-                <div className="text-sm text-gray-600 dark:text-white">Private - {repositories.filter(repo => repo.isPrivate).length}</div>
+                  transition={{ delay: 1.0 }}
+                  className=" rounded-[30px] p-6 border"
+                >
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[30px]">
+                        <FolderOpen className="w-5 h-5 text-white dark:text-gray-800" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          Repository Types
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Public vs Private distribution
+                        </p>
+                      </div>
                </div>
               <div className="text-right">
-                <div className="text-sm text-gray-500 dark:text-white">Total Repositories - {stats.totalRepositories}</div>
+                      <div className="text-xl font-bold text-gray-900 dark:text-white">
+                        {stats.totalRepositories}
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        Total Repositories
+                      </div>
               </div>
             </div>
-            <div className="h-48 mb-4">
+                  
+                  <div className="h-48 mb-6">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={repositoryTypeData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={40}
-                    outerRadius={80}
-                    paddingAngle={5}
+                          innerRadius={50}
+                          outerRadius={90}
+                          paddingAngle={8}
                     dataKey="value"
                   >
                     {repositoryTypeData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
                     ))}
                   </Pie>
-                  <Tooltip  contentStyle={{
+                        <Tooltip contentStyle={{
                       border: "none",
-                      borderRadius: "0px",
+                          borderRadius: "15px",
                       color: "white",
                       boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
                       backdropFilter: "blur(10px)",
@@ -245,52 +352,74 @@ const GitHubDashboard = () => {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="flex flex-wrap gap-2">
+                  
+                  <div className="grid grid-cols-1 gap-3">
               {repositoryTypeData.map((item, index) => (
-                <div key={index} className="flex items-center space-x-1">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1.1 + index * 0.1 }}
+                        className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
+                      >
+                        <div
+                          className="w-4 h-4 rounded-[30px] mr-3 shadow-sm"
                     style={{ backgroundColor: item.color }}
                   ></div>
-                  <span className="text-xs text-gray-600 dark:text-white">{item.name}</span>
+                        <div>
+                          <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                            {item.value}
+                          </div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400">
+                            {item.name}
+                          </div>
                 </div>
+                      </motion.div>
               ))}
             </div>
           </motion.div>
-
-          {/* Priority Level Distribution */}
-    
-
-          {/* Programming Language Distribution */}
-   
 
           {/* Activity Distribution */}
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
-            className=" rounded-[25px] border bg-gray-50 dark:bg-[rgba(255,255,255,.1)] shadow-sm p-6 dark:text-white"
-          >
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Activity Distribution</h3>
-            <div className="flex justify-between items-center mb-4">
-              <div className="space-y-2">
-                <div className="text-sm text-gray-600 dark:text-white">Total Pulls - {stats.openPullRequests}</div>
-                <div className="text-sm text-gray-600 dark:text-white">Total Issues - {stats.openIssues}</div>
+                  transition={{ delay: 1.2 }}
+                  className="border backdrop-blur-sm rounded-[30px] p-6 "
+                >
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[30px]">
+                        <TrendingUp className="w-5 h-5 text-white dark:text-gray-800" />
+                      </div>
+                      <div>
+                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                          Activity Overview
+                        </h3>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          Pull requests and issues distribution
+                        </p>
+                      </div>
               </div>
               <div className="text-right">
-                <div className="text-sm text-gray-500 dark:text-white">Total Activity - {stats.totalPullRequests + stats.totalIssues}</div>
+                      <div className="text-xl font-bold text-gray-900 dark:text-white">
+                        {stats.totalPullRequests + stats.totalIssues}
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        Total Activity
+                      </div>
               </div>
             </div>
-            <div className="h-48 mb-4">
+                  
+                  <div className="h-48 mb-6">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
                     data={activityData}
                     cx="50%"
                     cy="50%"
-                    innerRadius={40}
-                    outerRadius={80}
-                    paddingAngle={5}
+                          innerRadius={50}
+                          outerRadius={90}
+                          paddingAngle={8}
                     dataKey="value"
                   >
                     {activityData.map((entry, index) => (
@@ -300,7 +429,7 @@ const GitHubDashboard = () => {
                   <Tooltip 
                     contentStyle={{
                       border: "none",
-                      borderRadius: "0px",
+                            borderRadius: "15px",
                       color: "white",
                       boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
                       backdropFilter: "blur(10px)",
@@ -309,51 +438,110 @@ const GitHubDashboard = () => {
                 </PieChart>
               </ResponsiveContainer>
             </div>
-            <div className="flex flex-wrap gap-2">
+                  
+                  <div className="grid grid-cols-2 gap-3">
               {activityData.map((item, index) => (
-                <div key={index} className="flex items-center space-x-1">
-                  <div 
-                    className="w-3 h-3 rounded-full" 
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1.3 + index * 0.1 }}
+                        className={`flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[30px] ${item.name === "Total Activity" ? "col-span-2" : ""}`}
+                      >
+                        <div
+                          className="w-4 h-4 rounded-[30px] mr-3 shadow-sm"
                     style={{ backgroundColor: item.color }}
                   ></div>
-                  <span className="text-xs text-gray-600 dark:text-white">{item.name}</span>
-                </div>
-              ))}
+                        <div>
+                          <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                            {item.value}
+                          </div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400">
+                            {item.name}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </motion.div>
+              </div>
             </div>
           </motion.div>
-        </div>
 
-        {/* Quick Actions */}
-        {/* <motion.div 
+       
+
+          {/* Enhanced Quick Actions */}
+        <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
-          className="mt-8"
-        >
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Button 
+            transition={{ delay: 1.7 }}
+            className="mt-10 pb-20"
+          >
+            {/* Quick Actions Header */}
+
+            {/* Action Buttons */}
+            <div className="mt-10">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
               onClick={() => navigate('/dashboard/github/repositories')}
-              className="flex items-center justify-center space-x-2 p-4 bg-gray-100 text-black hover:bg-gray-100 h-auto"
-            >
-              <FolderOpen className="w-5 h-5" />
-              <span>Manage Repositories</span>
-            </Button>
-            <Button 
+                  className="flex items-center justify-start space-x-3 p-6 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 hover:from-blue-100 hover:to-blue-200 dark:hover:from-blue-900/30 dark:hover:to-blue-800/30 rounded-[30px] border border-blue-200/50 dark:border-blue-800/50 transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  <div className="p-3 bg-blue-500 rounded-xl">
+                    <FolderOpen className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Manage Repositories
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      View and organize your repos
+                    </div>
+                  </div>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
               onClick={() => navigate('/dashboard/github/pull-requests')}
-              className="flex items-center justify-center space-x-2 p-4 bg-gray-100 text-black hover:bg-gray-100 h-auto"
-            >
-              <GitPullRequest className="w-5 h-5" />
-              <span>Track Pull Requests</span>
-            </Button>
-            <Button 
+                  className="flex items-center justify-start space-x-3 p-6 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900/20 dark:to-green-800/20 hover:from-green-100 hover:to-green-200 dark:hover:from-green-900/30 dark:hover:to-green-800/30 rounded-[30px] border border-green-200/50 dark:border-green-800/50 transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  <div className="p-3 bg-green-500 rounded-xl">
+                    <GitPullRequest className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Track Pull Requests
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      Monitor PR status and reviews
+                    </div>
+                  </div>
+                </motion.button>
+
+                <motion.button
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
               onClick={() => navigate('/dashboard/github/issues')}
-              className="flex items-center justify-center space-x-2 p-4 bg-gray-100 text-black hover:bg-gray-100 h-auto"
-            >
-              <AlertCircle className="w-5 h-5" />
-              <span>Manage Issues</span>
-            </Button>
+                  className="flex items-center justify-start space-x-3 p-6 bg-gradient-to-r from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/20 hover:from-orange-100 hover:to-orange-200 dark:hover:from-orange-900/30 dark:hover:to-orange-800/30 rounded-[30px] border border-orange-200/50 dark:border-orange-800/50 transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  <div className="p-3 bg-orange-500 rounded-xl">
+                    <AlertCircle className="w-6 h-6 text-white" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                      Manage Issues
+                    </div>
+                    <div className="text-sm text-gray-600 dark:text-gray-400">
+                      Track and resolve issues
+                    </div>
+                  </div>
+                </motion.button>
+              </div>
           </div>
-        </motion.div> */}
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   )

@@ -2,6 +2,10 @@
     font-family: "Alan Sans", sans-serif;
 }
 
+button {
+    cursor: pointer !important;
+}
+
 /* Sonner Toast Custom Styles */
 .toast-custom {
     margin: 4px 0 !important;

@@ -1,6 +1,7 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { motion } from "framer-motion";
+import HorizontalLoader from "./HorizontalLoader";
 import Sidebar from "./Sidebar";
 import DashboardHeader from "./DashboardHeader";
 import { useSidebar } from "../contexts/SidebarContext";
@@ -15,21 +16,12 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
   // Show loading spinner while checking auth status
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          className="p-5 md:p-8 shadow-none border-none rounded-[25px]  "
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="flex flex-col items-center space-y-4">
-            <div className="w-8 h-8 border-4 border-black border-t-transparent rounded-[25px] animate-spin dark:border-white"></div>
-            <p className="text-gray-600 dark:text-gray-300 font-bold">
-              Loading...
-            </p>
-          </div>
-        </motion.div>
-      </div>
+      <HorizontalLoader 
+        message="Authenticating..."
+        subMessage="Checking your credentials"
+        progress={50}
+        className="min-h-screen"
+      />
     );
   }
 
@@ -53,7 +45,7 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
        </div>
 
 
-        <div className={`${isOpen ? "md:pl-28" : ""} transition-all flex-1 pr-10 md:pt-20 pt-25 pl-10 overflow-hidden`} >
+        <div className={`${isOpen ? "md:pl-65" : ""} transition-all font-bold flex-1 pr-10 md:pt-20 pt-25 pl-10 overflow-hidden`} >
           {children}
         </div>
       </div>

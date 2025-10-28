@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
+import HorizontalLoader from '../components/HorizontalLoader'
+import { usePermissions } from '../hooks/usePermissions'
 import { 
   Search, 
   Plus, 
@@ -49,6 +51,7 @@ import UserDetailsModal from '../components/UserDetailsModal'
 const Projects = () => {
   const { user } = useAuth()
   const { markAsReadByType } = useNotifications()
+  const { permissions, loading: permissionsLoading } = usePermissions()
   const [searchTerm, setSearchTerm] = useState('')
   const [showNewProjectPopup, setShowNewProjectPopup] = useState(false)
   const [selectedProjects, setSelectedProjects] = useState([])
@@ -99,7 +102,7 @@ const Projects = () => {
   const [showLinks, setShowLinks] = useState(false)
   const [pagination, setPagination] = useState({
     page: 1,
-    limit: 12,
+    limit: 6,
     total: 0,
     pages: 0
   })
@@ -129,6 +132,13 @@ const Projects = () => {
       setLoading(false)
     }
   }, [filterStatus, filterPriority, searchTerm, pagination.page, pagination.limit])
+
+  // Reset pagination when filters change
+  useEffect(() => {
+    if (pagination.page !== 1) {
+      setPagination(prev => ({ ...prev, page: 1 }))
+    }
+  }, [filterStatus, filterPriority, searchTerm])
 
   // Load friends for member selection
   const loadUsers = useCallback(async () => {
@@ -648,6 +658,42 @@ const Projects = () => {
     return matchesSearch && matchesStatus && matchesPriority
   })
 
+  // Pagination handlers
+  const handlePageChange = (newPage) => {
+    setPagination(prev => ({ ...prev, page: newPage }))
+  }
+
+  const handlePageSizeChange = (newLimit) => {
+    setPagination(prev => ({ ...prev, limit: newLimit, page: 1 }))
+  }
+
+  const getPageNumbers = () => {
+    const { page, pages } = pagination
+    const delta = 2
+    const range = []
+    const rangeWithDots = []
+
+    for (let i = Math.max(2, page - delta); i <= Math.min(pages - 1, page + delta); i++) {
+      range.push(i)
+    }
+
+    if (page - delta > 2) {
+      rangeWithDots.push(1, '...')
+    } else {
+      rangeWithDots.push(1)
+    }
+
+    rangeWithDots.push(...range)
+
+    if (page + delta < pages - 1) {
+      rangeWithDots.push('...', pages)
+    } else if (pages > 1) {
+      rangeWithDots.push(pages)
+    }
+
+    return rangeWithDots
+  }
+
   console.log(filteredProjects);
   
 
@@ -681,28 +727,9 @@ const Projects = () => {
         animate="visible"
       >
         {/* Header */}
-        <motion.div variants={itemVariants} className="flex items-center justify-between mb-8">
+        <motion.div variants={itemVariants} className="flex items-center justify-between mb-6">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Projects</h1>
-            <p className="text-gray-600 dark:text-gray-400">Manage your projects and collaborate with your team</p>
-          </div>
-          <div className="flex items-center gap-4">
-            
-            <Button
-              onClick={() => setShowNewProjectPopup(true)}
-            className={'w-[200px] rounded-[25px] rounded-[25px] h-12'}
-
-            >
-              <Plus className={ICON_SIZES.sm} />
-              New Project
-            </Button>
-          </div>
-        </motion.div>
-
-        {/* Stats Cards */}
-    
-        {/* Filters */}
-        <motion.div variants={itemVariants} className="flex flex-wrap justify-start items-center gap-4 mb-6">
+          <motion.div variants={itemVariants} className="flex flex-wrap justify-start items-center gap-4 ">
           <div className="">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon" />
@@ -711,13 +738,13 @@ const Projects = () => {
                 placeholder="Search projects..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={getInputClasses('default', 'md', 'pl-10 w-[350px] h-13')}
+                className={getInputClasses('default', 'md', 'pl-10 w-[500px] h-13')}
               />
             </div>
           </div>
           
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-40 bg-white dark:bg-black h-13">
+            <SelectTrigger className="w-40 px-5 cursor-pointer bg-white dark:bg-black h-13">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -731,7 +758,7 @@ const Projects = () => {
           </Select>
           
           <Select value={filterPriority} onValueChange={setFilterPriority}>
-            <SelectTrigger className="w-40 bg-white dark:bg-black h-13">
+            <SelectTrigger className="w-40 bg-white px-5 cursor-pointer dark:bg-black h-13">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <SelectContent>
@@ -743,12 +770,36 @@ const Projects = () => {
             </SelectContent>
           </Select>
         </motion.div>
+              </div>
+          <div className="flex items-center gap-4">
+            
+            <Button
+              onClick={() => {
+                if (!permissions.canCreateProject) {
+                  toast.error('You do not have permission to create projects. Contact an admin.');
+                  return;
+                }
+                setShowNewProjectPopup(true);
+              }}
+              disabled={!permissions.canCreateProject}
+              className={'w-[200px] rounded-[10px] rounded-[10px] h-12'}
+            >
+              <Plus className={ICON_SIZES.sm} />
+              New Project
+            </Button>
+          </div>
+        </motion.div>
+
+        {/* Stats Cards */}
+    
+        {/* Filters */}
+        
 
         {/* Projects Grid */}
         <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
             Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="bg-white dark:bg-black rounded-[25px] border-2 border-gray-200 dark:border-gray-700 p-6 animate-pulse">
+              <div key={index} className="bg-white dark:bg-black rounded-[10px] border-2 border-gray-200 dark:border-gray-700 p-6 animate-pulse">
                 <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
                 <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
                 <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
@@ -769,7 +820,14 @@ const Projects = () => {
               <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No projects found</h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">Get started by creating your first project</p>
               <Button
-                onClick={() => setShowNewProjectPopup(true)}
+                onClick={() => {
+                  if (!permissions.canCreateProject) {
+                    toast.error('You do not have permission to create projects. Contact an admin.');
+                    return;
+                  }
+                  setShowNewProjectPopup(true);
+                }}
+                disabled={!permissions.canCreateProject}
                 className={'w-[200px]'}
               >
                 <Plus className="w-4 h-4 mr-2 icon" />
@@ -781,7 +839,7 @@ const Projects = () => {
               <motion.div
                 key={project.id}
                 variants={itemVariants}
-                className="dark:bg-[rgba(255,255,255,.1)] rounded-[25px] bg-white dark:border-none border  p-6 transition-shadow duration-300"
+                className="dark:bg-[rgba(255,255,255,.1)] rounded-[10px] bg-white dark:border-none border  p-6 transition-shadow duration-300"
               >
                 {/* Project Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -791,16 +849,16 @@ const Projects = () => {
                         <img
                           src={project.logo.startsWith('http') ? project.logo : `http://localhost:4000${project.logo}`}
                           alt={project.name}
-                          className="w-8 h-8 rounded object-cover rounded-[25px] bg-gray-100  border border-gray-200 dark:border-gray-700"
+                          className="w-8 h-8 rounded object-cover rounded-[10px] bg-gray-100  border border-gray-200 dark:border-gray-700"
                         />
                       )}
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-1">
                         {project.name}
                       </h3>
                     </div>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                    {/* <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
                       {project.description}
-                    </p>
+                    </p> */}
                   </div>
                   <div className="flex items-center gap-1">
                     <Button
@@ -868,12 +926,12 @@ const Projects = () => {
                 </div>
 
                 {/* Status and Priority */}
-                <div className="flex gap-2 mb-4 mt-10">
-                  <span className={`inline-flex items-center border gap-1 uppercase px-4 py-2 rounded-[25px] text-[10px] font-medium ${getStatusColor(project.status)}`}>
+                <div className="flex gap-2 mb-4">
+                  <span className={`inline-flex items-center border gap-1 uppercase px-4 py-2 rounded-[10px] text-[10px] font-medium ${getStatusColor(project.status)}`}>
                     {getStatusIcon(project.status)}
                     {project.status.replace('_', ' ')}
                   </span>
-                  <span className={`inline-flex items-center  px-4 py-2 border uppercase rounded-[25px] text-[10px] font-medium ${getPriorityColor(project.priority)}`}>
+                  <span className={`inline-flex items-center  px-4 py-2 border uppercase rounded-[10px] text-[10px] font-medium ${getPriorityColor(project.priority)}`}>
                     {project.priority}
                   </span>
                 </div>
@@ -884,9 +942,9 @@ const Projects = () => {
                     <span>Progress</span>
                     <span>{project.progress}%</span>
                   </div>
-                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-[25px] h-2">
+                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-[10px] h-2">
                     <div 
-                      className="bg-black dark:bg-white h-2 rounded-[25px] transition-all duration-300"
+                      className="bg-black dark:bg-white h-2 rounded-[10px] transition-all duration-300"
                       style={{ width: `${project.progress}%` }}
                     ></div>
                   </div>
@@ -903,7 +961,7 @@ const Projects = () => {
                 )} */}
 
                 {/* Project Stats */}
-                <div className="grid grid-cols-4 gap-4 mb-4 text-sm">
+                {/* <div className="grid grid-cols-4 gap-4 mb-4 text-sm">
                   <div className="flex items-center gap-2 text-gray-600 col-span-2 dark:text-gray-400">
                     
                   </div>
@@ -915,7 +973,7 @@ const Projects = () => {
                     <Calendar className="w-4 h-4 icon" />
                     <span>{project?.meetings.length || 0} meetings</span>
                   </div>
-                </div>
+                </div> */}
 
                 {/* Tags */}
                 {project.tags && project.tags.length > 0 && (
@@ -923,7 +981,7 @@ const Projects = () => {
                     {project.tags.slice(0, 3).map((tag, index) => (
                       <span
                         key={index}
-                        className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-black text-gray-700 dark:text-gray-300 rounded-[25px] text-xs"
+                        className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-black text-gray-700 dark:text-gray-300 rounded-[10px] text-xs"
                       >
                         <Tag className="w-3 h-3 mr-1 icon" />
                         {tag}
@@ -944,7 +1002,7 @@ const Projects = () => {
                       {project.members?.slice(0, 3).map((member, index) => (
                         <div
                           key={index}
-                          className="w-10 h-10 rounded-[25px] border-2 border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:scale-110 transition-transform"
+                          className="w-10 h-10 rounded-[10px] border-2 border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:scale-110 transition-transform"
                           onClick={() => handleUserAvatarClick(member.user._id)}
                           title={member.user.username}
                         >
@@ -957,7 +1015,7 @@ const Projects = () => {
                         </div>
                       ))}
                       {project.members?.length > 3 && (
-                        <div className="w-6 h-6 rounded-[25px] border-2 border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
+                        <div className="w-6 h-6 rounded-[10px] border-2 border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
                           +{project.members.length - 3}
                         </div>
                       )}
@@ -972,6 +1030,76 @@ const Projects = () => {
           )}
         </motion.div>
 
+        {/* Pagination Controls - Fixed at Bottom */}
+        <div className="sticky bottom-0 border-t border-gray-200 dark:border-gray-700 p-4 mt-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="flex flex-col sm:flex-row items-center justify-end gap-4"
+          >
+          {/* Page Info */}
+          
+
+          {/* Pagination Buttons - Only show if more than 1 page */}
+          {pagination.pages > 1 && (
+            <div className="flex items-center gap-2">
+              {/* Previous Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(pagination.page - 1)}
+                disabled={pagination.page === 1 || loading}
+                className="flex items-center gap-1 h-8 px-3  w-[120px] h-[50px]"
+              >
+                <ArrowUp className="w-4 h-4 rotate-[-90deg]" />
+                Previous
+              </Button>
+
+              {/* Page Numbers */}
+              <div className="flex items-center gap-1">
+                {getPageNumbers().map((pageNum, index) => (
+                  <div key={index}>
+                    {pageNum === '...' ? (
+                      <span className="px-3 py-1 text-gray-500">...</span>
+                    ) : (
+                      <Button
+                        variant={pagination.page === pageNum ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => handlePageChange(pageNum)}
+                        disabled={loading}
+                        className={`h-8 w-8 p-0 ${
+                          pagination.page === pageNum 
+                            ? 'bg-gray-600 text-white hover:bg-gray-700' 
+                            : 'hover:bg-gray-100 dark:hover:bg-gray-800'
+                        }`}
+                      >
+                        {pageNum}
+                      </Button>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {/* Next Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => handlePageChange(pagination.page + 1)}
+                disabled={pagination.page === pagination.pages || loading}
+                className="flex items-center gap-1 h-8 w-[120px] h-[50px]"
+              >
+                Next
+                <ArrowDown className="w-4 h-4 rotate-[-90deg]" />
+              </Button>
+            </div>
+          )}
+        </motion.div>
+        </div>
+
+        {/* Loading Overlay for Pagination */}
+        
+
         {/* New Project Popup */}
         {showNewProjectPopup && (
           <motion.div
@@ -985,7 +1113,7 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
@@ -1006,7 +1134,7 @@ const Projects = () => {
                       value={newProject.name}
                       onChange={(e) => setNewProject({...newProject, name: e.target.value})}
                       placeholder="Project name *"
-                      className="w-full h-12 rounded-[25px]"
+                      className="w-full h-12 rounded-[10px]"
                       required
                     />
                   </div>
@@ -1015,7 +1143,7 @@ const Projects = () => {
                       value={newProject.description}
                       onChange={(e) => setNewProject({...newProject, description: e.target.value})}
                       placeholder="Project description *"
-                      className="w-full h-12 rounded-[25px]"
+                      className="w-full h-12 rounded-[10px]"
                       rows="3"
                       required
                     />
@@ -1048,18 +1176,18 @@ const Projects = () => {
                         <img
                           src={URL.createObjectURL(newProject.logo)}
                           alt="Project logo preview"
-                          className="w-16 h-16 rounded-[25px] object-cover border-2 border-gray-200 dark:border-gray-700"
+                          className="w-16 h-16 rounded-[10px] object-cover border-2 border-gray-200 dark:border-gray-700"
                         />
                         <button
                           type="button"
                           onClick={() => setNewProject({...newProject, logo: null})}
-                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-[25px] flex items-center justify-center text-xs hover:bg-red-600"
+                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-[10px] flex items-center justify-center text-xs hover:bg-red-600"
                         >
                           <X className="w-3 h-3" />
                         </button>
                       </div>
                     ) : (
-                      <div className="w-16 h-16 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-[25px] flex items-center justify-center">
+                      <div className="w-16 h-16 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-[10px] flex items-center justify-center">
                         <Camera className="w-6 h-6 text-gray-400" />
                       </div>
                     )}
@@ -1078,7 +1206,7 @@ const Projects = () => {
                       />
                       <label
                         htmlFor="logo-upload"
-                        className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-[25px] shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-gray-700"
+                        className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-[10px] shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-gray-700"
                       >
                         <Camera className="w-4 h-4 mr-2" />
                         {newProject.logo ? 'Change Logo' : 'Upload Logo'}
@@ -1128,7 +1256,7 @@ const Projects = () => {
                       value={newProject.startDate}
                       onChange={(e) => setNewProject({...newProject, startDate: e.target.value})}
                       placeholder="Start date *"
-                      className="w-full h-12 rounded-[25px]"
+                      className="w-full h-12 rounded-[10px]"
                       required
                     />
                   </div>
@@ -1138,7 +1266,7 @@ const Projects = () => {
                       value={newProject.endDate}
                       onChange={(e) => setNewProject({...newProject, endDate: e.target.value})}
                       placeholder="End date"
-                      className="w-full h-12 rounded-[25px]"
+                      className="w-full h-12 rounded-[10px]"
                     />
                   </div>
                 </div>
@@ -1150,10 +1278,10 @@ const Projects = () => {
                       value={memberSearch}
                       onChange={(e) => handleMemberSearch(e.target.value)}
                       placeholder="Add team members"
-                      className="w-full h-12 rounded-[25px]"
+                      className="w-full h-12 rounded-[10px]"
                     />
                     {showMemberSuggestions && memberSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[25px] shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[10px] shadow-lg max-h-48 overflow-y-auto">
                         {memberSuggestions.map((user) => (
                           <div
                             key={user.id}
@@ -1164,7 +1292,7 @@ const Projects = () => {
                               <img 
                                 {...getAvatarProps(user.avatar, user.username)}
                                 alt={user.username}
-                                className="w-8 h-8 rounded-[25px] object-cover border-2 border-gray-200 dark:border-gray-700"
+                                className="w-8 h-8 rounded-[10px] object-cover border-2 border-gray-200 dark:border-gray-700"
                               />
                               <div>
                                 <div className="font-medium text-gray-900 dark:text-white">{user.username}</div>
@@ -1182,12 +1310,12 @@ const Projects = () => {
                       {newProject.members.map((member) => (
                         <span
                           key={member.id}
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200 rounded-[25px] text-sm"
+                          className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200 rounded-[10px] text-sm"
                         >
                           <img
                             {...getAvatarProps(member.avatar, member.username)}
                             alt={member.username}
-                            className="w-4 h-4 rounded-[25px]"
+                            className="w-4 h-4 rounded-[10px]"
                           />
                           {member.username}
                           <button
@@ -1210,13 +1338,13 @@ const Projects = () => {
                       value={newLink.title}
                       onChange={(e) => setNewLink({...newLink, title: e.target.value})}
                       placeholder="Link title"
-                      className="flex-1 h-12 rounded-[25px]"
+                      className="flex-1 h-12 rounded-[10px]"
                     />
                     <Input
                       value={newLink.url}
                       onChange={(e) => setNewLink({...newLink, url: e.target.value})}
                       placeholder="URL"
-                      className="flex-1 h-12 rounded-[25px]"
+                      className="flex-1 h-12 rounded-[10px]"
                     />
                     <Select value={newLink.type} onValueChange={(value) => setNewLink({...newLink, type: value})}>
                       <SelectTrigger className="w-32 h-12 cursor-pointer">
@@ -1263,7 +1391,7 @@ const Projects = () => {
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
                       placeholder="Add a tag"
-                      className="flex-1 h-12 rounded-[25px]"
+                      className="flex-1 h-12 rounded-[10px]"
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                     />
                     <Button type="button" onClick={handleAddTag} variant="outline">
@@ -1276,7 +1404,7 @@ const Projects = () => {
                       {newProject.tags.map((tag, index) => (
                         <span
                           key={index}
-                          className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-[25px] text-sm"
+                          className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-[10px] text-sm"
                         >
                           <Tag className="w-3 h-3" />
                           {tag}
@@ -1313,14 +1441,14 @@ const Projects = () => {
                     type="button"
                     variant="outline"
                     onClick={() => setShowNewProjectPopup(false)}
-                    className="flex-1 h-12 rounded-[25px]"
+                    className="flex-1 h-12 rounded-[10px]"
                     disabled={loading}
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[25px]"
+                    className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[10px]"
                     disabled={loading}
                   >
                     {loading ? (
@@ -1361,7 +1489,7 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-6">
@@ -1403,13 +1531,13 @@ const Projects = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase font-bold rounded-[25px] text-xs font-medium ${getStatusColor(selectedProject.status)}`}>
+                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase font-bold rounded-[10px] text-xs font-medium ${getStatusColor(selectedProject.status)}`}>
                           {getStatusIcon(selectedProject.status)}
                           {selectedProject.status}
                         </span>
                       </div>
                       <div>
-                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase font-bold rounded-[25px] text-xs font-medium ${getPriorityColor(selectedProject.priority)}`}>
+                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase font-bold rounded-[10px] text-xs font-medium ${getPriorityColor(selectedProject.priority)}`}>
                           {getPriorityIcon(selectedProject.priority)}
                           {selectedProject.priority}
                         </span>
@@ -1420,9 +1548,9 @@ const Projects = () => {
 
                     <div>
                       <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Progress</h4>
-                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-[25px] h-2">
+                      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-[10px] h-2">
                         <div 
-                          className="bg-green-500 h-2 rounded-[25px] transition-all duration-300"
+                          className="bg-green-500 h-2 rounded-[10px] transition-all duration-300"
                           style={{ width: `${selectedProject.progress || 0}%` }}
                         ></div>
                       </div>
@@ -1438,7 +1566,7 @@ const Projects = () => {
                           {selectedProject.tags.map((tag, index) => (
                             <span
                               key={index}
-                              className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200 rounded-[25px] text-xs"
+                              className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200 rounded-[10px] text-xs"
                             >
                               {tag}
                             </span>
@@ -1455,12 +1583,12 @@ const Projects = () => {
                       {console.log('Rendering members:', selectedProject.members)}
                       <div className="space-y-2 max-h-45overflow-y-auto" key={refreshKey}>
                         {selectedProject.members && selectedProject.members.length > 0 ? selectedProject.members.map((member, index) => (
-                          <div key={`${member.user?._id || member.user?.id}-${index}-${refreshKey}`} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-[25px]">
+                          <div key={`${member.user?._id || member.user?.id}-${index}-${refreshKey}`} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-[10px]">
                             <div className="flex items-center gap-2">
                               <img
                                 {...getAvatarProps(member.user?.avatar, member.user?.username)}
                                 alt={member.user?.username}
-                                className="w-8 h-8 rounded-[25px] cursor-pointer hover:scale-110 transition-transform"
+                                className="w-8 h-8 rounded-[10px] cursor-pointer hover:scale-110 transition-transform"
                                 onClick={() => handleUserAvatarClick(member.user?.id)}
                                 title={`View ${member.user?.username}'s profile`}
                               />
@@ -1485,7 +1613,7 @@ const Projects = () => {
                     <div>
                       <button
                         onClick={() => setShowLinks(!showLinks)}
-                        className="flex items-center justify-between w-full cursor-pointer  text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border rounded-[25px] transition-colors"
+                        className="flex items-center justify-between w-full cursor-pointer  text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border rounded-[10px] transition-colors"
                       >
                         <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                           <Link className="w-5 h-5" />
@@ -1514,7 +1642,7 @@ const Projects = () => {
                                   initial={{ opacity: 0, y: 20 }}
                                   animate={{ opacity: 1, y: 0 }}
                                   transition={{ delay: index * 0.1 }}
-                                  className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-[25px]"
+                                  className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-[10px]"
                                 >
                                   <div className="flex items-center gap-2">
                                     <Link className="w-4 h-4 text-gray-500" />
@@ -1531,7 +1659,7 @@ const Projects = () => {
                                     href={link.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="text-gray-500 hover:text-gray-600 text-sm w-[50px] h-[50px] border flex items-center justify-center rounded-[25px]"
+                                    className="text-gray-500 hover:text-gray-600 text-sm w-[50px] h-[50px] border flex items-center justify-center rounded-[10px]"
                                   >
                                     <ArrowUpRightSquare className="w-4 h-4" />
                                   </a>
@@ -1556,7 +1684,7 @@ const Projects = () => {
                   <div>
                     <button
                       onClick={() => setShowTasks(!showTasks)}
-                      className="flex items-center justify-between w-full text-left hover:bg-gray-50 cursor-pointer dark:hover:bg-gray-800 p-4 border rounded-[25px] transition-colors"
+                      className="flex items-center justify-between w-full text-left hover:bg-gray-50 cursor-pointer dark:hover:bg-gray-800 p-4 border rounded-[10px] transition-colors"
                     >
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                         <CheckCircle className="w-5 h-5" />
@@ -1585,10 +1713,10 @@ const Projects = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.1 }}
-                                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[25px]"
+                                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]"
                               >
                                 <div className="flex items-center gap-3">
-                                  <div className={`w-3 h-3 rounded-[25px] ${
+                                  <div className={`w-3 h-3 rounded-[10px] ${
                                     task.status === 'completed' ? 'bg-green-500' :
                                     task.status === 'in_progress' ? 'bg-gray-500' :
                                     task.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
@@ -1602,7 +1730,7 @@ const Projects = () => {
                                     </p>
                                   </div>
                                 </div>
-                                <span className={`px-2 py-1 rounded-[25px] text-xs font-medium ${
+                                <span className={`px-2 py-1 rounded-[10px] text-xs font-medium ${
                                   task.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                                   task.status === 'in_progress' ? 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200' :
                                   task.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
@@ -1627,7 +1755,7 @@ const Projects = () => {
                   <div>
                     <button
                       onClick={() => setShowMeetings(!showMeetings)}
-                      className="flex items-center justify-between w-full text-left cursor-pointer mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border rounded-[25px] transition-colors"
+                      className="flex items-center justify-between w-full text-left cursor-pointer mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border rounded-[10px] transition-colors"
                     >
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                         <Calendar className="w-5 h-5 icon" />
@@ -1656,10 +1784,10 @@ const Projects = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.1 }}
-                                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[25px]"
+                                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]"
                               >
                                 <div className="flex items-center gap-3">
-                                  <div className={`w-3 h-3 rounded-[25px] ${
+                                  <div className={`w-3 h-3 rounded-[10px] ${
                                     meeting.status === 'completed' ? 'bg-green-500' :
                                     meeting.status === 'scheduled' ? 'bg-gray-500' :
                                     meeting.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
@@ -1673,7 +1801,7 @@ const Projects = () => {
                                     </p>
                                   </div>
                                 </div>
-                                <span className={`px-2 py-1 rounded-[25px] text-xs font-medium ${
+                                <span className={`px-2 py-1 rounded-[10px] text-xs font-medium ${
                                   meeting.status === 'completed' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' :
                                   meeting.status === 'scheduled' ? 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200' :
                                   meeting.status === 'pending' ? 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200' :
@@ -1702,7 +1830,7 @@ const Projects = () => {
                         setProjectProgress(selectedProject.progress || 0)
                         setShowProgressModal(true)
                       }}
-                      className="flex-1 h-12 rounded-[25px]"
+                      className="flex-1 h-12 rounded-[10px]"
                     >
                       <TrendingUp className="w-4 h-4 mr-2" />
                       Update Progress
@@ -1712,7 +1840,7 @@ const Projects = () => {
                       onClick={() => {
                         setShowMembersModal(true)
                       }}
-                      className="flex-1 h-12 rounded-[25px]"
+                      className="flex-1 h-12 rounded-[10px]"
                     >
                       <Settings className="w-4 h-4 mr-2" />
                       Edit Members
@@ -1722,7 +1850,7 @@ const Projects = () => {
                       onClick={() => {
                         setShowLinksModal(true)
                       }}
-                      className="flex-1 h-12 rounded-[25px]"
+                      className="flex-1 h-12 rounded-[10px]"
                     >
                       <Link className="w-4 h-4 mr-2" />
                       Manage Links
@@ -1730,7 +1858,7 @@ const Projects = () => {
                     <Button
                       variant="outline"
                       onClick={() => handleViewProject(selectedProject)}
-                      className="flex-1 h-12 rounded-[25px]"
+                      className="flex-1 h-12 rounded-[10px]"
                     >
                       <RefreshCw className="w-4 h-4 mr-2" />
                       Refresh
@@ -1755,7 +1883,7 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+              className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
@@ -1781,7 +1909,7 @@ const Projects = () => {
                     max="100"
                     value={projectProgress}
                     onChange={(e) => setProjectProgress(parseInt(e.target.value))}
-                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-[25px] appearance-none cursor-pointer"
+                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-[10px] appearance-none cursor-pointer"
                   />
                 </div>
 
@@ -1789,13 +1917,13 @@ const Projects = () => {
                   <Button
                     variant="outline"
                     onClick={() => setShowProgressModal(false)}
-                    className="flex-1 h-12 rounded-[25px]"
+                    className="flex-1 h-12 rounded-[10px]"
                   >
                     Cancel
                   </Button>
                   <Button
                     onClick={handleUpdateProgress}
-                    className="flex-1 h-12 rounded-[25px]"
+                    className="flex-1 h-12 rounded-[10px]"
                   >
                     Update Progress
                   </Button>
@@ -1818,7 +1946,7 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+              className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-6">
@@ -1843,7 +1971,7 @@ const Projects = () => {
                         value={projectMemberSearch}
                         onChange={(e) => handleProjectMemberSearch(e.target.value)}
                         placeholder="Search users..."
-                        className="flex-1 h-12 rounded-[25px]"
+                        className="flex-1 h-12 rounded-[10px]"
                       />
                       <Select value={projectMemberRole} onValueChange={setProjectMemberRole}>
                         <SelectTrigger className="w-32">
@@ -1858,7 +1986,7 @@ const Projects = () => {
                     </div>
                     
                     {showProjectMemberSuggestions && projectMemberSuggestions.length > 0 && (
-                      <div className="mt-2 border border-gray-200 dark:border-gray-700 rounded-[25px] bg-white dark:bg-black max-h-40 overflow-y-auto">
+                      <div className="mt-2 border border-gray-200 dark:border-gray-700 rounded-[10px] bg-white dark:bg-black max-h-40 overflow-y-auto">
                         {projectMemberSuggestions.map((user) => (
                           <div
                             key={user.id}
@@ -1872,7 +2000,7 @@ const Projects = () => {
                             <img
                               {...getAvatarProps(user.avatar, user.username)}
                               alt={user.username}
-                              className="w-10 h-10 rounded-[25px]"
+                              className="w-10 h-10 rounded-[10px]"
                             />
                            <div className="flex flex-col">
                            <span className="text-sm text-gray-900 dark:text-white font-bold">{user.username}</span>
@@ -1889,12 +2017,12 @@ const Projects = () => {
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Current Members</h3>
                     <div className="space-y-2 max-h-60 overflow-y-auto" key={refreshKey}>
                       {selectedProject.members?.map((member, index) => (
-                        <div key={`${member.user?._id || member.user?.id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[25px]">
+                        <div key={`${member.user?._id || member.user?.id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]">
                           <div className="flex items-center gap-3">
                             <img
                               {...getAvatarProps(member.user?.avatar, member.user?.username)}
                               alt={member.user?.username}
-                              className="w-8 h-8 rounded-[25px] cursor-pointer hover:scale-110 transition-transform"
+                              className="w-8 h-8 rounded-[10px] cursor-pointer hover:scale-110 transition-transform"
                               onClick={() => handleUserAvatarClick(member.user?.id)}
                               title={`View ${member.user?.username}'s profile`}
                             />
@@ -1940,7 +2068,7 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[25px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+              className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-6">
@@ -1991,7 +2119,7 @@ const Projects = () => {
                             setNewLink({ title: '', url: '', type: 'other' })
                           }
                         }}
-                        className="flex-1 h-12 rounded-[25px]"
+                        className="flex-1 h-12 rounded-[10px]"
                       >
                         Add Link
                       </Button>
@@ -2003,7 +2131,7 @@ const Projects = () => {
                     <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Current Links</h3>
                     <div className="space-y-2 max-h-60 overflow-y-auto">
                       {selectedProject.links?.map((link, index) => (
-                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[25px]">
+                        <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]">
                           <div className="flex items-center gap-3">
                             <Link className="w-4 h-4 text-gray-500" />
                             <div>

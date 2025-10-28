@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
+import HorizontalLoader from "../components/HorizontalLoader";
+import { usePermissions } from "../hooks/usePermissions";
 import {
   BarChart,
   Bar,
@@ -48,12 +51,14 @@ import meetingService from "../services/meetingService";
 import projectService from "../services/projectService";
 import { toast } from "sonner";
 import StatsCard from "../components/StatsCard";
+import { PiUsersDuotone } from "react-icons/pi";
 
 const Dashboard = () => {
 
   document.title = "Dashboard"
 
   const { user } = useAuth();
+  const { permissions, loading: permissionsLoading } = usePermissions();
   const [stats, setStats] = useState({
     totalTasks: 0,
     completedTasks: 0,
@@ -84,6 +89,29 @@ const Dashboard = () => {
   const [projects, setProjects] = useState([]);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [showUserDetails, setShowUserDetails] = useState(false);
+  const navigate = useNavigate();
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [calendarMonth, setCalendarMonth] = useState(new Date());
+
+  // Calendar helpers
+  const startOfMonth = (date) => new Date(date.getFullYear(), date.getMonth(), 1);
+  const endOfMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  const addMonths = (date, months) => new Date(date.getFullYear(), date.getMonth() + months, 1);
+  const isSameDay = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  const getMonthDaysGrid = (monthDate) => {
+    const start = startOfMonth(monthDate);
+    const end = endOfMonth(monthDate);
+    const days = [];
+    // Leading blanks (Sun=0 ... Sat=6) but we'll render Mon-Sun layout visually with CSS order
+    const leading = (start.getDay() + 6) % 7; // convert to Mon=0 ... Sun=6
+    for (let i = 0; i < leading; i++) {
+      days.push(null);
+    }
+    for (let d = 1; d <= end.getDate(); d++) {
+      days.push(new Date(monthDate.getFullYear(), monthDate.getMonth(), d));
+    }
+    return days;
+  };
 
   // Handle user avatar click
   const handleUserAvatarClick = (userId) => {
@@ -354,6 +382,26 @@ const Dashboard = () => {
     },
   ];
 
+  // Project progress trend data
+  const projectProgressData = [
+    { week: 1, completionRate: 15, targetRate: 20 },
+    { week: 2, completionRate: 28, targetRate: 25 },
+    { week: 3, completionRate: 35, targetRate: 30 },
+    { week: 4, completionRate: 42, targetRate: 35 },
+    { week: 5, completionRate: 38, targetRate: 40 },
+    { week: 6, completionRate: 45, targetRate: 45 },
+    { week: 7, completionRate: 52, targetRate: 50 },
+    { week: 8, completionRate: 48, targetRate: 55 },
+    { week: 9, completionRate: 58, targetRate: 60 },
+    { week: 10, completionRate: 65, targetRate: 65 },
+    { week: 11, completionRate: 72, targetRate: 70 },
+    { week: 12, completionRate: 78, targetRate: 75 },
+    { week: 13, completionRate: 82, targetRate: 80 },
+    { week: 14, completionRate: 85, targetRate: 85 },
+    { week: 15, completionRate: 88, targetRate: 90 },
+    { week: 16, completionRate: 92, targetRate: 95 },
+  ];
+
   const projectPriorityData = [
     {
       name: "High",
@@ -376,73 +424,53 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="text-center"
-        >
-          <div className="relative">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-gray-200 dark:border-gray-700 border-t-blue-600 dark:border-t-blue-400 mx-auto mb-6"></div>
-            <div
-              className="absolute inset-0 rounded-full h-16 w-16 border-4 border-transparent border-t-purple-600 dark:border-t-purple-400 animate-spin mx-auto"
-              style={{
-                animationDirection: "reverse",
-                animationDuration: "1.5s",
-              }}
-            ></div>
-          </div>
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-            className="text-gray-600 dark:text-gray-400 text-lg font-medium"
-          >
-            Loading your dashboard...
-          </motion.p>
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-gray-500 dark:text-gray-500 text-sm mt-2"
-          >
-            Preparing your workspace
-          </motion.p>
-        </motion.div>
-      </div>
+      <HorizontalLoader 
+        message="Loading your dashboard..."
+        subMessage="Preparing your workspace"
+        progress={75}
+        className="min-h-screen"
+      />
     );
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen ambient-light">
       <div className="mt-10 mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-        >
-          {/* Modern Header */}
-          <div className="mb-12">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <motion.h1
+      
+          <div className="mb-16">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-end mb-8 gap-6">
+              {/* <div className="flex-1">
+                <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.1 }}
-                  className="text-5xl font-bold text-gray-900 dark:text-white mb-3"
+                  className="flex items-center space-x-4 mb-4"
                 >
-                  Welcome Back!
-                </motion.h1>
-            
-                <motion.p
+                  <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-[30px] shadow-lg">
+                    <Activity className="w-8 h-8 text-white" />
+                  </div>
+                  <div>
+                    <h1 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                      Dashboard
+                    </h1>
+                 
+                  </div>
+                </motion.div>
+                
+                <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="text-gray-500 dark:text-gray-500 mt-1"
+                  className="space-y-2"
                 >
-                  Here's your comprehensive workspace overview , <span className="font-semibold text-blue-600 dark:text-blue-400">{user?.username}</span>
-                </motion.p>
-              </div>
+                  <p className="text-lg text-gray-600 dark:text-gray-300">
+                    Welcome back, <span className="font-semibold text-blue-600 dark:text-blue-400">{user?.username}</span>
+                  </p>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    Here's your comprehensive workspace overview and performance metrics
+                  </p>
+                </motion.div>
+              </div> */}
 
               {/* Action buttons */}
               <motion.div
@@ -452,123 +480,128 @@ const Dashboard = () => {
                 className="flex items-center space-x-3"
               >
                 <motion.button
-                  whileHover={{ scale: 1 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={loadDashboardData}
-                  className="flex items-center cursor-pointer space-x-2 px-10 py-4 bg-black dark:bg-white rounded-[25px] dark:border-gray-700 transition-all duration-200"
+                  className="flex items-center space-x-2 gap-2 px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-white dark:to-gray-100 text-white dark:text-gray-900 rounded-[30px] shadow-lg hover:shadow-xl transition-all duration-200 font-medium"
                 >
-                  <RefreshCw className="w-4 h-4 text-white dark:text-black" />
-                  <span className="text-sm font-medium text-white dark:text-black">
-                    Refresh
-                  </span>
+                  <RefreshCw className="w-4 h-4" />
+                  Refresh Data
                 </motion.button>
+                
+               
               </motion.div>
             </div>
 
             {/* Quick stats bar */}
-            {/* <motion.div
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
               className="grid grid-cols-2 md:grid-cols-4 gap-4"
             >
-              <div className="backdrop-blur-sm rounded-[25px] p-4 dark:bg-[rgba(255,255,255,.1)] border">
+              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-purple-200 dark:border-gray-700">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-black dark:bg-white rounded-[25px] animate-pulse"></div>
+                  <div className="w-3 h-3 bg-purple-500 rounded-full animate-pulse"></div>
                   <div>
-                    <p className="text-xs">
-                      Status
+                    <p className="text-xs font-medium text-purple-600 dark:text-purple-400 uppercase tracking-wide">
+                      System Status
                     </p>
-                    <p className="text-lg font-semibold">
+                    <p className="text-sm font-semibold text-purple-800 dark:text-purple-200">
                       All Systems Active
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="text-white backdrop-blur-sm dark:bg-[rgba(255,255,255,.1)] border rounded-[25px] p-4">
+              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-green-200 dark:border-gray-700">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-black dark:bg-white rounded-[25px] animate-pulse"></div>
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
                   <div>
-                    <p className="text-xs text-black dark:text-white">
+                    <p className="text-xs font-medium text-green-600 dark:text-green-400 uppercase tracking-wide">
                       Last Updated
                     </p>
-                    <p className="text-lg font-semibold text-black dark:text-white">
-                     Updated Just now
+                    <p className="text-sm font-semibold text-green-800 dark:text-green-200">
+                      Just now
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className=" text-black dark:text-white backdrop-blur-sm dark:bg-[rgba(255,255,255,.1)] border rounded-[25px] p-4">
+              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-orange-200 dark:border-gray-700">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-black dark:bg-white rounded-[25px] animate-pulse"></div>
+                  <div className="w-3 h-3 bg-orange-500 rounded-full animate-pulse"></div>
                   <div>
-                    <p className="text-xs text-black dark:text-white">
+                    <p className="text-xs font-medium text-orange-600 dark:text-orange-400 uppercase tracking-wide">
                       Performance
                     </p>
-                    <p className="text-lg font-semibold text-black dark:text-white">
-                      Extra Excellent
+                    <p className="text-sm font-semibold text-orange-800 dark:text-orange-200">
+                      Excellent
                     </p>
                   </div>
                 </div>
               </div>
 
-              <div className="text-black dark:text-white backdrop-blur-sm dark:bg-[rgba(255,255,255,.1)] border rounded-[25px] p-4">
+              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-blue-200 dark:border-gray-700">
                 <div className="flex items-center space-x-3">
-                  <div className="w-2 h-2 bg-black dark:bg-white rounded-[25px] animate-pulse"></div>
+                  <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
                   <div>
-                    <p className="text-xs text-black dark:text-white">
+                    <p className="text-xs font-medium text-blue-600 dark:text-blue-400 uppercase tracking-wide">
                       Sync Status
                     </p>
-                    <p className="text-lg font-semibold text-black dark:text-white">
-                      Real Time Sync
+                    <p className="text-sm font-semibold text-blue-800 dark:text-blue-200">
+                      Real-time Sync
                     </p>
                   </div>
                 </div>
               </div>
-            </motion.div> */}
+            </motion.div>
           </div>
-
-          {/* Main Metrics Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <StatsCard
-              title="Active Tasks"
-              value={stats.totalTasks}
-              icon={Target}
-              color="blue"
-              subtitle="Currently in progress"
-              delay={0.1}
-            />
-            <StatsCard
-              title="Completed"
-              value={stats.completedTasks}
-              icon={CheckCircle}
-              color="green"
-              trend="up"
-              trendValue={stats.completionRate}
-              subtitle="Successfully delivered"
-              delay={0.2}
-            />
-            <StatsCard
-              title="Team Meetings"
-              value={stats.totalMeetings}
-              icon={Video}
-              color="purple"
-              subtitle="Collaboration sessions"
-              delay={0.3}
-            />
-            <StatsCard
-              title="Active Projects"
-              value={stats.activeProjects}
-              icon={Activity}
-              color="red"
-              subtitle="Currently running"
-              delay={0.4}
-            />
+            <div className="card-glow">
+              <StatsCard
+                title="Active Tasks"
+                value={stats.totalTasks}
+                icon={Target}
+                color="blue"
+                subtitle="Currently in progress"
+                delay={0.1}
+              />
+            </div>
+            <div className="card-glow">
+              <StatsCard
+                title="Completed"
+                value={stats.completedTasks}
+                icon={CheckCircle}
+                color="orange"
+                trend="up"
+                trendValue={stats.completionRate}
+                subtitle="Successfully delivered"
+                delay={0.2}
+              />
+            </div>
+            <div className="card-glow">
+              <StatsCard
+                title="Team Meetings"
+                value={stats.totalMeetings}
+                icon={Video}
+                color="green"
+                subtitle="Collaboration sessions"
+                delay={0.3}
+              />
+            </div>
+            <div className="card-glow">
+              <StatsCard
+                title="Active Projects"
+                value={stats.activeProjects}
+                icon={Activity}
+                color="purple"
+                subtitle="Currently running"
+                delay={0.4}
+              />
+            </div>
           </div>
 
-          {/* Secondary Metrics Grid */}
           {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
             <StatsCard
               title="In Progress"
@@ -611,52 +644,96 @@ const Dashboard = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.9, duration: 0.6 }}
-            className="bg-white/80 dark:bg-black/80 backdrop-blur-sm rounded-3xl shadow-2xl mb-12 overflow-hidden"
+            className="mb-12 overflow-hidden ambient-section"
           >
-            {/* Header with modern styling */}
-        
+            {/* Chart Header */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <div className="p-3 bg-gradient-to-br from-blue-800 to-blue-900 dark:from-blue-200 dark:to-blue-300 rounded-[10px] shadow-lg">
+                    <BarChart3 className="w-6 h-6 text-white dark:text-gray-800" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-bold text-blue-900 dark:text-white">
+                      Activity Analytics
+                    </h2>
+                    <p className="text-sm text-blue-600 dark:text-blue-400">
+                      Weekly overview of tasks, meetings, and projects
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                    Live Data
+                  </span>
+                </div>
+              </div>
 
             {/* Weekly Activity Chart */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.3 }}
-              className="mb-12"
+              className="mt-10"
             >
-              <div className="flex items-center justify-end mb-8">
+              {/* <div className="flex items-center justify-end mb-8">
                
                 <div className="flex items-center space-x-6">
                   <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-[25px]"></div>
+                    <div className="w-4 h-4 bg-gradient-to-r from-blue-500 to-blue-600 rounded-[30px]"></div>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Tasks
                     </span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4 bg-gradient-to-r from-purple-500 to-purple-600 rounded-[25px]"></div>
+                    <div className="w-4 h-4 bg-gradient-to-r from-purple-500 to-purple-600 rounded-[30px]"></div>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Meetings
                     </span>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-[25px]"></div>
+                    <div className="w-4 h-4 bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-[30px]"></div>
                     <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                       Projects
                     </span>
                   </div>
                 </div>
+              </div> */}
+              <div className=" rounded-[30px]">
+                <div className="flex items-center justify-end py-10 mb-6">
+                
+                  <div className="flex items-center space-x-4">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-blue-500 dark:bg-blue-400 rounded-full"></div>
+                      <span className="text-sm text-blue-600 dark:text-blue-400">Tasks</span>
               </div>
-              <div className="rounded-[25px] p-6 pt-20 pr-20 border dark:border-gray-700   dark:bg-[rgba(255,255,255,.1)] ">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-green-500 dark:bg-green-400 rounded-full"></div>
+                      <span className="text-sm text-green-600 dark:text-green-400">Meetings</span>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                        <div className="w-3 h-3 bg-purple-500 dark:bg-purple-400 rounded-full"></div>
+                      <span className="text-sm text-purple-600 dark:text-purple-400">Projects</span>
+                    </div>
+                  </div>
+                </div>
                 <ResponsiveContainer width="100%" height={400}>
                   <LineChart data={weeklyData}>
                     <CartesianGrid
-                      strokeDasharray="3 3"
-                      stroke="#e5e7eb"
+                      strokeDasharray="3 2"
+                      stroke="#9CA3AF"
                       opacity={0.3}
                     />
                     <XAxis dataKey="day" stroke="#9CA3AF" />
                     <YAxis stroke="#9CA3AF" />
-                    <Tooltip />
+                    <Tooltip contentStyle={{
+                      border: "1px solid #9CA3AF",
+                      borderRadius: "15px",
+                      color: "black",
+                      padding: "10px 30px",
+                      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
+                      // backdropFilter: "blur(10px)",
+                    }} />
                     <Legend />
 
                     {/* Tasks line */}
@@ -666,24 +743,27 @@ const Dashboard = () => {
                       stroke="#3B82F6"
                       strokeWidth={3}
                       dot={{ r: 5, fill: "#3B82F6" }}
+                      style={{
+                        textTransform: 'uppercase'
+                      }}
                     />
 
                     {/* Meetings line */}
                     <Line
                       type="monotone"
                       dataKey="meetings"
-                      stroke="#8B5CF6"
+                      stroke="#10B981"
                       strokeWidth={3}
-                      dot={{ r: 5, fill: "#8B5CF6" }}
+                      dot={{ r: 5, fill: "#10B981" }}
                     />
 
                     {/* Projects line */}
                     <Line
                       type="monotone"
                       dataKey="projects"
-                      stroke="#10B981"
+                      stroke="#8B5CF6"
                       strokeWidth={3}
-                      dot={{ r: 5, fill: "#10B981" }}
+                      dot={{ r: 5, fill: "#8B5CF6" }}
                     />
 
                     {/* Gradient defs */}
@@ -697,12 +777,12 @@ const Dashboard = () => {
                       >
                         <stop
                           offset="5%"
-                          stopColor="#3B82F6"
+                          stopColor="#6B7280"
                           stopOpacity={0.9}
                         />
                         <stop
                           offset="95%"
-                          stopColor="#3B82F6"
+                          stopColor="#6B7280"
                           stopOpacity={0.3}
                         />
                       </linearGradient>
@@ -715,12 +795,12 @@ const Dashboard = () => {
                       >
                         <stop
                           offset="5%"
-                          stopColor="#8B5CF6"
+                          stopColor="#4B5563"
                           stopOpacity={0.9}
                         />
                         <stop
                           offset="95%"
-                          stopColor="#8B5CF6"
+                          stopColor="#4B5563"
                           stopOpacity={0.3}
                         />
                       </linearGradient>
@@ -733,12 +813,12 @@ const Dashboard = () => {
                       >
                         <stop
                           offset="5%"
-                          stopColor="#10B981"
+                          stopColor="#374151"
                           stopOpacity={0.9}
                         />
                         <stop
                           offset="95%"
-                          stopColor="#10B981"
+                          stopColor="#374151"
                           stopOpacity={0.3}
                         />
                       </linearGradient>
@@ -753,14 +833,14 @@ const Dashboard = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.4 }}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12 pt-8 border-t border-gray-200/50 dark:border-gray-700/50"
+              className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 pt-8 border-t border-gray-200/50 dark:border-gray-700/50"
             >
               {/* Task Status Distribution */}
-              <div className="border  dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm rounded-[25px] p-6">
+              <div className="backdrop-blur-sm rounded-[30px] p-6 border-gray-200">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gradient-to-br from-blue-500 to-blue-600 rounded-[25px]">
-                      <Target className="w-5 h-5 text-white" />
+                    <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[30px]">
+                      <Target className="w-5 h-5 text-white dark:text-gray-800" />
                     </div>
                     <div>
                       <h4 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -798,10 +878,9 @@ const Dashboard = () => {
                     <Tooltip
                       contentStyle={{
                         border: "none",
-                        borderRadius: "0px",
+                        borderRadius: "15px",
                         color: "white",
                         boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-                        backdropFilter: "blur(10px)",
                       }}
                     />
                   </PieChart>
@@ -814,10 +893,10 @@ const Dashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.5 + index * 0.1 }}
-                      className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[25px]"
+                      className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
                     >
                       <div
-                        className="w-4 h-4 rounded-[25px] mr-3 shadow-sm"
+                        className="w-4 h-4 rounded-[30px] mr-3 shadow-sm"
                         style={{ backgroundColor: item.color }}
                       ></div>
                       <div>
@@ -834,11 +913,11 @@ const Dashboard = () => {
               </div>
 
               {/* Meeting Status Distribution */}
-              <div className="border  dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm rounded-[25px] p-6">
+              <div className="rounded-[30px] p-6">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gradient-to-br from-purple-500 to-purple-600 rounded-[25px]">
-                      <Video className="w-5 h-5 text-white" />
+                    <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[30px]">
+                      <Video className="w-5 h-5 text-white dark:text-gray-800" />
                     </div>
                     <div>
                       <h4 className="text-xl font-bold text-gray-900 dark:text-white">
@@ -876,10 +955,9 @@ const Dashboard = () => {
                     <Tooltip
                       contentStyle={{
                         border: "none",
-                        borderRadius: "0px",
+                        borderRadius: "15px",
                         color: "white",
                         boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-                        backdropFilter: "blur(10px)",
                       }}
                     />
                   </PieChart>
@@ -892,10 +970,10 @@ const Dashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.6 + index * 0.1 }}
-                      className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[25px]"
+                      className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
                     >
                       <div
-                        className="w-4 h-4 rounded-[25px] mr-3 shadow-sm"
+                        className="w-4 h-4 rounded-[30px] mr-3 shadow-sm"
                         style={{ backgroundColor: item.color }}
                       ></div>
                       <div>
@@ -913,15 +991,19 @@ const Dashboard = () => {
             </motion.div>
           </motion.div>
 
-          {/* Project Distribution Charts */}
+          {/* Project Distribution Charts + Calendar */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 1.7, duration: 0.6 }}
-            className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8"
+            className="mb-20 grid grid-cols-1 lg:grid-cols-2 gap-8"
           >
+            {/* Project Chart Header */}
+            
+
             {/* Project Status Distribution */}
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6">
+            <div className="mt-10">
+              <div className="p-6 ">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
                   Project Status Distribution
@@ -948,226 +1030,143 @@ const Dashboard = () => {
                   <Tooltip
                     contentStyle={{
                       border: "none",
-                      borderRadius: "0px",
+                      borderRadius: "15px",
                       color: "white",
                       boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-                      backdropFilter: "blur(10px)",
                     }}
                   />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="flex flex-wrap justify-center mt-4 gap-3">
+              <div className="grid grid-cols-2 gap-3 mt-6">
                 {projectStatusData.map((item, index) => (
-                  <div key={index} className="flex items-center">
+                  <motion.div
+                    key={index}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 1.5 + index * 0.1 }}
+                    className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
+                  >
                     <div
-                      className="w-3 h-3 rounded-[25px] mr-2"
+                      className="w-4 h-4 rounded-[30px] mr-3 shadow-sm"
                       style={{ backgroundColor: item.color }}
                     ></div>
-                    <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {item.name}: {item.value}
-                    </span>
+                    <div>
+                      <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                        {item.value}
                   </div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">
+                        {item.name}
+                      </div>
+                    </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
+            </div>
 
-            {/* Project Priority Distribution */}
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                  Project Priority Breakdown
-                </h4>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  By Priority Level
-                </div>
-              </div>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={projectPriorityData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip
-                    contentStyle={{
-                      border: "none",
-                      borderRadius: "0px",
-                      padding: '10px 30px',
-                      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-                      backdropFilter: "blur(10px)",
-                    }}
-                  />
-                  <Bar dataKey="value" fill="#8884d8" />
-                </BarChart>
-              </ResponsiveContainer>
-              <div className="flex flex-wrap justify-center mt-4 gap-3">
-                {projectPriorityData.map((item, index) => (
-                  <div key={index} className="flex items-center">
-                    <div
-                      className="w-3 h-3 rounded-[25px] mr-2"
-                      style={{ backgroundColor: item.color }}
-                    ></div>
-                    {/* <span className="text-sm text-gray-600 dark:text-gray-400">
-                      {item.name}: {item.value}
-                    </span> */}
+            {/* Schedule Calendar */}
+            <div className="mt-10">
+              <div className="rounded-[30px] p-6">
+                <div className="flex items-center justify-end mb-6">
+                  {/* <div className="flex items-center space-x-3">
+                    <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[30px]">
+                      <Calendar className="w-5 h-5 text-white dark:text-gray-800" />
+                    </div>
+                    <div>
+                      <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Schedule</h4>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Plan tasks or meetings</p>
+                    </div>
+                  </div> */}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setCalendarMonth(addMonths(calendarMonth, -1))}
+                      className="px-3 py-2 rounded-[30px] w-10 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900"
+                      aria-label="Previous month"
+                    >
+                      ‹
+                    </button>
+                    <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {calendarMonth.toLocaleString('default', { month: 'long' })} {calendarMonth.getFullYear()}
+                    </div>
+                    <button
+                      onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))}
+                      className="px-3 py-2 rounded-[30px] w-10 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900"
+                      aria-label="Next month"
+                    >
+                      ›
+                    </button>
                   </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+                </div>
 
-          {/* Combined Priority & Type Distribution */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8">
-            {/* Task Priority Distribution */}
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                  Task Priority Breakdown
-                </h4>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  By Severity Level
+                {/* Calendar grid */}
+                <div className="grid grid-cols-7 gap-2">
+                  {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((d) => (
+                    <div key={d} className="text-xs text-gray-500 dark:text-gray-400 text-center py-1">{d}</div>
+                  ))}
+                  {getMonthDaysGrid(calendarMonth).map((d, idx) => {
+                    const isToday = d && isSameDay(d, new Date());
+                    const isSelected = d && isSameDay(d, selectedDate);
+                    return (
+                      <button
+                        key={idx}
+                        onClick={() => d && setSelectedDate(d)}
+                        className={[
+                          "h-12 rounded-[14px] border flex items-center justify-center text-sm transition-colors",
+                          d ? "border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900" : "border-transparent",
+                          isToday ? "ring-2 ring-[#fe914d]" : "",
+                          isSelected ? "bg-[#fe914d] text-white border-none" : "text-gray-800 dark:text-gray-200"
+                        ].join(' ')}
+                        disabled={!d}
+                        aria-label={d ? d.toDateString() : 'empty'}
+                      >
+                        {d ? d.getDate() : ''}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Actions */}
+                <div className="mt-6 flex items-center justify-between">
+                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                    Selected: {selectedDate.toLocaleDateString()}
+                  </div>
+                  <div className="flex gap-3 flex-col sn:flex-row">
+                    <button
+                      onClick={() => {
+                        if (!permissions.canCreateTask) {
+                          toast.error('You do not have permission to create tasks. Contact an admin.');
+                          return;
+                        }
+                        navigate('/dashboard/tasks', { state: { date: selectedDate.toISOString(), openModal: true } });
+                      }}
+                      disabled={!permissions.canCreateTask}
+                      className="w-[200px] h-12 rounded-[30px] text-sm bg-[#fe914d] text-white hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Schedule Task
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (!permissions.canCreateMeeting) {
+                          toast.error('You do not have permission to create meetings. Contact an admin.');
+                          return;
+                        }
+                        navigate('/dashboard/meetings', { state: { date: selectedDate.toISOString(), openModal: true } });
+                      }}
+                      disabled={!permissions.canCreateMeeting}
+                      className="w-[200px] h-12 rounded-[30px] text-sm border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Schedule Meeting
+                    </button>
+                  </div>
                 </div>
               </div>
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={priorityData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip
-                    contentStyle={{
-                      border: "none",
-                      borderRadius: "0px",
-                      padding: '10px 30px',
-                      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-                      backdropFilter: "blur(10px)",
-                    }}
-                  />
-                  <Bar dataKey="value" fill="#3B82F6" />
-                </BarChart>
-              </ResponsiveContainer>
             </div>
-
-            {/* Meeting Type Distribution */}
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6">
-              <div className="flex items-center justify-between mb-6">
-                <h4 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                  Meeting Format Analysis
-                </h4>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  By Communication Type
-                </div>
-              </div>
-              <ResponsiveContainer width="100%" height={250}>
-                <BarChart data={meetingTypeData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip
-                    contentStyle={{
-                      border: "none",
-                      borderRadius: "0px",
-                      // color: 'white',
-                      padding: '10px 30px',
-                      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-                      backdropFilter: "blur(10px)",
-                    }}
-                  />
-                  <Bar dataKey="value" fill="#8B5CF6" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </div>
         </motion.div>
 
         {/* Recent Activity Feed */}
 
-        {/* Performance Metrics */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="bg-white dark:bg-black rounded-[25px] shadow-lg  dark:border-gray-700 mt-10 pb-10"
-        >
-          <div className="flex items-center justify-between mb-8">
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 dark:text-white">
-                Performance Metrics
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mt-1">
-                Key performance indicators and productivity metrics
-              </p>
-            </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">
-              Last 30 days
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
-              <div className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
-                {stats.tasksThisWeek}
-              </div>
-              <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Tasks This Week
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Development Velocity
-              </div>
-            </div>
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
-              <div className="text-3xl font-bold text-green-600 dark:text-green-400 mb-2">
-                {stats.tasksThisMonth}
-              </div>
-              <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Tasks This Month
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Monthly Throughput
-              </div>
-            </div>
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
-              <div className="text-3xl font-bold text-purple-600 dark:text-purple-400 mb-2">
-                {stats.completionRate}%
-              </div>
-              <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Task Success Rate
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Quality Metric
-              </div>
-            </div>
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
-              <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">
-                {stats.meetingsThisWeek}
-              </div>
-              <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Meetings This Week
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Collaboration
-              </div>
-            </div>
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
-              <div className="text-3xl font-bold text-pink-600 dark:text-pink-400 mb-2">
-                {stats.meetingsThisMonth}
-              </div>
-              <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Meetings This Month
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Team Sync
-              </div>
-            </div>
-            <div className="border  dark:bg-[rgba(255,255,255,.1)] rounded-[25px] p-6 text-center">
-              <div className="text-3xl font-bold text-orange-600 dark:text-orange-400 mb-2">
-                {stats.meetingCompletionRate}%
-              </div>
-              <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                Meeting Efficiency
-              </div>
-              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                Completion Rate
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        
+      <motion.div />
       </div>
 
       {/* User Details Modal */}
@@ -1184,3 +1183,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
