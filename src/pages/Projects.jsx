@@ -772,8 +772,9 @@ const Projects = () => {
         </motion.div>
               </div>
           <div className="flex items-center gap-4">
-            
-            <Button
+
+            {
+              permissions.canCreateProject &&       <Button
               onClick={() => {
                 if (!permissions.canCreateProject) {
                   toast.error('You do not have permission to create projects. Contact an admin.');
@@ -781,12 +782,14 @@ const Projects = () => {
                 }
                 setShowNewProjectPopup(true);
               }}
-              disabled={!permissions.canCreateProject}
               className={'w-[200px] rounded-[10px] rounded-[10px] h-12'}
             >
               <Plus className={ICON_SIZES.sm} />
               New Project
             </Button>
+            }
+            
+      
           </div>
         </motion.div>
 

@@ -507,7 +507,8 @@ const Tasks = () => {
                   Delete ({selectedTasks.length})
                 </motion.button>
               )}
-              <Button
+              {
+                permissions.canCreateTask &&  <Button
                 onClick={() => {
                   if (!permissions.canCreateTask) {
                     toast.error('You do not have permission to create tasks. Contact an admin.');
@@ -515,12 +516,13 @@ const Tasks = () => {
                   }
                   setShowNewTaskPopup(true);
                 }}
-                disabled={!permissions.canCreateTask}
                 className={'w-[200px] rounded-[10px] h-12'}
               >
                 <Plus className={ICON_SIZES.sm} />
                 New Task
               </Button>
+              }
+             
             </div>
           </div>
         </motion.div>

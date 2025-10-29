@@ -580,7 +580,9 @@ const Meetings = () => {
                   Delete ({selectedMeetings.length})
                 </motion.button>
               )}
-              <Button
+
+              {
+                permissions.canCreateMeeting &&     <Button
                 onClick={() => {
                   if (!permissions.canCreateMeeting) {
                     toast.error('You do not have permission to create meetings. Contact an admin.');
@@ -588,12 +590,14 @@ const Meetings = () => {
                   }
                   setShowNewMeetingPopup(true);
                 }}
-                disabled={!permissions.canCreateMeeting}
                 className={'w-[200px] rounded-[10px] h-12'}
               >
                 <Plus className={ICON_SIZES.sm} />
                 New Meeting
               </Button>
+              }
+
+          
             </div>
           </div>
         </motion.div>

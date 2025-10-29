@@ -465,20 +465,22 @@ const TeamsManage = () => {
         </Select>
       </div>
         </div>
-        <Button
-          onClick={() => {
-            if (!permissions.canCreateTeam) {
-              toast.error('You do not have permission to create teams. Contact an admin.');
-              return;
-            }
-            setShowNewTeamModal(true);
-          }}
-          disabled={!permissions.canCreateTeam}
-          className={'w-[200px] rounded-[10px] h-12'}
-        >
-          <Plus className="w-4 h-4 mr-2 icon" />
-          Create Team
-        </Button>
+       
+       {
+        permissions.canCreateTeam &&  <Button
+        onClick={() => {
+          if (!permissions.canCreateTeam) {
+            toast.error('You do not have permission to create teams. Contact an admin.');
+            return;
+          }
+          setShowNewTeamModal(true);
+        }}
+        className={'w-[200px] rounded-[10px] h-12'}
+      >
+        <Plus className="w-4 h-4 mr-2 icon" />
+        Create Team
+      </Button>
+       }
       </div>
 
       {/* Filters */}
