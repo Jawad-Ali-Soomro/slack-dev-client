@@ -25,7 +25,9 @@ import {
   UserCheck,
   Link2,
   Shield,
-  Settings
+  Settings,
+  KeyIcon,
+  ShieldCheck
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSidebar } from '../contexts/SidebarContext'
@@ -150,20 +152,20 @@ const Sidebar = () => {
     // Admin section - only show if user is admin
     ...(user?.role === 'admin' ? [{
       title: 'Administration',
-      icon: Shield,
+      icon: Settings,
       path: '/dashboard/admin',
       badgeCount: 0,
       hasDropdown: true,
       dropdownItems: [
         {
-          title: 'User Management',
+          title: 'Manage Team',
           icon: PiUsersDuotone,
           path: '/dashboard/admin/users',
           color: 'text-black dark:text-white'
         },
         {
           title: 'Permissions',
-          icon: Settings,
+          icon: KeyIcon,
           path: '/dashboard/admin/permissions',
           color: 'text-black dark:text-white'
         }
@@ -294,7 +296,7 @@ const Sidebar = () => {
                             }`}
                           >
                             <div className="relative flex items-center gap-4 justify-center">
-                              <Icon className={`w-5 h-5 icon transition-transform ${active ? '' : item.color}`} />
+                              <Icon className={`w-5 h-5 icon  text-black dark:text-white transition-transform ${active ? '' : item.color}`} />
                               <span className="text-sm font-bold">
                                 {item.title}
                               </span>
@@ -323,13 +325,13 @@ const Sidebar = () => {
                                     <Link
                                       key={subItem.path}
                                       to={subItem.path}
-                                      className={`flex items-center gap-3 h-12 px-3 py-2 rounded-[8px] text-sm transition-all duration-200 ${
+                                      className={`flex items-center gap-3 h-10 px-3 py-2 rounded-[8px] text-sm transition-all duration-200 ${
                                         subActive
                                           ? 'bg-gray-100 dark:bg-[rgba(255,255,255,.1)] border-l-3 border-l dark:border-white border-black dark:border-gray-700 text-gray-900 dark:text-white'
                                           : 'hover:bg-gray-100 dark:hover:bg-[rgba(255,255,255,.1)] text-gray-600 dark:text-gray-300'
                                       }`}
                                     >
-                                      <SubIcon className="w-4 h-4" />
+                                      <SubIcon className="w-4 h-4 icon" />
                                       <span className="font-medium">{subItem.title}</span>
                                     </Link>
                                   )

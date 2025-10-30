@@ -489,7 +489,7 @@ const GitHubRepositories = () => {
                     </TableCell>
                     <TableCell className="px-6 py-4">
                       {repo.language ? (
-                        <Badge variant="secondary" className="bg-blue-200 text-black dark:bg-blue-900 dark:text-white px-3 py-2">
+                        <Badge variant="secondary" className="bg-blue-500 text-white dark:bg-blue-900 dark:text-white px-3 py-2">
                           {repo.language}
                         </Badge>
                       ) : (
@@ -499,8 +499,8 @@ const GitHubRepositories = () => {
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Badge 
-                          variant={repo.isPrivate ? "destructive" : "outline"}
-                          className={repo.isPrivate ? "bg-red-200 text-black dark:bg-red-900 dark:text-white px-3 py-2" : "bg-green-200 text-black dark:bg-green-900 dark:text-white px-3 py-2"}
+                          // variant={repo.isPrivate ? "destructive" : "outline"}
+                          className={repo.isPrivate ? "bg-red-500 text-white dark:bg-red-900 dark:text-white px-3 py-2" : "bg-green-500 text-white dark:bg-green-900 dark:text-white px-3 py-2"}
                         >
                           {repo.isPrivate ? (
                             <>
@@ -564,7 +564,7 @@ const GitHubRepositories = () => {
       {/* Custom Edit Modal */}
       {isEditDialogOpen && (
         <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsEditDialogOpen(false)}>
-          <div className="bg-white dark:bg-gray-800 rounded-[30px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-white dark:bg-black border rounded-[10px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl font-semibold">Edit Repository</h2>
@@ -595,30 +595,36 @@ const GitHubRepositories = () => {
               />
             </div>
             <div>
-              <Label htmlFor="edit-description">Description</Label>
               <Textarea
                 id="edit-description"
                 value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 items-center justify-center">
               <div>
-                <Label htmlFor="edit-language">Language</Label>
                 <Input
                   id="edit-language"
                   value={formData.language}
                   onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))}
                 />
               </div>
-              <div className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  id="edit-isPrivate"
-                  checked={formData.isPrivate}
-                  onChange={(e) => setFormData(prev => ({ ...prev, isPrivate: e.target.checked }))}
-                />
-                <Label htmlFor="edit-isPrivate">Private Repository</Label>
+              <div className="flex items-center py-5 justify-end gap-2 h-full">
+             
+                <Badge
+                  variant={formData.isPrivate ? "outline" : "default"}
+                  className={`cursor-pointer select-none w-1/2 h-12 ${!formData.isPrivate ? 'bg-green-500 text-white' : ''}`}
+                  onClick={() => setFormData(prev => ({ ...prev, isPrivate: false }))}
+                >
+                  <Globe className="w-3 h-3" /> Public
+                </Badge>
+                <Badge
+                  variant={formData.isPrivate ? "default" : "outline"}
+                  className={`cursor-pointer select-none w-1/2 h-12 ${formData.isPrivate ? 'bg-red-500 text-white' : ''}`}
+                  onClick={() => setFormData(prev => ({ ...prev, isPrivate: true }))}
+                >
+                  <Lock className="w-3 h-3" /> Private
+                </Badge>
               </div>
             </div>
             <div>
@@ -677,7 +683,6 @@ const GitHubRepositories = () => {
               </div>
             </div>
             <div>
-              <Label>Tags</Label>
               <div className="flex gap-2 mb-2">
                 <Input
                   value={tagInput}
@@ -685,7 +690,7 @@ const GitHubRepositories = () => {
                   placeholder="Add a tag"
                   onKeyPress={(e) => e.key === 'Enter' && addTag()}
                 />
-                <Button type="button" onClick={addTag}><Plus /></Button>
+                <Button type="button" className="w-12" onClick={addTag}><Plus /></Button>
               </div>
               <div className="flex flex-wrap gap-2">
                 {formData.tags.map((tag, index) => (

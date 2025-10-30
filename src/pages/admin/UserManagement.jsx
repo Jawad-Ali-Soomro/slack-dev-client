@@ -238,7 +238,7 @@ const UserManagement = () => {
                             Edit Permissions
                           </DropdownMenuItem>
                           {userItem.role !== 'admin' && userItem.role !== 'superadmin' && (
-                            <DropdownMenuItem className="text-red-600">
+                            <DropdownMenuItem className="text-red-600 px-5 h-10">
                               <Trash2 className="w-4 h-4 mr-2" />
                               Delete User
                             </DropdownMenuItem>

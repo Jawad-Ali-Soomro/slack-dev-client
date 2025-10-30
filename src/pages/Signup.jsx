@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { toast } from "sonner"
 import { authService } from "../services/authService"
 import { Input } from "../components/ui/input"
+import { PiUserDuotone } from "react-icons/pi"
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -94,7 +95,7 @@ const Signup = () => {
         {/* Signup Card */}
         <motion.div
           variants={itemVariants}
-          className="p-5 md:p-8 md:shadow-2xl md:border-gray-300 md:rounded-[10px] md:dark:border-gray-700 md:border"
+          className="p-5 md:p-8 md:shadow-2xl md:rounded-[10px] md:dark:border-gray-700"
         >
           {/* Header */}
           <div className="text-center mb-8">
@@ -106,14 +107,14 @@ const Signup = () => {
               className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
               style={{ fontWeight: 800 }}
             >
-              Register
+              Get On Board!
             </motion.h1>
             <motion.p 
               variants={itemVariants}
               className="text-gray-600 dark:text-gray-300"
               style={{ fontWeight: 800 }}
             >
-              Join thousands of developers
+              Join thousands of devs!
             </motion.p>
           </div>
 
@@ -125,16 +126,16 @@ const Signup = () => {
             {/* Username Input */}
             <div>
               <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-                Username
+                Your Full Name
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
-                <Input
+                <PiUserDuotone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
+                <input
                   type="text"
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3"
+                  className="w-full pl-10 pr-12 py-3 text-sm border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
                   placeholder="Enter your username"
                   required
                 />
@@ -148,12 +149,12 @@ const Signup = () => {
               </label>
               <div className="relative">
                 <Mail className="absolute icon left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <Input
+                <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
+                  className="w-full pl-10 pr-12 py-3 text-sm border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
                   placeholder="Enter your email"
                   required
                 />
@@ -172,7 +173,8 @@ const Signup = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
+                  
+                  className="w-full pl-10 pr-12 py-3 text-sm border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
                   placeholder="Create a password"
                   required
                 />
@@ -208,11 +210,11 @@ const Signup = () => {
           </motion.div>
 
           {/* Login Link */}
-          <motion.div variants={itemVariants} className="text-center mt-6">
+          <motion.div variants={itemVariants} className="text-end mt-6">
             <p className="text-gray-600 dark:text-gray-300">
-              Already have an account?{" "}
-              <Link to="/login" className="text-black hover:text-gray-800 font-bold dark:text-white dark:hover:text-gray-200">
-                Sign in
+              {/* already have an account{" "} */}
+              <Link to="/login" className="px-15  ml-3 py-4 rounded-[10px] text-white bg-[#fe904b] text-sm uppercase font-bold">
+                Login
               </Link>
             </p>
           </motion.div>

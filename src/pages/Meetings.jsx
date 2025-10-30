@@ -545,7 +545,7 @@ const Meetings = () => {
                 <SelectTrigger className="w-[180px] px-5 h-13 bg-white cursor-pointer dark:bg-black text-black dark:text-white">
                   <SelectValue placeholder="All Status" />
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
+                <SelectContent className="bg-white dark:bg-black  border-gray-200 dark:border-gray-700">
                   <SelectItem className={'cursor-pointer h-10 px-5'} value="all">All Status</SelectItem>
                   <SelectItem className={'cursor-pointer h-10 px-5'} value="scheduled">Scheduled</SelectItem>
                   <SelectItem className={'cursor-pointer h-10 px-5'} value="pregress">In Progress</SelectItem>
@@ -557,10 +557,10 @@ const Meetings = () => {
                 <SelectTrigger className="w-[180px] px-5 h-13 bg-white cursor-pointer dark:bg-black text-black dark:text-white">
                   <SelectValue placeholder="All Types" />
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
+                <SelectContent className="bg-white dark:bg-black  border-gray-200 dark:border-gray-700">
                   <SelectItem className={'cursor-pointer h-10 px-5'} value="all">All Types</SelectItem>
                   <SelectItem className={'cursor-pointer h-10 px-5'} value="online">Online</SelectItem>
-                  <SelectItem className={'cursor-pointer h-10 px-5'} value="in-person">in-person</SelectItem>
+                  <SelectItem className={'cursor-pointer h-10 px-5'} value="in-person">In Person</SelectItem>
                   <SelectItem className={'cursor-pointer h-10 px-5'} value="hybrid">Hybrid</SelectItem>
                 </SelectContent>
               </Select>
@@ -964,7 +964,7 @@ const Meetings = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className=" bg-white dark:bg-black rounded-[30px] shadow-2xl border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+              className=" bg-white dark:bg-black rounded-[10px] shadow-2xl border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
             
@@ -1269,7 +1269,7 @@ const Meetings = () => {
                   {loading ? (
                     <span className="loader w-5 h-5"></span>
                   ) : (
-                    'Create Meeting'
+                    'Schedule'
                   )}
                 </Button>
               </div>

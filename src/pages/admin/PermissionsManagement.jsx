@@ -14,7 +14,8 @@ import {
   Crown,
   Mail,
   Calendar,
-  Settings
+  Settings,
+  Check
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -281,11 +282,11 @@ const PermissionsManagement = () => {
                     </td>
                     <td className="px-3 py-2 flex items-center justify-end pr-5">
                       <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" onClick={() => handleEditPermissions(userItem)}>
+                        <Button variant="outline" size="sm" className={'w-12'} onClick={() => handleEditPermissions(userItem)}>
                 <Edit className="w-4 h-4 icon" />
                         </Button>
                         {userItem.permissions && (
-                          <Button variant="outline" size="sm" onClick={() => handleDeletePermissions(userItem.id)} className="text-red-600 hover:text-red-700">
+                          <Button variant="outline" size="sm" clas onClick={() => handleDeletePermissions(userItem.id)} className="text-red-600 w-12 hover:text-red-700">
                 <X className="w-4 h-4 icon" />
                           </Button>
                         )}
@@ -413,7 +414,7 @@ const PermissionsManagement = () => {
                   onClick={handleSavePermissions}
                   className="bg-black dark:bg-white"
                 >
-                  <Save className="w-4 h-4 mr-2" />
+                  <Check className="w-4 h-4 mr-2" />
                   Save Permissions
                 </Button>
               </div>

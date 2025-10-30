@@ -1119,8 +1119,7 @@ const Projects = () => {
               className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Create New Project</h2>
+              <div className="flex items-center justify-end mb-6">
                 <button
                   onClick={() => setShowNewProjectPopup(false)}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"

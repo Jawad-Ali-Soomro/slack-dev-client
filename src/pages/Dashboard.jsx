@@ -483,7 +483,7 @@ const Dashboard = () => {
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={loadDashboardData}
-                  className="flex items-center space-x-2 gap-2 px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-white dark:to-gray-100 text-white dark:text-gray-900 rounded-[30px] shadow-lg hover:shadow-xl transition-all duration-200 font-medium"
+                  className="flex items-center space-x-2 gap-2 px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-white dark:to-gray-100 text-white dark:text-gray-900 rounded-[20px] shadow-lg hover:shadow-xl transition-all duration-200 font-medium"
                 >
                   <RefreshCw className="w-4 h-4" />
                   Refresh Data

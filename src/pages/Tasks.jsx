@@ -468,10 +468,10 @@ const Tasks = () => {
             </div>
             <div className="flex gap-3">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-[180px] px-5 border-2 h-13 h-13 bg-white dark:bg-black cursor-pointer text-black dark:text-white">
+                <SelectTrigger className="w-[180px] px-5 h-13 h-13 bg-white dark:bg-black cursor-pointer text-black dark:text-white">
                   <SelectValue   placeholder="All Status" />
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-black border-2">
+                <SelectContent className="bg-white dark:bg-black ">
                   <SelectItem className={'h-10 cursor-pointer px-5'} value="all">All Status</SelectItem>
                   <SelectItem className={'h-10 cursor-pointer px-5'} value="pending">Pending</SelectItem>
                   <SelectItem className={'h-10 cursor-pointer px-5'} value="in_progress">In Progress</SelectItem>
@@ -625,31 +625,31 @@ const Tasks = () => {
                             {task.status}
                           </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
+                        <DropdownMenuContent align="start" className="bg-white dark:bg-black border-gray-200 dark:border-gray-700">
                           <DropdownMenuItem 
                             onClick={() => handleStatusChange(task.id, 'pending')}
-                            className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-black"
+                            className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                           >
                             <AlertCircle className="w-4 h-4 mr-2 icon" />
                             Pending
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={() => handleStatusChange(task.id, 'in_progress')}
-                            className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-black"
+                            className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                           >
                             <Clock className="w-4 h-4 mr-2 icon" />
                             In Progress
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={() => handleStatusChange(task.id, 'completed')}
-                            className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-black"
+                            className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                           >
                             <CheckCircle className="w-4 h-4 mr-2 icon" />
                             Completed
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={() => handleStatusChange(task.id, 'cancelled')}
-                            className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-black"
+                            className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                           >
                             <AlertCircle className="w-4 h-4 mr-2 icon" />
                             Cancelled
@@ -662,7 +662,7 @@ const Tasks = () => {
                         <img 
                           {...getAvatarProps(task.assignTo?.avatar, task.assignTo?.username)}
                           alt={task.assignTo?.username || "User"}
-                          className="w-8 h-8 rounded-[30px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                          className="w-8 h-8 rounded-[30px] object-cover border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                           onClick={() => task.assignTo?.id && handleUserAvatarClick(task.assignTo.id)}
                           title={task.assignTo?.username ? `View ${task.assignTo.username}'s profile` : ''}
                         />
@@ -678,7 +678,7 @@ const Tasks = () => {
                         <img 
                           {...getAvatarProps(task.assignedBy?.avatar, task.assignedBy?.username)}
                           alt={task.assignedBy?.username || "User"}
-                          className="w-8 h-8 rounded-[30px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                          className="w-8 h-8 rounded-[30px] object-cover border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                           onClick={() => task.assignedBy?.id && handleUserAvatarClick(task.assignedBy.id)}
                           title={task.assignedBy?.username ? `View ${task.assignedBy.username}'s profile` : ''}
                         />
@@ -747,7 +747,7 @@ const Tasks = () => {
                               <MoreVertical className="w-4 h-4 icon" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
+                          <DropdownMenuContent align="end" className="bg-white dark:bg-black border-gray-200 dark:border-gray-700">
                             {user && user.id && task.assignedBy?.id === user.id && (
                               <DropdownMenuItem className="text-black h-12 px-5 cursor-pointer  dark:text-white hover:bg-gray-100 dark:hover:bg-black">
                                 <Edit className="w-4 h-4 mr-2 icon" />
@@ -762,31 +762,31 @@ const Tasks = () => {
                                     Change Status
                                   </DropdownMenuItem>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
+                                <DropdownMenuContent align="end" className="bg-white dark:bg-black border-gray-200 dark:border-gray-700">
                                   <DropdownMenuItem 
                                     onClick={() => handleStatusChange(task.id, 'pending')}
-                                    className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-black"
+                                    className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                                   >
                                     <AlertCircle className="w-4 h-4 mr-2 icon" />
                                     Pending
                                   </DropdownMenuItem>
                                   <DropdownMenuItem 
                                     onClick={() => handleStatusChange(task.id, 'in_progress')}
-                                    className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-black"
+                                    className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                                   >
                                     <Clock className="w-4 h-4 mr-2 icon" />
                                     In Progress
                                   </DropdownMenuItem>
                                   <DropdownMenuItem 
                                     onClick={() => handleStatusChange(task.id, 'completed')}
-                                    className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-black"
+                                    className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                                   >
                                     <CheckCircle className="w-4 h-4 mr-2 icon" />
                                     Completed
                                   </DropdownMenuItem>
                                   <DropdownMenuItem 
                                     onClick={() => handleStatusChange(task.id, 'cancelled')}
-                                    className="text-black dark:text-white hover:bg-gray-100 dark:hover:bg-black"
+                                    className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                                   >
                                     <AlertCircle className="w-4 h-4 mr-2 icon" />
                                     Cancelled
@@ -828,7 +828,7 @@ const Tasks = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className=" bg-white dark:bg-black rounded-[30px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+              className=" bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
               
@@ -841,7 +841,7 @@ const Tasks = () => {
                     type="text"
                     value={newTask.title}
                     onChange={(e) => setNewTask({...newTask, title: e.target.value})}
-                    className="w-full border-2 h-12 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
+                    className="w-full h-12 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
                     placeholder="Enter task title"
                   />
                 </div>
@@ -853,7 +853,7 @@ const Tasks = () => {
                   <Textarea
                     value={newTask.description}
                     onChange={(e) => setNewTask({...newTask, description: e.target.value})}
-                    className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
+                    className="w-full border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
                     placeholder="Enter task description"
                     rows="3"
                   />
@@ -865,10 +865,10 @@ const Tasks = () => {
                       Priority
                     </label> */}
                     <Select value={newTask.priority} onValueChange={(value) => setNewTask({...newTask, priority: value})}>
-                      <SelectTrigger className="w-full h-12 border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white">
+                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white">
                         <SelectValue placeholder="Select priority" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
+                      <SelectContent className="bg-white dark:bg-black border-gray-200 dark:border-gray-700">
                         <SelectItem className={'h-10 cursor-pointer px-5'} value="low">Low</SelectItem>
                         <SelectItem className={'h-10 cursor-pointer px-5'} value="medium">Medium</SelectItem>
                         <SelectItem className={'h-10 cursor-pointer px-5'} value="high">High</SelectItem>
@@ -884,7 +884,7 @@ const Tasks = () => {
                       type="date"
                       value={newTask.dueDate}
                       onChange={(e) => setNewTask({...newTask, dueDate: e.target.value})}
-                      className="w-full border-2 h-12 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
+                      className="w-full h-12 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
                     />
                   </div>
                 </div>
@@ -903,11 +903,11 @@ const Tasks = () => {
                           setShowAssignedToSuggestions(true)
                         }
                       }}
-                      className="w-full h-12 border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
+                      className="w-full h-12 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
                       placeholder="Type to search users..."
                     />
                     {showAssignedToSuggestions && assignedToSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[30px] shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-gray-200 dark:border-gray-700 rounded-[30px] shadow-lg max-h-48 overflow-y-auto">
                         {assignedToSuggestions.map((user) => (
                               <div
                                 key={user.id}
@@ -918,7 +918,7 @@ const Tasks = () => {
                                   <img 
                                     {...getAvatarProps(user.avatar, user.username || user.name)}
                                     alt={user.username || user.name}
-                                    className="w-8 h-8 rounded-[30px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                                    className="w-8 h-8 rounded-[30px] object-cover border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                                     onClick={(e) => {
                                       e.stopPropagation()
                                       handleUserAvatarClick(user.id)
@@ -940,10 +940,10 @@ const Tasks = () => {
                 <div>
                   {/* Project Selection */}
                   <Select value={newTask.projectId} onValueChange={(value) => setNewTask({...newTask, projectId: value})}>
-                    <SelectTrigger className="w-full h-12 border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white">
+                    <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white">
                       <SelectValue placeholder="Select project (optional)" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
+                    <SelectContent className="bg-white dark:bg-black border-gray-200 dark:border-gray-700">
                       <SelectItem className={'h-10 cursor-pointer px-5'} value="none">No Project</SelectItem>
                       {projects.map((project) => (
                         <SelectItem className={'h-10 cursor-pointer px-5'} key={project.id} value={project.id}>
@@ -959,7 +959,7 @@ const Tasks = () => {
                 <Button
                   variant="outline"
                   onClick={() => setShowNewTaskPopup(false)}
-                  className="flex-1 px-4 py-3 h-12 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black"
+                  className="flex-1 px-4 py-3 h-12 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black"
                 >
                   Cancel
                 </Button>
@@ -971,7 +971,7 @@ const Tasks = () => {
                   {loading ? (
                     <span class="loader w-5 h-5"></span>
                   ) : (
-                    'Create Task'
+                    'Assign'
                   )}
                 </Button>
               </div>

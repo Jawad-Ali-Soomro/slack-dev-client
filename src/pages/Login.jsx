@@ -106,6 +106,7 @@ const Login = () => {
     }
   }
 
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center p-6">
       {/* Background Elements */}
@@ -124,21 +125,15 @@ const Login = () => {
         {/* Login Card */}
         <motion.div
           variants={itemVariants}
-          className="p-5 md:p-8 shadow-2xl md:border-gray-300 md:rounded-[10px] md:dark:border-gray-700 md:border"
+          className="p-5 md:p-8 shadow-2xl md:rounded-[10px] md:dark:border-gray-700"
         >
 
 <motion.div variants={itemVariants} className="mb-6">
-            <Link 
-              to="/" 
-              className="flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors text-sm"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              
-            </Link>
+            
           </motion.div>
           {/* Header */}
           <div className="text-center mb-8">
-            <motion.div variants={itemVariants} className="mb-4">
+            <motion.div variants={itemVariants} className="mb-4" onClick={() => navigate('/')}>
               <img src="/logo.png" alt="logo" className="w-16 h-16 mx-auto" />
             </motion.div>
             <motion.h1 
@@ -189,7 +184,7 @@ const Login = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
+                  className="w-full pl-10 pr-4 text-sm py-3 border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
                   placeholder="Enter your email"
                   required
                 />
@@ -208,7 +203,7 @@ const Login = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-12 py-3 border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
+                  className="w-full pl-10 pr-12 py-3 text-sm border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
                   placeholder="Enter your password"
                   required
                 />
@@ -252,10 +247,10 @@ const Login = () => {
           </motion.div>
 
           {/* Sign Up Link */}
-          <motion.div variants={itemVariants} className="text-center mt-6">
+          <motion.div variants={itemVariants} className="text-end mt-6">
             <p className="text-gray-600 dark:text-gray-300">
-              Don't have an account?{" "}
-              <Link to="/signup" className="text-black hover:text-gray-800 font-bold dark:text-white dark:hover:text-gray-200">
+              {/* don't have an account{" "} */}
+              <Link to="/signup" className="px-15  ml-3 py-4 rounded-[10px] text-white bg-[#fe904b] text-sm uppercase font-bold">
                 Register
               </Link>
             </p>
