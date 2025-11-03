@@ -172,7 +172,7 @@ const GitHubDashboard = () => {
                   onClick={loadDashboardData}
                   className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-white dark:to-gray-100 text-white dark:text-gray-900 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-medium"
                 >
-                  <RefreshCw className="w-4 h-4" />
+                  <RefreshCw className="w-4 h-4 icon" />
                   <span>Refresh Data</span>
                 </motion.button>
                 
@@ -180,57 +180,7 @@ const GitHubDashboard = () => {
               </motion.div>
             </div>
 
-            {/* GitHub Status Bar */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="grid grid-cols-2 md:grid-cols-3 gap-4"
-            >
-              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3 bg-gray-500 rounded-full animate-pulse"></div>
-                  <div>
-                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                      Repository Status
-                    </p>
-                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                      All Active
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3 bg-gray-500 rounded-full animate-pulse"></div>
-                  <div>
-                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                      Sync Status
-                    </p>
-                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                      Real-time
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-gray-200 dark:border-gray-700">
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3 bg-gray-500 rounded-full animate-pulse"></div>
-                  <div>
-                    <p className="text-xs font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
-                      Activity Level
-                    </p>
-                    <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                      High
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-          
-            </motion.div>
+            
           </div>
 
           {/* Enhanced Summary Cards */}
@@ -268,29 +218,7 @@ const GitHubDashboard = () => {
             transition={{ delay: 0.9, duration: 0.6 }}
           >
             {/* Chart Header */}
-            <div>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="p-3 bg-gradient-to-br from-blue-800 to-blue-900 dark:from-blue-200 dark:to-blue-300 rounded-[30px] shadow-lg">
-                    <BarChart3 className="w-6 h-6 text-white dark:text-blue-800" />
-                  </div>
-                  <div>
-                    <h2 className="text-2xl font-bold text-blue-900 dark:text-white">
-                      GitHub Analytics
-                    </h2>
-                    <p className="text-sm text-blue-600 dark:text-blue-400">
-                      Repository and activity distribution overview
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
-                    Live Data
-                  </span>
-                </div>
-              </div>
-        </div>
+         
 
         {/* Data Distribution Sections */}
             <div className="mt-10">
@@ -305,10 +233,10 @@ const GitHubDashboard = () => {
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center space-x-3">
                       <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[30px]">
-                        <FolderOpen className="w-5 h-5 text-white dark:text-gray-800" />
+                        <FolderOpen className="w-5 h-5 icon text-white dark:text-gray-800" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        <h3 className="text-lg  text-gray-900 dark:text-white">
                           Repository Types
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -317,7 +245,7 @@ const GitHubDashboard = () => {
                       </div>
                </div>
               <div className="text-right">
-                      <div className="text-xl font-bold text-gray-900 dark:text-white">
+                      <div className="text-xl  text-gray-900 dark:text-white">
                         {stats.totalRepositories}
                       </div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -363,11 +291,11 @@ const GitHubDashboard = () => {
                         className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
                       >
                         <div
-                          className="w-4 h-4 rounded-[30px] mr-3 shadow-sm"
+                          className="w-4 h-4 icon rounded-[30px] mr-3 shadow-sm"
                     style={{ backgroundColor: item.color }}
                   ></div>
                         <div>
-                          <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                          <div className="text-sm  text-gray-900 dark:text-white">
                             {item.value}
                           </div>
                           <div className="text-xs text-gray-600 dark:text-gray-400">
@@ -389,10 +317,10 @@ const GitHubDashboard = () => {
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center space-x-3">
                       <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[30px]">
-                        <TrendingUp className="w-5 h-5 text-white dark:text-gray-800" />
+                        <TrendingUp className="w-5 h-5 icon text-white dark:text-gray-800" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        <h3 className="text-lg  text-gray-900 dark:text-white">
                           Activity Overview
                         </h3>
                         <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -401,7 +329,7 @@ const GitHubDashboard = () => {
                       </div>
               </div>
               <div className="text-right">
-                      <div className="text-xl font-bold text-gray-900 dark:text-white">
+                      <div className="text-xl  text-gray-900 dark:text-white">
                         {stats.totalPullRequests + stats.totalIssues}
                       </div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">
@@ -449,11 +377,11 @@ const GitHubDashboard = () => {
                         className={`flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[30px] ${item.name === "Total Activity" ? "col-span-2" : ""}`}
                       >
                         <div
-                          className="w-4 h-4 rounded-[30px] mr-3 shadow-sm"
+                          className="w-4 h-4 icon rounded-[30px] mr-3 shadow-sm"
                     style={{ backgroundColor: item.color }}
                   ></div>
                         <div>
-                          <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                          <div className="text-sm  text-gray-900 dark:text-white">
                             {item.value}
                           </div>
                           <div className="text-xs text-gray-600 dark:text-gray-400">
@@ -492,7 +420,7 @@ const GitHubDashboard = () => {
                     <FolderOpen className="w-6 h-6 text-white" />
                   </div>
                   <div className="text-left">
-                    <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                    <div className="text-lg  text-gray-900 dark:text-white">
                       Manage Repositories
                     </div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -511,7 +439,7 @@ const GitHubDashboard = () => {
                     <GitPullRequest className="w-6 h-6 text-white" />
                   </div>
                   <div className="text-left">
-                    <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                    <div className="text-lg  text-gray-900 dark:text-white">
                       Track Pull Requests
                     </div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -530,7 +458,7 @@ const GitHubDashboard = () => {
                     <AlertCircle className="w-6 h-6 text-white" />
                   </div>
                   <div className="text-left">
-                    <div className="text-lg font-semibold text-gray-900 dark:text-white">
+                    <div className="text-lg  text-gray-900 dark:text-white">
                       Manage Issues
                     </div>
                     <div className="text-sm text-gray-600 dark:text-gray-400">

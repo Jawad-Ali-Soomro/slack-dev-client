@@ -26,7 +26,8 @@ import {
   Tag,
   User,
   XCircle,
-  Loader
+  Loader,
+  Import
 } from 'lucide-react'
 import { toast } from 'sonner'
 import GitHubUserReposModal from '../components/GitHubUserReposModal'
@@ -210,7 +211,7 @@ const GitHubRepositories = () => {
           <div>
           <div className="flex gap-4">
           <div className="relative flex-1 max-w-[600px]">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 icon" />
             <Input
               placeholder="Search repositories..."
               value={searchTerm}
@@ -233,16 +234,16 @@ const GitHubRepositories = () => {
           </div>
           <div className="flex gap-3">
             <Button onClick={() => setIsCreateDialogOpen(true)} className={'w-[200px]'}>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Repository
+              {/* <Plus className="h-4 w-4 icon mr-2" /> */}
+              New Repository
             </Button>
             <Button 
               onClick={() => setIsGitHubUserModalOpen(true)} 
               variant="outline"
               className={'w-[200px]'}
             >
-              <Github className="h-4 w-4 mr-2" />
-              Import from GitHub
+              <Import className="h-4 w-4 icon mr-2" />
+              Import from Github
             </Button>
           </div>
         </div>
@@ -253,7 +254,7 @@ const GitHubRepositories = () => {
             <div className="bg-white dark:bg-black rounded-[30px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className="text-xl font-semibold">Add New Repository</h2>
+                  <h2 className="text-xl ">Add New Repository</h2>
                  
                 </div>
                 <Button 
@@ -262,7 +263,7 @@ const GitHubRepositories = () => {
                   onClick={() => setIsCreateDialogOpen(false)}
                   className={'w-12'}
                 >
-                  <XCircle className="h-4 w-4" />
+                  <XCircle className="h-4 w-4 icon" />
                 </Button>
               </div>
               <div className="space-y-4">
@@ -317,9 +318,9 @@ const GitHubRepositories = () => {
                         <SelectItem key={friend._id} value={friend._id}>
                           <div className="flex items-center gap-2">
                             {friend.avatar ? (
-                              <img src={`http://localhost:4000${friend.avatar}`} alt={friend.username} className="w-5 h-5 rounded-full" />
+                              <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${friend.avatar}`} alt={friend.username} className="w-5 h-5 icon rounded-full" />
                             ) : (
-                              <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs">
+                              <div className="w-5 h-5 icon rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white  text-xs">
                                 {friend.username?.charAt(0)?.toUpperCase() || 'U'}
                               </div>
                             )}
@@ -340,9 +341,9 @@ const GitHubRepositories = () => {
                           }))
                         }}>
                           {contributor?.avatar ? (
-                            <img src={`http://localhost:4000${contributor.avatar}`} alt={contributor.username} className="w-4 h-4 rounded-full" />
+                            <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${contributor.avatar}`} alt={contributor.username} className="w-4 h-4 icon rounded-full" />
                           ) : (
-                            <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs">
+                            <div className="w-4 h-4 icon rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white  text-xs">
                               {contributor?.username?.charAt(0)?.toUpperCase() || 'U'}
                             </div>
                           )}
@@ -396,12 +397,12 @@ const GitHubRepositories = () => {
       ) : filteredRepositories.length === 0 ? (
         <div className="text-center py-12">
           <FolderOpen className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-          <h3 className="text-lg font-semibold mb-2">No repositories found</h3>
+          <h3 className="text-lg  mb-2">No repositories found</h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             {searchTerm ? 'Try adjusting your search terms' : 'You haven\'t registered any repositories yet'}
           </p>
           <Button onClick={() => setIsCreateDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="h-4 w-4 icon mr-2" />
             Add Your First Repository
           </Button>
         </div>
@@ -411,25 +412,25 @@ const GitHubRepositories = () => {
             <Table>
               <TableHeader className="bg-gray-100 text-black dark:border-gray-700 sticky top-0 z-10">
                 <TableRow>
-                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs font-bold  uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs   uppercase tracking-wider">
                     Repository
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs font-bold  uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs   uppercase tracking-wider">
                     Owner
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs font-bold  uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs   uppercase tracking-wider">
                     Contributors
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs font-bold  uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs   uppercase tracking-wider">
                     Language
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs font-bold  uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs   uppercase tracking-wider">
                     Status
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs font-bold  uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs   uppercase tracking-wider">
                     Updated
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs font-bold  uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs   uppercase tracking-wider">
                     
                   </TableHead>
                 </TableRow>
@@ -442,7 +443,7 @@ const GitHubRepositories = () => {
                         
                         <div className="ml-4">
                           <div className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                            {/* <Code className="h-4 w-4 text-gray-500" /> */}
+                            {/* <Code className="h-4 w-4 icon text-gray-500" /> */}
                             {repo.name}
                           </div>
                           
@@ -453,9 +454,9 @@ const GitHubRepositories = () => {
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-8 w-8">
                           {repo.owner?.avatar ? (
-                            <img className="h-8 w-8 rounded-full" src={`http://localhost:4000${repo.owner.avatar}`} alt={repo.owner.username} />
+                            <img className="h-8 w-8 rounded-full" src={`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${repo.owner.avatar}`} alt={repo.owner.username} />
                           ) : (
-                            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-white font-semibold text-xs">
+                            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-white  text-xs">
                               {repo.owner?.username?.charAt(0)?.toUpperCase() || 'U'}
                             </div>
                           )}
@@ -472,16 +473,16 @@ const GitHubRepositories = () => {
                         {repo.contributors?.slice(0, 3).map((contributor, index) => (
                           <div key={index} className="relative">
                             {contributor.avatar ? (
-                                <img className="h-8 w-8 rounded-full border-2 border-white dark:border-gray-800" src={`http://localhost:4000${contributor.avatar}`} alt={contributor.username} />
+                                <img className="h-8 w-8 rounded-full  border-white dark:border-gray-800" src={`http://localhost:4000${contributor.avatar}`} alt={contributor.username} />
                                 ) : (
-                              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-white font-semibold text-xs border-2 border-white dark:border-gray-800">
+                              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-white  text-xs  border-white dark:border-gray-800">
                                 {contributor.username?.charAt(0)?.toUpperCase() || 'U'}
                               </div>
                             )}
                           </div>
                         ))}
                         {repo.contributors?.length > 3 && (
-                          <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300 border-2 border-white dark:border-gray-800">
+                          <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300  border-white dark:border-gray-800">
                             +{repo.contributors.length - 3}
                           </div>
                         )}
@@ -504,12 +505,12 @@ const GitHubRepositories = () => {
                         >
                           {repo.isPrivate ? (
                             <>
-                              <Lock className="h-3 w-3 mr-1" />
+                              <Lock className="h-3 w-3 icon mr-1" />
                               Private
                             </>
                           ) : (
                             <>
-                              <Globe className="h-3 w-3 mr-1" />
+                              <Globe className="h-3 w-3 icon mr-1" />
                               Public
                             </>
                           )}
@@ -521,7 +522,7 @@ const GitHubRepositories = () => {
                     </TableCell>
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center gap-1">
-                        <Calendar className="h-4 w-4" />
+                        <Calendar className="h-4 w-4 icon" />
                         {formatDate(repo.updatedAt)}
                       </div>
                     </TableCell>
@@ -533,7 +534,7 @@ const GitHubRepositories = () => {
                           onClick={() => handleEditRepository(repo)}
                           className="w-12 hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
-                          <Edit className="h-4 w-4" />
+                          <Edit className="h-4 w-4 icon" />
                         </Button>
                         <Button 
                           variant="ghost" 
@@ -541,7 +542,7 @@ const GitHubRepositories = () => {
                           onClick={() => window.open(repo.githubUrl, '_blank')}
                           className="w-12 hover:bg-blue-100 dark:hover:bg-blue-900/20"
                         >
-                          <ExternalLink className="h-4 w-4 text-blue-500" />
+                          <ExternalLink className="h-4 w-4 icon text-blue-500" />
                         </Button>
                         <Button 
                           variant="ghost" 
@@ -549,7 +550,7 @@ const GitHubRepositories = () => {
                           onClick={() => handleDeleteRepository(repo._id)}
                           className="w-12 hover:bg-red-100 dark:hover:bg-red-900/20"
                         >
-                          <Trash2 className="h-4 w-4 text-red-500" />
+                          <Trash2 className="h-4 w-4 icon text-red-500" />
                         </Button>
                       </div>
                     </TableCell>
@@ -567,7 +568,7 @@ const GitHubRepositories = () => {
           <div className="bg-white dark:bg-black border rounded-[10px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-xl font-semibold">Edit Repository</h2>
+                <h2 className="text-xl ">Edit Repository</h2>
               
               </div>
               <Button 
@@ -576,7 +577,7 @@ const GitHubRepositories = () => {
                 onClick={() => setIsEditDialogOpen(false)}
                 className="cursor-pointer w-12"
               >
-                <XCircle className="h-4 w-4" />
+                <XCircle className="h-4 w-4 icon" />
               </Button>
             </div>
           <div className="space-y-4">
@@ -616,14 +617,14 @@ const GitHubRepositories = () => {
                   className={`cursor-pointer select-none w-1/2 h-12 ${!formData.isPrivate ? 'bg-green-500 text-white' : ''}`}
                   onClick={() => setFormData(prev => ({ ...prev, isPrivate: false }))}
                 >
-                  <Globe className="w-3 h-3" /> Public
+                  <Globe className="w-3 h-3 icon" /> Public
                 </Badge>
                 <Badge
                   variant={formData.isPrivate ? "default" : "outline"}
                   className={`cursor-pointer select-none w-1/2 h-12 ${formData.isPrivate ? 'bg-red-500 text-white' : ''}`}
                   onClick={() => setFormData(prev => ({ ...prev, isPrivate: true }))}
                 >
-                  <Lock className="w-3 h-3" /> Private
+                  <Lock className="w-3 h-3 icon" /> Private
                 </Badge>
               </div>
             </div>
@@ -647,9 +648,9 @@ const GitHubRepositories = () => {
                     <SelectItem key={friend._id} value={friend._id}>
                       <div className="flex items-center gap-2">
                         {friend.avatar ? (
-                          <img src={`http://localhost:4000${friend.avatar}`} alt={friend.username} className="w-5 h-5 rounded-full" />
+                          <img src={`http://localhost:4000${friend.avatar}`} alt={friend.username} className="w-5 h-5 icon rounded-full" />
                         ) : (
-                          <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs">
+                          <div className="w-5 h-5 icon rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white  text-xs">
                             {friend.username?.charAt(0)?.toUpperCase() || 'U'}
                           </div>
                         )}
@@ -670,9 +671,9 @@ const GitHubRepositories = () => {
                       }))
                     }}>
                       {contributor?.avatar ? (
-                        <img src={`http://localhost:4000${contributor.avatar}`} alt={contributor.username} className="w-4 h-4 rounded-full" />
+                        <img src={`http://localhost:4000${contributor.avatar}`} alt={contributor.username} className="w-4 h-4 icon rounded-full" />
                       ) : (
-                        <div className="w-4 h-4 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs">
+                        <div className="w-4 h-4 icon rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white  text-xs">
                           {contributor?.username?.charAt(0)?.toUpperCase() || 'U'}
                         </div>
                       )}

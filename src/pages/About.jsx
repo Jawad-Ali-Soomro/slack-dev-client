@@ -37,7 +37,7 @@ const About = () => {
         <div className="text-center mb-20">
           <motion.h1 
             variants={itemVariants}
-            className="text-6xl font-bold text-gray-900 dark:text-white  mb-6"
+            className="text-6xl  text-gray-900 dark:text-white  mb-6"
             style={{ fontWeight: 900 }}
           >
             Know Us!
@@ -79,13 +79,13 @@ const About = () => {
               className="text-center glass-card p-8 rounded-[10px]"
               whileHover={{ y: -5 }}
             >
-              <div className="text-4xl font-bold text-black mb-2 dark:text-white"
+              <div className="text-4xl  text-black mb-2 dark:text-white"
                 style={{
                   fontWeight: 900
                 }}>
                 {stat.number}
               </div>
-              <div className="text-gray-600 dark:text-gray-300 font-bold text-[15px] "   style={{
+              <div className="text-gray-600 dark:text-gray-300  text-[15px] "   style={{
             fontWeight: 800
           }}>
                 {stat.label}
@@ -157,10 +157,10 @@ const About = () => {
                     {value.icon}
                   </div>
                 </div>
-                <h3 className="text-xl font-bold dark:text-white mb-4 " >
+                <h3 className="text-xl  dark:text-white mb-4 " >
                   {value.title}
                 </h3>
-                <p className="text-[15px] font-semibold  leading-relaxed">
+                <p className="text-[15px]   leading-relaxed">
                   {value.description}
                 </p>
               </motion.div>

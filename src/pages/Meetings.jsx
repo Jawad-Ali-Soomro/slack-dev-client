@@ -319,11 +319,11 @@ const Meetings = () => {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case "completed": return <CheckCircle className="w-4 h-4 icon" />
-      case "pregress": return <Clock className="w-4 h-4 icon" />
-      case "scheduled": return <Calendar className="w-4 h-4 icon" />
-      case "cancelled": return <AlertCircle className="w-4 h-4 icon" />
-      default: return <Calendar className="w-4 h-4 icon" />
+      case "completed": return <CheckCircle className="w-4 h-4 icon icon" />
+      case "pregress": return <Clock className="w-4 h-4 icon icon" />
+      case "scheduled": return <Calendar className="w-4 h-4 icon icon" />
+      case "cancelled": return <AlertCircle className="w-4 h-4 icon icon" />
+      default: return <Calendar className="w-4 h-4 icon icon" />
     }
   }
 
@@ -531,18 +531,18 @@ const Meetings = () => {
             <motion.div variants={itemVariants}>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-50 icon" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon z-50 icon" />
               <Input
                 type="text"
                 placeholder="Search meetings..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-[500px] pl-10 pr-4 py-3 border border-gray-200 h-13 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
+                className="w-[500px] pl-10 pr-4 py-3 border border-gray-200 h-13 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white"
               />
             </div>
             <div className="flex gap-3">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-[180px] px-5 h-13 bg-white cursor-pointer dark:bg-black text-black dark:text-white">
+                <SelectTrigger className="w-[180px] px-5 h-13 bg-white cursor-pointer dark:bg-black dark:text-white">
                   <SelectValue placeholder="All Status" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-black  border-gray-200 dark:border-gray-700">
@@ -554,7 +554,7 @@ const Meetings = () => {
                 </SelectContent>
               </Select>
               <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger className="w-[180px] px-5 h-13 bg-white cursor-pointer dark:bg-black text-black dark:text-white">
+                <SelectTrigger className="w-[180px] px-5 h-13 bg-white cursor-pointer dark:bg-black dark:text-white">
                   <SelectValue placeholder="All Types" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-black  border-gray-200 dark:border-gray-700">
@@ -572,11 +572,11 @@ const Meetings = () => {
               {selectedMeetings.length > 0 && (
                 <motion.button
                   onClick={handleBulkDelete}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-[30px] font-bold hover:bg-red-700 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-[30px]  hover:bg-red-700 transition-colors"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
-                  <Trash2 className="w-4 h-4 icon" />
+                  <Trash2 className="w-4 h-4 icon icon" />
                   Delete ({selectedMeetings.length})
                 </motion.button>
               )}
@@ -592,8 +592,7 @@ const Meetings = () => {
                 }}
                 className={'w-[200px] rounded-[10px] h-12'}
               >
-                <Plus className={ICON_SIZES.sm} />
-                New Meeting
+                Schedule Meeting
               </Button>
               }
 
@@ -612,31 +611,31 @@ const Meetings = () => {
               <thead className="bg-gray-100 text-black border-gray-200 dark:border-gray-700 sticky top-0 z-10">
                 <tr>
                      
-                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Meeting
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Type
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Assigned To
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Attendees
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Project
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Date & Time
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Location
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     
                   </th>
                 </tr>
@@ -671,7 +670,7 @@ const Meetings = () => {
                        
                     <td className="px-6 py-4">
                       <div>
-                        <div className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                        <div className="text-sm  text-gray-900 dark:text-white truncate">
                           {meeting.title}
                         </div>
                         {/* <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -692,16 +691,16 @@ const Meetings = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <span className={`inline-flex items-center rounded-[30px] uppercase text-xs font-bold truncate ${getTypeColor(meeting.type)}`}>
-                        {meeting.type === 'online' && <Video className="w-4 h-4 mr-1 icon" />}
-                        {meeting.type === 'in-person' && <MapPin className="w-4 h-4 mr-1 icon" />}
-                        {meeting.type === 'hybrid' && <Calendar className="w-4 h-4 mr-1 icon" />}
+                      <span className={`inline-flex items-center rounded-[30px] uppercase text-xs  truncate ${getTypeColor(meeting.type)}`}>
+                        {meeting.type === 'online' && <Video className="w-4 h-4 icon mr-1 icon" />}
+                        {meeting.type === 'in-person' && <MapPin className="w-4 h-4 icon mr-1 icon" />}
+                        {meeting.type === 'hybrid' && <Calendar className="w-4 h-4 icon mr-1 icon" />}
                         {meeting.type.replaceAll("-", " ")}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <span className={`inline-flex items-center gap-1 rounded-[30px] text-xs font-bold truncate uppercase ${getStatusColor(meeting.status)}`}>
+                        <span className={`inline-flex items-center gap-1 rounded-[30px] text-xs  truncate uppercase ${getStatusColor(meeting.status)}`}>
                           {getStatusIcon(meeting.status)}
                           {meeting.status}
                         </span>
@@ -713,14 +712,14 @@ const Meetings = () => {
                               className="p-1 rounded-full bg-green-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/40 transition-colors"
                               title="Mark as Completed"
                             >
-                              <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+                              <CheckCircle className="w-4 h-4 icon text-green-600 dark:text-green-400" />
                             </button>
                             <button
                               onClick={() => handleStatusChangeWithConfirmation(meeting.id, 'cancelled', meeting.title)}
                               className="p-1 rounded-full bg-red-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/40 transition-colors"
                               title="Cancel Meeting"
                             >
-                              <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
+                              <AlertCircle className="w-4 h-4 icon text-red-600 dark:text-red-400" />
                             </button>
                           </div>
                         )}
@@ -730,7 +729,7 @@ const Meetings = () => {
                             className="p-1 rounded-full bg-red-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/40 transition-colors"
                             title="Mark as Cancelled"
                           >
-                            <AlertCircle className="w-4 h-4 text-red-600 dark:text-red-400" />
+                            <AlertCircle className="w-4 h-4 icon text-red-600 dark:text-red-400" />
                           </button>
                         )}
                         {meeting.status === 'cancelled' && (
@@ -739,7 +738,7 @@ const Meetings = () => {
                             className="p-1 rounded-full bg-green-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/40 transition-colors"
                             title="Mark as Completed"
                           >
-                            <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+                            <CheckCircle className="w-4 h-4 icon text-green-600 dark:text-green-400" />
                           </button>
                         )}
                       </div>
@@ -752,7 +751,7 @@ const Meetings = () => {
                             meeting.assignedTo?.username
                           )}
                           alt={meeting.assignedTo?.username || "User"}
-                          className="w-8 h-8 rounded-[30px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                          className="w-8 h-8 rounded-[30px] object-cover  border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                           onClick={() => meeting.assignedTo?.id && handleUserAvatarClick(meeting.assignedTo.id)}
                           title={meeting.assignedTo?.username ? `View ${meeting.assignedTo.username}'s profile` : ''}
                         />
@@ -812,7 +811,7 @@ const Meetings = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 text-gray-400 icon" />
+                        <Calendar className="w-4 h-4 icon text-gray-400 icon" />
                         <div>
                           <div className="text-sm text-gray-900 dark:text-white">
                             {meeting.startDate ? new Date(meeting.startDate).toLocaleDateString() : 'N/A'}
@@ -847,7 +846,7 @@ const Meetings = () => {
                             onClick={() => handleEditMeeting(meeting)}
                             className="p-2 text-gray-400 hover:text-black dark:hover:text-white"
                           >
-                            <Edit className="w-4 h-4 icon" />
+                            <Edit className="w-4 h-4 icon icon" />
                           </Button>
                         )}
                         {user && user.id && meeting.assignedBy?.id === user.id && (
@@ -857,7 +856,7 @@ const Meetings = () => {
                             onClick={() => handleDeleteMeeting(meeting.id)}
                             className="p-2 text-gray-400 hover:text-red-600"
                           >
-                            <Trash2 className="w-4 h-4 icon" />
+                            <Trash2 className="w-4 h-4 icon icon" />
                           </Button>
                         )}
                         <DropdownMenu>
@@ -867,16 +866,16 @@ const Meetings = () => {
                               size="sm"
                               className="p-2 text-gray-400 h-10 hover:text-black dark:hover:text-white"
                             >
-                              <MoreVertical className="w-4 h-4 icon" />
+                              <MoreVertical className="w-4 h-4 icon icon" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
+                          <DropdownMenuContent align="end" className="bg-white dark:bg-black  border-gray-200 dark:border-gray-700">
                             {user && user.id && meeting.assignedBy?.id === user.id && (
                               <DropdownMenuItem 
                                 onClick={() => handleEditMeeting(meeting)}
                                 className="text-black h-12 px-5 cursor-pointer dark:text-white hover:bg-gray-100 dark:hover:bg-black"
                               >
-                                <Edit className="w-4 h-4 mr-2 icon" />
+                                <Edit className="w-4 h-4 icon mr-2 icon" />
                                 Edit Meeting
                               </DropdownMenuItem>
                             )}
@@ -885,7 +884,7 @@ const Meetings = () => {
                                 onClick={() => handleEditMeeting(meeting)}
                                 className="text-black dark:text-white h-12 px-5 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                               >
-                                <Calendar className="w-4 h-4 mr-2 icon" />
+                                <Calendar className="w-4 h-4 icon mr-2 icon" />
                                 Reschedule
                               </DropdownMenuItem>
                             )}
@@ -896,14 +895,14 @@ const Meetings = () => {
                                   onClick={() => handleStatusChangeWithConfirmation(meeting.id, 'completed', meeting.title)}
                                   className="text-green-600 dark:text-green-400 h-12 px-5 cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/20"
                                 >
-                                  <CheckCircle className="w-4 h-4 mr-2 icon" />
+                                  <CheckCircle className="w-4 h-4 icon mr-2 icon" />
                                   Mark as Completed
                                 </DropdownMenuItem>
                                 <DropdownMenuItem 
                                   onClick={() => handleStatusChangeWithConfirmation(meeting.id, 'cancelled', meeting.title)}
                                   className="text-red-600 dark:text-red-400 h-12 px-5 cursor-pointer hover:bg-red-100 dark:hover:bg-red-900/20"
                                 >
-                                  <AlertCircle className="w-4 h-4 mr-2 icon" />
+                                  <AlertCircle className="w-4 h-4 icon mr-2 icon" />
                                   Cancel Meeting
                                 </DropdownMenuItem>
                               </>
@@ -913,7 +912,7 @@ const Meetings = () => {
                                 onClick={() => handleStatusChangeWithConfirmation(meeting.id, 'cancelled', meeting.title)}
                                 className="text-red-600 dark:text-red-400 h-12 px-5 cursor-pointer hover:bg-red-100 dark:hover:bg-red-900/20"
                               >
-                                <AlertCircle className="w-4 h-4 mr-2 icon" />
+                                <AlertCircle className="w-4 h-4 icon mr-2 icon" />
                                 Mark as Cancelled
                               </DropdownMenuItem>
                             )}
@@ -922,12 +921,12 @@ const Meetings = () => {
                                 onClick={() => handleStatusChangeWithConfirmation(meeting.id, 'completed', meeting.title)}
                                 className="text-green-600 dark:text-green-400 h-12 px-5 cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/20"
                               >
-                                <CheckCircle className="w-4 h-4 mr-2 icon" />
+                                <CheckCircle className="w-4 h-4 icon mr-2 icon" />
                                 Mark as Completed
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuItem className="text-black dark:text-white h-12 px-5 cursor-pointer hover:bg-gray-100 dark:hover:bg-black" onClick={() => handleJoinMeeting(meeting.meetingLink)}>
-                              <Video className="w-4 h-4 mr-2 icon" />
+                              <Video className="w-4 h-4 icon mr-2 icon" />
                               Join Meeting
                             </DropdownMenuItem>
                             {user && user.id && meeting.assignedBy?.id === user.id && (
@@ -935,7 +934,7 @@ const Meetings = () => {
                                 onClick={() => handleDeleteMeeting(meeting.id)}
                                 className="text-red-600 hover:bg-red-500 hover:text-white px-5 h-12 cursor-pointer dark:hover:bg-red-900"
                               >
-                                <Trash2 className="w-4 h-4 mr-2 icon" />
+                                <Trash2 className="w-4 h-4 icon mr-2 icon" />
                                 Delete Meeting
                               </DropdownMenuItem>
                             )}
@@ -957,7 +956,7 @@ const Meetings = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm bg-opacity-50 bg-black/50 flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 backdrop-blur-sm bg-opacity-50 bg-black/50 icon flex items-center justify-center p-4 z-50"
             onClick={() => setShowNewMeetingPopup(false)}
           >
             <motion.div
@@ -970,26 +969,26 @@ const Meetings = () => {
             
               <div className="space-y-4">
                 <div>
-                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                     Meeting Title
                   </label> */}
                   <Input
                     type="text"
                     value={newMeeting.title}
                     onChange={(e) => setNewMeeting({...newMeeting, title: e.target.value})}
-                    className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
+                    className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white"
                     placeholder="Enter meeting title"
                   />
                 </div>
 
                 <div>
-                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                     Description
                   </label> */}
                   <Textarea
                     value={newMeeting.description}
                     onChange={(e) => setNewMeeting({...newMeeting, description: e.target.value})}
-                    className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
+                    className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white"
                     placeholder="Enter meeting description"
                     rows="3"
                   />
@@ -997,14 +996,14 @@ const Meetings = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                       Meeting Type
                     </label> */}
                     <Select value={newMeeting.type} onValueChange={(value) => setNewMeeting({...newMeeting, type: value})}>
-                      <SelectTrigger className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white">
+                      <SelectTrigger className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white">
                         <SelectValue placeholder="Select meeting type" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
+                      <SelectContent className="bg-white dark:bg-black  border-gray-200 dark:border-gray-700">
                         <SelectItem className={'cursor-pointer h-10 px-5'} value="online">Online</SelectItem>
                         <SelectItem className={'cursor-pointer h-10 px-5'} value="in-person">in-person</SelectItem>
                         <SelectItem className={'cursor-pointer h-10 px-5'} value="hybrid">Hybrid</SelectItem>
@@ -1013,21 +1012,21 @@ const Meetings = () => {
                   </div>
 
                   <div>
-                    {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                       Location
                     </label> */}
                     <Input
                       type="text"
                       value={newMeeting.location}
                       onChange={(e) => setNewMeeting({...newMeeting, location: e.target.value})}
-                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
+                      className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white"
                       placeholder="Enter location or platform"
                     />
                   </div>
                 </div>
 
                 <div>
-                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                     Assign To Person
                   </label> */}
                   <div className="relative">
@@ -1040,11 +1039,11 @@ const Meetings = () => {
                           setShowAssignedToSuggestions(true)
                         }
                       }}
-                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
+                      className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white"
                       placeholder="Assign To Person"
                     />
                     {showAssignedToSuggestions && assignedToSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[30px] shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black  border-gray-200 dark:border-gray-700 rounded-[30px] shadow-lg max-h-48 overflow-y-auto">
                         {assignedToSuggestions.map((user) => (
                           <div
                             key={user.id}
@@ -1055,7 +1054,7 @@ const Meetings = () => {
                               <img 
                                 {...getAvatarProps(user.avatar, user.username || user.name)}
                                 alt={user.name}
-                                className="w-8 h-8 rounded-[30px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                                className="w-8 h-8 rounded-[30px] object-cover  border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   handleUserAvatarClick(user.id)
@@ -1076,46 +1075,46 @@ const Meetings = () => {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                       Start Date
                     </label>
                     <Input
                       type="date"
                       value={newMeeting.startDate}
                       onChange={(e) => setNewMeeting({...newMeeting, startDate: e.target.value})}
-                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
+                      className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white"
                     />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                    <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                       End Date
                     </label>
                     <Input
                       type="date"
                       value={newMeeting.endDate}
                       onChange={(e) => setNewMeeting({...newMeeting, endDate: e.target.value})}
-                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
+                      className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white"
                     />
                   </div>
                 </div>
 
                 <div>
-                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                     Meeting Link (Optional)
                   </label> */}
                   <Input
                     type="url"
                     value={newMeeting.meetingLink}
                     onChange={(e) => setNewMeeting({...newMeeting, meetingLink: e.target.value})}
-                    className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
+                    className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white"
                     placeholder="Enter meeting link"
                   />
                 </div>
 
                 {/* Attendees Section */}
                 <div>
-                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                     Additional Attendees
                   </label> */}
                   <div className="relative">
@@ -1128,10 +1127,10 @@ const Meetings = () => {
                           setShowAttendeeSuggestions(true)
                         }
                       }}
-                      className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
+                      className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white"
                     />
                     {showAttendeeSuggestions && attendeeSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[30px] shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black  border-gray-200 dark:border-gray-700 rounded-[30px] shadow-lg max-h-48 overflow-y-auto">
                         {attendeeSuggestions.map((user) => (
                           <div
                             key={user.id}
@@ -1142,7 +1141,7 @@ const Meetings = () => {
                               <img 
                                 {...getAvatarProps(user.avatar, user.username || user.name)}
                                 alt={user.name}
-                                className="w-8 h-8 rounded-[30px] object-cover border-2 border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                                className="w-8 h-8 rounded-[30px] object-cover  border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   handleUserAvatarClick(user.id)
@@ -1181,7 +1180,7 @@ const Meetings = () => {
                               onClick={() => handleRemoveAttendee(attendee.id)}
                               className="text-gray-500 hover:text-red-500"
                             >
-                              <X className="w-4 h-4 icon" />
+                              <X className="w-4 h-4 icon icon" />
                             </button>
                           </div>
                         ))}
@@ -1192,7 +1191,7 @@ const Meetings = () => {
 
                 {/* Tags Section */}
                 <div>
-                  {/* <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                  {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                     Tags
                   </label> */}
                   <div className="flex gap-2">
@@ -1201,7 +1200,7 @@ const Meetings = () => {
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
-                      className="flex-1 border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white"
+                      className="flex-1  border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white"
                       placeholder="Add a tag and press Enter"
                     />
                     <Button
@@ -1209,7 +1208,7 @@ const Meetings = () => {
                       onClick={handleAddTag}
                       className={getButtonClasses('secondary', 'sm', 'w-12 dark:bg-white dark:text-black')}
                     >
-                      <Plus className="w-4 h-4 icon" />
+                      <Plus className="w-4 h-4 icon icon" />
                     </Button>
                   </div>
                   
@@ -1227,7 +1226,7 @@ const Meetings = () => {
                               onClick={() => handleRemoveTag(tag)}
                               className="text-gray-500 hover:text-red-500"
                             >
-                              <X className="w-3 h-3 icon" />
+                              <X className="w-3 h-3 icon icon" />
                             </button>
                           </div>
                         ))}
@@ -1239,10 +1238,10 @@ const Meetings = () => {
                 <div>
                   {/* Project Selection */}
                   <Select value={newMeeting.projectId} onValueChange={(value) => setNewMeeting({...newMeeting, projectId: value})}>
-                    <SelectTrigger className="w-full border-2 border-gray-200 dark:border-gray-700 focus:border-black dark:focus:border-white bg-white dark:bg-black text-black dark:text-white">
+                    <SelectTrigger className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white">
                       <SelectValue placeholder="Select project (optional)" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700">
+                    <SelectContent className="bg-white dark:bg-black  border-gray-200 dark:border-gray-700">
                       <SelectItem className={'cursor-pointer h-10 px-5'} value="none">No Project</SelectItem>
                       {projects.map((project) => (
                         <SelectItem className={'cursor-pointer h-10 px-5'} key={project.id} value={project.id}>
@@ -1267,7 +1266,7 @@ const Meetings = () => {
                   className={`${getButtonClasses('primary', 'md', 'flex-1')} disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   {loading ? (
-                    <span className="loader w-5 h-5"></span>
+                    <span className="loader w-5 h-5 icon"></span>
                   ) : (
                     'Schedule'
                   )}

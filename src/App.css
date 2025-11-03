@@ -1,12 +1,20 @@
 * {
     font-family: "Alan Sans", sans-serif;
-    font-weight: 500 !important;
-    /* border-radius: 30px ; */
+    /* font-weight: 500; */
+    /* border-radius: 15px ; */
 }
 
-h1, h2 {
-    font-weight: 900 !important;
+
+
+
+h2 {
+    font-weight: 700;
 }
+
+h3, h4, span {
+    font-weight: 600;
+}
+
 
 button {
     cursor: pointer !important;
@@ -100,3 +108,13 @@ button {
     border-radius: 0 !important;
   }
   
+  .text {
+    color: transparent;
+    font-weight: 900;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: black;
+  }
+
+  .dark .text {
+    -webkit-text-stroke-color: white;
+  }

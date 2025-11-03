@@ -106,21 +106,21 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 icon bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
       onClick={onClose}
     >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl font-bold text-black dark:text-white">
+              <h2 className="text-2xl  text-black dark:text-white">
                 Edit Task
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -200,7 +200,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                         <img
                           {...getAvatarProps(assignedUser.avatar, assignedUser.username)}
                           alt={assignedUser.username}
-                          className="w-5 h-5 rounded-[10px]"
+                          className="w-5 h-5 icon rounded-[10px]"
                         />
                         <span>{assignedUser.username}</span>
                       </div>
@@ -215,7 +215,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                         <img
                           {...getAvatarProps(user.avatar, user.username)}
                           alt={user.username}
-                          className="w-5 h-5 rounded-[10px]"
+                          className="w-5 h-5 icon rounded-[10px]"
                         />
                         <span>{user.username}</span>
                       </div>
@@ -262,7 +262,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                       onClick={() => handleRemoveTag(tag)}
                       className="ml-1 hover:text-blue-600 dark:hover:text-blue-300"
                     >
-                      <X className="w-3 h-3" />
+                      <X className="w-3 h-3 icon" />
                     </button>
                   </span>
                 ))}
@@ -285,7 +285,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                 className="flex-1"
                 disabled={loading}
               >
-                <Save className="w-4 h-4 mr-2" />
+                <Save className="w-4 h-4 icon mr-2" />
                 {loading ? 'Saving...' : 'Save Changes'}
               </Button>
             </div>

@@ -155,13 +155,13 @@ const PremiumDashboard = () => {
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div className="flex items-center gap-2">
-                        {Icon && <Icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />}
+                        {Icon && <Icon className="w-5 h-5 icon text-gray-600 dark:text-gray-400" />}
                         <span className="font-medium capitalize">
                           {feature.replace(/([A-Z])/g, ' $1').trim()}
                         </span>
                       </div>
-                      {isAtLimit && <XCircle className="w-4 h-4 text-red-500" />}
-                      {isNearLimit && !isAtLimit && <AlertTriangle className="w-4 h-4 text-yellow-500" />}
+                      {isAtLimit && <XCircle className="w-4 h-4 icon text-red-500" />}
+                      {isNearLimit && !isAtLimit && <AlertTriangle className="w-4 h-4 icon text-yellow-500" />}
                     </div>
                     
                     <div className="space-y-2">
@@ -201,9 +201,9 @@ const PremiumDashboard = () => {
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
                         {isEnabled ? (
-                          <CheckCircle className="w-5 h-5 text-green-500" />
+                          <CheckCircle className="w-5 h-5 icon text-green-500" />
                         ) : (
-                          <XCircle className="w-5 h-5 text-gray-400" />
+                          <XCircle className="w-5 h-5 icon text-gray-400" />
                         )}
                         <div>
                           <h4 className="font-medium capitalize">
@@ -235,7 +235,7 @@ const PremiumDashboard = () => {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <CreditCard className="w-5 h-5" />
+                <CreditCard className="w-5 h-5 icon" />
                 Billing Information
               </CardTitle>
             </CardHeader>
@@ -302,7 +302,7 @@ const PremiumDashboard = () => {
                   }`}>
                     <CardHeader className="text-center">
                       <CardTitle className="text-lg">{plan.name}</CardTitle>
-                      <div className="text-2xl font-bold">
+                      <div className="text-2xl ">
                         ${plan.price}
                         <span className="text-sm font-normal text-gray-500">/month</span>
                       </div>
@@ -311,7 +311,7 @@ const PremiumDashboard = () => {
                       <div className="space-y-2">
                         {Object.entries(plan.features).slice(0, 5).map(([key, value]) => (
                           <div key={key} className="flex items-center gap-2 text-sm">
-                            <CheckCircle className="w-4 h-4 text-green-500" />
+                            <CheckCircle className="w-4 h-4 icon text-green-500" />
                             <span className="capitalize">
                               {key.replace(/([A-Z])/g, ' $1').trim()}: 
                               {typeof value === 'boolean' ? (value ? ' Yes' : ' No') :

@@ -78,11 +78,11 @@ const StatsCard = ({
                 transition={{ delay: delay + 0.2, type: "spring", stiffness: 200 }}
                 className={`p-3 ${config.bg} rounded-lg shadow-lg bg-[#fe914d]`}
               >
-                <Icon className="w-5 h-5 text-white dark:text-gray-800" />
+                <Icon className="w-5 h-5 icon text-white dark:text-gray-800" />
               </motion.div>
             )}
             <div>
-              <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">
+              <h3 className="text-sm  text-gray-600 dark:text-gray-400 tracking-wide">
                 {title}
               </h3>
               {subtitle && (
@@ -117,7 +117,7 @@ const StatsCard = ({
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: delay + 0.1 }}
-          className={`text-4xl font-bold ${config.text} mb-2`}
+          className={`text-4xl  ${config.text} mb-2 font-bold`}
         >
           {value}
         </motion.div>

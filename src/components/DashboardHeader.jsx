@@ -119,9 +119,10 @@ const DashboardHeader = () => {
       const response = await profileService.uploadAvatar(file)
       
       // Update avatar preview with full URL
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
       const avatarUrl = response.user.avatar.startsWith('http') 
         ? response.user.avatar 
-        : `http://localhost:4000${response.user.avatar}`
+        : `${apiUrl}${response.user.avatar}`
       
       setAvatarPreview(avatarUrl)
       setAvatarFile(file)
@@ -205,14 +206,14 @@ const DashboardHeader = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 backdrop-blur-sm flex items-center justify-center p-4 z-60"
+          className="fixed bg-black/20 inset-0 backdrop-blur-sm flex items-center justify-center p-4 z-60 icon"
           onClick={() => setShowProfileModal(false)}
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-sm shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+            className="bg-white dark:bg-black rounded-sm shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
@@ -231,7 +232,7 @@ const DashboardHeader = () => {
                   disabled={loading}
                   title="Refresh profile data"
                 >
-                  <RefreshCw className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} />
+                  <RefreshCw className={`w-5 h-5 icon ${loading ? 'animate-spin' : ''}`} />
                 </button>
                 <button
                   onClick={() => setShowProfileModal(false)}
@@ -253,7 +254,7 @@ const DashboardHeader = () => {
                   />
                 </div>
                 <label className="absolute -bottom-1 rounded-full bg-black dark:bg-white text-white dark:text-black -right-1 w-6 h-6 flex items-center justify-center cursor-pointer transition-colors">
-                  <Camera className="w-3 h-3" />
+                  <Camera className="w-3 h-3 icon" />
                   <input
                     type="file"
                     accept="image/*"
@@ -351,7 +352,7 @@ const DashboardHeader = () => {
                   className="flex-1"
                   disabled={loading}
                 >
-                  <Settings className="w-4 h-4 mr-2" />
+                  <Settings className="w-4 h-4 icon mr-2" />
                   Edit Profile
                 </Button>
               ) : (

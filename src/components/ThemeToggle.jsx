@@ -23,7 +23,7 @@ export const ThemeToggle = ({ className = '' }) => {
             exit={{ y: 20, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <Moon className='w-4 h-4' />
+            <Moon className='w-4 h-4 icon' />
           </motion.div>
         ) : (
           <motion.div
@@ -33,7 +33,7 @@ export const ThemeToggle = ({ className = '' }) => {
             exit={{ y: 20, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <Sun className='w-4 h-4' />
+            <Sun className='w-4 h-4 icon' />
           </motion.div>
         )}
       </AnimatePresence>

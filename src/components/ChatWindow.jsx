@@ -190,7 +190,8 @@ const ChatWindow = () => {
     // If avatar is already a full URL, return as is
     if (avatar.startsWith('http')) return avatar;
     // If avatar is a relative path, prefix with server URL
-    return `http://localhost:4000${avatar.startsWith('/') ? '' : '/'}${avatar}`;
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    return `${apiUrl}${avatar.startsWith('/') ? '' : '/'}${avatar}`;
   };
 
   const typingUsers = currentChat ? getTypingUsers(currentChat._id) : [];
@@ -227,11 +228,11 @@ const ChatWindow = () => {
                 </AvatarFallback>
               </Avatar>
               {isOnline && (
-                <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-[10px]"></div>
+                <div className="absolute -bottom-1 -right-1 h-3 w-3 icon bg-green-500  border-background rounded-[10px]"></div>
               )}
             </div>
             <div>
-              <h3 className="font-semibold">{getChatName(currentChat)}</h3>
+              <h3 className="">{getChatName(currentChat)}</h3>
               <p className="text-sm text-muted-foreground">
                 {isOnline ? 'Online' : 'Offline'}
               </p>
@@ -240,13 +241,13 @@ const ChatWindow = () => {
           
           <div className="flex items-center gap-2">
             <Button variant="ghost" size="sm">
-              <Phone className="h-4 w-4 icon" />
+              <Phone className="h-4 w-4 icon icon" />
             </Button>
             <Button variant="ghost" size="sm">
-              <Video className="h-4 w-4 icon" />
+              <Video className="h-4 w-4 icon icon" />
             </Button>
             <Button variant="ghost" size="sm">
-              <Info className="h-4 w-4 icon" />
+              <Info className="h-4 w-4 icon icon" />
             </Button>
           </div>
         </div>
@@ -323,7 +324,7 @@ const ChatWindow = () => {
                             className="h-6 w-6 p-0"
                             onClick={() => handleEditMessage(message)}
                           >
-                            <Edit className="h-3 w-3 icon" />
+                            <Edit className="h-3 w-3 icon icon" />
                           </Button>
                           <Button
                             variant="ghost"
@@ -331,7 +332,7 @@ const ChatWindow = () => {
                             className="h-6 w-6 p-0"
                             onClick={() => handleDeleteMessage(message._id)}
                           >
-                            <Trash2 className="h-3 w-3" />
+                            <Trash2 className="h-3 w-3 icon" />
                           </Button>
                         </div>
                       )}
@@ -343,7 +344,7 @@ const ChatWindow = () => {
                           className="h-6 w-6 p-0"
                           onClick={() => handleReplyToMessage(message)}
                         >
-                          <Reply className="h-3 w-3" />
+                          <Reply className="h-3 w-3 icon" />
                         </Button>
                       )}
                     </div>
@@ -362,7 +363,7 @@ const ChatWindow = () => {
               size="sm"
               className="rounded-[10px] shadow-lg bg-primary hover:bg-primary/90"
             >
-              <ArrowDown className="h-4 w-4" />
+              <ArrowDown className="h-4 w-4 icon" />
             </Button>
           </div>
         )}
@@ -417,7 +418,7 @@ const ChatWindow = () => {
             size="sm"
             onClick={() => fileInputRef.current?.click()}
           >
-            <Paperclip className="h-4 w-4" />
+            <Paperclip className="h-4 w-4 icon" />
           </Button>
           
           <Input
@@ -437,7 +438,7 @@ const ChatWindow = () => {
             className={'w-12'}
             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
           >
-            <Smile className="h-4 w-4 icon" />
+            <Smile className="h-4 w-4 icon icon" />
           </Button>
           
           <Button
@@ -446,7 +447,7 @@ const ChatWindow = () => {
             disabled={!messageText.trim() || loading}
             className={'w-12'}
           >
-            <Send className="h-4 w-4 icon" />
+            <Send className="h-4 w-4 icon icon" />
           </Button>
         </form>
         

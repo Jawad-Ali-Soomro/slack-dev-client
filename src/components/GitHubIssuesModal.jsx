@@ -178,17 +178,17 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
 
   const getIssueIcon = (labels) => {
     if (labels?.some(label => label.name.toLowerCase().includes('bug'))) {
-      return <Bug className="h-4 w-4 text-red-500" />
+      return <Bug className="h-4 w-4 icon text-red-500" />
     } else if (labels?.some(label => label.name.toLowerCase().includes('feature'))) {
-      return <Lightbulb className="h-4 w-4 text-green-500" />
+      return <Lightbulb className="h-4 w-4 icon text-green-500" />
     } else if (labels?.some(label => label.name.toLowerCase().includes('enhancement'))) {
-      return <Zap className="h-4 w-4 text-blue-500" />
+      return <Zap className="h-4 w-4 icon text-blue-500" />
     } else if (labels?.some(label => label.name.toLowerCase().includes('documentation'))) {
-      return <FileText className="h-4 w-4 text-purple-500" />
+      return <FileText className="h-4 w-4 icon text-purple-500" />
     } else if (labels?.some(label => label.name.toLowerCase().includes('question'))) {
-      return <HelpCircle className="h-4 w-4 text-yellow-500" />
+      return <HelpCircle className="h-4 w-4 icon text-yellow-500" />
     }
-    return <AlertCircle className="h-4 w-4 text-gray-500" />
+    return <AlertCircle className="h-4 w-4 icon text-gray-500" />
   }
 
   const getStatusColor = (state) => {
@@ -228,7 +228,7 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
       >
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-xl font-semibold">Issues</h2>
+            <h2 className="text-xl ">Issues</h2>
            
           </div>
           <Button 
@@ -237,7 +237,7 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
             onClick={onClose}
             className="w-12"
           >
-            <XCircle className="h-4 w-4" />
+            <XCircle className="h-4 w-4 icon" />
           </Button>
         </div>
 
@@ -260,7 +260,7 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
           </div>
         </div>
           <Button onClick={fetchUserIssues} disabled={loading || !username.trim() || !repoName.trim()} className={'w-full'}>
-            {loading ? 'Fetching...' : <><Search className="h-4 w-4" /> Fetch Issues</>}
+            {loading ? 'Fetching...' : <><Search className="h-4 w-4 icon" /> Fetch Issues</>}
           </Button>
 
         {/* Mode Toggle */}
@@ -307,7 +307,7 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
                 Cancel
               </Button>
               <Button onClick={createIssueToGitHub} disabled={loading || !createForm.title.trim()}>
-                {loading ? 'Creating...' : <><Plus className="h-4 w-4 mr-2" /> Create Issue on GitHub</>}
+                {loading ? 'Creating...' : <><Plus className="h-4 w-4 icon mr-2" /> Create Issue on GitHub</>}
               </Button>
             </div>
           </div>
@@ -330,7 +330,7 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
                     disabled={selectedIssues.length === 0}
                     className="bg-green-600 hover:bg-green-700 w-[200px]"
                   >
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus className="h-4 w-4 icon mr-2" />
                     Import Selected ({selectedIssues.length})
                   </Button>
                 </div>
@@ -342,7 +342,7 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
               {userIssues.length === 0 && !loading && (
                 <div className="text-center py-12">
                   <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                  <h3 className="text-lg font-semibold mb-2">No issues found</h3>
+                  <h3 className="text-lg  mb-2">No issues found</h3>
                   <p className="text-gray-600 dark:text-gray-400">
                     Enter a GitHub username and repository to fetch issues
                   </p>
@@ -376,7 +376,7 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                               {getIssueIcon(issue.labels)}
-                              <h3 className="font-semibold text-gray-900 dark:text-white">
+                              <h3 className=" text-gray-900 dark:text-white">
                                 #{issue.number} {issue.title}
                               </h3>
                               <Badge className={getStatusColor(issue.state)}>
@@ -392,7 +392,7 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
 
                             <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
                               <div className="flex items-center gap-1">
-                                <Calendar className="h-4 w-4" />
+                                <Calendar className="h-4 w-4 icon" />
                                 {formatDate(issue.created_at)}
                               </div>
                               {issue.user && (
@@ -400,7 +400,7 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
                                   <img 
                                     src={issue.user.avatar_url} 
                                     alt={issue.user.login}
-                                    className="w-4 h-4 rounded-full"
+                                    className="w-4 h-4 icon rounded-full"
                                   />
                                   {issue.user.login}
                                 </div>
@@ -433,9 +433,9 @@ const GitHubIssuesModal = ({ isOpen, onClose, onCreateIssue }) => {
                               }}
                               className="w-8 h-8 p-0"
                             >
-                              <ExternalLink className="h-4 w-4" />
+                              <ExternalLink className="h-4 w-4 icon" />
                             </Button>
-                            <div className={`w-4 h-4 rounded border-2 ${
+                            <div className={`w-4 h-4 icon rounded  ${
                               isSelected 
                                 ? 'bg-blue-500 border-blue-500' 
                                 : 'border-gray-300 dark:border-gray-600'

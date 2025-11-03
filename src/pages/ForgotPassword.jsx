@@ -220,7 +220,7 @@ const ForgotPassword = () => {
               to="/login" 
               className="flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors text-sm"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4 icon" />
               
             </Link>
           </motion.div>
@@ -232,7 +232,7 @@ const ForgotPassword = () => {
             </motion.div>
             <motion.h1 
               variants={itemVariants}
-              className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
+              className="text-3xl  text-gray-900 dark:text-white mb-2"
               style={{ fontWeight: 800 }}
             >
               {step === 1 && "Forgot Password"}
@@ -259,11 +259,11 @@ const ForgotPassword = () => {
           {step === 1 && (
             <motion.form variants={itemVariants} onSubmit={handleEmailSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
                   <input
                     type="email"
                     value={email}
@@ -278,7 +278,7 @@ const ForgotPassword = () => {
               <motion.button
                 type="submit"
                 disabled={isLoading}
-                className="w-full py-3 bg-black text-white rounded-[10px] font-bold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className="w-full py-3 bg-black text-white rounded-[10px]  hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
                 whileHover={{ scale: isLoading ? 1 : 1.02 }}
                 whileTap={{ scale: isLoading ? 1 : 0.98 }}
               >
@@ -291,7 +291,7 @@ const ForgotPassword = () => {
           {step === 2 && (
             <motion.form variants={itemVariants} onSubmit={handleOtpSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-4 text-center">
+                <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-4 text-center">
                   Enter 4-Digit Code
                 </label>
                 <div className="flex justify-center space-x-4">
@@ -306,7 +306,7 @@ const ForgotPassword = () => {
                         value={digit}
                         onChange={(e) => handleOtpChange(index, e.target.value.replace(/\D/g, ''))}
                         onKeyDown={(e) => handleOtpKeyDown(index, e)}
-                        className="w-14 h-14 text-center text-2xl font-bold border-2 border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline focus:outline-1 focus:outline-black focus:border-black dark:focus:outline-white dark:focus:border-white dark:bg-black dark:text-white"
+                        className="w-14 h-14 text-center text-2xl   border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline focus:outline-1 focus:outline-black  dark:focus:outline-white  dark:bg-black dark:text-white"
                         autoComplete="off"
                       />
                       {index < 3 && (
@@ -321,7 +321,7 @@ const ForgotPassword = () => {
                 <button
                   type="button"
                   onClick={handleResendOtp}
-                  className="text-sm text-black hover:text-gray-800 font-bold dark:text-white dark:hover:text-gray-200"
+                  className="text-sm text-black hover:text-gray-800  dark:text-white dark:hover:text-gray-200"
                 >
                   Didn't receive code? Resend
                 </button>
@@ -330,7 +330,7 @@ const ForgotPassword = () => {
               <motion.button
                 type="submit"
                 disabled={isLoading || otp.join("").length !== 4}
-                className="w-full py-3 bg-black text-white rounded-[10px] font-bold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className="w-full py-3 bg-black text-white rounded-[10px]  hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
                 whileHover={{ scale: isLoading ? 1 : 1.02 }}
                 whileTap={{ scale: isLoading ? 1 : 0.98 }}
               >
@@ -343,11 +343,11 @@ const ForgotPassword = () => {
           {step === 3 && (
             <motion.form variants={itemVariants} onSubmit={handlePasswordSubmit} className="space-y-6">
               <div>
-                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                   New Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={newPassword}
@@ -361,17 +361,17 @@ const ForgotPassword = () => {
                     onClick={() => setShowPassword(!showPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
-                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showPassword ? <EyeOff className="w-5 h-5 icon" /> : <Eye className="w-5 h-5 icon" />}
                   </button>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+                <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                   Confirm Password
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
                   <input
                     type={showConfirmPassword ? "text" : "password"}
                     value={confirmPassword}
@@ -385,7 +385,7 @@ const ForgotPassword = () => {
                     onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                   >
-                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                    {showConfirmPassword ? <EyeOff className="w-5 h-5 icon" /> : <Eye className="w-5 h-5 icon" />}
                   </button>
                 </div>
               </div>
@@ -393,7 +393,7 @@ const ForgotPassword = () => {
               <motion.button
                 type="submit"
                 disabled={isLoading || !newPassword || !confirmPassword}
-                className="w-full py-3 bg-black text-white rounded-[10px] font-bold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className="w-full py-3 bg-black text-white rounded-[10px]  hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
                 whileHover={{ scale: isLoading ? 1 : 1.02 }}
                 whileTap={{ scale: isLoading ? 1 : 0.98 }}
               >
@@ -419,7 +419,7 @@ const ForgotPassword = () => {
 
               <Link
                 to="/login"
-                className="inline-block w-full py-3 bg-black text-white rounded-[10px] font-bold hover:bg-black transition-colors text-center dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className="inline-block w-full py-3 bg-black text-white rounded-[10px]  hover:bg-black transition-colors text-center dark:bg-white dark:text-black dark:hover:bg-gray-200"
               >
                 Back to Login
               </Link>

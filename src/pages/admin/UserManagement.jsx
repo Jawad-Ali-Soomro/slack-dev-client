@@ -128,7 +128,7 @@ const UserManagement = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <PiUsersDuotone className="w-6 h-6 text-red-500" />
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">User Management</h1>
+              <h1 className="text-2xl  text-gray-900 dark:text-white">User Management</h1>
             </div>
             <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Admin Access</span>
           </div>
@@ -144,7 +144,7 @@ const UserManagement = () => {
         >
           <div className="flex flex-col md:flex-row gap-3">
             <div className="relative flex-1 max-w-[600px]">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 icon" />
               <Input
                 placeholder="Search users..."
                 value={searchTerm}
@@ -184,19 +184,19 @@ const UserManagement = () => {
         >
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full rounded-[10px] overflow-hidden">
-              <thead className="bg-gray-200 text-black rounded-[10px] dark:border-gray-700 sticky top-0 z-10">
+              <thead className="bg-gray-100 text-black rounded-[10px] dark:border-gray-700 sticky top-0 z-10">
                 <tr className="rounded-t-r-[10px]">
-                  <th className="px-3 py-4 rounded-[10px] text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">User</th>
-                  <th className="px-3 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">Role</th>
-                  <th className="px-3 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">Permissions</th>
-                  <th className="px-3 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">Joined</th>
-                  <th className="px-3 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider"></th>
+                  <th className="px-5 py-4 rounded-[10px] text-left text-xs  text-black dark:text-black uppercase tracking-wider">User</th>
+                  <th className="px-5 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">Role</th>
+                  <th className="px-5 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">Permissions</th>
+                  <th className="px-5 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">Joined</th>
+                  <th className="px-5 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredUsers.map((userItem) => (
                   <tr key={userItem.id} className="hover:bg-gray-50 dark:hover:bg-black">
-                    <td className="px-3 py-2">
+                    <td className="px-5 py-2">
                       <div className="flex items-center gap-3">
                         <img
                           {...getAvatarProps(userItem.avatar, userItem.username)}
@@ -209,37 +209,37 @@ const UserManagement = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-5 py-2">
                       <Badge className={getRoleBadgeColor(userItem.role)}>{userItem.role}</Badge>
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-5 py-2">
                       <div className="flex items-center gap-2">
-                        <Shield className="w-4 h-4 text-gray-400" />
+                        <Shield className="w-4 h-4 icon text-gray-400" />
                         <span className="text-sm text-gray-600 dark:text-gray-400">{getPermissionCount(userItem.permissions)} permissions</span>
                       </div>
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-5 py-2">
                       <div className="text-sm text-gray-600 dark:text-gray-400">{getJoinedDate(userItem.id, '')}</div>
                     </td>
-                    <td className="px-3 py-2 flex items-center justify-end">
+                    <td className="px-5 py-2 flex items-center justify-end">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm" className="p-2 w-12">
-                            <MoreVertical className="w-4 h-4" />
+                            <MoreVertical className="w-4 h-4 icon" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuItem className={'px-5 h-10 cursor-pointer'}>
-                            <Eye className="w-4 h-4 mr-2" />
+                            <Eye className="w-4 h-4 icon mr-2" />
                             View Details
                           </DropdownMenuItem>
                           <DropdownMenuItem className={'px-5 h-10 cursor-pointer'}>
-                            <Edit className="w-4 h-4 mr-2" />
+                            <Edit className="w-4 h-4 icon mr-2" />
                             Edit Permissions
                           </DropdownMenuItem>
                           {userItem.role !== 'admin' && userItem.role !== 'superadmin' && (
                             <DropdownMenuItem className="text-red-600 px-5 h-10">
-                              <Trash2 className="w-4 h-4 mr-2" />
+                              <Trash2 className="w-4 h-4 icon mr-2" />
                               Delete User
                             </DropdownMenuItem>
                           )}

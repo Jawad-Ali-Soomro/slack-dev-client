@@ -139,7 +139,7 @@ const GitHubUserReposModal = ({ isOpen, onClose, onCreateRepository, existingRep
       >
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-xl font-semibold">Repositories</h2>
+            <h2 className="text-xl ">Repositories</h2>
            
           </div>
           <Button 
@@ -148,7 +148,7 @@ const GitHubUserReposModal = ({ isOpen, onClose, onCreateRepository, existingRep
             onClick={onClose}
             className="w-12"
           >
-            <XCircle className="h-4 w-4" />
+            <XCircle className="h-4 w-4 icon" />
           </Button>
         </div>
 
@@ -163,7 +163,7 @@ const GitHubUserReposModal = ({ isOpen, onClose, onCreateRepository, existingRep
             />
           </div>
           <Button onClick={fetchUserRepos} disabled={loading || !username.trim()} className={'w-[200px]'}>
-            {loading ? <Loader className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />}
+            {loading ? <Loader className="h-4 w-4 icon animate-spin" /> : <Search className="h-4 w-4 icon" />}
             {loading ? 'Fetching...' : 'Fetch Repos'}
           </Button>
         </div>
@@ -177,7 +177,7 @@ const GitHubUserReposModal = ({ isOpen, onClose, onCreateRepository, existingRep
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search repositories..."
               />
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 icon" />
             </div>
             <div className="flex items-center gap-4">
               
@@ -186,7 +186,7 @@ const GitHubUserReposModal = ({ isOpen, onClose, onCreateRepository, existingRep
                 disabled={selectedRepos.length === 0}
                 className="bg-green-600 hover:bg-green-700 w-[200px]"
               >
-                <Plus className="h-4 w-4 mr-2" />
+                <Plus className="h-4 w-4 icon mr-2" />
                 Create Selected ({selectedRepos.length})
               </Button>
             </div>
@@ -202,7 +202,7 @@ const GitHubUserReposModal = ({ isOpen, onClose, onCreateRepository, existingRep
                 <div className="space-y-2">
                   {existingRepos.slice(0, 3).map((repo) => (
                     <div key={repo.id} className="flex items-center gap-2 p-2 bg-gray-50 dark:bg-gray-800 rounded-[10px]">
-                      <Github className="h-4 w-4 text-gray-500" />
+                      <Github className="h-4 w-4 icon text-gray-500" />
                       <span className="text-sm text-gray-600 dark:text-gray-400">{repo.name}</span>
                       <Badge variant="secondary" className="text-xs">Already exists</Badge>
                     </div>
@@ -221,7 +221,7 @@ const GitHubUserReposModal = ({ isOpen, onClose, onCreateRepository, existingRep
               {userRepos.length === 0 && !loading && (
                 <div className="text-center py-12">
                   <Github className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                  <h3 className="text-lg font-semibold mb-2">No repositories found</h3>
+                  <h3 className="text-lg  mb-2">No repositories found</h3>
                   <p className="text-gray-600 dark:text-gray-400">
                     Enter a GitHub username to fetch their public repositories
                   </p>
@@ -257,13 +257,13 @@ const GitHubUserReposModal = ({ isOpen, onClose, onCreateRepository, existingRep
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-2">
-                          <h3 className="font-semibold text-gray-900 dark:text-white">
+                          <h3 className=" text-gray-900 dark:text-white">
                             {repo.name}
                           </h3>
                           {repo.private ? (
-                            <Lock className="h-4 w-4 text-gray-500" />
+                            <Lock className="h-4 w-4 icon text-gray-500" />
                           ) : (
-                            <Globe className="h-4 w-4 text-gray-500" />
+                            <Globe className="h-4 w-4 icon text-gray-500" />
                           )}
                         </div>
                         
@@ -276,24 +276,24 @@ const GitHubUserReposModal = ({ isOpen, onClose, onCreateRepository, existingRep
                         <div className="flex items-center gap-4 text-sm text-gray-500">
                           {repo.language && (
                             <div className="flex items-center gap-1">
-                              <Code className="h-4 w-4" />
+                              <Code className="h-4 w-4 icon" />
                               {repo.language}
                             </div>
                           )}
                           <div className="flex items-center gap-1">
-                            <Star className="h-4 w-4" />
+                            <Star className="h-4 w-4 icon" />
                             {repo.stargazers_count}
                           </div>
                           <div className="flex items-center gap-1">
-                            <GitFork className="h-4 w-4" />
+                            <GitFork className="h-4 w-4 icon" />
                             {repo.forks_count}
                           </div>
                           <div className="flex items-center gap-1">
-                            <Eye className="h-4 w-4" />
+                            <Eye className="h-4 w-4 icon" />
                             {repo.watchers_count}
                           </div>
                           <div className="flex items-center gap-1">
-                            <Calendar className="h-4 w-4" />
+                            <Calendar className="h-4 w-4 icon" />
                             {formatDate(repo.updated_at)}
                           </div>
                         </div>
@@ -324,9 +324,9 @@ const GitHubUserReposModal = ({ isOpen, onClose, onCreateRepository, existingRep
                           }}
                           className="w-8 h-8 p-0"
                         >
-                          <ExternalLink className="h-4 w-4" />
+                          <ExternalLink className="h-4 w-4 icon" />
                         </Button>
-                        <div className={`w-4 h-4 rounded border-2 ${
+                        <div className={`w-4 h-4 icon rounded  ${
                           isSelected 
                             ? 'bg-blue-500 border-blue-500' 
                             : 'border-gray-300 dark:border-gray-600'

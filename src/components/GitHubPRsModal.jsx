@@ -184,17 +184,17 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
 
   const getStatusIcon = (state, merged) => {
     if (merged) {
-      return <GitMerge className="h-4 w-4 text-purple-500" />
+      return <GitMerge className="h-4 w-4 icon text-purple-500" />
     }
     switch (state) {
       case 'open':
-        return <CheckCircle className="h-4 w-4 text-green-500" />
+        return <CheckCircle className="h-4 w-4 icon text-green-500" />
       case 'closed':
-        return <XCircleIcon className="h-4 w-4 text-red-500" />
+        return <XCircleIcon className="h-4 w-4 icon text-red-500" />
       case 'draft':
-        return <Clock className="h-4 w-4 text-yellow-500" />
+        return <Clock className="h-4 w-4 icon text-yellow-500" />
       default:
-        return <GitPullRequest className="h-4 w-4 text-gray-500" />
+        return <GitPullRequest className="h-4 w-4 icon text-gray-500" />
     }
   }
 
@@ -240,7 +240,7 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
       >
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h2 className="text-xl font-semibold">Pull Requests</h2>
+            <h2 className="text-xl ">Pull Requests</h2>
            
           </div>
           <Button 
@@ -249,7 +249,7 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
             onClick={onClose}
             className="w-12"
           >
-            <XCircle className="h-4 w-4" />
+            <XCircle className="h-4 w-4 icon" />
           </Button>
         </div>
 
@@ -272,7 +272,7 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
           </div>
         </div>
           <Button onClick={fetchUserPRs} disabled={loading || !username.trim() || !repoName.trim()} className={'w-full'}>
-            {loading ? 'Fetching...' : <><Search className="h-4 w-4" /> Fetch PRs</>}
+            {loading ? 'Fetching...' : <><Search className="h-4 w-4 icon" /> Fetch PRs</>}
           </Button>
 
         {/* Mode Toggle */}
@@ -335,7 +335,7 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
                 Cancel
               </Button>
               <Button onClick={createPRToGitHub} disabled={loading || !createForm.title.trim() || !createForm.head.trim()}>
-                {loading ? 'Creating...' : <><Plus className="h-4 w-4 mr-2" /> Create PR on GitHub</>}
+                {loading ? 'Creating...' : <><Plus className="h-4 w-4 icon mr-2" /> Create PR on GitHub</>}
               </Button>
             </div>
           </div>
@@ -358,7 +358,7 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
                     disabled={selectedPRs.length === 0}
                     className="bg-green-600 hover:bg-green-700 w-[200px]"
                   >
-                    <Plus className="h-4 w-4 mr-2" />
+                    <Plus className="h-4 w-4 icon mr-2" />
                     Import Selected ({selectedPRs.length})
                   </Button>
                 </div>
@@ -370,7 +370,7 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
               {userPRs.length === 0 && !loading && (
                 <div className="text-center py-12">
                   <GitPullRequest className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-                  <h3 className="text-lg font-semibold mb-2">No pull requests found</h3>
+                  <h3 className="text-lg  mb-2">No pull requests found</h3>
                   <p className="text-gray-600 dark:text-gray-400">
                     Enter a GitHub username and repository to fetch pull requests
                   </p>
@@ -404,7 +404,7 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-2">
                               {getStatusIcon(pr.state, pr.merged)}
-                              <h3 className="font-semibold text-gray-900 dark:text-white">
+                              <h3 className=" text-gray-900 dark:text-white">
                                 #{pr.number} {pr.title}
                               </h3>
                               <Badge className={getStatusColor(pr.state, pr.merged)}>
@@ -420,7 +420,7 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
 
                             <div className="flex items-center gap-4 text-sm text-gray-500 mb-2">
                               <div className="flex items-center gap-1">
-                                <Calendar className="h-4 w-4" />
+                                <Calendar className="h-4 w-4 icon" />
                                 {formatDate(pr.created_at)}
                               </div>
                               {pr.user && (
@@ -428,7 +428,7 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
                                   <img 
                                     src={pr.user.avatar_url} 
                                     alt={pr.user.login}
-                                    className="w-4 h-4 rounded-full"
+                                    className="w-4 h-4 icon rounded-full"
                                   />
                                   {pr.user.login}
                                 </div>
@@ -464,9 +464,9 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
                               }}
                               className="w-8 h-8 p-0"
                             >
-                              <ExternalLink className="h-4 w-4" />
+                              <ExternalLink className="h-4 w-4 icon" />
                             </Button>
-                            <div className={`w-4 h-4 rounded border-2 ${
+                            <div className={`w-4 h-4 icon rounded  ${
                               isSelected 
                                 ? 'bg-blue-500 border-blue-500' 
                                 : 'border-gray-300 dark:border-gray-600'

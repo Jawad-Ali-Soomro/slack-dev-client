@@ -26,7 +26,8 @@ const ChatList = () => {
     // If avatar is already a full URL, return as is
     if (avatar.startsWith('http')) return avatar;
     // If avatar is a relative path, prefix with server URL
-    return `http://localhost:4000${avatar.startsWith('/') ? '' : '/'}${avatar}`;
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    return `${apiUrl}${avatar.startsWith('/') ? '' : '/'}${avatar}`;
   };
   
   const [searchTerm, setSearchTerm] = useState('');
@@ -67,7 +68,7 @@ const ChatList = () => {
       
         
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 icon text-muted-foreground" />
           <Input
             placeholder="Search chats..."
             value={searchTerm}
@@ -113,7 +114,7 @@ const ChatList = () => {
                           </AvatarFallback>
                         </Avatar>
                         {isOnline && (
-                          <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-[10px]"></div>
+                          <div className="absolute -bottom-1 -right-1 h-3 w-3 icon bg-green-500  border-background rounded-[10px]"></div>
                         )}
                       </div>
                       
@@ -144,7 +145,7 @@ const ChatList = () => {
                         
                         {/* {chat.type === 'group' && (
                           <div className="flex items-center gap-1 mt-1">
-                            <Users className="h-3 w-3 text-muted-foreground" />
+                            <Users className="h-3 w-3 icon text-muted-foreground" />
                             <span className="text-xs text-muted-foreground">
                               {chat.participants.length} members
                             </span>

@@ -144,7 +144,7 @@ const Friends = () => {
       <div className="mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+          <h1 className="text-3xl  text-gray-900 dark:text-white mb-2">
             Friends
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
@@ -158,28 +158,28 @@ const Friends = () => {
             <Card className={'bg-gray-100 border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Friends</CardTitle>
-                <Users className="h-4 w-4 text-muted-foreground" />
+                <Users className="h-4 w-4 icon text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.totalFriends}</div>
+                <div className="text-2xl ">{stats.totalFriends}</div>
               </CardContent>
             </Card>
             <Card className={'bg-gray-100 border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Pending Received</CardTitle>
-                <Clock className="h-4 w-4 text-muted-foreground" />
+                <Clock className="h-4 w-4 icon text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.pendingReceivedRequests}</div>
+                <div className="text-2xl ">{stats.pendingReceivedRequests}</div>
               </CardContent>
             </Card>
             <Card className={'bg-gray-100 border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Pending Sent</CardTitle>
-                <Send className="h-4 w-4 text-muted-foreground" />
+                <Send className="h-4 w-4 icon text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{stats.pendingSentRequests}</div>
+                <div className="text-2xl ">{stats.pendingSentRequests}</div>
               </CardContent>
             </Card>
           </div>
@@ -257,7 +257,7 @@ const Friends = () => {
                           onClick={() => handleRemoveFriend(friendship.friend.id)}
                           className="text-red-600 hover:text-red-700 w-12"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-4 w-4 icon" />
                         </Button>
                       </motion.div>
                     ))}
@@ -376,7 +376,7 @@ const Friends = () => {
                           </div>
                         </div>
                         <Badge variant="outline" className="text-yellow-600 px-4 py-2 bg-gray-100">
-                          <Clock className="h-3 w-3 mr-1" />
+                          <Clock className="h-3 w-3 icon mr-1" />
                           Pending
                         </Badge>
                       </motion.div>

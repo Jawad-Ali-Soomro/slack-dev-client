@@ -18,6 +18,7 @@ import {
   ArrowBigUp,
 } from "lucide-react";
 import { userService } from "../services/userService";
+import { PiUserDuotone, PiUsersDuotone } from "react-icons/pi";
 
 const CreateChatModal = ({ isOpen, onClose }) => {
   const { createChat } = useChat();
@@ -28,7 +29,8 @@ const CreateChatModal = ({ isOpen, onClose }) => {
     // If avatar is already a full URL, return as is
     if (avatar.startsWith("http")) return avatar;
     // If avatar is a relative path, prefix with server URL
-    return `http://localhost:4000${avatar.startsWith("/") ? "" : "/"}${avatar}`;
+    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    return `${apiUrl}${avatar.startsWith("/") ? "" : "/"}${avatar}`;
   };
   const [searchTerm, setSearchTerm] = useState("");
   const [users, setUsers] = useState([]);
@@ -124,7 +126,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-100000 backdrop-blur-sm"
+      className="fixed inset-0 bg-black/50 icon flex items-center justify-center z-100000 backdrop-blur-sm"
       onClick={onClose}
     >
       <Card
@@ -135,7 +137,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
           <div className="flex items-center justify-between">
             <CardTitle>Create New Chat</CardTitle>
             <Button variant="ghost" size="sm" onClick={onClose}>
-              <X className="h-4 w-4" />
+              <X className="h-4 w-4 icon" />
             </Button>
           </div>
         </CardHeader>
@@ -160,7 +162,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
                 }}
                 className="flex items-center gap-2 w-full"
               >
-                <ArrowBigUp className="h-4 w-4" />
+                <PiUserDuotone className="h-4 w-4 icon" />
                 Direct Message
               </Button>
               <Button
@@ -173,7 +175,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
                 }}
                 className="flex items-center gap-2 w-full"
               >
-                <Users className="h-4 w-4" />
+                <PiUsersDuotone className="h-4 w-4 icon" />
                 Group Chat
               </Button>
             </div>
@@ -205,7 +207,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
           {/* User Search */}
           <div>
             <div className="relative mt-2">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 icon text-muted-foreground" />
               <Input
                 placeholder="Search users..."
                 value={searchTerm}
@@ -228,7 +230,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
                       variant="secondary"
                       className="flex items-center gap-1 py-2"
                     >
-                      <Avatar className="h-4 w-4">
+                      <Avatar className="h-4 w-4 icon">
                         <AvatarImage src={getAvatarUrl(user?.avatar)} />
                         <AvatarFallback className="text-xs">
                           {user?.username?.charAt(0).toUpperCase()}
@@ -238,10 +240,10 @@ const CreateChatModal = ({ isOpen, onClose }) => {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-4 w-4 p-0 ml-1"
+                        className="h-4 w-4 icon p-0 ml-1"
                         onClick={() => handleUserSelect(userId)}
                       >
-                        <X className="h-3 w-3" />
+                        <X className="h-3 w-3 icon" />
                       </Button>
                     </Badge>
                   );
@@ -297,7 +299,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
             <Button
               onClick={handleCreateChat}
               disabled={selectedUsers.length === 0 || loading}
-              className={"w-[150px] font-bold"}
+              className={"w-[150px] "}
             >
               {loading ? "Creating..." : "Create Chat"}
             </Button>

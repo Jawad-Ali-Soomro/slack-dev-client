@@ -37,7 +37,7 @@ const DevHub = () => {
         <div className="text-center mb-20">
           <motion.h1 
             variants={itemVariants}
-            className="text-6xl font-bold text-gray-900 dark:text-white  mb-6"
+            className="text-6xl  text-gray-900 dark:text-white  mb-6"
             style={{ fontWeight: 900 }}
           >
             Dev Hub
@@ -92,13 +92,13 @@ const DevHub = () => {
                   {category.icon}
                 </div>
               </div>
-              <div className="text-2xl font-bold text-black mb-2 dark:text-white">
+              <div className="text-2xl  text-black mb-2 dark:text-white">
                 {category.count}
               </div>
-              <h3 className="text-xl font-bold text-gray-600 dark:text-white mb-4 " style={{ fontWeight: 900 }}>
+              <h3 className="text-xl  text-gray-600 dark:text-white mb-4 " style={{ fontWeight: 900 }}>
                 {category.title}
               </h3>
-              <p className="text-sm font-bold text-gray-600 dark:text-gray-300  leading-relaxed">
+              <p className="text-sm  text-gray-600 dark:text-gray-300  leading-relaxed">
                 {category.description}
               </p>
             </motion.div>
@@ -139,21 +139,21 @@ const DevHub = () => {
                 className="glass-card p-8 rounded-[10px]"
                 whileHover={{ y: -5 }}
               >
-                <div className="text-sm font-bold text-black  mb-2 dark:text-white">
+                <div className="text-sm  text-black  mb-2 dark:text-white">
                   {resource.category}
                 </div>
-                <h3 className="text-xl font-bold text-gray-600 dark:text-white mb-4 " style={{ fontWeight: 900 }}>
+                <h3 className="text-xl  text-gray-600 dark:text-white mb-4 " style={{ fontWeight: 900 }}>
                   {resource.title}
                 </h3>
-                <p className="text-sm font-bold text-gray-600 dark:text-gray-300  leading-relaxed mb-4">
+                <p className="text-sm  text-gray-600 dark:text-gray-300  leading-relaxed mb-4">
                   {resource.description}
                 </p>
                 <div className="flex justify-between items-center">
-                  <span className="text-xs font-bold text-gray-500 dark:text-gray-400 ">
+                  <span className="text-xs  text-gray-500 dark:text-gray-400 ">
                     {resource.readTime}
                   </span>
-                  <button className="text-xs font-bold text-white  w-[40px] h-10 bg-black rounded-[10px] flex items-center justify-center dark:bg-white dark:text-black">
-                    <ArrowRight className="w-4 h-4" />
+                  <button className="text-xs  text-white  w-[40px] h-10 bg-black rounded-[10px] flex items-center justify-center dark:bg-white dark:text-black">
+                    <ArrowRight className="w-4 h-4 icon" />
                   </button>
                 </div>
               </motion.div>
@@ -181,10 +181,10 @@ const DevHub = () => {
                 className="glass-card p-8 rounded-[10px]"
                 whileHover={{ y: -5 }}
               >
-                <div className="text-4xl font-bold text-black mb-2 dark:text-white">
+                <div className="text-4xl  text-black mb-2 dark:text-white">
                   {stat.number}
                 </div>
-                <div className="text-sm font-bold text-gray-600 dark:text-gray-300 ">
+                <div className="text-sm  text-gray-600 dark:text-gray-300 ">
                   {stat.label}
                 </div>
               </motion.div>
@@ -204,7 +204,7 @@ const DevHub = () => {
             Start learning, sharing, and building with thousands of developers worldwide
           </p>
           <motion.button 
-            className="px-12 py-4 bg-black text-white rounded-[10px] font-bold text-lg  hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
+            className="px-12 py-4 bg-black text-white rounded-[10px]  text-lg  hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

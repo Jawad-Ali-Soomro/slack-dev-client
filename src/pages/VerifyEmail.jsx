@@ -175,7 +175,7 @@ const VerifyEmail = () => {
               to="/login" 
               className="flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors text-sm"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4 icon" />
               Back to Login
             </Link>
           </motion.div>
@@ -189,7 +189,7 @@ const VerifyEmail = () => {
             </motion.div>
             <motion.h1 
               variants={itemVariants}
-              className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
+              className="text-3xl  text-gray-900 dark:text-white mb-2"
               style={{ fontWeight: 800 }}
             >
               Verify Your Email
@@ -203,7 +203,7 @@ const VerifyEmail = () => {
             </motion.p>
             <motion.p 
               variants={itemVariants}
-              className="text-orange-500 dark:text-orange-400 font-bold"
+              className="text-orange-500 dark:text-orange-400 "
               style={{ fontWeight: 800 }}
             >
               {email}
@@ -222,7 +222,7 @@ const VerifyEmail = () => {
                   value={digit}
                   onChange={(e) => handleOtpChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-12 h-12 text-center text-xl font-bold border-2 border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline-none focus:border-blue-500 dark:bg-black dark:text-white"
+                  className="w-12 h-12 text-center text-xl   border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline-none focus:border-blue-500 dark:bg-black dark:text-white"
                 />
               ))}
             </div>
@@ -231,7 +231,7 @@ const VerifyEmail = () => {
             <motion.button
               onClick={handleVerify}
               disabled={loading || otp.join('').length !== 4}
-              className="w-full py-3 bg-black dark:bg-white text-white dark:text-black rounded-[10px] font-bold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-3 bg-black dark:bg-white text-white dark:text-black rounded-[10px]  transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
@@ -246,11 +246,11 @@ const VerifyEmail = () => {
               <button
                 onClick={handleResendOtp}
                 disabled={resendLoading}
-                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-bold text-sm disabled:opacity-50"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300  text-sm disabled:opacity-50"
               >
                 {resendLoading ? (
                   <span className="flex items-center gap-2">
-                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <RefreshCw className="w-4 h-4 icon animate-spin" />
                     Sending...
                   </span>
                 ) : (

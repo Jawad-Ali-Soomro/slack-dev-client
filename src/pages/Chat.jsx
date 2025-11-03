@@ -42,12 +42,12 @@ const Chat = () => {
             <div className="flex items-center gap-1 text-sm">
               {isConnected ? (
                 <>
-                  <Wifi className="h-4 w-4 text-green-500" />
+                  <Wifi className="h-4 w-4 icon text-green-500" />
                   <span className="text-green-600 dark:text-green-400">Connected</span>
                 </>
               ) : (
                 <>
-                  <WifiOff className="h-4 w-4 text-red-500" />
+                  <WifiOff className="h-4 w-4 icon text-red-500" />
                   <span className="text-red-600 dark:text-red-400">Disconnected</span>
                 </>
               )}
@@ -64,7 +64,7 @@ const Chat = () => {
               onClick={() => setShowCreateModal(true)}
               className="h-8 w-8 p-0"
             >
-              <Plus className="h-4 w-4" />
+              <Plus className="h-4 w-4 icon" />
             </Button>
           </div>
         </div>

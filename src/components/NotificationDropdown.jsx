@@ -34,15 +34,15 @@ const NotificationDropdown = () => {
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'task':
-        return <CheckCircle className="w-4 h-4 text-blue-500" />
+        return <CheckCircle className="w-4 h-4 icon text-blue-500" />
       case 'meeting':
-        return <Clock className="w-4 h-4 text-green-500" />
+        return <Clock className="w-4 h-4 icon text-green-500" />
       case 'system':
-        return <Info className="w-4 h-4 text-purple-500" />
+        return <Info className="w-4 h-4 icon text-purple-500" />
       case 'alert':
-        return <AlertCircle className="w-4 h-4 text-red-500" />
+        return <AlertCircle className="w-4 h-4 icon text-red-500" />
       default:
-        return <Bell className="w-4 h-4 text-gray-500" />
+        return <Bell className="w-4 h-4 icon text-gray-500" />
     }
   }
 
@@ -67,9 +67,9 @@ const NotificationDropdown = () => {
           size="sm"
           className="relative p-2 w-12 text-gray-500 hover:text-black dark:hover:text-white"
         >
-          <Bell className="w-5 h-5" />
+          <Bell className="w-5 h-5 icon" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-[10px] text-[10px] text-white flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 w-5 h-5 icon bg-red-500 rounded-[10px] text-[10px] text-white flex items-center justify-center">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
@@ -78,12 +78,12 @@ const NotificationDropdown = () => {
       
       <DropdownMenuContent 
         align="end" 
-        className="w-80 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 p-0"
+        className="w-80 bg-white dark:bg-black  border-gray-200 dark:border-gray-700 p-0"
       >
         {/* Header */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 icon">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+            <h3 className="text-lg  text-gray-900 dark:text-white">
               Notifications
             </h3>
             <div className="flex items-center gap-2">
@@ -94,7 +94,7 @@ const NotificationDropdown = () => {
                 disabled={loading}
                 className="text-xs text-gray-600 hover:text-gray-800 dark:text-gray-400"
               >
-                <RefreshCw className={`w-3 h-3 mr-1 ${loading ? 'animate-spin' : ''}`} />
+                <RefreshCw className={`w-3 h-3 icon mr-1 ${loading ? 'animate-spin' : ''}`} />
                 Refresh
               </Button>
              
@@ -168,7 +168,7 @@ const NotificationDropdown = () => {
                               onClick={() => markAsRead(notification.id || notification._id)}
                               className="p-1 h-6 w-6 text-gray-400 hover:text-green-600"
                             >
-                              <Check className="w-3 h-3" />
+                              <Check className="w-3 h-3 icon" />
                             </Button>
                           )}
                           
@@ -179,7 +179,7 @@ const NotificationDropdown = () => {
                                 size="sm"
                                 className="p-1 h-6 w-6 text-gray-400 hover:text-gray-600"
                               >
-                                <MoreVertical className="w-3 h-3" />
+                                <MoreVertical className="w-3 h-3 icon" />
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end" className="w-32">
@@ -188,7 +188,7 @@ const NotificationDropdown = () => {
                                   onClick={() => markAsRead(notification.id || notification._id)}
                                   className="text-xs"
                                 >
-                                  <Check className="w-3 h-3 mr-2" />
+                                  <Check className="w-3 h-3 icon mr-2" />
                                   Mark read
                                 </DropdownMenuItem>
                               )}
@@ -196,7 +196,7 @@ const NotificationDropdown = () => {
                                 onClick={() => deleteNotification(notification.id || notification._id)}
                                 className="text-xs text-red-600"
                               >
-                                <Trash2 className="w-3 h-3 mr-2" />
+                                <Trash2 className="w-3 h-3 icon mr-2" />
                                 Delete
                               </DropdownMenuItem>
                             </DropdownMenuContent>

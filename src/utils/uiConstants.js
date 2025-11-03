@@ -10,7 +10,7 @@ export const BUTTON_SIZES = {
 export const BUTTON_VARIANTS = {
   primary: 'bg-black text-white hover:bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200',
   secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 dark:bg-black dark:text-gray-100 dark:hover:bg-gray-700',
-  outline: 'border-2 border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-black',
+  outline: ' border-gray-200 text-gray-700 hover:bg-gray-50 dark:border-gray-700 dark:text-gray-300 dark:hover:bg-black',
   ghost: 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-black',
   danger: 'bg-red-600 text-white hover:bg-red-700 dark:bg-red-700 dark:hover:bg-red-800'
 }
@@ -22,14 +22,14 @@ export const INPUT_SIZES = {
 }
 
 export const INPUT_VARIANTS = {
-  default: 'border border-gray-200 focus:border-black dark:border-gray-700 dark:focus:border-white bg-white dark:bg-black text-black dark:text-white',
+  default: 'border border-gray-200  dark:border-gray-700  bg-white dark:bg-black text-black dark:text-white',
   error: 'border border-red-500 focus:border-red-600 dark:border-red-600 dark:focus:border-red-500 bg-white dark:bg-black text-black dark:text-white'
 }
 
 export const ICON_SIZES = {
-  xs: 'w-3 h-3',
-  sm: 'w-4 h-4',
-  md: 'w-5 h-5',
+  xs: 'w-3 h-3 icon',
+  sm: 'w-4 h-4 icon',
+  md: 'w-5 h-5 icon',
   lg: 'w-6 h-6',
   xl: 'w-8 h-8'
 }

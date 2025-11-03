@@ -37,7 +37,7 @@ const Contact = () => {
         <div className="text-center mb-20">
           <motion.h1 
             variants={itemVariants}
-            className="text-6xl font-bold text-gray-900 dark:text-white  mb-6"
+            className="text-6xl  text-gray-900 dark:text-white  mb-6"
             style={{ fontWeight: 900 }}
           >
             Contact Us
@@ -86,10 +86,10 @@ const Contact = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-600 dark:text-white " style={{ fontWeight: 700 }}>
+                    <h3 className="text-lg  text-gray-600 dark:text-white " style={{ fontWeight: 700 }}>
                       {contact.title}
                     </h3>
-                    <p className="text-sm font-bold text-gray-600 dark:text-gray-300 ">
+                    <p className="text-sm  text-gray-600 dark:text-gray-300 ">
                       {contact.info}
                     </p>
                   </div>
@@ -108,37 +108,37 @@ const Contact = () => {
                 <input
                   type="text"
                   placeholder="Your Name"
-                  className="w-full p-4 glass-card rounded-[10px] border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400  font-bold text-sm"
+                  className="w-full p-4 glass-card rounded-[10px] border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400   text-sm"
                 />
               </div>
               <div>
                 <input
                   type="email"
                   placeholder="Your Email"
-                  className="w-full p-4 glass-card rounded-[10px] border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400  font-bold text-sm"
+                  className="w-full p-4 glass-card rounded-[10px] border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400   text-sm"
                 />
               </div>
               <div>
                 <input
                   type="text"
                   placeholder="Subject"
-                  className="w-full p-4 glass-card rounded-[10px] border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400  font-bold text-sm"
+                  className="w-full p-4 glass-card rounded-[10px] border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400   text-sm"
                 />
               </div>
               <div>
                 <textarea
                   rows={6}
                   placeholder="Your Message"
-                  className="w-full p-4 glass-card rounded-[10px] border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400  font-bold text-sm resize-none"
+                  className="w-full p-4 glass-card rounded-[10px] border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400   text-sm resize-none"
                 ></textarea>
               </div>
               <motion.button
                 type="submit"
-                className="w-full p-4 bg-black text-white rounded-[10px] font-bold text-sm  hover:bg-black transition-colors flex items-center justify-center space-x-2 dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                className="w-full p-4 bg-black text-white rounded-[10px]  text-sm  hover:bg-black transition-colors flex items-center justify-center space-x-2 dark:bg-white dark:text-black dark:hover:bg-gray-200"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
-                <Send className="w-5 h-5" />
+                <Send className="w-5 h-5 icon" />
                 <span>Send Message</span>
               </motion.button>
             </form>

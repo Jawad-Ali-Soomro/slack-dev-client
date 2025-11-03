@@ -145,10 +145,10 @@ const Teams = () => {
   // Get role icon
   const getRoleIcon = (role) => {
     switch (role) {
-      case 'owner': return <Crown className="w-4 h-4" />
-      case 'admin': return <Shield className="w-4 h-4" />
-      case 'member': return <User className="w-4 h-4" />
-      default: return <User className="w-4 h-4" />
+      case 'owner': return <Crown className="w-4 h-4 icon" />
+      case 'admin': return <Shield className="w-4 h-4 icon" />
+      case 'member': return <User className="w-4 h-4 icon" />
+      default: return <User className="w-4 h-4 icon" />
     }
   }
 
@@ -191,7 +191,7 @@ const Teams = () => {
         {/* Header */}
         <motion.div variants={itemVariants} className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Teams</h1>
+            <h1 className="text-3xl  text-gray-900 dark:text-white mb-2">Teams</h1>
             <p className="text-gray-600 dark:text-gray-400">Manage your teams and collaborate with members</p>
           </div>
           <div className="flex items-center gap-4">
@@ -241,7 +241,7 @@ const Teams = () => {
         <motion.div variants={itemVariants} className="flex flex-wrap justify-start items-center gap-4 mb-6">
           <div className="">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon icon" />
               <Input
                 type="text"
                 placeholder="Search teams..."
@@ -271,13 +271,13 @@ const Teams = () => {
             <SkeletonLoader type="grid" count={6} />
           ) : filteredTeams.length === 0 ? (
             <div className="col-span-full text-center py-12">
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No teams found</h3>
+              <h3 className="text-xl  text-gray-900 dark:text-white mb-2">No teams found</h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">Get started by creating your first team</p>
               <Button
                 onClick={() => setShowNewTeamPopup(true)}
                 className={'w-[200px]'}
               >
-                <Plus className="w-4 h-4 mr-2 icon" />
+                <Plus className="w-4 h-4 icon mr-2 icon" />
                 Create Team
               </Button>
             </div>
@@ -286,12 +286,12 @@ const Teams = () => {
               <motion.div
                 key={team.id}
                 variants={itemVariants}
-                className="bg-white dark:bg-black rounded-[10px] border-2 border-gray-200 dark:border-gray-700 p-6 transition-shadow duration-300 hover:shadow-lg"
+                className="bg-white dark:bg-black rounded-[10px]  border-gray-200 dark:border-gray-700 p-6 transition-shadow duration-300 hover:shadow-lg"
               >
                 {/* Team Header */}
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                    <h3 className="text-lg  text-gray-900 dark:text-white mb-2">
                       {team.name}
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
@@ -301,22 +301,22 @@ const Teams = () => {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm" className="p-2">
-                        <MoreVertical className="w-4 h-4 icon" />
+                        <MoreVertical className="w-4 h-4 icon icon" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem className="h-10 px-5 cursor-pointer">
-                        <Settings className="w-4 h-4 mr-2 icon" />
+                        <Settings className="w-4 h-4 icon mr-2 icon" />
                         Manage Team
                       </DropdownMenuItem>
                       <DropdownMenuItem className="h-10 px-5 cursor-pointer">
-                        <UserPlus className="w-4 h-4 mr-2 icon" />
+                        <UserPlus className="w-4 h-4 icon mr-2 icon" />
                         Add Members
                       </DropdownMenuItem>
                       <DropdownMenuItem className="h-10 px-5 cursor-pointer text-red-600" 
                         onClick={() => handleDeleteTeam(team.id)}
                       >
-                        <Trash2 className="w-4 h-4 mr-2" />
+                        <Trash2 className="w-4 h-4 icon mr-2" />
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -326,7 +326,7 @@ const Teams = () => {
                 {/* Team Stats */}
                 <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <Users className="w-4 h-4 icon" />
+                    <Users className="w-4 h-4 icon icon" />
                     <span>{team.members?.length || 0} members</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
@@ -343,7 +343,7 @@ const Teams = () => {
                     {team.members?.slice(0, 3).map((member, index) => (
                       <div
                         key={index}
-                        className="w-8 h-8 rounded-[10px] border-2 border-white dark:border-gray-900 overflow-hidden"
+                        className="w-8 h-8 rounded-[10px]  border-white dark:border-gray-900 overflow-hidden"
                         title={member.user?.username}
                       >
                         <img
@@ -354,7 +354,7 @@ const Teams = () => {
                       </div>
                     ))}
                     {team.members?.length > 3 && (
-                      <div className="w-8 h-8 rounded-[10px] border-2 border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
+                      <div className="w-8 h-8 rounded-[10px]  border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
                         +{team.members.length - 3}
                       </div>
                     )}
@@ -381,11 +381,11 @@ const Teams = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+              className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Create New Team</h2>
+                <h2 className="text-2xl  text-gray-900 dark:text-white">Create New Team</h2>
                 <button
                   onClick={() => setShowNewTeamPopup(false)}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
@@ -421,7 +421,7 @@ const Teams = () => {
                     id="isPublic"
                     checked={newTeam.isPublic}
                     onChange={(e) => setNewTeam({...newTeam, isPublic: e.target.checked})}
-                    className="w-4 h-4 text-gray-600 bg-gray-100 border-gray-300 rounded focus:ring-gray-500 dark:focus:ring-gray-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    className="w-4 h-4 icon text-gray-600 bg-gray-100 border-gray-300 rounded focus:ring-gray-500 dark:focus:ring-gray-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
                   <label htmlFor="isPublic" className="text-sm text-gray-700 dark:text-gray-300">
                     Make this team public
@@ -444,7 +444,7 @@ const Teams = () => {
                     disabled={loading}
                   >
                     {loading ? (
-                      <span className="loader w-5 h-5"></span>
+                      <span className="loader w-5 h-5 icon"></span>
                     ) : (
                       'Create Team'
                     )}

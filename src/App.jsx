@@ -33,7 +33,7 @@ import PermissionsManagement from './pages/admin/PermissionsManagement'
 
 function App() {
   return (
-   <div className='bg-gray-100 dark:bg-black'>
+   <div className='bg-white dark:bg-[#14120b]'>
      <Router>
       <Toaster 
         position="top-right"

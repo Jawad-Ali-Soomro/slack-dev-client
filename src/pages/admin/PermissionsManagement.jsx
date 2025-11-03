@@ -187,7 +187,7 @@ const PermissionsManagement = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <Shield className="w-6 h-6 text-blue-600" />
-              <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Permissions Management</h1>
+              <h1 className="text-2xl  text-gray-900 dark:text-white">Permissions Management</h1>
             </div>
             <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Admin Access</span>
           </div>
@@ -203,7 +203,7 @@ const PermissionsManagement = () => {
         >
           <div className="flex flex-col md:flex-row gap-3">
             <div className="relative flex-1 max-w-[600px]">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 icon" />
               <Input
                 placeholder="Search users..."
                 value={searchTerm}
@@ -233,19 +233,19 @@ const PermissionsManagement = () => {
         >
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full rounded-[10px] overflow-hidden">
-              <thead className="bg-gray-200 text-black dark:border-gray-700 sticky top-0 z-10">
+              <thead className="bg-gray-100 text-black dark:border-gray-700 sticky top-0 z-10">
                 <tr>
-                  <th className="px-3 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">User</th>
-                  <th className="px-3 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">Role</th>
-                  <th className="px-3 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">Permissions</th>
-                  <th className="px-3 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">Joined</th>
-                  <th className="px-3 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider"></th>
+                  <th className="px-5 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">User</th>
+                  <th className="px-5 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">Role</th>
+                  <th className="px-5 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">Permissions</th>
+                  <th className="px-5 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">Joined</th>
+                  <th className="px-5 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider"></th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredUsers.map((userItem) => (
                   <tr key={userItem.id} className="hover:bg-gray-50 dark:hover:bg-black">
-                    <td className="px-3 py-2">
+                    <td className="px-5 py-2">
                       <div className="flex items-center gap-3">
                         <img
                           {...getAvatarProps(userItem.avatar, userItem.username)}
@@ -258,10 +258,10 @@ const PermissionsManagement = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-5 py-2">
                       <Badge className={getRoleBadgeColor(userItem.role)}>{userItem.role}</Badge>
                     </td>
-                    <td className="px-3 py-2 ">
+                    <td className="px-5 py-2 ">
                       <div className="flex flex-wrap gap-2">
                         {userItem.permissions ? (
                           <>
@@ -277,17 +277,17 @@ const PermissionsManagement = () => {
                         )}
                       </div>
                     </td>
-                    <td className="px-3 py-2">
+                    <td className="px-5 py-2">
                       <div className="text-sm text-gray-600 dark:text-gray-400">{getJoinedDate(userItem.id, userItem.createdAt)}</div>
                     </td>
-                    <td className="px-3 py-2 flex items-center justify-end pr-5">
+                    <td className="px-5 py-2 flex items-center justify-end pr-5">
                       <div className="flex items-center gap-2">
                         <Button variant="outline" size="sm" className={'w-12'} onClick={() => handleEditPermissions(userItem)}>
-                <Edit className="w-4 h-4 icon" />
+                <Edit className="w-4 h-4 icon icon" />
                         </Button>
                         {userItem.permissions && (
                           <Button variant="outline" size="sm" clas onClick={() => handleDeletePermissions(userItem.id)} className="text-red-600 w-12 hover:text-red-700">
-                <X className="w-4 h-4 icon" />
+                <X className="w-4 h-4 icon icon" />
                           </Button>
                         )}
                       </div>
@@ -309,7 +309,7 @@ const PermissionsManagement = () => {
             //   onClick={setEditingUser(null)}
             >
               <div className="flex items-center justify-between mb-6" onClick={(e) => e.stopPropagation()}>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-2xl  text-gray-900 dark:text-white">
                   Edit Permissions - {editingUser.username}
                 </h2>
                 <Button
@@ -317,7 +317,7 @@ const PermissionsManagement = () => {
                   size="sm"
                   onClick={() => setEditingUser(null)}
                 >
-                  <X className="w-4 h-4" />
+                  <X className="w-4 h-4 icon" />
                 </Button>
               </div>
 
@@ -414,7 +414,7 @@ const PermissionsManagement = () => {
                   onClick={handleSavePermissions}
                   className="bg-black dark:bg-white"
                 >
-                  <Check className="w-4 h-4 mr-2" />
+                  <Check className="w-4 h-4 icon mr-2" />
                   Save Permissions
                 </Button>
               </div>

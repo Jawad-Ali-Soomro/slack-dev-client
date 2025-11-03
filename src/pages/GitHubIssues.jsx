@@ -29,7 +29,8 @@ import {
   FileText,
   HelpCircle,
   Zap,
-  Github
+  Github,
+  Info
 } from 'lucide-react'
 import { toast } from 'sonner'
 import GitHubIssuesModal from '../components/GitHubIssuesModal'
@@ -225,43 +226,43 @@ const GitHubIssues = () => {
   const getStatusIcon = (status) => {
     switch (status) {
       case 'open':
-        return <CheckCircle className="h-4 w-4 text-green-500" />
+        return <CheckCircle className="h-4 w-4 icon text-green-500" />
       case 'closed':
-        return <XCircle className="h-4 w-4 text-red-500" />
+        return <XCircle className="h-4 w-4 icon text-red-500" />
       case 'in-progress':
-        return <Clock className="h-4 w-4 text-yellow-500" />
+        return <Clock className="h-4 w-4 icon text-yellow-500" />
       case 'resolved':
-        return <CheckCircle className="h-4 w-4 text-blue-500" />
+        return <CheckCircle className="h-4 w-4 icon text-blue-500" />
       default:
-        return <Clock className="h-4 w-4 text-gray-500" />
+        return <Clock className="h-4 w-4 icon text-gray-500" />
     }
   }
 
   const getStatusColor = (status) => {
     switch (status) {
       case 'open':
-        return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+        return 'bg-green-500 text-white dark:bg-green-900 dark:text-green-200'
       case 'closed':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+        return 'bg-red-500 text-white dark:bg-red-900 dark:text-red-200'
       case 'in-progress':
-        return 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
+        return 'bg-yellow-500 text-white dark:bg-yellow-900 dark:text-yellow-200'
       case 'resolved':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+        return 'bg-blue-500 text-white dark:bg-blue-900 dark:text-blue-200'
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+        return 'bg-gray-500 text-white dark:bg-gray-900 dark:text-gray-200'
     }
   }
 
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'critical':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+        return 'bg-red-500 text-white dark:bg-red-900 dark:text-red-200'
       case 'high':
-        return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
+        return 'bg-orange-500 text-white dark:bg-orange-900 dark:text-orange-200'
       case 'medium':
-        return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+        return 'bg-blue-500 text-white dark:bg-blue-900 dark:text-blue-200'
       case 'low':
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+        return 'bg-gray-500 text-white dark:bg-gray-900 dark:text-gray-200'
       default:
         return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
     }
@@ -270,24 +271,24 @@ const GitHubIssues = () => {
   const getTypeIcon = (type) => {
     switch (type) {
       case 'bug':
-        return <Bug className="h-4 w-4 text-red-500" />
+        return <Bug className="h-4 w-4 icon text-red-500" />
       case 'feature':
-        return <Lightbulb className="h-4 w-4 text-green-500" />
+        return <Lightbulb className="h-4 w-4 icon text-green-500" />
       case 'enhancement':
-        return <Zap className="h-4 w-4 text-blue-500" />
+        return <Zap className="h-4 w-4 icon text-blue-500" />
       case 'documentation':
-        return <FileText className="h-4 w-4 text-purple-500" />
+        return <FileText className="h-4 w-4 icon text-purple-500" />
       case 'question':
-        return <HelpCircle className="h-4 w-4 text-yellow-500" />
+        return <HelpCircle className="h-4 w-4 icon text-yellow-500" />
       default:
-        return <AlertCircle className="h-4 w-4 text-gray-500" />
+        return <AlertCircle className="h-4 w-4 icon text-gray-500" />
     }
   }
 
   const getTypeColor = (type) => {
     switch (type) {
       case 'bug':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
+          return 'bg-red-500 text-white dark:bg-red-900 dark:text-red-200'
       case 'feature':
         return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
       case 'enhancement':
@@ -316,7 +317,7 @@ const GitHubIssues = () => {
           <div>
           <div className="flex gap-4">
           <div className="relative flex-1 max-w-[600px]">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 icon" />
             <Input
               placeholder="Search issues..."
               value={searchTerm}
@@ -366,7 +367,7 @@ const GitHubIssues = () => {
           </div>
           <div className="flex gap-3">
             <Button onClick={() => setIsCreateDialogOpen(true)} className={'w-[200px]'}>
-              <Plus className="h-4 w-4 mr-2" />
+              {/* <Plus className="h-4 w-4 icon mr-2" /> */}
               New Issue
             </Button>
             <Button 
@@ -374,8 +375,8 @@ const GitHubIssues = () => {
               variant="outline"
               className={'w-[200px]'}
             >
-              <Github className="h-4 w-4 mr-2" />
-              Import from GitHub
+              <Info className="h-4 w-4 icon mr-2" />
+              Import from Github
             </Button>
           </div>
         </div>
@@ -383,10 +384,10 @@ const GitHubIssues = () => {
         {/* Custom Create Modal */}
         {isCreateDialogOpen && (
           <div className="fixed inset-0 backdrop-blur-sm bg-black/50 bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsCreateDialogOpen(false)}>
-            <div className="bg-white dark:bg-black rounded-[30px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white dark:bg-black rounded-[10px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-center justify-between mb-4">
                 <div>
-                  <h2 className="text-xl font-semibold">Add New Issue</h2>
+                  <h2 className="text-xl ">Add New Issue</h2>
                  
                 </div>
                 <Button 
@@ -395,7 +396,7 @@ const GitHubIssues = () => {
                   onClick={() => setIsCreateDialogOpen(false)}
                   className={'w-12'}
                 >
-                  <XCircle className="h-4 w-4" />
+                  <XCircle className="h-4 w-4 icon" />
                 </Button>
               </div>
               <div className="space-y-4">
@@ -509,9 +510,9 @@ const GitHubIssues = () => {
                         <SelectItem key={friend._id} value={friend._id}>
                           <div className="flex items-center gap-2">
                             {friend.avatar ? (
-                              <img src={`http://localhost:4000${friend.avatar}`} alt={friend.username} className="w-5 h-5 rounded-full" />
+                              <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${friend.avatar}`} alt={friend.username} className="w-5 h-5 icon rounded-full" />
                             ) : (
-                              <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-semibold text-xs">
+                              <div className="w-5 h-5 icon rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white  text-xs">
                                 {friend.username?.charAt(0)?.toUpperCase() || 'U'}
                               </div>
                             )}
@@ -565,12 +566,12 @@ const GitHubIssues = () => {
       ) : issues.length === 0 ? (
         <div className="text-center py-12">
           <AlertCircle className="h-12 w-12 mx-auto mb-4 text-gray-400" />
-          <h3 className="text-lg font-semibold mb-2">No issues found</h3>
+          <h3 className="text-lg  mb-2">No issues found</h3>
           <p className="text-gray-600 dark:text-gray-400 mb-4">
             {searchTerm ? 'Try adjusting your search terms' : 'You haven\'t logged any issues yet'}
           </p>
           <Button onClick={() => setIsCreateDialogOpen(true)}>
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="h-4 w-4 icon mr-2" />
             Add Your First Issue
           </Button>
         </div>
@@ -580,28 +581,28 @@ const GitHubIssues = () => {
             <Table>
               <TableHeader className="bg-gray-100 text-black dark:border-gray-700 sticky top-0 z-10">
                 <TableRow>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Issue
                       </TableHead>
-                      <TableHead className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                      <TableHead className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Issue Hash
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Repository
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Status
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Priority
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Assigned To
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs font-bold text-black dark:text-black uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Due Date
                   </TableHead>
-                  <TableHead className="px-6 py-4 text-right text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider">
+                  <TableHead className="px-6 py-4 text-right text-xs  text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                     
                   </TableHead>
                 </TableRow>
@@ -646,17 +647,17 @@ const GitHubIssues = () => {
     {issue?.assignedTo ? (
       issue.assignedTo.avatar ? (
         <img
-          className="h-8 w-8 rounded-full border-2 border-white dark:border-gray-800"
-          src={`http://localhost:4000${issue.assignedTo.avatar}`}
+          className="h-8 w-8 rounded-full  border-white dark:border-gray-800"
+          src={`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${issue.assignedTo.avatar}`}
           alt={issue.assignedTo.username}
         />
       ) : (
-        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-white font-semibold text-xs border-2 border-white dark:border-gray-800">
+        <div className="h-8 w-8 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-white  text-xs  border-white dark:border-gray-800">
           {issue.assignedTo.username?.charAt(0)?.toUpperCase() || 'U'}
         </div>
       )
     ) : (
-      <div className="h-8 w-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-white font-semibold text-xs border-2 border-white dark:border-gray-800">
+      <div className="h-8 w-8 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-white  text-xs  border-white dark:border-gray-800">
         U
       </div>
     )}
@@ -666,7 +667,7 @@ const GitHubIssues = () => {
                     <TableCell className="px-6 py-4">
                       {issue.dueDate ? (
                         <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
+                          <Calendar className="h-4 w-4 icon" />
                           {formatDate(issue.dueDate)}
                         </div>
                       ) : (
@@ -681,7 +682,7 @@ const GitHubIssues = () => {
                           onClick={() => window.open(issue.githubUrl, '_blank')}
                           className="hover:bg-blue-100 dark:hover:bg-blue-900/20"
                         >
-                          <ExternalLink className="h-4 w-4 text-blue-500" />
+                          <ExternalLink className="h-4 w-4 icon text-blue-500" />
                         </Button>
                         <Button 
                           variant="ghost" 
@@ -689,7 +690,7 @@ const GitHubIssues = () => {
                           onClick={() => handleEditIssue(issue)}
                           className="hover:bg-gray-100 dark:hover:bg-gray-700"
                         >
-                          <Edit className="h-4 w-4" />
+                          <Edit className="h-4 w-4 icon" />
                         </Button>
                         <Button 
                           variant="ghost" 
@@ -697,7 +698,7 @@ const GitHubIssues = () => {
                           onClick={() => handleDeleteIssue(issue._id)}
                           className="hover:bg-red-100 dark:hover:bg-red-900/20"
                         >
-                          <Trash2 className="h-4 w-4 text-red-500" />
+                          <Trash2 className="h-4 w-4 icon text-red-500" />
                         </Button>
                       </div>
                     </TableCell>
@@ -715,7 +716,7 @@ const GitHubIssues = () => {
           <div className="bg-white dark:bg-gray-800 rounded-[30px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-xl font-semibold">Edit Issue</h2>
+                <h2 className="text-xl ">Edit Issue</h2>
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
                   Update issue information
                 </p>
@@ -725,7 +726,7 @@ const GitHubIssues = () => {
                 size="sm" 
                 onClick={() => setIsEditDialogOpen(false)}
               >
-                <XCircle className="h-4 w-4" />
+                <XCircle className="h-4 w-4 icon" />
               </Button>
             </div>
           <div className="space-y-4">

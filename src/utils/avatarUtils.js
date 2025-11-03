@@ -15,8 +15,8 @@ export const getAvatarUrl = (avatar, username = 'User') => {
   }
   
   // If it's a relative path, prepend the API URL
-  const apiUrl = 'http://localhost:4000'
-  return `${apiUrl}${avatar}`
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000'
+  return `${apiUrl}${avatar.startsWith('/') ? '' : '/'}${avatar}`
 }
 
 /**

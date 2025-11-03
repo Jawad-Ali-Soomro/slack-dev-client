@@ -328,7 +328,8 @@ const Projects = () => {
         formData.append('logo', newProject.logo)
         formData.append('folder', 'projects')
         
-        const uploadResponse = await fetch('http://localhost:4000/api/projects/upload/projects', {
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+        const uploadResponse = await fetch(`${apiUrl}/api/projects/upload/projects`, {
           method: 'POST',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -616,11 +617,11 @@ const Projects = () => {
   // Get priority icon
   const getPriorityIcon = (priority) => {
     switch (priority) {
-      case 'low': return <ArrowDown className="w-3 h-3 icon" />
-      case 'medium': return <Minus className="w-3 h-3 icon" />
-      case 'high': return <ArrowUp className="w-3 h-3 icon" />
-      case 'urgent': return <AlertTriangle className="w-3 h-3 icon" />
-      default: return <Minus className="w-3 h-3 icon" />
+      case 'low': return <ArrowDown className="w-3 h-3 icon icon" />
+      case 'medium': return <Minus className="w-3 h-3 icon icon" />
+      case 'high': return <ArrowUp className="w-3 h-3 icon icon" />
+      case 'urgent': return <AlertTriangle className="w-3 h-3 icon icon" />
+      default: return <Minus className="w-3 h-3 icon icon" />
     }
   }
 
@@ -639,12 +640,12 @@ const Projects = () => {
   // Get status icon
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'planning': return <Clock className="w-4 h-4 icon" />
-      case 'active': return <CheckCircle className="w-4 h-4 icon" />
-      case 'on_hold': return <Pause className="w-4 h-4 icon" />
-      case 'completed': return <CheckCircle className="w-4 h-4 icon" />
-      case 'cancelled': return <X className="w-4 h-4 icon" />
-      default: return <Clock className="w-4 h-4 icon" />
+      case 'planning': return <Clock className="w-4 h-4 icon icon" />
+      case 'active': return <CheckCircle className="w-4 h-4 icon icon" />
+      case 'on_hold': return <Pause className="w-4 h-4 icon icon" />
+      case 'completed': return <CheckCircle className="w-4 h-4 icon icon" />
+      case 'cancelled': return <X className="w-4 h-4 icon icon" />
+      default: return <Clock className="w-4 h-4 icon icon" />
     }
   }
 
@@ -732,7 +733,7 @@ const Projects = () => {
           <motion.div variants={itemVariants} className="flex flex-wrap justify-start items-center gap-4 ">
           <div className="">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon icon" />
               <Input
                 type="text"
                 placeholder="Search projects..."
@@ -784,7 +785,6 @@ const Projects = () => {
               }}
               className={'w-[200px] rounded-[10px] rounded-[10px] h-12'}
             >
-              <Plus className={ICON_SIZES.sm} />
               New Project
             </Button>
             }
@@ -802,7 +802,7 @@ const Projects = () => {
         <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
             Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="bg-white dark:bg-black rounded-[10px] border-2 border-gray-200 dark:border-gray-700 p-6 animate-pulse">
+              <div key={index} className="bg-white dark:bg-black rounded-[10px]  border-gray-200 dark:border-gray-700 p-6 animate-pulse">
                 <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
                 <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
                 <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
@@ -820,7 +820,7 @@ const Projects = () => {
           ) : filteredProjects.length === 0 ? (
             <div className="col-span-full text-center py-12">
              
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">No projects found</h3>
+              <h3 className="text-xl  text-gray-900 dark:text-white mb-2">No projects found</h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">Get started by creating your first project</p>
               <Button
                 onClick={() => {
@@ -833,7 +833,7 @@ const Projects = () => {
                 disabled={!permissions.canCreateProject}
                 className={'w-[200px]'}
               >
-                <Plus className="w-4 h-4 mr-2 icon" />
+                <Plus className="w-4 h-4 icon mr-2 icon" />
                 Create Project
               </Button>
             </div>
@@ -850,12 +850,12 @@ const Projects = () => {
                     <div className="flex items-center gap-3 mb-2">
                       {project.logo && (
                         <img
-                          src={project.logo.startsWith('http') ? project.logo : `http://localhost:4000${project.logo}`}
+                          src={project.logo.startsWith('http') ? project.logo : `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${project.logo}`}
                           alt={project.name}
                           className="w-8 h-8 rounded object-cover rounded-[10px] bg-gray-100  border border-gray-200 dark:border-gray-700"
                         />
                       )}
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-1">
+                      <h3 className="text-lg  text-gray-900 dark:text-white line-clamp-1">
                         {project.name}
                       </h3>
                     </div>
@@ -870,7 +870,7 @@ const Projects = () => {
                       onClick={() => handleViewProject(project)}
                       className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 w-12"
                     >
-                      <Eye className="w-4 h-4 icon" />
+                      <Eye className="w-4 h-4 icon icon" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -882,43 +882,43 @@ const Projects = () => {
                       }}
                       className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 w-12"
                     >
-                      <TrendingUp className="w-4 h-4 icon" />
+                      <TrendingUp className="w-4 h-4 icon icon" />
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm" className="p-2 w-12">
-                          <MoreVertical className="w-4 h-4 icon" />
+                          <MoreVertical className="w-4 h-4 icon icon" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => handleViewProject(project)}>
-                          <Eye className="w-4 h-4 mr-2 icon" />
+                          <Eye className="w-4 h-4 icon mr-2 icon" />
                           View Details
                         </DropdownMenuItem>
                         {isProjectOwner(project) && (
                           <>
                             <DropdownMenuItem className="h-10 px-5 cursor-pointer">
-                              <Edit className="w-4 h-4 mr-2 icon" />
+                              <Edit className="w-4 h-4 icon mr-2 icon" />
                               Edit Project
                             </DropdownMenuItem>
                             <DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => {
                               setSelectedProject(project)
                               setShowMembersModal(true)
                             }}>
-                              <Settings className="w-4 h-4 mr-2 icon" />
+                              <Settings className="w-4 h-4 icon mr-2 icon" />
                               Edit Members
                             </DropdownMenuItem>
                             <DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => {
                               setSelectedProject(project)
                               setShowLinksModal(true)
                             }}>
-                              <Link className="w-4 h-4 mr-2 icon" />
+                              <Link className="w-4 h-4 icon mr-2 icon" />
                               Manage Links
                             </DropdownMenuItem>
                             <DropdownMenuItem className="h-10 px-5 cursor-pointer text-red-600" 
                               onClick={() => handleDeleteProject(project.id)}
                             >
-                              <Trash2 className="w-4 h-4 mr-2" />
+                              <Trash2 className="w-4 h-4 icon mr-2" />
                               Delete
                             </DropdownMenuItem>
                           </>
@@ -957,7 +957,7 @@ const Projects = () => {
                 {/* {project.teamId && (
                   <div className="mb-4">
                     <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm">
-                      <Users className="w-4 h-4 icon" />
+                      <Users className="w-4 h-4 icon icon" />
                       <span>Team: {project.teamId.name}</span>
                     </div>
                   </div>
@@ -969,11 +969,11 @@ const Projects = () => {
                     
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <CheckCircle className="w-4 h-4 icon" />
+                    <CheckCircle className="w-4 h-4 icon icon" />
                     <span>{project?.tasks.length || 0} tasks</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <Calendar className="w-4 h-4 icon" />
+                    <Calendar className="w-4 h-4 icon icon" />
                     <span>{project?.meetings.length || 0} meetings</span>
                   </div>
                 </div> */}
@@ -986,7 +986,7 @@ const Projects = () => {
                         key={index}
                         className="inline-flex items-center px-2 py-1 bg-gray-100 dark:bg-black text-gray-700 dark:text-gray-300 rounded-[10px] text-xs"
                       >
-                        <Tag className="w-3 h-3 mr-1 icon" />
+                        <Tag className="w-3 h-3 icon mr-1 icon" />
                         {tag}
                       </span>
                     ))}
@@ -1005,7 +1005,7 @@ const Projects = () => {
                       {project.members?.slice(0, 3).map((member, index) => (
                         <div
                           key={index}
-                          className="w-10 h-10 rounded-[10px] border-2 border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:scale-110 transition-transform"
+                          className="w-10 h-10 rounded-[10px]  border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:scale-110 transition-transform"
                           onClick={() => handleUserAvatarClick(member.user._id)}
                           title={member.user.username}
                         >
@@ -1018,7 +1018,7 @@ const Projects = () => {
                         </div>
                       ))}
                       {project.members?.length > 3 && (
-                        <div className="w-6 h-6 rounded-[10px] border-2 border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
+                        <div className="w-6 h-6 rounded-[10px]  border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
                           +{project.members.length - 3}
                         </div>
                       )}
@@ -1034,7 +1034,7 @@ const Projects = () => {
         </motion.div>
 
         {/* Pagination Controls - Fixed at Bottom */}
-        <div className="sticky bottom-0 border-t border-gray-200 dark:border-gray-700 p-4 mt-8">
+        <div className="sticky bottom-0  border-gray-200 dark:border-gray-700 p-4 mt-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -1055,7 +1055,7 @@ const Projects = () => {
                 disabled={pagination.page === 1 || loading}
                 className="flex items-center gap-1 h-8 px-3  w-[120px] h-[50px]"
               >
-                <ArrowUp className="w-4 h-4 rotate-[-90deg]" />
+                <ArrowUp className="w-4 h-4 icon rotate-[-90deg]" />
                 Previous
               </Button>
 
@@ -1093,7 +1093,7 @@ const Projects = () => {
                 className="flex items-center gap-1 h-8 w-[120px] h-[50px]"
               >
                 Next
-                <ArrowDown className="w-4 h-4 rotate-[-90deg]" />
+                <ArrowDown className="w-4 h-4 icon rotate-[-90deg]" />
               </Button>
             </div>
           )}
@@ -1109,14 +1109,14 @@ const Projects = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 backdrop-blur-sm bg-black/50 icon  bg-opacity-50 flex items-center justify-center p-4 z-50"
             onClick={() => setShowNewProjectPopup(false)}
           >
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-end mb-6">
@@ -1169,28 +1169,26 @@ const Projects = () => {
 
                 {/* Project Logo Upload */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                    Project Logo (Optional)
-                  </label>
+                
                   <div className="flex items-center gap-4">
                     {newProject.logo ? (
                       <div className="relative">
                         <img
                           src={URL.createObjectURL(newProject.logo)}
                           alt="Project logo preview"
-                          className="w-16 h-16 rounded-[10px] object-cover border-2 border-gray-200 dark:border-gray-700"
+                          className="w-16 h-16 rounded-[10px] object-cover  border-gray-200 dark:border-gray-700"
                         />
                         <button
                           type="button"
                           onClick={() => setNewProject({...newProject, logo: null})}
                           className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-[10px] flex items-center justify-center text-xs hover:bg-red-600"
                         >
-                          <X className="w-3 h-3" />
+                          <X className="w-3 h-3 icon" />
                         </button>
                       </div>
                     ) : (
-                      <div className="w-16 h-16 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-[10px] flex items-center justify-center">
-                        <Camera className="w-6 h-6 text-gray-400" />
+                      <div className="w-16 h-16  border-dashed border-gray-300 dark:border-gray-600 rounded-[10px] flex items-center justify-center">
+                        <Camera className="w-6 h-6 text-gray-400 icon" />
                       </div>
                     )}
                     <div>
@@ -1210,12 +1208,10 @@ const Projects = () => {
                         htmlFor="logo-upload"
                         className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-[10px] shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-gray-700"
                       >
-                        <Camera className="w-4 h-4 mr-2" />
+                        <Camera className="w-4 h-4 icon mr-2 icon" />
                         {newProject.logo ? 'Change Logo' : 'Upload Logo'}
                       </label>
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        Recommended: 200x200px, PNG or JPG
-                      </p>
+                    
                     </div>
                   </div>
                 </div>
@@ -1283,7 +1279,7 @@ const Projects = () => {
                       className="w-full h-12 rounded-[10px]"
                     />
                     {showMemberSuggestions && memberSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[10px] shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black  border-gray-200 dark:border-gray-700 rounded-[10px] shadow-lg max-h-48 overflow-y-auto">
                         {memberSuggestions.map((user) => (
                           <div
                             key={user.id}
@@ -1294,7 +1290,7 @@ const Projects = () => {
                               <img 
                                 {...getAvatarProps(user.avatar, user.username)}
                                 alt={user.username}
-                                className="w-8 h-8 rounded-[10px] object-cover border-2 border-gray-200 dark:border-gray-700"
+                                className="w-8 h-8 rounded-[10px] object-cover  border-gray-200 dark:border-gray-700"
                               />
                               <div>
                                 <div className="font-medium text-gray-900 dark:text-white">{user.username}</div>
@@ -1317,7 +1313,7 @@ const Projects = () => {
                           <img
                             {...getAvatarProps(member.avatar, member.username)}
                             alt={member.username}
-                            className="w-4 h-4 rounded-[10px]"
+                            className="w-4 h-4 icon rounded-[10px]"
                           />
                           {member.username}
                           <button
@@ -1325,7 +1321,7 @@ const Projects = () => {
                             onClick={() => handleRemoveMember(member.id)}
                             className="ml-1 hover:text-gray-600 dark:hover:text-gray-300"
                           >
-                            <X className="w-3 h-3" />
+                            <X className="w-3 h-3 icon" />
                           </button>
                         </span>
                       ))}
@@ -1369,7 +1365,7 @@ const Projects = () => {
                       {newProject.links.map((link) => (
                         <div key={link.id} className="flex items-center justify-between p-2 bg-gray-100 dark:bg-black rounded">
                           <div className="flex items-center gap-2">
-                            <ExternalLink className="w-4 h-4 text-gray-500" />
+                            <ExternalLink className="w-4 h-4 icon text-gray-500" />
                             <span className="text-sm font-medium">{link.title}</span>
                             <span className="text-xs text-gray-500">({link.type})</span>
                           </div>
@@ -1378,7 +1374,7 @@ const Projects = () => {
                             onClick={() => handleRemoveLink(link.id)}
                             className="text-red-500 hover:text-red-700"
                           >
-                            <X className="w-4 h-4" />
+                            <X className="w-4 h-4 icon" />
                           </button>
                         </div>
                       ))}
@@ -1408,14 +1404,14 @@ const Projects = () => {
                           key={index}
                           className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-[10px] text-sm"
                         >
-                          <Tag className="w-3 h-3" />
+                          <Tag className="w-3 h-3 icon" />
                           {tag}
                           <button
                             type="button"
                             onClick={() => handleRemoveTag(tag)}
                             className="ml-1 hover:text-green-600 dark:hover:text-green-300"
                           >
-                            <X className="w-3 h-3" />
+                            <X className="w-3 h-3 icon" />
                           </button>
                         </span>
                       ))}
@@ -1424,19 +1420,7 @@ const Projects = () => {
                 </div>
 
                 {/* Public Toggle */}
-                <div className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    id="isPublic"
-                    checked={newProject.isPublic}
-                    onChange={(e) => setNewProject({...newProject, isPublic: e.target.checked})}
-                    className="w-4 h-4 text-gray-600 bg-gray-100 border-gray-300 rounded focus:ring-gray-500 dark:focus:ring-gray-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                  />
-                  <label htmlFor="isPublic" className="text-sm text-gray-700 dark:text-gray-300">
-                    Make this project public
-                  </label>
-                </div>
-
+               
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-4 border-t icon border-gray-200 dark:border-gray-700">
                   <Button
@@ -1454,7 +1438,7 @@ const Projects = () => {
                     disabled={loading}
                   >
                     {loading ? (
-                      <span className="loader w-5 h-5"></span>
+                      <span className="loader w-5 h-5 icon"></span>
                     ) : (
                       'Create Project'
                     )}
@@ -1475,7 +1459,7 @@ const Projects = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-100000"
+            className="fixed inset-0 bg-black/50 icon  backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-100000"
             onClick={() => {
               setShowProjectDetails(false)
               setShowTasks(false)
@@ -1491,13 +1475,13 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                    <h2 className="text-2xl  text-gray-900 dark:text-white">
                       {selectedProject.name}
                     </h2>
                     <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -1525,7 +1509,7 @@ const Projects = () => {
                   {/* Project Info */}
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Description</h3>
+                      <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Description</h3>
                       <p className="text-gray-600 dark:text-gray-400">
                         {selectedProject.description || 'No description provided'}
                       </p>
@@ -1533,13 +1517,13 @@ const Projects = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase font-bold rounded-[10px] text-xs font-medium ${getStatusColor(selectedProject.status)}`}>
+                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase  rounded-[10px] text-xs font-medium ${getStatusColor(selectedProject.status)}`}>
                           {getStatusIcon(selectedProject.status)}
                           {selectedProject.status}
                         </span>
                       </div>
                       <div>
-                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase font-bold rounded-[10px] text-xs font-medium ${getPriorityColor(selectedProject.priority)}`}>
+                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase  rounded-[10px] text-xs font-medium ${getPriorityColor(selectedProject.priority)}`}>
                           {getPriorityIcon(selectedProject.priority)}
                           {selectedProject.priority}
                         </span>
@@ -1581,7 +1565,7 @@ const Projects = () => {
                   {/* Members and Links */}
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Members ({selectedProject.members?.length || 0})</h3>
+                      <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Members ({selectedProject.members?.length || 0})</h3>
                       {console.log('Rendering members:', selectedProject.members)}
                       <div className="space-y-2 max-h-45overflow-y-auto" key={refreshKey}>
                         {selectedProject.members && selectedProject.members.length > 0 ? selectedProject.members.map((member, index) => (
@@ -1617,12 +1601,12 @@ const Projects = () => {
                         onClick={() => setShowLinks(!showLinks)}
                         className="flex items-center justify-between w-full cursor-pointer  text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border rounded-[10px] transition-colors"
                       >
-                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                          <Link className="w-5 h-5" />
+                        <h3 className="text-lg  text-gray-900 dark:text-white flex items-center gap-2">
+                          <Link className="w-5 h-5 icon" />
                           Links ({selectedProject.links?.length || 0})
                         </h3>
                         <ChevronDown 
-                          className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
+                          className={`w-5 h-5 icon text-gray-500 transition-transform duration-200 ${
                             showLinks ? 'rotate-180' : ''
                           }`} 
                         />
@@ -1647,7 +1631,7 @@ const Projects = () => {
                                   className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-[10px]"
                                 >
                                   <div className="flex items-center gap-2">
-                                    <Link className="w-4 h-4 text-gray-500" />
+                                    <Link className="w-4 h-4 icon text-gray-500" />
                                     <div>
                                       <p className="text-sm font-medium text-gray-900 dark:text-white">
                                         {link.title}
@@ -1663,7 +1647,7 @@ const Projects = () => {
                                     rel="noopener noreferrer"
                                     className="text-gray-500 hover:text-gray-600 text-sm w-[50px] h-[50px] border flex items-center justify-center rounded-[10px]"
                                   >
-                                    <ArrowUpRightSquare className="w-4 h-4" />
+                                    <ArrowUpRightSquare className="w-4 h-4 icon" />
                                   </a>
                                 </motion.div>
                               ))
@@ -1688,12 +1672,12 @@ const Projects = () => {
                       onClick={() => setShowTasks(!showTasks)}
                       className="flex items-center justify-between w-full text-left hover:bg-gray-50 cursor-pointer dark:hover:bg-gray-800 p-4 border rounded-[10px] transition-colors"
                     >
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                        <CheckCircle className="w-5 h-5" />
+                      <h3 className="text-lg  text-gray-900 dark:text-white flex items-center gap-2">
+                        <CheckCircle className="w-5 h-5 icon" />
                         Tasks ({selectedProject.tasks?.length || 0})
                       </h3>
                       <ChevronDown 
-                        className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
+                        className={`w-5 h-5 icon text-gray-500 transition-transform duration-200 ${
                           showTasks ? 'rotate-180' : ''
                         }`} 
                       />
@@ -1718,7 +1702,7 @@ const Projects = () => {
                                 className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]"
                               >
                                 <div className="flex items-center gap-3">
-                                  <div className={`w-3 h-3 rounded-[10px] ${
+                                  <div className={`w-3 h-3 icon rounded-[10px] ${
                                     task.status === 'completed' ? 'bg-green-500' :
                                     task.status === 'in_progress' ? 'bg-gray-500' :
                                     task.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
@@ -1759,12 +1743,12 @@ const Projects = () => {
                       onClick={() => setShowMeetings(!showMeetings)}
                       className="flex items-center justify-between w-full text-left cursor-pointer mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border rounded-[10px] transition-colors"
                     >
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-                        <Calendar className="w-5 h-5 icon" />
+                      <h3 className="text-lg  text-gray-900 dark:text-white flex items-center gap-2">
+                        <Calendar className="w-5 h-5 icon icon" />
                         Meetings ({selectedProject.meetings?.length || 0})
                       </h3>
                       <ChevronDown 
-                        className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
+                        className={`w-5 h-5 icon text-gray-500 transition-transform duration-200 ${
                           showMeetings ? 'rotate-180' : ''
                         }`} 
                       />
@@ -1789,7 +1773,7 @@ const Projects = () => {
                                 className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]"
                               >
                                 <div className="flex items-center gap-3">
-                                  <div className={`w-3 h-3 rounded-[10px] ${
+                                  <div className={`w-3 h-3 icon rounded-[10px] ${
                                     meeting.status === 'completed' ? 'bg-green-500' :
                                     meeting.status === 'scheduled' ? 'bg-gray-500' :
                                     meeting.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
@@ -1834,7 +1818,7 @@ const Projects = () => {
                       }}
                       className="flex-1 h-12 rounded-[10px]"
                     >
-                      <TrendingUp className="w-4 h-4 mr-2" />
+                      <TrendingUp className="w-4 h-4 icon mr-2" />
                       Update Progress
                     </Button>
                     <Button
@@ -1844,7 +1828,7 @@ const Projects = () => {
                       }}
                       className="flex-1 h-12 rounded-[10px]"
                     >
-                      <Settings className="w-4 h-4 mr-2" />
+                      <Settings className="w-4 h-4 icon mr-2" />
                       Edit Members
                     </Button>
                     <Button
@@ -1854,7 +1838,7 @@ const Projects = () => {
                       }}
                       className="flex-1 h-12 rounded-[10px]"
                     >
-                      <Link className="w-4 h-4 mr-2" />
+                      <Link className="w-4 h-4 icon mr-2" />
                       Manage Links
                     </Button>
                     <Button
@@ -1862,7 +1846,7 @@ const Projects = () => {
                       onClick={() => handleViewProject(selectedProject)}
                       className="flex-1 h-12 rounded-[10px]"
                     >
-                      <RefreshCw className="w-4 h-4 mr-2" />
+                      <RefreshCw className="w-4 h-4 icon mr-2" />
                       Refresh
                     </Button>
                   </div>
@@ -1885,11 +1869,11 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+              className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-xl  text-gray-900 dark:text-white">
                   Update Progress
                 </h2>
                 <button
@@ -1948,12 +1932,12 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+              className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                  <h2 className="text-xl  text-gray-900 dark:text-white">
                     Manage Members - {selectedProject.name}
                   </h2>
                   <button
@@ -1967,7 +1951,7 @@ const Projects = () => {
                 <div className="space-y-4">
                   {/* Add Member */}
                   <div>
-                    {/* <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Add Member</h3> */}
+                    {/* <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Add Member</h3> */}
                     <div className="flex gap-2">
                       <Input
                         value={projectMemberSearch}
@@ -2005,7 +1989,7 @@ const Projects = () => {
                               className="w-10 h-10 rounded-[10px]"
                             />
                            <div className="flex flex-col">
-                           <span className="text-sm text-gray-900 dark:text-white font-bold">{user.username}</span>
+                           <span className="text-sm text-gray-900 dark:text-white ">{user.username}</span>
                            <span className="text-sm text-gray-900 dark:text-white">{user.email}</span>
                            </div>
                           </div>
@@ -2016,7 +2000,7 @@ const Projects = () => {
 
                   {/* Current Members */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Current Members</h3>
+                    <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Current Members</h3>
                     <div className="space-y-2 max-h-60 overflow-y-auto" key={refreshKey}>
                       {selectedProject.members?.map((member, index) => (
                         <div key={`${member.user?._id || member.user?.id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]">
@@ -2044,7 +2028,7 @@ const Projects = () => {
                           onClick={() => handleRemoveMemberFromProject(member.user?._id)}
                           className="text-red-500 hover:text-red-700 w-12 border"
                         >
-                          <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4 icon" />
                         </Button>
                         }
                         </div>
@@ -2070,12 +2054,12 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+              className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                  <h2 className="text-xl  text-gray-900 dark:text-white">
                     Manage Links
                   </h2>
                   <button
@@ -2089,7 +2073,7 @@ const Projects = () => {
                 <div className="space-y-4">
                   {/* Add Link */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Add Link</h3>
+                    <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Add Link</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       <Input
                         value={newLink.title}
@@ -2130,12 +2114,12 @@ const Projects = () => {
 
                   {/* Current Links */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Current Links</h3>
+                    <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Current Links</h3>
                     <div className="space-y-2 max-h-60 overflow-y-auto">
                       {selectedProject.links?.map((link, index) => (
                         <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]">
                           <div className="flex items-center gap-3">
-                            <Link className="w-4 h-4 text-gray-500" />
+                            <Link className="w-4 h-4 icon text-gray-500" />
                             <div>
                               <p className="text-sm font-medium text-gray-900 dark:text-white">
                                 {link.title}
@@ -2160,7 +2144,7 @@ const Projects = () => {
                               onClick={() => handleRemoveLinkFromProject(link._id)}
                               className="text-red-500 hover:text-red-700"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-4 h-4 icon" />
                             </Button>
                           </div>
                         </div>

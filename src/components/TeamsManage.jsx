@@ -388,8 +388,8 @@ const TeamsManage = () => {
   // Get role icon
   const getRoleIcon = (role) => {
     switch (role) {
-      case 'owner': return <Shield className="w-4 h-4 text-yellow-600 icon p2" />
-      case 'admin': return <Shield className="w-4 h-4 text-blue-500 icon" />
+      case 'owner': return <Shield className="w-4 h-4 icon text-yellow-600 icon p2" />
+      case 'admin': return <Shield className="w-4 h-4 icon text-blue-500 icon" />
       default: return null
     }
   }
@@ -444,7 +444,7 @@ const TeamsManage = () => {
         <div className="flex gap-4 justify-start items-center">
         <div className="bg-white dark:bg-black">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon icon" />
             <Input
               placeholder="Search teams..."
               value={searchTerm}
@@ -477,8 +477,7 @@ const TeamsManage = () => {
         }}
         className={'w-[200px] rounded-[10px] h-12'}
       >
-        <Plus className="w-4 h-4 mr-2 icon" />
-        Create Team
+        New Team
       </Button>
        }
       </div>
@@ -512,7 +511,7 @@ const TeamsManage = () => {
               disabled={!permissions.canCreateTeam}
               className={'w-[200px]'}
             >
-              <Plus className="w-4 h-4 mr-2 icon" />
+              <Plus className="w-4 h-4 icon mr-2 icon" />
               Create Team
             </Button>
           )}
@@ -533,7 +532,7 @@ const TeamsManage = () => {
               {/* Team Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white line-clamp-1">
+                  <h3 className="text-lg  text-gray-900 dark:text-white line-clamp-1">
                     {team.name}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
@@ -550,12 +549,12 @@ const TeamsManage = () => {
                     }}
                     className="p-2 text-gray-400 w-12 hover:text-gray-600 dark:hover:text-gray-300"
                   >
-                    <Eye className="w-4 h-4 icon" />
+                    <Eye className="w-4 h-4 icon icon" />
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm" className="p-2 w-12">
-                        <MoreVertical className="w-4 h-4 icon" />
+                        <MoreVertical className="w-4 h-4 icon icon" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -563,7 +562,7 @@ const TeamsManage = () => {
                         setSelectedTeam(team)
                         setShowTeamDetails(true)
                       }}>
-                        <Eye className="w-4 h-4 mr-2 icon" />
+                        <Eye className="w-4 h-4 icon mr-2 icon" />
                         View Details
                       </DropdownMenuItem>
                       {isTeamOwner(team) && (
@@ -572,13 +571,13 @@ const TeamsManage = () => {
                         setSelectedTeam(team)
                         setShowMembersModal(true)
                       }}>
-                            <Settings className="w-4 h-4 mr-2 icon" />
+                            <Settings className="w-4 h-4 icon mr-2 icon" />
                             Edit Members
                       </DropdownMenuItem>
                       <DropdownMenuItem className={'h-10 px-5 cursor-pointer'} 
                         onClick={() => handleDeleteTeam(team.id)}
                       >
-                        <Trash2 className="w-4 h-4 mr-2" />
+                        <Trash2 className="w-4 h-4 icon mr-2" />
                         Delete
                       </DropdownMenuItem>
                         </>
@@ -590,7 +589,7 @@ const TeamsManage = () => {
 
               {/* Status and Members */}
               <div className="flex gap-2 mb-4">
-                <span className={`inline-flex items-center px-4 py-2 rounded-[10px] text-xs uppercase font-bold ${getStatusColor(team.isActive)}`}>
+                <span className={`inline-flex items-center px-4 py-2 rounded-[10px] text-xs uppercase  ${getStatusColor(team.isActive)}`}>
                   {team.isActive ? 'Active' : 'Inactive'}
                 </span>
                
@@ -602,7 +601,7 @@ const TeamsManage = () => {
                 
                 </div>
                 <div className="flex items-center justify-end gap-2 text-gray-600 dark:text-gray-400">
-                  <Activity className="w-4 h-4 icon" />
+                  <Activity className="w-4 h-4 icon icon" />
                   <span>Created {new Date(team.createdAt).toLocaleDateString()}</span>
                 </div>
               </div> */}
@@ -616,13 +615,13 @@ const TeamsManage = () => {
                             <img
                               {...getAvatarProps(member.user?.avatar, member.user?.username)}
                               alt={member.user?.username}
-                              className="w-10 h-10 rounded-[10px] object-cover border-2 border-white dark:border-gray-900"
+                              className="w-10 h-10 rounded-[10px] object-cover  border-white dark:border-gray-900"
                             />
                          
                           </div>
                         ))}
                   {team.members?.length > 3 && (
-                    <div className="w-8 h-8 rounded-[10px] bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400 border-2 border-white dark:border-gray-900">
+                    <div className="w-8 h-8 rounded-[10px] bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400  border-white dark:border-gray-900">
                       +{team.members.length - 3}
                     </div>
                   )}
@@ -632,7 +631,7 @@ const TeamsManage = () => {
               {/* Team Footer */}
               <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
                 <div className="flex items-center gap-2">
-                    <FolderOpen className="w-4 h-4" />
+                    <FolderOpen className="w-4 h-4 icon" />
                     {team.projects?.length || 0} Projects
                 </div>
               </div>
@@ -643,7 +642,7 @@ const TeamsManage = () => {
       )}
 
       {/* Pagination Controls - Fixed at Bottom */}
-      <div className="sticky bottom-0  border-t border-gray-200 dark:border-gray-700 p-4 mt-8">
+      <div className="sticky bottom-0  border-gray-200 dark:border-gray-700 p-4 mt-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -664,7 +663,7 @@ const TeamsManage = () => {
                 disabled={pagination.page === 1 || loading}
                 className="flex items-center gap-1 h-8 px-3 w-[120px] h-[50px]"
               >
-                <ArrowUp className="w-4 h-4 rotate-[-90deg]" />
+                <ArrowUp className="w-4 h-4 icon rotate-[-90deg]" />
                 Previous
               </Button>
 
@@ -702,7 +701,7 @@ const TeamsManage = () => {
                 className="flex items-center gap-1 h-8 px-3 w-[120px] h-[50px]"
               >
                 Next
-                <ArrowDown className="w-4 h-4 rotate-[-90deg]" />
+                <ArrowDown className="w-4 h-4 icon rotate-[-90deg]" />
               </Button>
             </div>
           )}
@@ -718,19 +717,18 @@ const TeamsManage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-50"
+          className="fixed inset-0 bg-black/50 icon  backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-50"
           onClick={() => setShowNewTeamModal(false)}
         >
           <motion.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-md w-full"
+            className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Create New Team</h2>
+              <div className="flex items-center justify-end mb-4">
                 <button
                   onClick={() => setShowNewTeamModal(false)}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
@@ -807,7 +805,7 @@ const TeamsManage = () => {
                     className="flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {loading ? (
-                      <span className="loader w-5 h-5"></span>
+                      <span className="loader w-5 h-5 icon"></span>
                     ) : (
                       'Create Team'
                     )}
@@ -825,7 +823,7 @@ const TeamsManage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-50"
+          className="fixed inset-0 bg-black/50 icon  backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-50"
           onClick={() => {
             setShowTeamDetails(false)
             setShowProjects(false)
@@ -835,13 +833,13 @@ const TeamsManage = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                  <h2 className="text-2xl  text-gray-900 dark:text-white">
                     {selectedTeam.name}
                   </h2>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -863,7 +861,7 @@ const TeamsManage = () => {
                 {/* Team Info */}
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">Description</h3>
+                    <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Description</h3>
                     <p className="text-gray-600 dark:text-gray-400">
                       {selectedTeam.description || 'No description provided'}
                     </p>
@@ -882,11 +880,11 @@ const TeamsManage = () => {
                     <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Settings</h4>
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle className={`w-4 h-4 ${selectedTeam.settings?.allowMemberInvites ? 'text-green-500' : 'text-gray-400'}`} />
+                        <CheckCircle className={`w-4 h-4 icon ${selectedTeam.settings?.allowMemberInvites ? 'text-green-500' : 'text-gray-400'}`} />
                         <span className="text-gray-600 dark:text-gray-400">Member invites allowed</span>
                       </div>
                       <div className="flex items-center gap-2 text-sm">
-                        <CheckCircle className={`w-4 h-4 ${selectedTeam.settings?.allowProjectCreation ? 'text-green-500' : 'text-gray-400'}`} />
+                        <CheckCircle className={`w-4 h-4 icon ${selectedTeam.settings?.allowProjectCreation ? 'text-green-500' : 'text-gray-400'}`} />
                         <span className="text-gray-600 dark:text-gray-400">Project creation allowed</span>
                       </div>
                     </div>
@@ -895,7 +893,7 @@ const TeamsManage = () => {
 
                 {/* Members */}
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Members ({selectedTeam.members?.length || 0})</h3>
+                  <h3 className="text-lg  text-gray-900 dark:text-white mb-4">Members ({selectedTeam.members?.length || 0})</h3>
                   <div className="space-y-2 max-h-60 overflow-y-auto" key={refreshKey}>
                     {selectedTeam.members?.map((member, index) => (
                       <div key={`${member.user?.id || member.user?._id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]">
@@ -932,11 +930,11 @@ const TeamsManage = () => {
                   onClick={() => setShowProjects(!showProjects)}
                   className="flex items-center justify-between w-full text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border cursor-pointer rounded-[10px] transition-colors"
                 >
-                  <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  <h3 className="text-lg  text-gray-900 dark:text-white">
                     Projects ({selectedTeam.projects?.length || 0})
                   </h3>
                   <ChevronDown 
-                    className={`w-5 h-5 text-gray-500 transition-transform duration-200 ${
+                    className={`w-5 h-5 icon text-gray-500 transition-transform duration-200 ${
                       showProjects ? 'rotate-180' : ''
                     }`} 
                   />
@@ -1012,7 +1010,7 @@ const TeamsManage = () => {
                             
                             {project.startDate && (
                               <div className="mt-2 text-xs text-gray-500 dark:text-gray-400">
-                                <Calendar className="w-3 h-3 inline mr-1" />
+                                <Calendar className="w-3 h-3 icon inline mr-1" />
                                 Started {new Date(project.startDate).toLocaleDateString()}
                               </div>
                             )}
@@ -1034,7 +1032,7 @@ const TeamsManage = () => {
                   }}
                     className="w-1/3 hover:text-white  bg-black dark:bg-white text-white dark:text-black dark:text-black hover:bg-black dark:hover:bg-white border-none hover:border-none"
                 >
-                    <Settings className="w-4 h-4 mr-2 icon" />
+                    <Settings className="w-4 h-4 icon mr-2 icon" />
                     Edit Members
                 </Button>
               </div>
@@ -1057,12 +1055,12 @@ const TeamsManage = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-[10px] shadow-2xl border-2 border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-xl  text-gray-900 dark:text-white">
                   Manage Members - {selectedTeam.name}
                 </h2>
                 <button
@@ -1075,7 +1073,7 @@ const TeamsManage = () => {
 
               {/* Add Member Form */}
               <div className="mb-6 rounded-[10px]">
-                {/* <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Add New Member</h3> */}
+                {/* <h3 className="text-lg  text-gray-900 dark:text-white mb-4">Add New Member</h3> */}
                 <div className="flex gap-2">
                   <div className="relative flex-1 member-search-container">
                     <Input
@@ -1085,7 +1083,7 @@ const TeamsManage = () => {
                       className="w-full h-12 rounded-[10px]"
                     />
                     {showMemberSuggestions && memberSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-2 border-gray-200 dark:border-gray-700 rounded-[10px] shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black  border-gray-200 dark:border-gray-700 rounded-[10px] shadow-lg max-h-48 overflow-y-auto">
                         {memberSuggestions.map((user) => (
                           <div
                             key={user.id}
@@ -1096,7 +1094,7 @@ const TeamsManage = () => {
                                 <img
                                   {...getAvatarProps(user.avatar, user.username)}
                                   alt={user.username}
-                                className="w-8 h-8 rounded-[10px] object-cover border-2 border-gray-200 dark:border-gray-700"
+                                className="w-8 h-8 rounded-[10px] object-cover  border-gray-200 dark:border-gray-700"
                               />
                               <div>
                                 <div className="font-medium text-gray-900 dark:text-white">{user.username}</div>
@@ -1122,7 +1120,7 @@ const TeamsManage = () => {
 
               {/* Current Members */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Current Members</h3>
+                <h3 className="text-lg  text-gray-900 dark:text-white mb-4">Current Members</h3>
                 <div className="space-y-2 max-h-60 overflow-y-auto" key={refreshKey}>
                   {selectedTeam.members?.map((member, index) => (
                     <div key={`${member.user?.id || member.user?._id}-${index}-${refreshKey}`} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]">
@@ -1151,7 +1149,7 @@ const TeamsManage = () => {
                             onClick={() => handleRemoveMember(member.user._id)}
                             className="text-red-600 w-12 hover:text-red-700"
                           >
-                            <Trash className="w-4 h-4 icon" />
+                            <Trash className="w-4 h-4 icon icon" />
                           </Button>
                         )
                        }

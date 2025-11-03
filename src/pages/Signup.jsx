@@ -104,7 +104,7 @@ const Signup = () => {
             </motion.div>
             <motion.h1 
               variants={itemVariants}
-              className="text-3xl font-bold text-gray-900 dark:text-white mb-2"
+              className="text-3xl  text-gray-900 dark:text-white mb-2"
               style={{ fontWeight: 800 }}
             >
               Get On Board!
@@ -125,11 +125,11 @@ const Signup = () => {
           <motion.form variants={itemVariants} onSubmit={handleSubmit} className="space-y-4">
             {/* Username Input */}
             <div>
-              <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                 Your Full Name
               </label>
               <div className="relative">
-                <PiUserDuotone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
+                <PiUserDuotone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon icon" />
                 <input
                   type="text"
                   name="username"
@@ -144,11 +144,11 @@ const Signup = () => {
 
             {/* Email Input */}
             <div>
-              <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute icon left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Mail className="absolute icon left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
                 <input
                   type="email"
                   name="email"
@@ -163,11 +163,11 @@ const Signup = () => {
 
             {/* Password Input */}
             <div>
-              <label className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                 Password
               </label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 icon transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Lock className="absolute left-3 top-1/2 icon transform -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
@@ -183,7 +183,7 @@ const Signup = () => {
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  {showPassword ? <EyeOff className="w-5 h-5 icon" /> : <Eye className="w-5 h-5 icon" />}
                 </button>
               </div>
             </div>
@@ -192,7 +192,7 @@ const Signup = () => {
             <motion.button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-black text-white rounded-[10px] font-bold hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
+              className="w-full py-3 bg-black text-white rounded-[10px]  hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
@@ -213,8 +213,8 @@ const Signup = () => {
           <motion.div variants={itemVariants} className="text-end mt-6">
             <p className="text-gray-600 dark:text-gray-300">
               {/* already have an account{" "} */}
-              <Link to="/login" className="px-15  ml-3 py-4 rounded-[10px] text-white bg-[#fe904b] text-sm uppercase font-bold">
-                Login
+              <Link to="/login" className="px-15  ml-3 py-4 rounded-[10px] text-white bg-black  text-sm capitalize ">
+                Sign in
               </Link>
             </p>
           </motion.div>
