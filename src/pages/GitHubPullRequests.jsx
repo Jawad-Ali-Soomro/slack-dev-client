@@ -321,17 +321,17 @@ const GitHubPullRequests = () => {
         </div>
           </div>
           <div className="flex gap-3">
-            <Button onClick={() => setIsCreateDialogOpen(true)} className={'w-[200px]'}>
+            <Button onClick={() => setIsCreateDialogOpen(true)} className={'w-[200px] font-bold'}>
               {/* <Plus className="h-4 w-4 icon mr-2" /> */}
               New Pull Request
             </Button>
             <Button 
               onClick={() => setIsGitHubPRsModalOpen(true)} 
               variant="outline"
-              className={'w-[200px]'}
+              className={'w-[200px] font-bold'}
             >
               <GitPullRequest className="h-4 w-4 icon mr-2" />
-              Import from Github
+              Import from github
             </Button>
           </div>
         </div>

@@ -192,11 +192,11 @@ const Signup = () => {
             <motion.button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-black text-white rounded-[10px]  hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
+              className="w-full py-3 bg-black text-white rounded-[10px] font-bold  hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
-              {loading ? "Registering Account..." : "Register"}
+              {loading ? <div className="loader"></div> : "Register"}
             </motion.button>
           </motion.form>
 
@@ -213,7 +213,7 @@ const Signup = () => {
           <motion.div variants={itemVariants} className="text-end mt-6">
             <p className="text-gray-600 dark:text-gray-300">
               {/* already have an account{" "} */}
-              <Link to="/login" className="px-15  ml-3 py-4 rounded-[10px] text-white bg-black  text-sm capitalize ">
+              <Link to="/login" className="px-15  ml-3 py-4 font-bold rounded-[10px] text-white bg-black  text-sm capitalize ">
                 Sign in
               </Link>
             </p>

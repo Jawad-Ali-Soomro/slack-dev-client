@@ -69,7 +69,7 @@ const NotificationDropdown = () => {
         >
           <Bell className="w-5 h-5 icon" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-5 h-5 icon bg-red-500 rounded-[10px] text-[10px] text-white flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-[10px] text-[10px] text-white flex items-center justify-center">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
@@ -87,16 +87,7 @@ const NotificationDropdown = () => {
               Notifications
             </h3>
             <div className="flex items-center gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={loadNotifications}
-                disabled={loading}
-                className="text-xs text-gray-600 hover:text-gray-800 dark:text-gray-400"
-              >
-                <RefreshCw className={`w-3 h-3 icon mr-1 ${loading ? 'animate-spin' : ''}`} />
-                Refresh
-              </Button>
+             
              
               {unreadCount > 0 && (
                 <Button

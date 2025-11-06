@@ -475,7 +475,7 @@ const TeamsManage = () => {
           }
           setShowNewTeamModal(true);
         }}
-        className={'w-[200px] rounded-[10px] h-12'}
+        className={'w-[200px] rounded-[10px] h-12 font-bold'}
       >
         New Team
       </Button>
@@ -925,7 +925,7 @@ const TeamsManage = () => {
               </div>
 
               {/* Projects Section */}
-              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
+              <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700 ma">
                 <button
                   onClick={() => setShowProjects(!showProjects)}
                   className="flex items-center justify-between w-full text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border cursor-pointer rounded-[10px] transition-colors"
@@ -946,7 +946,7 @@ const TeamsManage = () => {
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
+                    className="overflow-hidden max-h-[300px] overflow-y-auto"
                   >
                     {selectedTeam.projects?.length === 0 ? (
                       <div className="text-center py-8 text-gray-500 dark:text-gray-400">
@@ -1032,7 +1032,7 @@ const TeamsManage = () => {
                   }}
                     className="w-1/3 hover:text-white  bg-black dark:bg-white text-white dark:text-black dark:text-black hover:bg-black dark:hover:bg-white border-none hover:border-none"
                 >
-                    <Settings className="w-4 h-4 icon mr-2 icon" />
+                    <PiUsersDuotone className="w-4 h-4 icon mr-2 icon" />
                     Edit Members
                 </Button>
               </div>

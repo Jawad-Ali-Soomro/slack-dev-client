@@ -337,7 +337,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                             <Briefcase className="w-5 h-5 icon icon" />
                           </div>
                         </div>
-                        <p className="text-3xl  text-blue-700 dark:text-blue-300">
+                        <p className="text-3xl  text-blue-700 dark:text-blue-300 font-bold">
                           {user.projects?.length || 0}
                         </p>
                       </div>
@@ -348,7 +348,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                           </div>
                           <span className="">Teams</span>
                         </div>
-                        <p className="text-3xl  text-purple-700 dark:text-purple-300">
+                        <p className="text-3xl  text-purple-700 dark:text-purple-300 font-bold">
                           {user.teams?.length || 0}
                         </p>
                       </div>
@@ -372,7 +372,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                                   alt={project.name}
                                   className="w-12 h-12 rounded-[10px] object-cover  border-gray-200 dark:border-gray-700 shadow-sm"
                                 />
-                                <div className="absolute -top-1 -right-1 w-4 h-4 icon bg-gradient-to-r from-blue-500 to-purple-500 rounded-[10px]"></div>
+                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-[10px]"></div>
                               </div>
                             )}
                             <div className="flex-1">

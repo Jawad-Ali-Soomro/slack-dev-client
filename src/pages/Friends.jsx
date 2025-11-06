@@ -24,6 +24,7 @@ import { getAvatarProps } from '../utils/avatarUtils'
 import UserDetailsModal from '../components/UserDetailsModal'
 import FindFriendsModal from '../components/FindFriendsModal'
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
+import { PiUserDuotone } from 'react-icons/pi'
 
 const Friends = () => {
   const { user } = useAuth()
@@ -189,9 +190,9 @@ const Friends = () => {
         <div className="mb-6 flex justify-end">
           <Button
             onClick={() => setShowFindFriendsModal(true)}
-            className={getButtonClasses('primary', 'md', 'w-[200px]')}
+            className={getButtonClasses('primary', 'md', 'w-[200px] font-bold')}
           >
-            <UserPlus className={ICON_SIZES.md} />
+            <PiUserDuotone className={ICON_SIZES.md} />
             Find Friends
           </Button>
         </div>

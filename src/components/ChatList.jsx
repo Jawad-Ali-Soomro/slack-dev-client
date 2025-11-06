@@ -114,7 +114,7 @@ const ChatList = () => {
                           </AvatarFallback>
                         </Avatar>
                         {isOnline && (
-                          <div className="absolute -bottom-1 -right-1 h-3 w-3 icon bg-green-500  border-background rounded-[10px]"></div>
+                          <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500  border-background rounded-[10px]"></div>
                         )}
                       </div>
                       

@@ -2,6 +2,7 @@ import Header from "../components/Header"
 import Footer from "../components/Footer"
 import { motion } from "framer-motion"
 import { Code, Database, GitBranch, Zap, Users, Shield, Rocket, Terminal, Settings, Cpu, RocketIcon, LayoutDashboard, Lock, Flashlight, Lightbulb, ToolCase, ArrowRight } from "lucide-react"
+import { PiUsersDuotone } from "react-icons/pi"
 
 const Indexing = () => {
   const floatingIcons = [
@@ -197,7 +198,7 @@ const Indexing = () => {
                 image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?w=400&h=300&fit=crop"
               },
               {
-                icon: <Users />,
+                icon: <PiUsersDuotone size={24} />,
                 title: "Team Collaboration",
                 description: "Work seamlessly with your team using real-time collaboration tools and shared workspaces.",
                 image: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=300&fit=crop"
@@ -289,7 +290,7 @@ const Indexing = () => {
                     }}>
                     {stat.number}
                   </div>
-                  <div className="text-gray-300  text-sm dark:text-gray-700"
+                  <div className="text-gray-300  text-sm dark:text-gray-700 font-bold"
                     >
                     {stat.label}
                   </div>
@@ -396,7 +397,7 @@ const Indexing = () => {
                 fontWeight: 900
               }}
             >
-How It Works
+{/* How It Works */}
             </motion.h2>
           </div>
 
@@ -404,17 +405,17 @@ How It Works
             {[
               {
                 step: "01",
-                title: "Register",
+                title: "Register Account",
                 description: "Create your account in seconds and get instant access to all features."
               },
               {
                 step: "02", 
-                title: "Connect",
+                title: "Connect Workflow",
                 description: "Link your repositories and invite your team members to start collaborating."
               },
               {
                 step: "03",
-                title: "Deploy",
+                title: "Manage Projects",
                 description: "Push your code and watch it deploy automatically with zero configuration."
               }
             ].map((step, index) => (
@@ -426,18 +427,17 @@ How It Works
                 transition={{ delay: index * 0.2, duration: 0.6 }}
                 viewport={{ once: true }}
               >
-                <div className="text-6xl  text-black mb-4 dark:text-white"   style={{
-            fontWeight: 900
-          }}>
+                <div className="text-4xl font-bold text-black mb-4 dark:text-white" style={{
+                  fontWeight: 800
+                }}>
                   {step.step}
                 </div>
-                <h3 className="text-2xl  text-gray-900 dark:text-white mb-4 " >
+                <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-4 "style={{
+                  fontWeight: 800
+                }} >
                   {step.title}
                 </h3>
-                <p className="text-gray-600 dark:text-gray-300  text-sm leading-relaxed" 
-                  style={{
-                    fontWeight: 900
-                  }}>
+                <p className="text-gray-600 dark:text-gray-300  text-sm leading-relaxed font-bold">
                   {step.description}
                 </p>
               </motion.div>
@@ -447,7 +447,7 @@ How It Works
 
         {/* Final CTA Section */}
         <motion.section 
-          className="w-full bg-black icon dark:bg-black py-20 relative z-10"
+          className="w-full bg-white text-black icon dark:bg-black py-20 relative z-10"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
@@ -455,25 +455,25 @@ How It Works
         >
           <div className="max-w-4xl mx-auto text-center px-6">
             <motion.h2 
-              className="text-4xl  text-white mb-6 "
+              className="text-4xl  text-black mb-6 "
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
               viewport={{ once: true }}
             >
-              Ready to Get Started?
+              Start?
             </motion.h2>
             <motion.p 
-              className="text-xl text-gray-300 mb-10 "
+              className="text-xl text-black mb-10 "
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
               viewport={{ once: true }}
             >
-              Join thousands of developers who trust our platform
+              Stay connected with thousands of developers who trust our platform
             </motion.p>
             <motion.button 
-              className="w-[400px]  py-4 bg-white text-black rounded-full text-lg  transition-colors shadow-lg dark:bg-white dark:text-black "
+              className="w-[400px]  py-4 bg-black text-white rounded-full text-lg  transition-colors shadow-lg dark:bg-white dark:text-black font-bold"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.6 }}

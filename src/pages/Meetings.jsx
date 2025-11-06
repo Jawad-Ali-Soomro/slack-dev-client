@@ -590,7 +590,7 @@ const Meetings = () => {
                   }
                   setShowNewMeetingPopup(true);
                 }}
-                className={'w-[200px] rounded-[10px] h-12'}
+                className={'w-[200px] rounded-[10px] h-12 font-bold'}
               >
                 Schedule Meeting
               </Button>

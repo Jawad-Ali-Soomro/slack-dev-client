@@ -115,7 +115,7 @@ const Sidebar = () => {
           initial="closed"
           animate="open"
           exit="closed"
-          className="fixed left-0 top-0 h-[91.5vh] mt-[8.5vh] w-[240px] 
+          className="fixed left-0 top-0 h-[91.5vh] mt-[8.5vh] w-[90px] 
                      bg-white text-black dark:bg-black dark:text-white 
                      border-r border-gray-200 dark:border-gray-800 
                      z-50 flex flex-col justify-between icon"
@@ -138,7 +138,7 @@ const Sidebar = () => {
                           if (item.title === 'Control')
                             setAdminDropdownOpen(!adminDropdownOpen)
                         }}
-                        className={`flex items-center px-4 gap-4 cursor-pointer justify-start relative w-[200px] h-[50px] rounded-xl transition-colors duration-200
+                        className={`flex items-center px-4 gap-4 cursor-pointer justify-start relative w-[50px] h-[50px] rounded-xl transition-colors duration-200
                           ${active
                             ? 'bg-black text-white dark:bg-white dark:text-black'
                             : 'hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300'}
@@ -146,8 +146,8 @@ const Sidebar = () => {
                         title={item.title}
                       >
                         <Icon className="w-5 h-5 icon icon" />
-                        <label className='font-bold cursor-pointer' htmlFor={item.title}>{item.title}</label>
-                        <ChevronDown className="w-5 h-5 icon icon absolute right-4" />
+                        {/* <label className='font-bold cursor-pointer' htmlFor={item.title}>{item.title}</label>
+                        <ChevronDown className="w-5 h-5 icon icon absolute right-4" /> */}
                       </button>
 
                       <AnimatePresence>
@@ -166,7 +166,7 @@ const Sidebar = () => {
                                 <Link
                                   key={sub.path}
                                   to={sub.path}
-                                  className={`flex relative items-center justify-start px-4 gap-4 cursor-pointer w-[180px] h-[45px] rounded-lg transition-all
+                                  className={`flex relative items-center justify-start px-4 gap-4 cursor-pointer w-[50px] h-[45px] rounded-lg transition-all
                                     ${subActive
                                       ? 'bg-black text-white dark:bg-white dark:text-black'
                                       : 'hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-300'}
@@ -174,8 +174,8 @@ const Sidebar = () => {
                                   title={sub.title}
                                 >
                                   <SubIcon className="w-4 h-4 icon icon" />
-                                  <label className='font-bold cursor-pointer' htmlFor={sub.title}>{sub.title}</label>
-                                  <div className="absolute w-[12px] h-full -left-[11px] -top-[22px] border-l border-b border-gray-300 rounded-bl-lg"></div>
+                                  {/* <label className='font-bold cursor-pointer' htmlFor={sub.title}>{sub.title}</label>
+                                  <div className="absolute w-[12px] h-full -left-[11px] -top-[22px] border-l border-b border-gray-300 rounded-bl-lg"></div> */}
                                 </Link>
                               )
                             })}
@@ -187,14 +187,14 @@ const Sidebar = () => {
                     <Link
                       to={item.path}
                       title={item.title}
-                      className={`relative flex items-center justify-start px-4 gap-4 cursor-pointer w-[200px] h-[50px] rounded-xl transition-all duration-200
+                      className={`relative flex items-center justify-start px-4 gap-4 cursor-pointer w-[50px] h-[50px] rounded-xl transition-all duration-200
                         ${active
                           ? 'bg-black text-white dark:bg-white dark:text-black'
                           : 'hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300'}
                       `}
                     >
                       <Icon className="w-5 h-5 icon icon" />
-                      <label className='font-bold cursor-pointer' htmlFor={item.title}>{item.title}</label>
+                      {/* <label className='font-bold cursor-pointer' htmlFor={item.title}>{item.title}</label> */}
                       
                       {item.badgeCount > 0 && (
                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
@@ -210,12 +210,12 @@ const Sidebar = () => {
 
           <div
             onClick={logout}
-            className="flex items-center justify-center w-[200px] gap-4 h-[50px] m-auto mb-5 rounded-xl bg-red-500 text-white 
+            className="flex items-center justify-center w-[50px] gap-4 h-[50px] m-auto mb-5 rounded-xl bg-red-500 text-white 
                        hover:bg-red-600 transition-all cursor-pointer"
             title="Logout"
           >
             <LogOut className="w-5 h-5 icon" />
-            Logout
+            {/* Logout */}
           </div>
         </motion.aside>
       )}

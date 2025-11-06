@@ -783,7 +783,7 @@ const Projects = () => {
                 }
                 setShowNewProjectPopup(true);
               }}
-              className={'w-[200px] rounded-[10px] rounded-[10px] h-12'}
+              className={'w-[200px] rounded-[10px] rounded-[10px] h-12 font-bold'}
             >
               New Project
             </Button>

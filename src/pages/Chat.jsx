@@ -42,7 +42,7 @@ const Chat = () => {
             <div className="flex items-center gap-1 text-sm">
               {isConnected ? (
                 <>
-                  <Wifi className="h-4 w-4 icon text-green-500" />
+                  <Wifi className="h-4 w-4 text-green-500" />
                   <span className="text-green-600 dark:text-green-400">Connected</span>
                 </>
               ) : (
