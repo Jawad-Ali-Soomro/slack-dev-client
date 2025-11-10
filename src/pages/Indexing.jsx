@@ -3,6 +3,7 @@ import Footer from "../components/Footer"
 import { motion } from "framer-motion"
 import { Code, Database, GitBranch, Zap, Users, Shield, Rocket, Terminal, Settings, Cpu, RocketIcon, LayoutDashboard, Lock, Flashlight, Lightbulb, ToolCase, ArrowRight } from "lucide-react"
 import { PiUsersDuotone } from "react-icons/pi"
+import { useNavigate } from "react-router-dom"
 
 const Indexing = () => {
   const floatingIcons = [
@@ -45,6 +46,8 @@ const Indexing = () => {
       ease: "easeInOut"
     }
   }
+
+  const navigate = useNavigate()
 
   return (
     <div className="flex flex-col items-center justify-center relative overflow-hidden bg-gray-50 dark:bg-black">
@@ -117,9 +120,11 @@ const Indexing = () => {
               className="flex gap-4 mt-10"
             >
                 <motion.button 
-                  className="w-full md:w-[280px]  py-4 bg-black text-white z-50 rounded-full text-sm cursor-pointer hover:bg-gray-900 transition-colors shadow-lg dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                  className="w-full md:w-[280px]  py-4 bg-black text-white z-50 font-bold rounded-full text-sm cursor-pointer hover:bg-gray-900 transition-colors shadow-lg dark:bg-white dark:text-black dark:hover:bg-gray-200"
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  onClick={() => navigate("/login")}
+
                 >
                     Get Started
                 </motion.button>
@@ -473,12 +478,13 @@ const Indexing = () => {
               Stay connected with thousands of developers who trust our platform
             </motion.p>
             <motion.button 
-              className="w-[400px]  py-4 bg-black text-white rounded-full text-lg  transition-colors shadow-lg dark:bg-white dark:text-black font-bold"
+              className="w-[400px]  py-4 bg-black text-white rounded-full text-lg  transition-colors shadow-lg dark:bg-white dark:text-black font-bold cursor-pointer"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.6 }}
               whileTap={{ scale: 0.95 }}
               viewport={{ once: true }}
+              onClick={() => navigate("/login")}
             >
               Start Your Free Trial
             </motion.button>
