@@ -1566,7 +1566,7 @@ const Projects = () => {
                   <div className="space-y-4">
                     <div>
                       <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Members ({selectedProject.members?.length || 0})</h3>
-                      {console.log('Rendering members:', selectedProject.members)}
+                      {/* {console.log('Rendering members:', selectedProject.members)} */}
                       <div className="space-y-2 max-h-45overflow-y-auto" key={refreshKey}>
                         {selectedProject.members && selectedProject.members.length > 0 ? selectedProject.members.map((member, index) => (
                           <div key={`${member.user?._id || member.user?.id}-${index}-${refreshKey}`} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-[10px]">
@@ -1575,7 +1575,7 @@ const Projects = () => {
                                 {...getAvatarProps(member.user?.avatar, member.user?.username)}
                                 alt={member.user?.username}
                                 className="w-8 h-8 rounded-[10px] cursor-pointer hover:scale-110 transition-transform"
-                                onClick={() => handleUserAvatarClick(member.user?.id)}
+                                onClick={() => handleUserAvatarClick(member.user?._id)}
                                 title={`View ${member.user?.username}'s profile`}
                               />
                               <div>
