@@ -145,7 +145,7 @@ const Friends = () => {
       <div className="mx-auto">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl  text-gray-900 dark:text-white mb-2">
+          <h1 className="text-3xl  text-gray-900 dark:text-white font-bold mb-2">
             Friends
           </h1>
           <p className="text-gray-600 dark:text-gray-400">
@@ -162,7 +162,7 @@ const Friends = () => {
                 <Users className="h-4 w-4 icon text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl ">{stats.totalFriends}</div>
+                <div className="text-2xl font-bold">{stats.totalFriends}</div>
               </CardContent>
             </Card>
             <Card className={'bg-gray-100 border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
@@ -171,7 +171,7 @@ const Friends = () => {
                 <Clock className="h-4 w-4 icon text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl ">{stats.pendingReceivedRequests}</div>
+                <div className="text-2xl font-bold">{stats.pendingReceivedRequests}</div>
               </CardContent>
             </Card>
             <Card className={'bg-gray-100 border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
@@ -180,7 +180,7 @@ const Friends = () => {
                 <Send className="h-4 w-4 icon text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl ">{stats.pendingSentRequests}</div>
+                <div className="text-2xl font-bold">{stats.pendingSentRequests}</div>
               </CardContent>
             </Card>
           </div>

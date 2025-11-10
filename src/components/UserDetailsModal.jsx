@@ -25,7 +25,7 @@ import { Button } from './ui/button'
 import { getAvatarProps } from '../utils/avatarUtils'
 import { userService } from '../services/userService'
 import postService from '../services/postService'
-import { PiUsersDuotone } from "react-icons/pi";
+import { PiUserDuotone, PiUsersDuotone } from "react-icons/pi";
 
 const UserDetailsModal = ({ userId, isOpen, onClose }) => {
   const [user, setUser] = useState(null)
@@ -76,7 +76,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
   if (!isOpen) return null
 
   const tabs = [
-    { id: 'overview', label: 'Overview', icon: UserCircle },
+    { id: 'overview', label: 'Overview', icon: PiUserDuotone },
     { id: 'projects', label: 'Projects', icon: Briefcase },
   ]
 
@@ -143,13 +143,11 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                       user.isActive ? 'bg-emerald-500' : 'bg-gray-400'
                     }`}></div> */}
                   </div>
-                  <div className='mt-3'>
-                    <h2 className="text-3xl  text-black dark:text-white font-semibold">
+                    <h2 className="text-3xl  text-black dark:text-white font-bold">
                       {user.username}
                     </h2>
-                    <p className=" text-black dark:text-white text-lg mb-3">{user.email}</p>
+                    {/* <p className=" text-black dark:text-white text-lg mb-3">{user.email}</p> */}
                    
-                  </div>
                 </div>
                 <button
                   onClick={onClose}

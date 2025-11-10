@@ -1702,7 +1702,7 @@ const Projects = () => {
                                 className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]"
                               >
                                 <div className="flex items-center gap-3">
-                                  <div className={`w-3 h-3 icon rounded-[10px] ${
+                                  <div className={`w-3 h-3 rounded-[10px] ${
                                     task.status === 'completed' ? 'bg-green-500' :
                                     task.status === 'in_progress' ? 'bg-gray-500' :
                                     task.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'
@@ -1773,7 +1773,7 @@ const Projects = () => {
                                 className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]"
                               >
                                 <div className="flex items-center gap-3">
-                                  <div className={`w-3 h-3 icon rounded-[10px] ${
+                                  <div className={`w-3 h-3 rounded-[10px] ${
                                     meeting.status === 'completed' ? 'bg-green-500' :
                                     meeting.status === 'scheduled' ? 'bg-gray-500' :
                                     meeting.status === 'pending' ? 'bg-yellow-500' : 'bg-gray-500'

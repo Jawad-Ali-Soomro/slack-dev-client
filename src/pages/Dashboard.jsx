@@ -550,7 +550,7 @@ const Dashboard = () => {
                       Sync Status
                     </p>
                     <p className="text-sm  text-blue-800 dark:text-blue-200">
-                      Real-time Synchronization
+                      Real Time Synchronization
                     </p>
                   </div>
                 </div>
@@ -1119,7 +1119,7 @@ const Dashboard = () => {
                         navigate('/dashboard/tasks', { state: { date: selectedDate.toISOString(), openModal: true } });
                       }}
                       disabled={!permissions.canCreateTask}
-                      className="w-[200px] h-12 rounded-[30px] text-sm bg-[#fe914d] text-white hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-[250px] h-12 font-bold rounded-[15px] text-sm bg-[#fe914d] text-white hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Schedule Task
                     </button>
@@ -1132,7 +1132,7 @@ const Dashboard = () => {
                         navigate('/dashboard/meetings', { state: { date: selectedDate.toISOString(), openModal: true } });
                       }}
                       disabled={!permissions.canCreateMeeting}
-                      className="w-[200px] h-12 rounded-[30px] text-sm border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-[250px] h-12 rounded-[15px] text-sm border border-gray-200 font-bold dark:border-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Schedule Meeting
                     </button>

@@ -442,7 +442,7 @@ const GitHubRepositories = () => {
                       <div className="flex items-center">
                         
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                          <div className="text-sm text-gray-900 dark:text-gray-100 flex items-center gap-2 font-bold">
                             {/* <Code className="h-4 w-4 icon text-gray-500" /> */}
                             {repo.name}
                           </div>

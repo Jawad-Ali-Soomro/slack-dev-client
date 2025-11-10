@@ -1,10 +1,26 @@
+import { useState, useEffect } from "react"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
 import { motion } from "framer-motion"
 import { Code, Database, GitBranch, Zap, Users, Shield, Rocket, Terminal, Settings, Cpu, RocketIcon, LayoutDashboard, Lock, Flashlight, Lightbulb, ToolCase, ArrowRight } from "lucide-react"
 import { PiUsersDuotone } from "react-icons/pi"
+import ThemeSelectionModal from "../components/ThemeSelectionModal"
+import { useNavigate } from "react-router-dom"
 
 const Indexing = () => {
+  const [showThemeModal, setShowThemeModal] = useState(false)
+
+  useEffect(() => {
+    // Check if user has already selected a theme
+    const themeSelected = localStorage.getItem('themeSelected')
+    if (!themeSelected) {
+      setShowThemeModal(true)
+    }
+  }, [])
+
+  const handleThemeModalClose = () => {
+    setShowThemeModal(false)
+  }
   const floatingIcons = [
     { Icon: Code, color: "text-blue-500", top: "15%", left: "10%", delay: 0 },
     { Icon: Database, color: "text-green-500", top: "25%", right: "15%", delay: 0.5 },
@@ -46,8 +62,11 @@ const Indexing = () => {
     }
   }
 
+  const navigate = useNavigate()
+
   return (
     <div className="flex flex-col items-center justify-center relative overflow-hidden bg-gray-50 dark:bg-black">
+      {showThemeModal && <ThemeSelectionModal onClose={handleThemeModalClose} />}
         {/* Floating Background Orbs */}
         <div className="floating-orb w-96 h-96 top-10 left-10 opacity-30"></div>
         <div className="floating-orb w-64 h-64 top-1/3 right-20 opacity-20" style={{animationDelay: '2s'}}></div>
@@ -117,9 +136,10 @@ const Indexing = () => {
               className="flex gap-4 mt-10"
             >
                 <motion.button 
-                  className="w-full md:w-[280px]  py-4 bg-black text-white z-50 rounded-full text-sm cursor-pointer hover:bg-gray-900 transition-colors shadow-lg dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                  className="w-full md:w-[280px]  py-4 bg-black font-bold text-white z-50 rounded-full text-sm cursor-pointer hover:bg-gray-900 transition-colors shadow-lg dark:bg-white dark:text-black dark:hover:bg-gray-200"
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
+                  onClick={() => navigate('/login')}
                 >
                     Get Started
                 </motion.button>
@@ -447,7 +467,7 @@ const Indexing = () => {
 
         {/* Final CTA Section */}
         <motion.section 
-          className="w-full bg-white text-black icon dark:bg-black py-20 relative z-10"
+          className="w-ful text-black dark:text-white icon dark:bg-black py-20 relative z-10"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
@@ -464,7 +484,7 @@ const Indexing = () => {
               Start?
             </motion.h2>
             <motion.p 
-              className="text-xl text-black mb-10 "
+              className="text-xl text-black dark:text-white mb-10 "
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.4, duration: 0.6 }}
@@ -479,6 +499,7 @@ const Indexing = () => {
               transition={{ delay: 0.6, duration: 0.6 }}
               whileTap={{ scale: 0.95 }}
               viewport={{ once: true }}
+              onClick={() => navigate('/login')}
             >
               Start Your Free Trial
             </motion.button>

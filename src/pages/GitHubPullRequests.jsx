@@ -554,7 +554,7 @@ const GitHubPullRequests = () => {
                     <TableCell className="px-6 py-4">
                       <div className="flex items-center">
                         
-                          <div className="text-sm font-medium text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                          <div className="text-sm font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                             {getStatusIcon(pr.status)}
                             {pr.title}
                           </div>
