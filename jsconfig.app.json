@@ -1,18 +1,25 @@
 {
-    "compilerOptions": {
-      "baseUrl": ".",
-      "paths": {
-        "@/*": [
-          "./src/*"
-        ]
-      }
-    },
-    "include": [
-      "."
-    ],
-    "exclude": [
-      "node_modules",
-      "dist",
-      "build"
-    ]
-  }
+  "compilerOptions": {
+    "baseUrl": ".",
+    "allowJs": true,
+    // "checkJs": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "src/**/*",
+    "types/**/*.d.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "build"
+  ]
+}

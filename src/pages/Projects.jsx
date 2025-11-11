@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
+// @ts-ignore
 import HorizontalLoader from '../components/HorizontalLoader'
 import { usePermissions } from '../hooks/usePermissions'
 import { 
@@ -8,19 +9,23 @@ import {
   Edit, 
   Trash2, 
   Calendar, 
+  // @ts-ignore
   Users, 
   Link, 
   MoreVertical, 
+  // @ts-ignore
   Filter, 
   ChevronDown,
   RefreshCw,
   Eye,
   Settings,
+  // @ts-ignore
   UserPlus,
   ExternalLink,
   Tag,
   Clock,
   CheckCircle,
+  // @ts-ignore
   AlertCircle,
   Pause,
   X,
@@ -30,6 +35,7 @@ import {
   Minus,
   AlertTriangle,
   Camera,
+  // @ts-ignore
   ArrowUpRight,
   ArrowUpRightSquare
 } from 'lucide-react'
@@ -45,15 +51,19 @@ import teamService from '../services/teamService'
 import { useAuth } from '../contexts/AuthContext'
 import { useNotifications } from '../contexts/NotificationContext'
 import { getAvatarProps } from '../utils/avatarUtils'
+// @ts-ignore
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
 import UserDetailsModal from '../components/UserDetailsModal'
+import { PiUsersDuotone } from 'react-icons/pi'
 
 const Projects = () => {
   const { user } = useAuth()
   const { markAsReadByType } = useNotifications()
+  // @ts-ignore
   const { permissions, loading: permissionsLoading } = usePermissions()
   const [searchTerm, setSearchTerm] = useState('')
   const [showNewProjectPopup, setShowNewProjectPopup] = useState(false)
+  // @ts-ignore
   const [selectedProjects, setSelectedProjects] = useState([])
   const [filterStatus, setFilterStatus] = useState('all')
   const [filterPriority, setFilterPriority] = useState('all')
@@ -74,6 +84,7 @@ const Projects = () => {
   const [memberSearch, setMemberSearch] = useState('')
   const [memberSuggestions, setMemberSuggestions] = useState([])
   const [showMemberSuggestions, setShowMemberSuggestions] = useState(false)
+  // @ts-ignore
   const [memberRole, setMemberRole] = useState('member')
   
   // Separate state for project details modal member search
@@ -87,6 +98,7 @@ const Projects = () => {
   const [projects, setProjects] = useState([])
   const [users, setUsers] = useState([])
   const [teams, setTeams] = useState([])
+  // @ts-ignore
   const [stats, setStats] = useState(null)
   const [selectedProject, setSelectedProject] = useState(null)
   const [showProjectDetails, setShowProjectDetails] = useState(false)
@@ -111,6 +123,7 @@ const Projects = () => {
   
 
   // Load projects
+  // @ts-ignore
   const loadProjects = useCallback(async () => {
     try {
       setLoading(true)
@@ -141,6 +154,7 @@ const Projects = () => {
   }, [filterStatus, filterPriority, searchTerm])
 
   // Load friends for member selection
+  // @ts-ignore
   const loadUsers = useCallback(async () => {
     try {
       const response = await friendService.getFriends()
@@ -167,6 +181,7 @@ const Projects = () => {
   }, [user])
 
   // Load teams
+  // @ts-ignore
   const loadTeams = useCallback(async () => {
     try {
       const response = await teamService.getTeams({ limit: 100 })
@@ -177,6 +192,7 @@ const Projects = () => {
   }, [])
 
   // Load stats
+  // @ts-ignore
   const loadStats = useCallback(async () => {
     try {
       const response = await projectService.getProjectStats()
@@ -293,6 +309,7 @@ const Projects = () => {
 
   // Add tag
   const handleAddTag = () => {
+    // @ts-ignore
     if (newTag.trim() && !newProject.tags.includes(newTag.trim())) {
       setNewProject(prev => ({
         ...prev,
@@ -311,6 +328,7 @@ const Projects = () => {
   }
 
   // Create project
+  // @ts-ignore
   const handleCreateProject = async (e) => {
     e.preventDefault()
     if (!newProject.name.trim()) {
@@ -328,6 +346,7 @@ const Projects = () => {
         formData.append('logo', newProject.logo)
         formData.append('folder', 'projects')
         
+        // @ts-ignore
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
         const uploadResponse = await fetch(`${apiUrl}/api/projects/upload/projects`, {
           method: 'POST',
@@ -352,6 +371,7 @@ const Projects = () => {
       const response = await projectService.createProject(projectData)
       setProjects(prev => [response.project, ...prev])
       setShowNewProjectPopup(false)
+      // @ts-ignore
       setNewProject({
         name: '',
         description: '',
@@ -376,6 +396,7 @@ const Projects = () => {
   }
 
   // Delete project
+  // @ts-ignore
   const handleDeleteProject = async (projectId) => {
     if (!confirm('Are you sure you want to delete this project?')) return
 
@@ -391,6 +412,7 @@ const Projects = () => {
   }
 
   // View project details
+  // @ts-ignore
   const handleViewProject = async (project) => {
     try {
       // Fetch full project details with populated tasks and meetings
@@ -424,6 +446,7 @@ const Projects = () => {
   }
 
   // Update project progress
+  // @ts-ignore
   const handleUpdateProgress = async () => {
     if (!selectedProject) return
 
@@ -448,6 +471,7 @@ const Projects = () => {
   }
 
   // Add member to project
+  // @ts-ignore
   const handleAddMemberToProject = async (userId, role = 'member') => {
     if (!selectedProject) return
 
@@ -470,6 +494,7 @@ const Projects = () => {
         console.log('Updated project members:', response.project.members)
         
         // Check if the project in the projects list has the same data
+        // @ts-ignore
         const projectInList = projects.find(p => p.id === selectedProject.id)
         console.log('Project in list members count:', projectInList?.members?.length)
         console.log('Project in list members:', projectInList?.members)
@@ -491,6 +516,7 @@ const Projects = () => {
   }
 
   // Remove member from project
+  // @ts-ignore
   const handleRemoveMemberFromProject = async (userId) => {
     if (!confirm('Are you sure you want to remove this member?')) return
 
@@ -514,6 +540,7 @@ const Projects = () => {
         console.log('Previous selectedProject members count:', selectedProject.members.length)
         
         // Check if the project in the projects list has the same data
+        // @ts-ignore
         const projectInList = projects.find(p => p.id === selectedProject.id)
         console.log('Project in list members count:', projectInList?.members?.length)
         console.log('Project in list members:', projectInList?.members)
@@ -544,6 +571,7 @@ const Projects = () => {
   }
 
   // Add link to project
+  // @ts-ignore
   const handleAddLinkToProject = async (linkData) => {
     if (!selectedProject) return
 
@@ -567,6 +595,7 @@ const Projects = () => {
   }
 
   // Remove link from project
+  // @ts-ignore
   const handleRemoveLinkFromProject = async (linkId) => {
     if (!selectedProject) return
 
@@ -664,6 +693,7 @@ const Projects = () => {
     setPagination(prev => ({ ...prev, page: newPage }))
   }
 
+  // @ts-ignore
   const handlePageSizeChange = (newLimit) => {
     setPagination(prev => ({ ...prev, limit: newLimit, page: 1 }))
   }
@@ -748,7 +778,9 @@ const Projects = () => {
             <SelectTrigger className="w-40 px-5 cursor-pointer bg-white dark:bg-black h-13">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
-            <SelectContent>
+            <
+// @ts-ignore
+            SelectContent>
               <SelectItem className={'px-5 h-10 cursor-pointer'} value="all">All Status</SelectItem>
               <SelectItem className={'px-5 h-10 cursor-pointer'} value="planning">Planning</SelectItem>
               <SelectItem className={'px-5 h-10 cursor-pointer'} value="active">Active</SelectItem>
@@ -762,7 +794,9 @@ const Projects = () => {
             <SelectTrigger className="w-40 bg-white px-5 cursor-pointer dark:bg-black h-13">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
-            <SelectContent>
+            <
+// @ts-ignore
+            SelectContent>
               <SelectItem className={'px-5 h-10 cursor-pointer'} value="all">All Priority</SelectItem>
               <SelectItem className={'px-5 h-10 cursor-pointer'} value="low">Low</SelectItem>
               <SelectItem className={'px-5 h-10 cursor-pointer'} value="medium">Medium</SelectItem>
@@ -775,6 +809,7 @@ const Projects = () => {
           <div className="flex items-center gap-4">
 
             {
+              // @ts-ignore
               permissions.canCreateProject &&       <Button
               onClick={() => {
                 if (!permissions.canCreateProject) {
@@ -801,6 +836,7 @@ const Projects = () => {
         {/* Projects Grid */}
         <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
+            // @ts-ignore
             Array.from({ length: 6 }).map((_, index) => (
               <div key={index} className="bg-white dark:bg-black rounded-[10px]  border-gray-200 dark:border-gray-700 p-6 animate-pulse">
                 <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
@@ -822,7 +858,9 @@ const Projects = () => {
              
               <h3 className="text-xl  text-gray-900 dark:text-white mb-2">No projects found</h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">Get started by creating your first project</p>
-              <Button
+              <
+// @ts-ignore
+              Button
                 onClick={() => {
                   if (!permissions.canCreateProject) {
                     toast.error('You do not have permission to create projects. Contact an admin.');
@@ -850,6 +888,7 @@ const Projects = () => {
                     <div className="flex items-center gap-3 mb-2">
                       {project.logo && (
                         <img
+                          // @ts-ignore
                           src={project.logo.startsWith('http') ? project.logo : `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${project.logo}`}
                           alt={project.name}
                           className="w-8 h-8 rounded object-cover rounded-[10px] bg-gray-100  border border-gray-200 dark:border-gray-700"
@@ -890,32 +929,44 @@ const Projects = () => {
                           <MoreVertical className="w-4 h-4 icon icon" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => handleViewProject(project)}>
+                      <
+// @ts-ignore
+                      DropdownMenuContent align="end">
+                        <
+// @ts-ignore
+                        DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => handleViewProject(project)}>
                           <Eye className="w-4 h-4 icon mr-2 icon" />
                           View Details
                         </DropdownMenuItem>
                         {isProjectOwner(project) && (
                           <>
-                            <DropdownMenuItem className="h-10 px-5 cursor-pointer">
+                            <
+// @ts-ignore
+                            DropdownMenuItem className="h-10 px-5 cursor-pointer">
                               <Edit className="w-4 h-4 icon mr-2 icon" />
                               Edit Project
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => {
+                            <
+// @ts-ignore
+                            DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => {
                               setSelectedProject(project)
                               setShowMembersModal(true)
                             }}>
                               <Settings className="w-4 h-4 icon mr-2 icon" />
                               Edit Members
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => {
+                            <
+// @ts-ignore
+                            DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => {
                               setSelectedProject(project)
                               setShowLinksModal(true)
                             }}>
                               <Link className="w-4 h-4 icon mr-2 icon" />
                               Manage Links
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="h-10 px-5 cursor-pointer text-red-600" 
+                            <
+// @ts-ignore
+                            DropdownMenuItem className="h-10 px-5 cursor-pointer text-red-600" 
                               onClick={() => handleDeleteProject(project.id)}
                             >
                               <Trash2 className="w-4 h-4 icon mr-2" />
@@ -1119,20 +1170,15 @@ const Projects = () => {
               className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="flex items-center justify-end mb-6">
-                <button
-                  onClick={() => setShowNewProjectPopup(false)}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                >
-                  <X className="w-6 h-6 icon" />
-                </button>
-              </div>
+            
 
               <form onSubmit={handleCreateProject} className="space-y-2">
                 {/* Project Name and Description */}
                 <div className="grid grid-cols-1 gap-4">
                   <div>
-                    <Input
+                    <
+// @ts-ignore
+                    Input
                       value={newProject.name}
                       onChange={(e) => setNewProject({...newProject, name: e.target.value})}
                       placeholder="Project name *"
@@ -1142,6 +1188,7 @@ const Projects = () => {
                   </div>
                   <div>
                     <Textarea
+                      // @ts-ignore
                       value={newProject.description}
                       onChange={(e) => setNewProject({...newProject, description: e.target.value})}
                       placeholder="Project description *"
@@ -1155,7 +1202,9 @@ const Projects = () => {
                       <SelectTrigger className="w-full h-12">
                         <SelectValue placeholder="Select Team (Optional)" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <
+// @ts-ignore
+                      SelectContent>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="none">No Team</SelectItem>
                         {teams.map((team) => (
                           <SelectItem className={'px-5 h-10 cursor-pointer'} key={team.id} value={team.id}>
@@ -1187,7 +1236,7 @@ const Projects = () => {
                         </button>
                       </div>
                     ) : (
-                      <div className="w-16 h-16  border-dashed border-gray-300 dark:border-gray-600 rounded-[10px] flex items-center justify-center">
+                      <div className="w-16 h-16 border dark:border-gray-600 rounded-[10px] flex items-center justify-center">
                         <Camera className="w-6 h-6 text-gray-400 icon" />
                       </div>
                     )}
@@ -1206,7 +1255,7 @@ const Projects = () => {
                       />
                       <label
                         htmlFor="logo-upload"
-                        className="cursor-pointer inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-[10px] shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-gray-700"
+                        className="cursor-pointer border inline-flex items-center px-10 py-5 border border-gray-300 dark:border-gray-600 rounded-[10px] shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-gray-700"
                       >
                         <Camera className="w-4 h-4 icon mr-2 icon" />
                         {newProject.logo ? 'Change Logo' : 'Upload Logo'}
@@ -1223,7 +1272,9 @@ const Projects = () => {
                       <SelectTrigger className="w-full h-12">
                         <SelectValue placeholder="Status" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <
+// @ts-ignore
+                      SelectContent>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="planning">Planning</SelectItem>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="active">Active</SelectItem>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="on_hold">On Hold</SelectItem>
@@ -1237,7 +1288,9 @@ const Projects = () => {
                       <SelectTrigger className="w-full h-12">
                         <SelectValue placeholder="Priority" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <
+// @ts-ignore
+                      SelectContent>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="low">Low</SelectItem>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="medium">Medium</SelectItem>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="high">High</SelectItem>
@@ -1272,7 +1325,9 @@ const Projects = () => {
                 {/* Members */}
                 <div>
                   <div className="relative mb-3">
-                    <Input
+                    <
+// @ts-ignore
+                    Input
                       value={memberSearch}
                       onChange={(e) => handleMemberSearch(e.target.value)}
                       placeholder="Add team members"
@@ -1332,13 +1387,17 @@ const Projects = () => {
                 {/* Links */}
                 <div>
                   <div className="flex gap-2 mb-3">
-                    <Input
+                    <
+// @ts-ignore
+                    Input
                       value={newLink.title}
                       onChange={(e) => setNewLink({...newLink, title: e.target.value})}
                       placeholder="Link title"
                       className="flex-1 h-12 rounded-[10px]"
                     />
-                    <Input
+                    <
+// @ts-ignore
+                    Input
                       value={newLink.url}
                       onChange={(e) => setNewLink({...newLink, url: e.target.value})}
                       placeholder="URL"
@@ -1348,14 +1407,18 @@ const Projects = () => {
                       <SelectTrigger className="w-32 h-12 cursor-pointer">
                         <SelectValue />
                       </SelectTrigger>
-                      <SelectContent>
+                      <
+// @ts-ignore
+                      SelectContent>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="repository">Repository</SelectItem>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="documentation">Documentation</SelectItem>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="design">Design</SelectItem>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="other">Other</SelectItem>
                       </SelectContent>
                     </Select>
-                    <Button type="button" className={'h-12 w-12'} onClick={handleAddLink} variant="outline">
+                    <
+// @ts-ignore
+                    Button type="button" className={'h-12 w-12'} onClick={handleAddLink} variant="outline">
                       <Plus />
                     </Button>
                   </div>
@@ -1385,14 +1448,18 @@ const Projects = () => {
                 {/* Tags */}
                 <div>
                   <div className="flex gap-2 mb-3">
-                    <Input
+                    <
+// @ts-ignore
+                    Input
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
                       placeholder="Add a tag"
                       className="flex-1 h-12 rounded-[10px]"
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                     />
-                    <Button type="button" onClick={handleAddTag} variant="outline">
+                    <
+// @ts-ignore
+                    Button type="button" onClick={handleAddTag} variant="outline">
                       Add
                     </Button>
                   </div>
@@ -1423,7 +1490,9 @@ const Projects = () => {
                
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-4 border-t icon border-gray-200 dark:border-gray-700">
-                  <Button
+                  <
+// @ts-ignore
+                  Button
                     type="button"
                     variant="outline"
                     onClick={() => setShowNewProjectPopup(false)}
@@ -1432,7 +1501,9 @@ const Projects = () => {
                   >
                     Cancel
                   </Button>
-                  <Button
+                  <
+// @ts-ignore
+                  Button
                     type="submit"
                     className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[10px]"
                     disabled={loading}
@@ -1510,7 +1581,7 @@ const Projects = () => {
                   <div className="space-y-4">
                     <div>
                       <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Description</h3>
-                      <p className="text-gray-600 dark:text-gray-400">
+                      <p className="text-gray-600 dark:text-gray-400 text-sm text-justify line-clamp-1">
                         {selectedProject.description || 'No description provided'}
                       </p>
                     </div>
@@ -1620,7 +1691,7 @@ const Projects = () => {
                           transition={{ duration: 0.3 }}
                           className="overflow-hidden"
                         >
-                          <div className="space-y-2 max-h-40 overflow-y-auto p-6">
+                          <div className="space-y-2 max-h-40 overflow-y-auto px-6 py-2">
                             {selectedProject.links?.length > 0 ? (
                               selectedProject.links.map((link, index) => (
                                 <motion.div 
@@ -1691,7 +1762,7 @@ const Projects = () => {
                         transition={{ duration: 0.3 }}
                         className="overflow-hidden"
                       >
-                        <div className="space-y-2 max-h-60 overflow-y-auto p-6">
+                        <div className="space-y-2 max-h-20 overflow-y-auto px-6 py-2">
                           {selectedProject.tasks?.length > 0 ? (
                             selectedProject.tasks.map((task, index) => (
                               <motion.div 
@@ -1728,7 +1799,6 @@ const Projects = () => {
                             ))
                           ) : (
                             <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                              <CheckCircle className="w-12 h-12 mx-auto mb-2 opacity-50" />
                               <p>No tasks assigned to this project</p>
                             </div>
                           )}
@@ -1762,7 +1832,7 @@ const Projects = () => {
                         transition={{ duration: 0.3 }}
                         className="overflow-hidden"
                       >
-                        <div className="space-y-2 max-h-60 overflow-y-auto p-6">
+                        <div className="space-y-2 max-h-20 overflow-y-auto px-6 py-2">
                           {selectedProject.meetings?.length > 0 ? (
                             selectedProject.meetings.map((meeting, index) => (
                               <motion.div 
@@ -1799,7 +1869,6 @@ const Projects = () => {
                             ))
                           ) : (
                             <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                              <Calendar className="w-12 h-12 mx-auto mb-2 opacity-50" />
                               <p>No meetings scheduled for this project</p>
                             </div>
                           )}
@@ -1811,7 +1880,9 @@ const Projects = () => {
 
                 {isProjectOwner(selectedProject) && (
                   <div className="flex gap-3 mt-6 pt-4  icon border-gray-200 dark:border-gray-700">
-                    <Button
+                    <
+// @ts-ignore
+                    Button
                       onClick={() => {
                         setProjectProgress(selectedProject.progress || 0)
                         setShowProgressModal(true)
@@ -1821,17 +1892,21 @@ const Projects = () => {
                       <TrendingUp className="w-4 h-4 icon mr-2" />
                       Update Progress
                     </Button>
-                    <Button
+                    <
+// @ts-ignore
+                    Button
                       variant="outline"
                       onClick={() => {
                         setShowMembersModal(true)
                       }}
                       className="flex-1 h-12 rounded-[10px]"
                     >
-                      <Settings className="w-4 h-4 icon mr-2" />
+                      <PiUsersDuotone className="w-4 h-4 icon mr-2" />
                       Edit Members
                     </Button>
-                    <Button
+                    <
+// @ts-ignore
+                    Button
                       variant="outline"
                       onClick={() => {
                         setShowLinksModal(true)
@@ -1841,7 +1916,9 @@ const Projects = () => {
                       <Link className="w-4 h-4 icon mr-2" />
                       Manage Links
                     </Button>
-                    <Button
+                    <
+// @ts-ignore
+                    Button
                       variant="outline"
                       onClick={() => handleViewProject(selectedProject)}
                       className="flex-1 h-12 rounded-[10px]"
@@ -1900,14 +1977,18 @@ const Projects = () => {
                 </div>
 
                 <div className="flex gap-3">
-                  <Button
+                  <
+// @ts-ignore
+                  Button
                     variant="outline"
                     onClick={() => setShowProgressModal(false)}
                     className="flex-1 h-12 rounded-[10px]"
                   >
                     Cancel
                   </Button>
-                  <Button
+                  <
+// @ts-ignore
+                  Button
                     onClick={handleUpdateProgress}
                     className="flex-1 h-12 rounded-[10px]"
                   >
@@ -1953,7 +2034,9 @@ const Projects = () => {
                   <div>
                     {/* <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Add Member</h3> */}
                     <div className="flex gap-2">
-                      <Input
+                      <
+// @ts-ignore
+                      Input
                         value={projectMemberSearch}
                         onChange={(e) => handleProjectMemberSearch(e.target.value)}
                         placeholder="Search users..."
@@ -1963,7 +2046,9 @@ const Projects = () => {
                         <SelectTrigger className="w-32">
                           <SelectValue placeholder="Role" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <
+// @ts-ignore
+                        SelectContent>
                           <SelectItem className={'px-5 h-10 cursor-pointer'} value="member">Member</SelectItem>
                           <SelectItem className={'px-5 h-10 cursor-pointer'} value="admin">Admin</SelectItem>
                           <SelectItem className={'px-5 h-10 cursor-pointer'} value="viewer">Viewer</SelectItem>
@@ -2075,12 +2160,16 @@ const Projects = () => {
                   <div>
                     <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Add Link</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      <Input
+                      <
+// @ts-ignore
+                      Input
                         value={newLink.title}
                         onChange={(e) => setNewLink({...newLink, title: e.target.value})}
                         placeholder="Link title"
                       />
-                      <Input
+                      <
+// @ts-ignore
+                      Input
                         value={newLink.url}
                         onChange={(e) => setNewLink({...newLink, url: e.target.value})}
                         placeholder="URL"
@@ -2091,14 +2180,18 @@ const Projects = () => {
                         <SelectTrigger className="w-40">
                           <SelectValue placeholder="Type" />
                         </SelectTrigger>
-                        <SelectContent>
+                        <
+// @ts-ignore
+                        SelectContent>
                           <SelectItem className={'px-5 h-10 cursor-pointer'} value="repository">Repository</SelectItem>
                           <SelectItem className={'px-5 h-10 cursor-pointer'} value="documentation">Documentation</SelectItem>
                           <SelectItem className={'px-5 h-10 cursor-pointer'} value="design">Design</SelectItem>
                           <SelectItem className={'px-5 h-10 cursor-pointer'} value="other">Other</SelectItem>
                         </SelectContent>
                       </Select>
-                      <Button
+                      <
+// @ts-ignore
+                      Button
                         onClick={() => {
                           if (newLink.title && newLink.url) {
                             handleAddLinkToProject(newLink)

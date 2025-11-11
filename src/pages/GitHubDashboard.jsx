@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -291,7 +292,7 @@ const GitHubDashboard = () => {
                         className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
                       >
                         <div
-                          className="w-4 h-4 icon rounded-[30px] mr-3 shadow-sm"
+                          className="w-4 h-4 rounded-[30px] mr-3 shadow-sm"
                     style={{ backgroundColor: item.color }}
                   ></div>
                         <div>
@@ -377,7 +378,7 @@ const GitHubDashboard = () => {
                         className={`flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[30px] ${item.name === "Total Activity" ? "col-span-2" : ""}`}
                       >
                         <div
-                          className="w-4 h-4 icon rounded-[30px] mr-3 shadow-sm"
+                          className="w-4 h-4 rounded-[30px] mr-3 shadow-sm"
                     style={{ backgroundColor: item.color }}
                   ></div>
                         <div>

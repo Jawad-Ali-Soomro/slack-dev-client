@@ -312,11 +312,11 @@ const Tasks = () => {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case "completed": return <CheckCircle className="w-4 h-4 icon icon" />
-      case "in_progress": return <Clock className="w-4 h-4 icon icon" />
-      case "pending": return <AlertCircle className="w-4 h-4 icon icon" />
-      case "cancelled": return <AlertCircle className="w-4 h-4 icon icon" />
-      default: return <Clock className="w-4 h-4 icon icon" />
+      case "completed": return <CheckCircle className="w-4 h-4 icon" />
+      case "in_progress": return <Clock className="w-4 h-4 icon" />
+      case "pending": return <AlertCircle className="w-4 h-4 icon" />
+      case "cancelled": return <AlertCircle className="w-4 h-4 icon" />
+      default: return <Clock className="w-4 h-4 icon" />
     }
   }
 
@@ -457,7 +457,7 @@ const Tasks = () => {
                 <motion.div variants={itemVariants}>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1 max-w-3xl">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon z-10 icon" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-10 icon" />
               <Input
                 type="text"
                 placeholder="Search tasks..."
@@ -503,7 +503,7 @@ const Tasks = () => {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
-                  <Trash2 className="w-4 h-4 icon icon" />
+                  <Trash2 className="w-4 h-4 icon" />
                   Delete ({selectedTasks.length})
                 </motion.button>
               )}
@@ -516,7 +516,7 @@ const Tasks = () => {
                   }
                   setShowNewTaskPopup(true);
                 }}
-                className={'w-[200px] rounded-[10px] h-12 font-bold'}
+                className={'w-[200px] rounded-[10px] h-12'}
               >
                 Schedule Task
               </Button>
@@ -593,7 +593,7 @@ const Tasks = () => {
                     <td className="px-6 py-4">
                       <div>
                         <div className="flex items-center gap-2">
-                          <div className="text-sm  text-gray-900 dark:text-white truncate font-bold">
+                          <div className="text-sm font-bold text-gray-900 dark:text-white truncate">
                             {task.title}
                           </div>
                           {user && user.id && (
@@ -629,28 +629,28 @@ const Tasks = () => {
                             onClick={() => handleStatusChange(task.id, 'pending')}
                             className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                           >
-                            <AlertCircle className="w-4 h-4 icon mr-2 icon" />
+                            <AlertCircle className="w-4 h-4 mr-2 icon" />
                             Pending
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={() => handleStatusChange(task.id, 'in_progress')}
                             className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                           >
-                            <Clock className="w-4 h-4 icon mr-2 icon" />
+                            <Clock className="w-4 h-4 mr-2 icon" />
                             In Progress
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={() => handleStatusChange(task.id, 'completed')}
                             className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                           >
-                            <CheckCircle className="w-4 h-4 icon mr-2 icon" />
+                            <CheckCircle className="w-4 h-4 mr-2 icon" />
                             Completed
                           </DropdownMenuItem>
                           <DropdownMenuItem 
                             onClick={() => handleStatusChange(task.id, 'cancelled')}
                             className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                           >
-                            <AlertCircle className="w-4 h-4 icon mr-2 icon" />
+                            <AlertCircle className="w-4 h-4 mr-2 icon" />
                             Cancelled
                           </DropdownMenuItem>
                         </DropdownMenuContent>
@@ -693,7 +693,7 @@ const Tasks = () => {
                         <div className="flex items-center gap-2">
                           {/* {task.project.logo && (
                             <img 
-                              src={task.project.logo.startsWith('http') ? task.project.logo : `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${task.project.logo}`}
+                              src={task.project.logo.startsWith('http') ? task.project.logo : `http://localhost:4000${task.project.logo}`}
                               alt={task.project.name}
                               className="w-6 h-6 rounded object-cover"
                             />
@@ -708,7 +708,7 @@ const Tasks = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <Calendar className="w-4 h-4 icon text-gray-400 icon" />
+                        <Calendar className="w-4 h-4 text-gray-400 icon" />
                         <span className="text-sm text-gray-900 dark:text-white truncate">
                           {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : "No due date"}
                         </span>
@@ -723,7 +723,7 @@ const Tasks = () => {
                             onClick={() => handleEditTask(task)}
                             className="p-2 text-gray-400 h-10 hover:text-black dark:hover:text-white"
                           >
-                            <Edit className="w-4 h-4 icon icon" />
+                            <Edit className="w-4 h-4 icon" />
                           </Button>
                         )}
                         {user && user.id && task.assignedBy?.id === user.id && (
@@ -733,7 +733,7 @@ const Tasks = () => {
                             onClick={() => handleDeleteTask(task.id)}
                             className="p-2 text-gray-400 h-10 hover:text-red-600"
                           >
-                            <Trash2 className="w-4 h-4 icon icon" />
+                            <Trash2 className="w-4 h-4 icon" />
                           </Button>
                         )}
                         <DropdownMenu>
@@ -743,13 +743,13 @@ const Tasks = () => {
                               size="sm"
                               className="p-2 text-gray-400 h-10 hover:text-black dark:hover:text-white"
                             >
-                              <MoreVertical className="w-4 h-4 icon icon" />
+                              <MoreVertical className="w-4 h-4 icon" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-white dark:bg-black border-gray-200 dark:border-gray-700">
                             {user && user.id && task.assignedBy?.id === user.id && (
                               <DropdownMenuItem className="text-black h-12 px-5 cursor-pointer  dark:text-white hover:bg-gray-100 dark:hover:bg-black">
-                                <Edit className="w-4 h-4 icon mr-2 icon" />
+                                <Edit className="w-4 h-4 mr-2 icon" />
                                 Edit Task
                               </DropdownMenuItem>
                             )}
@@ -757,7 +757,7 @@ const Tasks = () => {
                               <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
                                   <DropdownMenuItem className="text-black h-12 px-5 cursor-pointer   dark:text-white hover:bg-gray-100 dark:hover:bg-black">
-                                    <Clock className="w-4 h-4 icon mr-2 icon" />
+                                    <Clock className="w-4 h-4 mr-2 icon" />
                                     Change Status
                                   </DropdownMenuItem>
                                 </DropdownMenuTrigger>
@@ -766,28 +766,28 @@ const Tasks = () => {
                                     onClick={() => handleStatusChange(task.id, 'pending')}
                                     className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                                   >
-                                    <AlertCircle className="w-4 h-4 icon mr-2 icon" />
+                                    <AlertCircle className="w-4 h-4 mr-2 icon" />
                                     Pending
                                   </DropdownMenuItem>
                                   <DropdownMenuItem 
                                     onClick={() => handleStatusChange(task.id, 'in_progress')}
                                     className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                                   >
-                                    <Clock className="w-4 h-4 icon mr-2 icon" />
+                                    <Clock className="w-4 h-4 mr-2 icon" />
                                     In Progress
                                   </DropdownMenuItem>
                                   <DropdownMenuItem 
                                     onClick={() => handleStatusChange(task.id, 'completed')}
                                     className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                                   >
-                                    <CheckCircle className="w-4 h-4 icon mr-2 icon" />
+                                    <CheckCircle className="w-4 h-4 mr-2 icon" />
                                     Completed
                                   </DropdownMenuItem>
                                   <DropdownMenuItem 
                                     onClick={() => handleStatusChange(task.id, 'cancelled')}
                                     className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                                   >
-                                    <AlertCircle className="w-4 h-4 icon mr-2 icon" />
+                                    <AlertCircle className="w-4 h-4 mr-2 icon" />
                                     Cancelled
                                   </DropdownMenuItem>
                                 </DropdownMenuContent>
@@ -798,7 +798,7 @@ const Tasks = () => {
                                 onClick={() => handleDeleteTask(task.id)}
                                 className="text-red-600 hover:bg-red-500 hover:text-white px-5 h-12 cursor-pointer dark:hover:bg-red-900"
                               >
-                                <Trash2 className="w-4 h-4 icon mr-2" />
+                                <Trash2 className="w-4 h-4 mr-2" />
                                 Delete Task
                               </DropdownMenuItem>
                             )}
@@ -968,7 +968,7 @@ const Tasks = () => {
                   className="flex-1 px-4 py-3 h-12 bg-black text-white hover:bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
-                    <span class="loader w-5 h-5 icon"></span>
+                    <span class="loader w-5 h-5"></span>
                   ) : (
                     'Assign'
                   )}
