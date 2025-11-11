@@ -273,7 +273,6 @@ const Dashboard = () => {
   }, [user]);
 
   useEffect(() => {
-    console.log("Dashboard useEffect triggered:", { user: user?.id });
     if (user && user.id) {
       loadDashboardData();
     }
@@ -1092,8 +1091,8 @@ const Dashboard = () => {
                         className={[
                           "h-12 rounded-[14px] border flex items-center justify-center text-sm transition-colors",
                           d ? "border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900" : "border-transparent",
-                          isToday ? "ring-2 ring-[#fe914d]" : "",
-                          isSelected ? "bg-[#fe914d] text-white border-none" : "text-gray-800 dark:text-gray-200"
+                          isToday ? "ring-2 ring-black dark:ring-white" : "",
+                          isSelected ? "bg-black  text-white border-none" : "text-gray-800 dark:text-gray-200"
                         ].join(' ')}
                         disabled={!d}
                         aria-label={d ? d.toDateString() : 'empty'}
@@ -1119,7 +1118,7 @@ const Dashboard = () => {
                         navigate('/dashboard/tasks', { state: { date: selectedDate.toISOString(), openModal: true } });
                       }}
                       disabled={!permissions.canCreateTask}
-                      className="w-[250px] h-12 font-bold rounded-[15px] text-sm bg-[#fe914d] text-white hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-[250px] h-12 font-bold rounded-[15px] text-sm bg-black text-white hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Schedule Task
                     </button>

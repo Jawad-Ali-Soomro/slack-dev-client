@@ -35,7 +35,6 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
   const [loadingPosts, setLoadingPosts] = useState(false)
 
   useEffect(() => {
-    console.log('UserDetailsModal useEffect:', { isOpen, userId })
     if (isOpen && userId) {
       loadUserDetails()
     }
@@ -49,7 +48,6 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
 
   const loadUserDetails = async () => {
     try {
-      console.log('Loading user details for ID:', userId)
       setLoading(true)
       const response = await userService.getUserDetails(userId)
       console.log('User details response:', response)

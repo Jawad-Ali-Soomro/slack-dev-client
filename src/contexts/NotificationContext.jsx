@@ -31,12 +31,11 @@ export const NotificationProvider = ({ children }) => {
   const loadNotifications = useCallback(async () => {
     try {
       setLoading(true)
-      const response = await notificationService.getNotifications()
-      console.log('Loaded notifications:', response)
+      const response = await notificationService.getNotifications() 
       setNotifications(response.notifications || [])
       updateUnreadCount(response.notifications || [])
     } catch (error) {
-      console.error('Failed to load notifications:', error)
+      toast.error('Failed to load notifications')
     } finally {
       setLoading(false)
     }
@@ -108,7 +107,6 @@ export const NotificationProvider = ({ children }) => {
       }
     })
     
-    console.log('Updated unread counts:', counts)
     setUnreadCounts(counts)
   }
 
@@ -166,7 +164,6 @@ export const NotificationProvider = ({ children }) => {
         return updated
       })
     } catch (error) {
-      console.error('Failed to mark notification as read:', error)
       toast.error('Failed to mark notification as read')
     }
   }
@@ -182,7 +179,6 @@ export const NotificationProvider = ({ children }) => {
       })
       toast.success('All notifications marked as read')
     } catch (error) {
-      console.error('Failed to mark all as read:', error)
       toast.error('Failed to mark all as read')
     }
   }
@@ -257,7 +253,6 @@ export const NotificationProvider = ({ children }) => {
         return updated
       })
       
-      console.log(`Marked ${unreadNotifications.length} ${type} notifications as read`)
     } catch (error) {
       console.error(`Failed to mark ${type} notifications as read:`, error)
     }
@@ -274,7 +269,6 @@ export const NotificationProvider = ({ children }) => {
       })
       toast.success('Notification deleted')
     } catch (error) {
-      console.error('Failed to delete notification:', error)
       toast.error('Failed to delete notification')
     }
   }
@@ -287,7 +281,6 @@ export const NotificationProvider = ({ children }) => {
       setUnreadCount(0)
       toast.success('All notifications deleted')
     } catch (error) {
-      console.error('Failed to delete all notifications:', error)
       toast.error('Failed to delete all notifications')
     }
   }
@@ -295,11 +288,8 @@ export const NotificationProvider = ({ children }) => {
   // Load notifications automatically when user is authenticated
   useEffect(() => {
     if (user) {
-      console.log('User authenticated, loading notifications...')
       loadNotifications()
     } else {
-      // Clear notifications when user logs out
-      console.log('User not authenticated, clearing notifications...')
       setNotifications([])
       setUnreadCount(0)
       setUnreadCounts({
@@ -317,14 +307,11 @@ export const NotificationProvider = ({ children }) => {
   useEffect(() => {
     if (!user) return
 
-    console.log('Setting up notification refresh interval...')
     const interval = setInterval(() => {
-      console.log('Refreshing notifications...')
       loadNotifications()
     }, 30000) // 30 seconds
 
     return () => {
-      console.log('Clearing notification refresh interval...')
       clearInterval(interval)
     }
   }, [user, loadNotifications])

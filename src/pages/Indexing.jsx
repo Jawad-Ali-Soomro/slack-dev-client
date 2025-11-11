@@ -235,7 +235,7 @@ const Indexing = () => {
             ].map((feature, index) => (
               <motion.div
                 key={index}
-                className="p-6 md:p-8 bg-white dark:bg-black rounded-[10px] shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden transition-transform"
+                className="p-6 md:p-8 bg-gray-100 dark:bg-[rgba(255,255,255,0.1)] rounded-[10px] shadow-lg overflow-hidden transition-transform"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
@@ -268,7 +268,7 @@ const Indexing = () => {
 
         {/* Stats Section */}
         <motion.section 
-          className="w-full bg-black icon py-16 relative dark:bg-white"
+          className="w-full bg-gray-100 dark:bg-[rgba(255,255,255,0.1)] icon py-16 relative"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
@@ -289,13 +289,13 @@ const Indexing = () => {
                   transition={{ delay: index * 0.1, duration: 0.6 }}
                   viewport={{ once: true }}
                 >
-                  <div className="text-4xl  text-white dark:text-black mb-2 "
+                  <div className="text-4xl  text-black dark:text-white mb-2 "
                     style={{
                       fontWeight: 900
                     }}>
                     {stat.number}
                   </div>
-                  <div className="text-gray-300  text-sm dark:text-gray-700 font-bold"
+                  <div className="text-gray-600  text-sm dark:text-gray-300 font-bold"
                     >
                     {stat.label}
                   </div>
@@ -351,7 +351,7 @@ const Indexing = () => {
             ].map((testimonial, index) => (
               <motion.div
                 key={index}
-                className="p-8 glass-card rounded-[10px] relative overflow-hidden"
+                className="p-8 bg-gray-100 dark:bg-[rgba(255,255,255,0.1)] rounded-[10px] relative overflow-hidden"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.2, duration: 0.6 }}
@@ -452,7 +452,7 @@ const Indexing = () => {
 
         {/* Final CTA Section */}
         <motion.section 
-          className="w-full bg-white text-black dark:text-white icon dark:bg-black py-20 relative z-10"
+          className="w-full bg-gray-100 dark:bg-[rgba(255,255,255,0.1)] text-black dark:text-white icon py-20 relative z-10"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
