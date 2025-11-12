@@ -267,7 +267,13 @@ const GitHubPullRequests = () => {
   }
 
   return (
-    <div className='mt-10 ambient-light'>
+    <div className='ambient-light'>
+         <div className="flex py-6 gap-3 items-center">
+                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <GitPullRequest  size={20} />
+                  </div>
+                  <h1 className="text-2xl font-bold">Your Pull Requests</h1>
+                </div>
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
           <div>

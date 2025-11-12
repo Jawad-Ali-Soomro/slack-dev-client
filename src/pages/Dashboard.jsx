@@ -43,6 +43,7 @@ import {
   Eye,
   Filter,
   MoreHorizontal,
+  LayoutDashboard,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import UserDetailsModal from "../components/UserDetailsModal";
@@ -52,6 +53,8 @@ import projectService from "../services/projectService";
 import { toast } from "sonner";
 import StatsCard from "../components/StatsCard";
 import { PiUsersDuotone } from "react-icons/pi";
+import { RiDashboard2Fill } from "react-icons/ri";
+import { BsDashCircle } from "react-icons/bs";
 
 const Dashboard = () => {
 
@@ -434,7 +437,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen ambient-light">
-      <div className="mt-10 mx-auto">
+      <div className="mx-auto">
       
           <div className="mb-16">
             <div className="flex flex-col lg:flex-row lg:items-center justify-end mb-8 gap-6">
@@ -471,26 +474,15 @@ const Dashboard = () => {
                 </motion.div>
               </div> */}
 
-              {/* Action buttons */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-                className="flex items-center space-x-3"
-              >
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={loadDashboardData}
-                  className="flex items-center space-x-2 gap-2 px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-white dark:to-gray-100 text-white dark:text-gray-900 rounded-[20px] shadow-lg hover:shadow-xl transition-all duration-200 font-medium"
-                >
-                  <RefreshCw className="w-4 h-4 " />
-                  Refresh Data
-                </motion.button>
-                
-               
-              </motion.div>
+            
             </div>
+
+                <div className="flex py-6 gap-3 items-center">
+                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <LayoutDashboard  size={20} />
+                  </div>
+                  <h1 className="text-2xl font-bold">Dashboard</h1>
+                </div>
 
             {/* Quick stats bar */}
             <motion.div
@@ -572,7 +564,7 @@ const Dashboard = () => {
                 title="Completed"
                 value={stats.completedTasks}
                 icon={CheckCircle}
-                color="orange"
+                color="neutral"
                 trend="up"
                 trendValue={stats.completionRate}
                 subtitle="Successfully delivered"
@@ -594,7 +586,7 @@ const Dashboard = () => {
                 title="Active Projects"
                 value={stats.activeProjects}
                 icon={Activity}
-                color="purple"
+                color="neutral"
                 subtitle="Currently running"
                 delay={0.4}
               />
@@ -1078,8 +1070,8 @@ const Dashboard = () => {
 
                 {/* Calendar grid */}
                 <div className="grid grid-cols-7 gap-2">
-                  {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((d) => (
-                    <div key={d} className="text-xs text-gray-500 dark:text-gray-400 text-center py-1">{d}</div>
+                  {['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map((d) => (
+                    <div key={d} className="text-xs font-bold text-gray-500 dark:text-gray-400 text-start py-1">{d}</div>
                   ))}
                   {getMonthDaysGrid(calendarMonth).map((d, idx) => {
                     const isToday = d && isSameDay(d, new Date());
@@ -1089,7 +1081,7 @@ const Dashboard = () => {
                         key={idx}
                         onClick={() => d && setSelectedDate(d)}
                         className={[
-                          "h-12 rounded-[14px] border flex items-center justify-center text-sm transition-colors",
+                          "h-12 rounded-[14px] border flex font-bold items-center justify-center text-sm transition-colors",
                           d ? "border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900" : "border-transparent",
                           isToday ? "ring-2 ring-black dark:ring-white" : "",
                           isSelected ? "bg-black  text-white border-none" : "text-gray-800 dark:text-gray-200"
@@ -1118,7 +1110,7 @@ const Dashboard = () => {
                         navigate('/dashboard/tasks', { state: { date: selectedDate.toISOString(), openModal: true } });
                       }}
                       disabled={!permissions.canCreateTask}
-                      className="w-[250px] h-12 font-bold rounded-[15px] text-sm bg-black text-white hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-[250px] h-12 font-bold rounded-[15px] text-sm bg-gray-100 dark:bg-white text-black hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Schedule Task
                     </button>

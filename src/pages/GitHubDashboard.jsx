@@ -48,7 +48,8 @@ import {
   Code,
   GitBranch,
   Bug,
-  FileText
+  FileText,
+  LayoutDashboard
 } from 'lucide-react'
 import { toast } from 'sonner'
 import StatsCard from '../components/StatsCard'
@@ -145,7 +146,7 @@ const GitHubDashboard = () => {
 
   return (
     <div className="min-h-screen ambient-light">
-      <div className="mt-10 mx-auto">
+      <div className="mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -155,30 +156,20 @@ const GitHubDashboard = () => {
           <div className="mb-16">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-6">
               <div className="flex-1">
-             
+              <div className="flex py-6 gap-3 items-center">
+                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <Github  size={20} />
+                  </div>
+                 
+                  <h1 className="text-2xl font-bold">Version Control Dashboard</h1>
+                </div>
+
                 
               
               </div>
 
               {/* Action buttons */}
-              <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-                className="flex items-center space-x-3"
-              >
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={loadDashboardData}
-                  className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-gray-900 to-gray-800 dark:from-white dark:to-gray-100 text-white dark:text-gray-900 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 font-medium"
-                >
-                  <RefreshCw className="w-4 h-4 icon" />
-                  <span>Refresh Data</span>
-                </motion.button>
-                
-              
-              </motion.div>
+            
             </div>
 
             

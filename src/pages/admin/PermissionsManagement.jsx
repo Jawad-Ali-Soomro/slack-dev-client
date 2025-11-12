@@ -177,21 +177,15 @@ const PermissionsManagement = () => {
 
   return (
     <div className="ambient-light">
-      <div className="mt-10 mx-auto">
+      <div className="mx-auto">
         {/* Header - no cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-6"
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Shield className="w-6 h-6 text-blue-600" />
-              <h1 className="text-2xl  text-gray-900 dark:text-white">Permissions Management</h1>
-            </div>
-            <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Admin Access</span>
-          </div>
-        </motion.div>
+        <div className="flex py-6 gap-3 items-center">
+                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <Shield  size={20} />
+                  </div>
+                  <h1 className="text-2xl font-bold">Permissions Management</h1>
+                </div>
+
 
         {/* Filters */}
         {/* Filters - no padding/cards */}

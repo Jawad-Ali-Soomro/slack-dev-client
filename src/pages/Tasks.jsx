@@ -443,7 +443,7 @@ const Tasks = () => {
   document.title = "Tasks - Schedule & Manage"
 
   return (
-    <div className="overflow-hidden pt-6">
+    <div className="overflow-hidden">
       <motion.div
         className="mx-auto"
         variants={containerVariants}
@@ -451,6 +451,13 @@ const Tasks = () => {
         animate="visible"
       >
             {/* Header */}
+            <div className="flex py-6 gap-3 items-center">
+                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <CheckCircle  size={20} />
+                  </div>
+                  <h1 className="text-2xl font-bold">Tasks Assigned</h1>
+                </div>
+
             <motion.div variants={itemVariants} className="mb-8">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
@@ -531,7 +538,7 @@ const Tasks = () => {
 
         {/* Tasks Table */}
         <motion.div variants={itemVariants} className="bg-white dark:bg-black rounded-[10px] shadow-xl overflow-hidden">
-          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+          <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
               <thead className="bg-gray-100 text-black border-b dark:border-gray-700 sticky top-0 z-10">
                 <tr>

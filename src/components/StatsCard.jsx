@@ -12,10 +12,10 @@ const StatsCard = ({
 }) => {
   const colorConfig = {
     neutral: {
-      bg: 'bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300',
-      text: 'text-gray-800 dark:text-gray-200',
-      light: 'bg-white dark:bg-gray-800',
-      border: 'border-gray-200 dark:border-gray-700'
+      bg: 'bg-gray-100 dark:bg-[rgba(255,255,255,.1)] backdrop-blur-sm',
+      text: 'text-black dark:text-white',
+      light: 'bg-white dark:bg-[rgba(0,0,0,.1)]',
+      border: 'border-gray-200 dark:border-[rgba(255,255,255,.5)]'
     },
     blue: {
       bg: 'bg-gradient-to-br from-blue-500 to-blue-600',
@@ -70,17 +70,8 @@ const StatsCard = ({
       <div className="relative p-6">
         {/* Header with icon and title */}
         <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center space-x-3">
-            {Icon && (
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: delay + 0.2, type: "spring", stiffness: 200 }}
-                className={`p-3 ${config.bg} rounded-lg shadow-lg bg-[#fe914d]`}
-              >
-                <Icon className="w-5 h-5 icon text-white dark:text-gray-800" />
-              </motion.div>
-            )}
+          <div className="flex items-center justify-between w-full space-x-3">
+           
             <div>
               <h3 className="text-sm  text-gray-600 dark:text-gray-400 tracking-wide">
                 {title}
@@ -91,10 +82,34 @@ const StatsCard = ({
                 </p>
               )}
             </div>
+            {Icon && (
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: delay + 0.2, type: "spring", stiffness: 200 }}
+                className={`p-3 border rounded-full bg-gray-100 dark:bg-gray-800`}
+              >
+                <Icon className="w-5 h-5 icon" />
+              </motion.div>
+            )}
           </div>
           
           {/* Trend indicator */}
-          {trend && trendValue && (
+        
+        </div>
+
+        {/* Main value */}
+       <div className="flex justify-between items-center">
+       <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: delay + 0.1 }}
+          className={`text-4xl  ${config.text} mb-2 font-bold`}
+        >
+          {value}
+        </motion.div>
+
+        {trend && trendValue && (
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -110,17 +125,7 @@ const StatsCard = ({
               </span>
             </motion.div>
           )}
-        </div>
-
-        {/* Main value */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: delay + 0.1 }}
-          className={`text-4xl  ${config.text} mb-2 font-bold`}
-        >
-          {value}
-        </motion.div>
+       </div>
 
         {/* Decorative element */}
         <div className="absolute bottom-0 right-0 w-20 h-20 opacity-10">

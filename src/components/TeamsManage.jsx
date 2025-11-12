@@ -437,8 +437,15 @@ const TeamsManage = () => {
   }
 
   return (
-    <div className='pt-10'>
+    <div>
       {/* Header */}
+      <div className="flex py-6 gap-3 items-center">
+                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <PiUsersDuotone  size={20} />
+                  </div>
+                  <h1 className="text-2xl font-bold">Your Teams</h1>
+                </div>
+
       <div className="flex items-center justify-between mb-6">
         <div>
         <div className="flex gap-4 justify-start items-center">
@@ -642,7 +649,7 @@ const TeamsManage = () => {
       )}
 
       {/* Pagination Controls - Fixed at Bottom */}
-      <div className="sticky bottom-0  border-gray-200 dark:border-gray-700 p-4 mt-8">
+      <div className="sticky bottom-0  border-gray-200 dark:border-gray-700 p-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}

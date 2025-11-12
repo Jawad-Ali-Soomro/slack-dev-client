@@ -118,9 +118,15 @@ const UserManagement = () => {
 
   return (
     <div className=" ambient-light">
-      <div className="mt-10 mx-auto">
+      <div className="mx-auto">
         {/* Header - simple, no cards */}
-        <motion.div
+        <div className="flex py-6 gap-3 items-center">
+                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <PiUsersDuotone  size={20} />
+                  </div>
+                  <h1 className="text-2xl font-bold">User Management</h1>
+                </div>
+        {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
@@ -132,7 +138,7 @@ const UserManagement = () => {
             </div>
             <span className="text-xs font-medium text-gray-500 dark:text-gray-400">Admin Access</span>
           </div>
-        </motion.div>
+        </motion.div> */}
 
         {/* Filters */}
         {/* Filters - simple row, no cards */}

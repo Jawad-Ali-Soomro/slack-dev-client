@@ -37,7 +37,8 @@ import {
   Camera,
   // @ts-ignore
   ArrowUpRight,
-  ArrowUpRightSquare
+  ArrowUpRightSquare,
+  Folder
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '../components/ui/button'
@@ -750,13 +751,20 @@ const Projects = () => {
   }
 
   return (
-    <div className="overflow-hidden pt-6 pb-10">
+    <div className="overflow-hidden pb-10">
       <motion.div
         className="mx-auto"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
+         <div className="flex py-6 gap-3 items-center">
+                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <Folder  size={20} />
+                  </div>
+                  <h1 className="text-2xl font-bold">My Projects</h1>
+                </div>
+
         {/* Header */}
         <motion.div variants={itemVariants} className="flex items-center justify-between mb-6">
           <div>
@@ -1085,7 +1093,7 @@ const Projects = () => {
         </motion.div>
 
         {/* Pagination Controls - Fixed at Bottom */}
-        <div className="sticky bottom-0  border-gray-200 dark:border-gray-700 p-4 mt-8">
+        <div className="sticky bottom-0  border-gray-200 dark:border-gray-700 p-4">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
