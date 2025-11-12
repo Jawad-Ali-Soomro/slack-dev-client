@@ -7,7 +7,8 @@ import {
   AlertCircle,
   LogOut,
   KeyIcon,
-  ChevronDown
+  ChevronDown,
+  Dock
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSidebar } from '../contexts/SidebarContext'
@@ -17,7 +18,7 @@ import { GoCalendar, GoWorkflow } from 'react-icons/go'
 import { IoFolderOpenOutline } from 'react-icons/io5'
 import { PiUsersDuotone, PiUserCheck } from 'react-icons/pi'
 import { BiMessageSquareDetail } from 'react-icons/bi'
-import { FolderOpen as RepoIcon } from 'lucide-react'
+import { FolderOpen as RepoIcon, FileText } from 'lucide-react'
 
 const Sidebar = () => {
   const { isOpen, closeSidebar } = useSidebar()
@@ -78,6 +79,12 @@ const Sidebar = () => {
       path: '/dashboard/friends',
       badgeCount: 0
     },
+    {
+      title: 'Resume Builder',
+      icon: Dock,
+      path: '/dashboard/resume',
+      badgeCount: 0
+    },
     ...(user?.role === 'admin'
       ? [
           {
@@ -97,7 +104,8 @@ const Sidebar = () => {
       icon: BiMessageSquareDetail,
       path: '/dashboard/chat',
       badgeCount: unreadCounts.messages
-    }
+    },
+   
   ]
 
   const sidebarVariants = {

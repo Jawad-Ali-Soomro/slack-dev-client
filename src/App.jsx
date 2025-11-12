@@ -30,6 +30,7 @@ import { Toaster } from 'sonner'
 import GitHubDashboard from './pages/GitHubDashboard'
 import UserManagement from './pages/admin/UserManagement'
 import PermissionsManagement from './pages/admin/PermissionsManagement'
+import ResumeBuilder from './pages/ResumeBuilder'
 
 function App() {
   return (
@@ -194,6 +195,14 @@ function App() {
           element={
             <ProtectedRoute requireAuth={true}>
               <PermissionsManagement />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/resume" 
+          element={
+            <ProtectedRoute requireAuth={true}>
+              <ResumeBuilder />
             </ProtectedRoute>
           } 
         />

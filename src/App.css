@@ -4,6 +4,22 @@
     /* border-radius: 15px ; */
 }
 
+Button {
+  border-radius: 20px;
+}
+
+Input {
+  border-radius: 20px;
+}
+
+Textarea {
+  border-radius: 20px;
+}
+
+Select {
+  border-radius: 20px;
+}
+
 
 
 
