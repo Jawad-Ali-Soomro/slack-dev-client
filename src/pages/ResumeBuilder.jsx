@@ -327,12 +327,12 @@ const ResumeBuilder = () => {
       
       // Header
       doc.setFontSize(24)
-      doc.setFont('halvetica neue', 'bold')
+      doc.setFont('halvetica', 'bold')
       doc.text(resumeData.personalInfo.fullName || 'Your Name', margin, yPosition)
       yPosition += 10
       
       doc.setFontSize(10)
-      doc.setFont('halvetica neue', 'normal')
+      doc.setFont('halvetica', 'normal')
       const contactInfo = [
         resumeData.personalInfo.email,
         resumeData.personalInfo.phone,
@@ -342,9 +342,9 @@ const ResumeBuilder = () => {
       yPosition += 5
       
       const links = [
-        resumeData.personalInfo.linkedin ? `LinkedIn · ${resumeData.personalInfo.linkedin}` : '',
-        resumeData.personalInfo.github ? `GitHub · ${resumeData.personalInfo.github}` : '',
-        resumeData.personalInfo.website ? `Website · ${resumeData.personalInfo.website}` : ''
+        resumeData.personalInfo.linkedin ? `Linkedin · ${resumeData.personalInfo.linkedin}` : '',
+        resumeData.personalInfo.github ? `Github · ${resumeData.personalInfo.github}` : '',
+        resumeData.personalInfo.website ? `Portfolio · ${resumeData.personalInfo.website}` : ''
       ].filter(Boolean).join(' | ')
       if (links) {
         doc.text(links, margin, yPosition)
@@ -355,12 +355,12 @@ const ResumeBuilder = () => {
       if (resumeData.personalInfo.summary) {
         yPosition += 5
         doc.setFontSize(14)
-        doc.setFont('halvetica neue', 'bold')
+        doc.setFont('halvetica', 'bold')
         doc.text('PROFESSIONAL SUMMARY', margin, yPosition)
         yPosition += 7
         
         doc.setFontSize(10)
-        doc.setFont('halvetica neue', 'normal')
+        doc.setFont('halvetica', 'normal')
         const summaryLines = doc.splitTextToSize(resumeData.personalInfo.summary, contentWidth)
         doc.text(summaryLines, margin, yPosition)
         yPosition += summaryLines.length * 5 + 5
@@ -370,12 +370,12 @@ const ResumeBuilder = () => {
       if (resumeData.skills.length > 0) {
         yPosition += 5
         doc.setFontSize(14)
-        doc.setFont('halvetica neue', 'bold')
+        doc.setFont('halvetica', 'bold')
         doc.text('TECHNICAL SKILLS', margin, yPosition)
         yPosition += 7
         
         doc.setFontSize(10)
-        doc.setFont('halvetica neue', 'normal')
+        doc.setFont('halvetica', 'normal')
         const skillsText = resumeData.skills.filter(Boolean).join(' • ')
         const skillsLines = doc.splitTextToSize(skillsText, contentWidth)
         doc.text(skillsLines, margin, yPosition)
@@ -386,7 +386,7 @@ const ResumeBuilder = () => {
       if (resumeData.experience.length > 0) {
         yPosition += 5
         doc.setFontSize(14)
-        doc.setFont('halvetica neue', 'bold')
+        doc.setFont('halvetica', 'bold')
         doc.text('PROFESSIONAL EXPERIENCE', margin, yPosition)
         yPosition += 7
         
@@ -397,12 +397,12 @@ const ResumeBuilder = () => {
           }
           
           doc.setFontSize(11)
-          doc.setFont('halvetica neue', 'bold')
+          doc.setFont('halvetica', 'bold')
           doc.text(exp.position || 'Position', margin, yPosition)
           yPosition += 5
           
           doc.setFontSize(10)
-          doc.setFont('halvetica neue', 'normal')
+          doc.setFont('halvetica', 'normal')
           doc.text(`${exp.company || 'Company'} | ${exp.startDate || ''} - ${exp.endDate || 'Present'}`, margin, yPosition)
           yPosition += 5
           
@@ -433,7 +433,7 @@ const ResumeBuilder = () => {
         
         yPosition += 5
         doc.setFontSize(14)
-        doc.setFont('halvetica neue', 'bold')
+        doc.setFont('halvetica', 'bold')
         doc.text('PROJECTS', margin, yPosition)
         yPosition += 7
         
@@ -444,12 +444,12 @@ const ResumeBuilder = () => {
           }
           
           doc.setFontSize(11)
-          doc.setFont('halvetica neue', 'bold')
+          doc.setFont('halvetica', 'bold')
           doc.text(project.name || 'Project Name', margin, yPosition)
           yPosition += 5
           
           doc.setFontSize(10)
-          doc.setFont('halvetica neue', 'normal')
+          doc.setFont('halvetica', 'normal')
           if (project.date) {
             doc.text(project.date, margin, yPosition)
             yPosition += 5
@@ -805,7 +805,7 @@ const ResumeBuilder = () => {
                       {resumeData.personalInfo.phone && <span>• {resumeData.personalInfo.phone}</span>}
                       {resumeData.personalInfo.location && <span>• {resumeData.personalInfo.location}</span>}
                     </div>
-                    <div className="flex flex-wrap justify-center gap-2 text-xs text-gray-600 dark:text-gray-400 mt-1">
+                    <div className="flex flex-wrap justify-start gap-2 text-xs text-gray-600 dark:text-gray-400 mt-1">
                       {resumeData.personalInfo.linkedin && <span>LinkedIn</span>}
                       {resumeData.personalInfo.github && <span>• GitHub</span>}
                       {resumeData.personalInfo.website && <span>• Website</span>}

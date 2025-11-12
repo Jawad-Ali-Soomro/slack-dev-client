@@ -250,7 +250,7 @@ const Login = () => {
           <motion.div variants={itemVariants} className="text-end mt-6">
             <p className="text-gray-600 dark:text-gray-300">
               {/* don't have an account{" "} */}
-              <Link to="/signup" className="px-15 dark:bg-white dark:text-black ml-3 py-4 font-bold rounded-[10px] text-white bg-black  text-sm capitalize ">
+              <Link to="/signup" className="px-15 dark:bg-white dark:text-black ml-3 py-4 font-bold rounded-[20px] text-white bg-black  text-sm capitalize ">
                 Sign Up
               </Link>
             </p>
