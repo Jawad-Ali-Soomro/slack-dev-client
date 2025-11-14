@@ -478,7 +478,7 @@ const Dashboard = () => {
             </div>
 
                 <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
                   <LayoutDashboard  size={20} />
                   </div>
                   <h1 className="text-2xl font-bold">Dashboard</h1>
@@ -554,7 +554,7 @@ const Dashboard = () => {
                 title="Active Tasks"
                 value={stats.totalTasks}
                 icon={Target}
-                color="blue"
+                color="neutral"
                 subtitle="Currently in progress"
                 delay={0.1}
               />
@@ -576,7 +576,7 @@ const Dashboard = () => {
                 title="Team Meetings"
                 value={stats.totalMeetings}
                 icon={Video}
-                color="green"
+                color="neutral"
                 subtitle="Collaboration sessions"
                 delay={0.3}
               />
@@ -863,7 +863,7 @@ const Dashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.5 + index * 0.1 }}
-                      className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
+                      className="flex items-center p-3 bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
                     >
                       <div
                         className="w-4 h-4  rounded-[30px] mr-3 shadow-sm"
@@ -873,7 +873,7 @@ const Dashboard = () => {
                         <div className="text-sm  text-gray-900 dark:text-white">
                           {item.value}
                         </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400">
+                        <div className="text-xs text-gray-600 dark:text-gray-400 font-bold">
                           {item.name}
                         </div>
                       </div>
@@ -940,7 +940,7 @@ const Dashboard = () => {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 1.6 + index * 0.1 }}
-                      className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
+                      className="flex items-center p-3 bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
                     >
                       <div
                         className="w-4 h-4  rounded-[30px] mr-3 shadow-sm"
@@ -950,7 +950,7 @@ const Dashboard = () => {
                         <div className="text-sm  text-gray-900 dark:text-white">
                           {item.value}
                         </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400">
+                        <div className="text-xs text-gray-600 dark:text-gray-400 font-bold">
                           {item.name}
                         </div>
                       </div>
@@ -1014,7 +1014,7 @@ const Dashboard = () => {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 1.5 + index * 0.1 }}
-                    className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
+                    className="flex items-center p-3 bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
                   >
                     <div
                       className="w-4 h-4  rounded-[30px] mr-3 shadow-sm"
@@ -1024,7 +1024,7 @@ const Dashboard = () => {
                       <div className="text-sm  text-gray-900 dark:text-white">
                         {item.value}
                   </div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400">
+                      <div className="text-xs text-gray-600 dark:text-gray-400 font-bold">
                         {item.name}
                       </div>
                     </div>
@@ -1070,7 +1070,7 @@ const Dashboard = () => {
 
                 {/* Calendar grid */}
                 <div className="grid grid-cols-7 gap-2">
-                  {['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map((d) => (
+                  {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((d) => (
                     <div key={d} className="text-xs font-bold text-gray-500 dark:text-gray-400 text-start py-1">{d}</div>
                   ))}
                   {getMonthDaysGrid(calendarMonth).map((d, idx) => {
@@ -1082,9 +1082,9 @@ const Dashboard = () => {
                         onClick={() => d && setSelectedDate(d)}
                         className={[
                           "h-12 rounded-[14px] border flex font-bold items-center justify-center text-sm transition-colors",
-                          d ? "border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900" : "border-transparent",
+                          d ? "border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900" : "border-transparent",
                           isToday ? "ring-2 ring-black dark:ring-white" : "",
-                          isSelected ? "bg-black  text-white border-none" : "text-gray-800 dark:text-gray-200"
+                          isSelected ? "bg-white dark:bg-black  text-black dark:text-white border-none" : "text-gray-800 dark:text-gray-200"
                         ].join(' ')}
                         disabled={!d}
                         aria-label={d ? d.toDateString() : 'empty'}
@@ -1096,10 +1096,8 @@ const Dashboard = () => {
                 </div>
 
                 {/* Actions */}
-                <div className="mt-6 flex items-center justify-between">
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
-                    Selected: {selectedDate.toLocaleDateString()}
-                  </div>
+                <div className="mt-6 flex items-end justify-end">
+                
                   <div className="flex gap-3 flex-col sn:flex-row">
                     <button
                       onClick={() => {
@@ -1110,7 +1108,7 @@ const Dashboard = () => {
                         navigate('/dashboard/tasks', { state: { date: selectedDate.toISOString(), openModal: true } });
                       }}
                       disabled={!permissions.canCreateTask}
-                      className="w-[250px] h-12 font-bold rounded-[15px] text-sm bg-gray-100 dark:bg-white text-black hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-[250px] h-12 font-bold rounded-[15px] text-sm bg-white dark:bg-white text-black hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Schedule Task
                     </button>
@@ -1123,7 +1121,7 @@ const Dashboard = () => {
                         navigate('/dashboard/meetings', { state: { date: selectedDate.toISOString(), openModal: true } });
                       }}
                       disabled={!permissions.canCreateMeeting}
-                      className="w-[250px] h-12 rounded-[15px] text-sm border border-gray-200 font-bold dark:border-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-[250px] h-12 rounded-[15px] text-sm border border-gray-300 font-bold dark:border-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       Schedule Meeting
                     </button>

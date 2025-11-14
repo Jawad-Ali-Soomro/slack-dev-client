@@ -1,23 +1,32 @@
+import React from "react"
 import Header from "../components/Header"
 import Footer from "../components/Footer"
 import { motion } from "framer-motion"
-import { Code, Database, GitBranch, Zap, Users, Shield, Rocket, Terminal, Settings, Cpu, RocketIcon, LayoutDashboard, Lock, Flashlight, Lightbulb, ToolCase, ArrowRight } from "lucide-react"
+import { RocketIcon, LayoutDashboard, Lock, Lightbulb, ToolCase, ArrowRight } from "lucide-react"
 import { PiUsersDuotone } from "react-icons/pi"
 import { useNavigate } from "react-router-dom"
+import Typed from 'typed.js'
 
 const Indexing = () => {
-  const floatingIcons = [
-    { Icon: Code, color: "text-blue-500", top: "15%", left: "10%", delay: 0 },
-    { Icon: Database, color: "text-green-500", top: "25%", right: "15%", delay: 0.5 },
-    { Icon: GitBranch, color: "text-purple-500", top: "60%", left: "8%", delay: 1 },
-    { Icon: Zap, color: "text-yellow-500", top: "70%", right: "12%", delay: 1.5 },
-    { Icon: Users, color: "text-pink-500", top: "40%", left: "5%", delay: 2 },
-    { Icon: Shield, color: "text-red-500", top: "45%", right: "8%", delay: 2.5 },
-    { Icon: Rocket, color: "text-indigo-500", top: "80%", left: "15%", delay: 3 },
-    { Icon: Terminal, color: "text-cyan-500", top: "20%", right: "25%", delay: 3.5 },
-    { Icon: Settings, color: "text-gray-500", top: "65%", right: "20%", delay: 4 },
-    { Icon: Cpu, color: "text-black dark:text-white", top: "35%", left: "20%", delay: 4.5 }
-  ]
+
+  const el = React.useRef(null);
+
+  React.useEffect(() => {
+    const typed = new Typed(el.current, {
+      strings: ['Professional', 'Developer', 'Leader'],
+      typeSpeed: 50,
+      loop: true,
+      backSpeed: 50,
+      smartBackspace: true,
+      shuffle: true,
+      showCursor: false,
+    });
+
+    return () => {
+      typed.destroy();
+    };
+
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -38,15 +47,6 @@ const Indexing = () => {
     }
   }
 
-  const floatingAnimation = {
-    y: [-10, 10, -10],
-    rotate: [-5, 5, -5],
-    transition: {
-      duration: 1,
-      ease: "easeInOut"
-    }
-  }
-
   const navigate = useNavigate()
 
   return (
@@ -64,46 +64,19 @@ const Indexing = () => {
           initial="visible"
           animate="visible"
         >
-          {/* Hero Background Image */}
-{/*         
-{floatingIcons.map(({ Icon, color, top, left, right, delay }, index) => (
-          <motion.div
-            key={index}
-            className={`absolute ${color} opacity-20 dark:opacity-20`}
-            style={{ 
-              top, 
-              left, 
-              right,
-              zIndex: 1
-            }}
-            initial={{ opacity: 0, scale: 0 }}
-            animate={{ 
-              opacity: 0.5, 
-              scale: 1,
-              ...floatingAnimation
-            }}
-            transition={{ 
-              delay: delay * 0.5,
-              duration: 0.8
-            }}
-          >
-            <Icon size={48} />
-          </motion.div>
-        ))} */}
-
-            <motion.span 
-              variants={itemVariants}
-              className="p-3 text-[9px]  bg-white dark:bg-gray-700 text-black dark:text-white rounded-full uppercase px-5 "
-            >
-              From Developer to Developers
-            </motion.span>
-            
-            <motion.h1 
-              variants={itemVariants}
+              <motion.span 
+                variants={itemVariants}
+                className="p-3 text-[9px]  bg-white dark:bg-gray-700 text-black dark:text-white rounded-full uppercase px-5 "
+              >
+                From Developer to Developers
+              </motion.span>
+              
+              <motion.h1 
+                variants={itemVariants}
               className="text-[32px] md:text-[56px] p-5 md:p-0 mt-8 font-extrabold tracking-tight text-gray-900 dark:text-white" 
               style={{ fontWeight: 900 }}
             >
-              <span className="text">Manage</span> Your <span className="text">Projects</span> Like a <span className="text">Professional</span>!
+              <span className="text">Manage</span> Your <span className="text">Projects</span> Like a <span className="text" ref={el}></span> !
             </motion.h1>
             
             <motion.p 

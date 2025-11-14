@@ -180,7 +180,7 @@ const PermissionsManagement = () => {
       <div className="mx-auto">
         {/* Header - no cards */}
         <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <div className="flex p-5 bg-white  dark:bg-gray-800 rounded-full">
                   <Shield  size={20} />
                   </div>
                   <h1 className="text-2xl font-bold">Permissions Management</h1>
@@ -196,17 +196,17 @@ const PermissionsManagement = () => {
           className="mb-4"
         >
           <div className="flex flex-col md:flex-row gap-3">
-            <div className="relative flex-1 max-w-[600px]">
+            <div className="relative flex-1 max-w-[500px]">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 icon" />
               <Input
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
+                className="pl-10 bg-white dark:bg-gray-800 rounded-[10px]"
               />
             </div>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-44 h-12 px-5">
+              <SelectTrigger className="w-44 h-12 px-5 bg-white dark:bg-gray-800 rounded-[10px]">
                 <SelectValue placeholder="Filter by role" />
               </SelectTrigger>
               <SelectContent>
@@ -227,7 +227,7 @@ const PermissionsManagement = () => {
         >
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full rounded-[10px] overflow-hidden">
-              <thead className="bg-gray-100 text-black dark:border-gray-700 sticky top-0 z-10">
+              <thead className="bg-white text-black dark:border-gray-700 sticky top-0 z-10">
                 <tr>
                   <th className="px-5 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">User</th>
                   <th className="px-5 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">Role</th>
@@ -238,7 +238,7 @@ const PermissionsManagement = () => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredUsers.map((userItem) => (
-                  <tr key={userItem.id} className="hover:bg-gray-50 dark:hover:bg-black">
+                  <tr key={userItem.id} className="bg-white hover:bg-gray-50 dark:hover:bg-black">
                     <td className="px-5 py-2">
                       <div className="flex items-center gap-3">
                         <img

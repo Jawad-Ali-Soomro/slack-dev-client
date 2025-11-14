@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { useLocation } from "react-router-dom"
 import { motion } from "framer-motion"
 import HorizontalLoader from "../components/HorizontalLoader"
 import { usePermissions } from "../hooks/usePermissions"
-import { Search, Plus, Edit, Trash2, Calendar, User, Clock, CheckCircle, AlertCircle, MoreVertical, Filter, Video, MapPin, ChevronDown, X } from "lucide-react"
+import { Search, Plus, Edit, Trash2, Calendar, User, Clock, CheckCircle, AlertCircle, MoreVertical, Filter, Video, MapPin, ChevronDown, X, Eye, ArrowRight, FolderOpen, RefreshCw } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
@@ -11,6 +11,7 @@ import { Textarea } from "../components/ui/textarea"
 import { Checkbox } from "../components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu"
+import { Badge } from "../components/ui/badge"
 import { userService } from "../services/userService"
 import meetingService from "../services/meetingService"
 import projectService from "../services/projectService"
@@ -22,6 +23,8 @@ import { getAvatarProps } from "../utils/avatarUtils"
 import MeetingEditModal from "../components/MeetingEditModal"
 import UserDetailsModal from "../components/UserDetailsModal"
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from "../utils/uiConstants"
+import { cn } from "../lib/utils"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../components/ui/sheet"
 
 const Meetings = () => {
 
@@ -65,12 +68,30 @@ const Meetings = () => {
   const [availableUsers, setAvailableUsers] = useState([])
   const [loading, setLoading] = useState(false)
   const [meetings, setMeetings] = useState([])
+  const [selectedMeetingDetails, setSelectedMeetingDetails] = useState(null)
+  const [isMeetingSheetOpen, setIsMeetingSheetOpen] = useState(false)
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
     total: 0,
     pages: 0
   })
+
+  const relatedMeetings = useMemo(() => {
+    if (!selectedMeetingDetails?.project) return []
+    const projectId = selectedMeetingDetails.project.id || selectedMeetingDetails.project._id
+    if (!projectId) return []
+
+    const selectedId = selectedMeetingDetails.id || selectedMeetingDetails._id
+
+    return meetings
+      .filter((meeting) => {
+        const currentProjectId = meeting.project?.id || meeting.project?._id
+        const meetingId = meeting.id || meeting._id
+        return currentProjectId === projectId && meetingId !== selectedId
+      })
+      .slice(0, 4)
+  }, [selectedMeetingDetails, meetings])
 
   // Load meetings from API
   // Handle user avatar click
@@ -81,7 +102,22 @@ const Meetings = () => {
     console.log('Modal should open now')
   }
 
-  const loadMeetings = useCallback(async () => {
+  const handleViewMeetingDetails = (meeting) => {
+    setSelectedMeetingDetails(meeting)
+    setIsMeetingSheetOpen(true)
+  }
+
+  const handleCloseMeetingDetails = () => {
+    setIsMeetingSheetOpen(false)
+    setSelectedMeetingDetails(null)
+  }
+
+  const handleRelatedMeetingClick = (meeting) => {
+    if (!meeting) return
+    handleViewMeetingDetails(meeting)
+  }
+ 
+   const loadMeetings = useCallback(async () => {
     try {
       setLoading(true)
       const filters = {
@@ -327,6 +363,43 @@ const Meetings = () => {
     }
   }
 
+  const formatLabel = (value) => {
+    if (!value) return 'N/A'
+    return value
+      .toString()
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (char) => char.toUpperCase())
+  }
+
+  const getMeetingStatusBadgeStyles = (status) => {
+    switch (status) {
+      case 'completed':
+        return 'bg-emerald-500/15 text-emerald-600 border border-emerald-400/40'
+      case 'scheduled':
+        return 'bg-amber-500/15 text-amber-600 border border-amber-400/40'
+      case 'pregress':
+      case 'in_progress':
+        return 'bg-gray-500/15 text-gray-600 border border-gray-400/40'
+      case 'cancelled':
+        return 'bg-red-500/15 text-red-600 border border-red-400/40'
+      default:
+        return 'bg-gray-500/15 text-gray-600 border border-gray-400/40'
+    }
+  }
+
+  const getMeetingTypeBadgeStyles = (type) => {
+    switch (type) {
+      case 'online':
+        return 'bg-blue-500/12 text-blue-600 border border-blue-400/40'
+      case 'in-person':
+        return 'bg-green-500/12 text-green-600 border border-green-400/40'
+      case 'hybrid':
+        return 'bg-purple-500/12 text-purple-600 border border-purple-400/40'
+      default:
+        return 'bg-gray-500/12 text-gray-600 border border-gray-400/40'
+    }
+  }
+
   const handleNewMeeting = async () => {
     if (!newMeeting.title.trim()) {
       toast.error("Please enter a meeting title")
@@ -526,7 +599,7 @@ const Meetings = () => {
       >
         {/* Header */}
         <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
                   <Calendar  size={20} />
                   </div>
                   <h1 className="text-2xl font-bold">Meetings Scheduled</h1>
@@ -615,7 +688,7 @@ const Meetings = () => {
         <motion.div variants={itemVariants} className="bg-white dark:bg-black rounded-[10px] shadow-xl overflow-hidden">
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
-              <thead className="bg-gray-100 text-black border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+              <thead className="bg-white rounded-[20px] text-black border-gray-200 dark:border-gray-700 sticky top-0 z-10">
                 <tr>
                      
                   <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
@@ -677,7 +750,10 @@ const Meetings = () => {
                        
                     <td className="px-6 py-4">
                       <div>
-                        <div className="text-sm  text-gray-900 dark:text-white truncate font-bold">
+                        <div className="text-sm  text-gray-900 flex items-center gap-2 dark:text-white truncate font-semibold">
+                          {
+                            getStatusIcon(meeting.status)
+                          }
                           {meeting.title}
                         </div>
                         {/* <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -846,6 +922,15 @@ const Meetings = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleViewMeetingDetails(meeting)}
+                          className="p-2 text-gray-400 hover:text-black dark:hover:text-white"
+                          title="View meeting details"
+                        >
+                          <Eye className="w-4 h-4 icon" />
+                        </Button>
                         {user && user.id && meeting.assignedBy?.id === user.id && (
                           <Button
                             variant="ghost"
@@ -970,7 +1055,7 @@ const Meetings = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className=" bg-white dark:bg-black rounded-[10px] shadow-2xl border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+              className=" bg-white dark:bg-black rounded-[20px] shadow-2xl border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
             
@@ -1282,6 +1367,236 @@ const Meetings = () => {
             </motion.div>
           </motion.div>
         )}
+
+        <Sheet
+          open={isMeetingSheetOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleCloseMeetingDetails()
+            } else {
+              setIsMeetingSheetOpen(true)
+            }
+          }}
+        >
+          <SheetContent
+            side="right"
+            className="w-full sm:max-w-md md:max-w-lg p-0 border-none"
+          >
+            {selectedMeetingDetails ? (
+              <div className="flex h-full flex-col">
+                <div className="relative overflow-hidden rounded-b-[32px] bg-white text-black px-6 py-7">
+                  <div className="relative flex flex-col gap-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge
+                        className={cn(
+                          'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm border',
+                          getMeetingStatusBadgeStyles(selectedMeetingDetails.status)
+                        )}
+                      >
+                        {getStatusIcon(selectedMeetingDetails.status)}
+                        <span className="capitalize">{formatLabel(selectedMeetingDetails.status)}</span>
+                      </Badge>
+                      <Badge
+                        className={cn(
+                          'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm border',
+                          getMeetingTypeBadgeStyles(selectedMeetingDetails.type)
+                        )}
+                      >
+                        {selectedMeetingDetails.type === 'online' && <Video className="w-3 h-3 icon" />}
+                        {selectedMeetingDetails.type === 'in-person' && <MapPin className="w-3 h-3 icon" />}
+                        {selectedMeetingDetails.type === 'hybrid' && <Calendar className="w-3 h-3 icon" />}
+                        <span className="capitalize">{formatLabel(selectedMeetingDetails.type)}</span>
+                      </Badge>
+                      {selectedMeetingDetails.project && (
+                        <Badge className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm border border-gray-200 dark:border-gray-700 bg-white/10 text-black">
+                          <FolderOpen className="w-3 h-3 icon" />
+                          {selectedMeetingDetails.project.name}
+                        </Badge>
+                      )}
+                    </div>
+                    <SheetHeader className="space-y-2">
+                      <SheetTitle className="text-xl font-semibold text-black leading-8">
+                        {selectedMeetingDetails.title}
+                      </SheetTitle>
+                      <p className="text-xs font-semibold line-clamp-2 text-justify text-black/70 leading-6">
+                        {selectedMeetingDetails.description || 'No description provided for this meeting.'}
+                      </p>
+                    </SheetHeader>
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto bg-white dark:bg-black px-6 space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <Calendar className="w-4 h-4 text-gray-400 icon" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {selectedMeetingDetails.startDate ? new Date(selectedMeetingDetails.startDate).toLocaleDateString() : 'No start date'}
+                          </p>
+                       
+                        </div>
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <Clock className="w-4 h-4 text-gray-400 icon" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {selectedMeetingDetails.endDate ? new Date(selectedMeetingDetails.endDate).toLocaleDateString() : 'No end date'}
+                          </p>
+                          
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <MapPin className="w-4 h-4 text-gray-400 icon" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {selectedMeetingDetails.location || 'No location provided'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <Video className="w-4 h-4 text-gray-400 icon" />
+                        <div>
+                          {selectedMeetingDetails.meetingLink ? (
+                            <a
+                              href={selectedMeetingDetails.meetingLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-sm font-medium text-blue-600 dark:text-blue-400 hover:underline"
+                            >
+                              Join Meeting
+                            </a>
+                          ) : (
+                            <p className="text-sm text-gray-900 dark:text-white">Not provided</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+                      <img
+                        {...getAvatarProps(selectedMeetingDetails.assignedTo?.avatar, selectedMeetingDetails.assignedTo?.username || 'User')}
+                        alt={selectedMeetingDetails.assignedTo?.username || 'User Avatar'}
+                        className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-700"
+                      />
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">Assigned To</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {selectedMeetingDetails.assignedTo?.username || 'Unassigned'}
+                        </p>
+                        {selectedMeetingDetails.assignedTo?.email && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{selectedMeetingDetails.assignedTo.email}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+                      <img
+                        {...getAvatarProps(selectedMeetingDetails.assignedBy?.avatar, selectedMeetingDetails.assignedBy?.username || 'User')}
+                        alt={selectedMeetingDetails.assignedBy?.username || 'Assigned By'}
+                        className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-700"
+                      />
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">Organized By</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {selectedMeetingDetails.assignedBy?.username || 'Unknown'}
+                        </p>
+                        {selectedMeetingDetails.assignedBy?.email && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{selectedMeetingDetails.assignedBy.email}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+                    {selectedMeetingDetails.attendees && selectedMeetingDetails.attendees.length > 0 ? (
+                      <div className="space-y-2">
+                        {selectedMeetingDetails.attendees.slice(0, 6).map((attendee, index) => (
+                          <div key={index} className="flex items-center gap-3 p-3 bg-gray-100 rounded-[20px]">
+                            <img
+                              {...getAvatarProps(attendee.avatar, attendee.username || attendee.name)}
+                              alt={attendee.username || attendee.name || 'Attendee'}
+                              className="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700"
+                            />
+                            <div className="w-full justify-between items-center flex">
+                              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                                {attendee.username || attendee.name || 'Attendee'}
+                              </p>
+                             <span className="px-5 py-2 bg-white text-[10px] uppercase font-bold">Attendee</span>
+                            </div>
+                          </div>
+                        ))}
+                        {selectedMeetingDetails.attendees.length > 6 && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            +{selectedMeetingDetails.attendees.length - 6} more attendee(s)
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500 dark:text-gray-400">No attendees listed.</p>
+                    )}
+                  </div>
+
+              
+
+                  {relatedMeetings.length > 0 && (
+                    <div className="shadow-sm">
+                      <div className="space-y-2">
+                        {relatedMeetings.map((relatedMeeting) => {
+                          const relatedId = relatedMeeting.id || relatedMeeting._id
+                          return (
+                            <button
+                              key={relatedId}
+                              type="button"
+                              onClick={() => handleRelatedMeetingClick(relatedMeeting)}
+                              className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-black px-4 py-3 text-left transition hover:-translate-y-0.5 hover:shadow-md"
+                            >
+                              <div className="flex items-center justify-between gap-3 p-3">
+                                <div className="flex flex-col">
+                                  <span className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
+                                    {relatedMeeting.title}
+                                  </span>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    DATE: <span className="font-bold text-black dark:text-white">{relatedMeeting.startDate ? new Date(relatedMeeting.startDate).toLocaleDateString() : 'No date'}</span>
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Badge
+                                    className={cn(
+                                      'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium border backdrop-blur-sm',
+                                      getMeetingStatusBadgeStyles(relatedMeeting.status)
+                                    )}
+                                  >
+                                    {formatLabel(relatedMeeting.status)}
+                                  </Badge>
+                                  <ArrowRight className="w-4 h-4 text-gray-400 icon" />
+                                </div>
+                              </div>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="flex h-full items-center justify-center text-sm text-gray-500 dark:text-gray-400">
+                Select a meeting to view details.
+              </div>
+            )}
+          </SheetContent>
+        </Sheet>
 
         {/* Meeting Edit Modal */}
         <MeetingEditModal

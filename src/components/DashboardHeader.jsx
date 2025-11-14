@@ -151,7 +151,7 @@ const DashboardHeader = () => {
   return (
     <>
       {/* Dashboard Header */}
-      <header className="bg-white dark:bg-black z-50 icon  border-gray-200 dark:border-gray-700 px-6 py-4 border-b fixed w-full">
+      <header className="bg-[#eee] dark:bg-[#111827] z-50 icon  border-gray-300 dark:border-gray-700 px-6 py-4 border-b fixed w-full">
         <div className={`flex items-center justify-between `}>
 
           <div className="flex justify-center items-center gap-4">
@@ -166,7 +166,7 @@ const DashboardHeader = () => {
           <div className="flex items-center gap-4">
 
 
-          <ThemeToggle className='border-none text-sm' />
+          {/* <ThemeToggle className='border-none text-sm' /> */}
             {/* Notifications */}
             <NotificationDropdown />
 

@@ -4,9 +4,9 @@ import { githubService } from '../services/githubService'
 import { Button } from '../components/ui/button'
 import  {useNavigate} from 'react-router-dom'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table'
 import { Badge } from '../components/ui/badge'
 import { Input } from '../components/ui/input'
+import { getInputClasses } from '../utils/uiConstants'
 // Removed Dialog import - using custom modal
 import { Label } from '../components/ui/label'
 import { Textarea } from '../components/ui/textarea'
@@ -29,6 +29,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import GitHubPRsModal from '../components/GitHubPRsModal'
+import { getAvatarProps } from '../utils/avatarUtils'
 
 const GitHubPullRequests = () => {
   const [pullRequests, setPullRequests] = useState([])
@@ -58,6 +59,8 @@ const GitHubPullRequests = () => {
   })
   const [labelInput, setLabelInput] = useState('')
   const navigate = useNavigate()
+
+  const tableHeadClass = 'sticky top-0 z-30 bg-white dark:bg-black px-6 py-4 text-left text-xs uppercase tracking-wider font-semibold text-gray-900 dark:text-white shadow-sm'
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
@@ -269,7 +272,7 @@ const GitHubPullRequests = () => {
   return (
     <div className='ambient-light'>
          <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
                   <GitPullRequest  size={20} />
                   </div>
                   <h1 className="text-2xl font-bold">Your Pull Requests</h1>
@@ -284,11 +287,11 @@ const GitHubPullRequests = () => {
               placeholder="Search pull requests..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-[500px]"
+              className={getInputClasses('default', 'md', 'pl-10 w-full sm:w-[500px]')}
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-48 cursor-pointer px-5">
+            <SelectTrigger className="w-48 cursor-pointer px-5 bg-white">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -300,7 +303,7 @@ const GitHubPullRequests = () => {
             </SelectContent>
           </Select>
           <Select value={repositoryFilter} onValueChange={setRepositoryFilter}>
-            <SelectTrigger className="w-48 px-5 cursor-pointer">
+            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white">
               <SelectValue placeholder="Filter by repository" />
             </SelectTrigger>
             <SelectContent className="max-h-[400px]">
@@ -313,7 +316,7 @@ const GitHubPullRequests = () => {
             </SelectContent>
           </Select>
           <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger className="w-48 px-5 cursor-pointer">
+            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white">
               <SelectValue placeholder="Filter by priority" />
             </SelectTrigger>
             <SelectContent>
@@ -345,21 +348,8 @@ const GitHubPullRequests = () => {
         {/* Custom Create Modal */}
         {isCreateDialogOpen && (
           <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 bg-black/50 flex items-center justify-center z-50" onClick={() => setIsCreateDialogOpen(false)}>
-            <div className="bg-white dark:bg-black border rounded-[10px] p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="text-xl ">Add New Pull Request</h2>
-                 
-                </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setIsCreateDialogOpen(false)}
-                  className='w-12'
-                >
-                  <XCircle className="h-4 w-4 icon" />
-                </Button>
-              </div>
+            <div className="bg-white dark:bg-black border rounded-[20px] p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+         
               <div className="space-y-4">
                 <div>
                   <Input
@@ -367,6 +357,7 @@ const GitHubPullRequests = () => {
                     value={formData.title}
                     onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
                     placeholder="Pull request title"
+                    className={getInputClasses('default', 'md')}
                   />
                 </div>
                 <div>
@@ -384,6 +375,7 @@ const GitHubPullRequests = () => {
                       value={formData.githubUrl}
                       onChange={(e) => setFormData(prev => ({ ...prev, githubUrl: e.target.value }))}
                       placeholder="https://github.com/owner/repo/pull/123"
+                      className={getInputClasses('default', 'md')}
                     />
                   </div>
                   <div>
@@ -392,6 +384,7 @@ const GitHubPullRequests = () => {
                       value={formData.githubHash}
                       onChange={(e) => setFormData(prev => ({ ...prev, githubHash: e.target.value }))}
                       placeholder="123"
+                      className={getInputClasses('default', 'md')}
                     />
                   </div>
                 </div>
@@ -432,6 +425,7 @@ const GitHubPullRequests = () => {
                       value={formData.estimatedHours}
                       onChange={(e) => setFormData(prev => ({ ...prev, estimatedHours: e.target.value }))}
                       placeholder="0"
+                      className={getInputClasses('default', 'md')}
                     />
                   </div>
                   <div>
@@ -440,6 +434,7 @@ const GitHubPullRequests = () => {
                       type="date"
                       value={formData.dueDate}
                       onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
+                      className={getInputClasses('default', 'md')}
                     />
                   </div>
                 </div>
@@ -477,6 +472,7 @@ const GitHubPullRequests = () => {
                       onChange={(e) => setLabelInput(e.target.value)}
                       placeholder="Add a label"
                       onKeyPress={(e) => e.key === 'Enter' && addLabel()}
+                      className={getInputClasses('default', 'md', 'flex-1')}
                     />
                     <Button type="button" className={'w-12'} onClick={addLabel}><Plus /></Button>
                   </div>
@@ -525,88 +521,86 @@ const GitHubPullRequests = () => {
       ) : (
         <div className="bg-white dark:bg-black rounded-[10px] shadow-xl overflow-hidden">
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-            <Table>
-              <TableHeader className="bg-gray-100 text-black dark:border-gray-700 sticky top-0 z-10">
-                <TableRow>
-                  <TableHead className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+            <table className="w-full">
+              <thead className="sticky top-0 z-20 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-700 shadow-sm">
+                <tr>
+                  <th className={tableHeadClass}>
                     Pull Request
-                  </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                  </th>
+                  <th className={tableHeadClass}>
                     Pull Hash
-                  </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
-                    Repository
-                  </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                  </th>
+                  <th className={tableHeadClass}>
                     Status
-                  </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                  </th>
+                  <th className={tableHeadClass}>
+                    Repository
+                  </th>
+                  <th className={tableHeadClass}>
                     Priority
-                  </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                  </th>
+                  <th className={tableHeadClass}>
                     Assigned To
-                  </TableHead>
-                  <TableHead className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                  </th>
+                  <th className={tableHeadClass}>
                     Due Date
-                  </TableHead>
-                  <TableHead className="px-6 py-4 text-right text-xs  text-gray-700 dark:text-gray-300 uppercase tracking-wider">
-                    
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  </th>
+                  <th className={`${tableHeadClass} text-right`}>
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {pullRequests.map((pr) => (
-                  <TableRow key={pr._id} className="hover:bg-gray-50 dark:hover:bg-black transition-colors">
-                    <TableCell className="px-6 py-4">
+                  <tr key={pr._id} className="hover:bg-gray-50 dark:hover:bg-black transition-colors">
+                    <td className="px-6 py-4">
                       <div className="flex items-center">
                         
-                          <div className="text-sm font-bold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                          <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
                             {getStatusIcon(pr.status)}
                             {pr.title}
                           </div>
                         
                           
                       </div>
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
-                      <div className="text-sm text-gray-900 dark:text-gray-100">
-                        {pr.githubHash}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        #{pr.githubHash}
                       </div>
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
-                      <div className="text-sm text-gray-900 dark:text-gray-100">
-                        {pr.repository?.name || 'Unknown'}
-                      </div>
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
+                    </td>
+                    <td className="px-6 py-4">
                       <Badge className={getStatusColor(pr.status) + ' px-3 py-2'}>
                         {pr.status}
                       </Badge>
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate line-clamp-1">
+                        {pr.repository?.name || 'N/A'}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
                       <Badge className={getPriorityColor(pr.priority) + ' px-3 py-2'}>
                         {pr.priority}
                       </Badge>
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
-                      <div className="flex -space-x-2">
-                          <div  className="relative">
-                            {pr?.assignedTo?.avatar ? (
-                              <img className="h-8 w-8 rounded-full  border-white dark:border-gray-800" src={`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${pr?.assignedTo?.avatar}`} alt={pr?.assignedTo?.username} />
-                            ) : (
-                              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center text-white  text-xs  border-white dark:border-gray-800">
-                                {pr?.assignedTo?.username?.charAt(0)?.toUpperCase() || 'U'}
-                              </div>
-                            )}
-                          </div>
-                        {pr?.assignedTo?.length > 3 && (
-                          <div className="h-8 w-8 rounded-full bg-gray-100 dark:bg-gray-600 flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-300  border-white dark:border-gray-800">
-                            +{pr?.assignedTo.length - 3}
-                          </div>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
+                    </td>
+                    <td className="px-6 py-4">
+                      {pr.assignedTo ? (
+                        <div className="flex items-center gap-2">
+                          <img
+                            {...getAvatarProps(pr.assignedTo?.avatar, pr.assignedTo?.username || 'User')}
+                            alt={pr.assignedTo?.username || 'User'}
+                            className="w-6 h-6 rounded-full border border-gray-200 dark:border-gray-700"
+                          />
+                          <span className="text-sm text-gray-900 dark:text-white">
+                            {pr.assignedTo?.username || 'Unassigned'}
+                          </span>
+                        </div>
+                      ) : (
+                        <span className="text-sm text-gray-400 dark:text-gray-500">Unassigned</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
                       {pr.dueDate ? (
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4 icon" />
@@ -615,8 +609,8 @@ const GitHubPullRequests = () => {
                       ) : (
                         <span className="text-gray-400 dark:text-gray-500">-</span>
                       )}
-                    </TableCell>
-                    <TableCell className="px-6 py-4 text-right">
+                    </td>
+                    <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <Button 
                           variant="ghost" 
@@ -643,11 +637,11 @@ const GitHubPullRequests = () => {
                           <Trash2 className="h-4 w-4 icon text-red-500" />
                         </Button>
                       </div>
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
+              </tbody>
+            </table>
           </div>
         </div>
       )}
@@ -679,6 +673,7 @@ const GitHubPullRequests = () => {
                 id="edit-title"
                 value={formData.title}
                 onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                className={getInputClasses('default', 'md')}
               />
             </div>
             <div>
@@ -696,6 +691,7 @@ const GitHubPullRequests = () => {
                   id="edit-githubUrl"
                   value={formData.githubUrl}
                   onChange={(e) => setFormData(prev => ({ ...prev, githubUrl: e.target.value }))}
+                  className={getInputClasses('default', 'md')}
                 />
               </div>
               <div>
@@ -704,6 +700,7 @@ const GitHubPullRequests = () => {
                   id="edit-githubHash"
                   value={formData.githubHash}
                   onChange={(e) => setFormData(prev => ({ ...prev, githubHash: e.target.value }))}
+                  className={getInputClasses('default', 'md')}
                 />
               </div>
             </div>
@@ -746,6 +743,7 @@ const GitHubPullRequests = () => {
                   type="number"
                   value={formData.estimatedHours}
                   onChange={(e) => setFormData(prev => ({ ...prev, estimatedHours: e.target.value }))}
+                  className={getInputClasses('default', 'md')}
                 />
               </div>
               <div>
@@ -755,6 +753,7 @@ const GitHubPullRequests = () => {
                   type="date"
                   value={formData.dueDate}
                   onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
+                  className={getInputClasses('default', 'md')}
                 />
               </div>
             </div>
@@ -766,6 +765,7 @@ const GitHubPullRequests = () => {
                   onChange={(e) => setLabelInput(e.target.value)}
                   placeholder="Add a label"
                   onKeyPress={(e) => e.key === 'Enter' && addLabel()}
+                  className={getInputClasses('default', 'md', 'flex-1')}
                 />
                 <Button type="button" onClick={addLabel}>Add</Button>
               </div>

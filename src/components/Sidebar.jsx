@@ -50,7 +50,7 @@ const Sidebar = () => {
       badgeCount: unreadCounts.meetings
     },
     {
-      title: 'Project Flow',
+      title: 'Flow',
       icon: GoWorkflow,
       path: '/dashboard/github',
       hasDropdown: true,
@@ -79,16 +79,10 @@ const Sidebar = () => {
       path: '/dashboard/friends',
       badgeCount: 0
     },
-    {
-      title: 'Resume Builder',
-      icon: Dock,
-      path: '/dashboard/resume',
-      badgeCount: 0
-    },
     ...(user?.role === 'admin'
       ? [
           {
-            title: 'Control',
+            title: 'Admin',
             icon: KeyIcon,
             path: '/dashboard/admin',
             hasDropdown: true,
@@ -123,9 +117,9 @@ const Sidebar = () => {
           initial="closed"
           animate="open"
           exit="closed"
-          className="fixed left-0 top-0 h-[91.5vh] mt-[8.5vh] w-[90px] 
-                     bg-white text-black dark:bg-black dark:text-white 
-                     border-r border-gray-200 dark:border-gray-800 
+          className="fixed left-0 top-0 h-[91.5vh] mt-[8.5vh] w-[240px] 
+                     bg-[#eee] text-black dark:bg-[#111827] dark:text-white 
+                     border-r border-gray-300 dark:border-gray-800 
                      z-50 flex flex-col justify-between icon"
         >
           <nav className="flex flex-col items-center justify-start p-3 gap-2 icon">
@@ -141,26 +135,26 @@ const Sidebar = () => {
                     <>
                       <button
                         onClick={() => {
-                          if (item.title === 'Project Flow')
+                          if (item.title === 'Flow')
                             setGithubDropdownOpen(!githubDropdownOpen)
-                          if (item.title === 'Control')
+                          if (item.title === 'Admin')
                             setAdminDropdownOpen(!adminDropdownOpen)
                         }}
-                        className={`flex items-center px-4 gap-4 cursor-pointer justify-start relative w-[50px] h-[50px] rounded-xl transition-colors duration-200
+                        className={`flex items-center px-4 gap-4 cursor-pointer justify-start relative w-[220px] h-[50px] rounded-[20px] transition-colors duration-200
                           ${active
-                            ? 'bg-black text-white dark:bg-white dark:text-black'
-                            : 'hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300'}
+                            ? 'bg-white text-black border dark:bg-white dark:text-black'
+                            : 'hover:bg-white dark:hover:bg-gray-800 text-gray-500 dark:text-gray-300'}
                         `}
                         title={item.title}
                       >
                         <Icon className="w-5 h-5 icon icon" />
-                        {/* <label className='font-bold cursor-pointer' htmlFor={item.title}>{item.title}</label>
-                        <ChevronDown className="w-5 h-5 icon icon absolute right-4" /> */}
+                        <label className='font-semibold cursor-pointer' htmlFor={item.title}>{item.title}</label>
+                        <ChevronDown className="w-5 h-5 icon icon absolute right-4" />
                       </button>
 
                       <AnimatePresence>
-                        {((item.title === 'Project Flow' && githubDropdownOpen) ||
-                          (item.title === 'Control' && adminDropdownOpen)) && (
+                        {((item.title === 'Flow' && githubDropdownOpen) ||
+                          (item.title === 'Admin' && adminDropdownOpen)) && (
                           <motion.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
@@ -174,16 +168,16 @@ const Sidebar = () => {
                                 <Link
                                   key={sub.path}
                                   to={sub.path}
-                                  className={`flex relative items-center justify-start px-4 gap-4 cursor-pointer w-[50px] h-[45px] rounded-lg transition-all
+                                  className={`flex relative items-center justify-start px-4 gap-4 cursor-pointer w-[200px] ml-[20px] h-[45px] rounded-[20px] transition-all
                                     ${subActive
-                                      ? 'bg-black text-white dark:bg-white dark:text-black'
-                                      : 'hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-300'}
+                                      ? 'bg-white text-black border dark:bg-white dark:text-black'
+                                      : 'hover:bg-white dark:hover:bg-gray-800 text-gray-500 dark:text-gray-300'}
                                   `}
                                   title={sub.title}
                                 >
                                   <SubIcon className="w-4 h-4 icon icon" />
-                                  {/* <label className='font-bold cursor-pointer' htmlFor={sub.title}>{sub.title}</label>
-                                  <div className="absolute w-[12px] h-full -left-[11px] -top-[22px] border-l border-b border-gray-300 rounded-bl-lg"></div> */}
+                                  <label className='font-semibold cursor-pointer' htmlFor={sub.title}>{sub.title}</label>
+                                  {/* <div className="absolute w-[12px] h-full -left-[11px] -top-[22px] border-l border-b border-gray-300 rounded-bl-lg"></div> */}
                                 </Link>
                               )
                             })}
@@ -195,14 +189,14 @@ const Sidebar = () => {
                     <Link
                       to={item.path}
                       title={item.title}
-                      className={`relative flex items-center justify-start px-4 gap-4 cursor-pointer w-[50px] h-[50px] rounded-xl transition-all duration-200
+                      className={`relative flex items-center justify-start px-4 gap-4 cursor-pointer w-[220px] h-[50px] rounded-[20px] transition-all duration-200
                         ${active
-                          ? 'bg-black text-white dark:bg-white dark:text-black'
-                          : 'hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-600 dark:text-gray-300'}
+                          ? 'bg-white text-black border dark:bg-white dark:text-black'
+                          : 'hover:bg-white dark:hover:bg-gray-800 text-gray-500 dark:text-gray-300'}
                       `}
                     >
                       <Icon className="w-5 h-5 icon icon" />
-                      {/* <label className='font-bold cursor-pointer' htmlFor={item.title}>{item.title}</label> */}
+                      <label className='font-semibold cursor-pointer' htmlFor={item.title}>{item.title}</label>
                       
                       {item.badgeCount > 0 && (
                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center">
@@ -218,12 +212,12 @@ const Sidebar = () => {
 
           <div
             onClick={logout}
-            className="flex items-center justify-center w-[50px] gap-4 h-[50px] m-auto mb-5 rounded-xl bg-red-500 text-white 
+            className="flex items-center justify-center w-[220px] gap-4 h-[50px] m-auto mb-5 rounded-xl bg-red-500 text-white 
                        hover:bg-red-600 transition-all cursor-pointer"
             title="Logout"
           >
             <LogOut className="w-5 h-5 icon" />
-            {/* Logout */}
+            Logout
           </div>
         </motion.aside>
       )}

@@ -759,7 +759,7 @@ const Projects = () => {
         animate="visible"
       >
          <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
                   <Folder  size={20} />
                   </div>
                   <h1 className="text-2xl font-bold">My Projects</h1>
@@ -1175,7 +1175,7 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-black rounded-[20px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
             

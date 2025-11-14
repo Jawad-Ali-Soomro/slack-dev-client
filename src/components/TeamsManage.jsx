@@ -440,7 +440,7 @@ const TeamsManage = () => {
     <div>
       {/* Header */}
       <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
                   <PiUsersDuotone  size={20} />
                   </div>
                   <h1 className="text-2xl font-bold">Your Teams</h1>
@@ -449,17 +449,17 @@ const TeamsManage = () => {
       <div className="flex items-center justify-between mb-6">
         <div>
         <div className="flex gap-4 justify-start items-center">
-        <div className="bg-white dark:bg-black">
+        {/* <div className="bg-white dark:bg-black"> */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon icon" />
             <Input
               placeholder="Search teams..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-[500px] h-13"
+              className="pl-10 w-[500px] h-13 bg-white"
             />
           </div>
-        </div>
+        {/* </div> */}
         <Select value={filterStatus} onValueChange={setFilterStatus}>
           <SelectTrigger className="w-48 bg-white px-5 cursor-pointer dark:bg-black h-13">
             <SelectValue placeholder="Filter by status" />
@@ -731,18 +731,11 @@ const TeamsManage = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full"
+            className="bg-white dark:bg-black rounded-[20px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
-              <div className="flex items-center justify-end mb-4">
-                <button
-                  onClick={() => setShowNewTeamModal(false)}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                >
-                  <X className="w-6 h-6 icon" />
-                </button>
-              </div>
+             
 
               <form onSubmit={handleCreateTeam} className="space-y-4">
                 <div>

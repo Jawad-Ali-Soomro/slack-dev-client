@@ -231,10 +231,10 @@ const ChatWindow = () => {
                 <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500  border-background rounded-[10px]"></div>
               )}
             </div>
-            <div>
-              <h3 className="">{getChatName(currentChat)}</h3>
-              <p className="text-sm text-muted-foreground">
-                {isOnline ? 'Online' : 'Offline'}
+            <div className='flex items-center gap-2'>
+              <h3 className="font-bold">{getChatName(currentChat)}</h3>
+              <p className="text-sm text-muted-foreground font-bold">
+                {isOnline ? <span className="text-green-500 px-5 py-2 rounded-[10px] bg-green-500/10">Online</span> : <span className="text-red-500 font-bold px-5 py-2 rounded-[10px] bg-red-500/10">Offline</span>}
               </p>
             </div>
           </div>
@@ -278,28 +278,28 @@ const ChatWindow = () => {
             return (
               <div
                 key={message._id}
-                className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}
+                className={`flex ${isOwn ? 'justify-end rounded-[20px]' : 'justify-start rounded-[20px]'}`}
               >
-                <div className={`flex gap-2 max-w-[70%] ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
+                <div className={`flex gap-2 max-w-[70%] ${isOwn ? 'flex-row-reverse rounded-[20px]' : 'flex-row rounded-[20px]'}`}>
                   {!isOwn && (
-                    <Avatar className="h-10 w-10 mt-1 border border-gray-200 dark:border-gray-600 p-1 rounded-[10px]">
-                      <AvatarImage src={getAvatarUrl(message.sender.avatar)} className='rounded-[10px]' />
+                    <Avatar className="h-10 w-10 mt-1 border border-gray-200 dark:border-gray-600 p-1 rounded-[20px]">
+                      <AvatarImage src={getAvatarUrl(message.sender.avatar)} className='rounded-[20px]' />
                       <AvatarFallback>
                         {(message.sender.name || message.sender.username || 'U').charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
                   )}
                   
-                  <div className={`space-y-1 ${isOwn ? 'items-end' : 'items-start'}`}>
+                  <div className={`space-y-1 ${isOwn ? 'items-end rounded-[20px]' : 'items-start rounded-[20px]'}`}>
                     <div
-                      className={`px-5 py-3 rounded-[10px] relative ${
+                      className={`px-5 py-3 relative ${
                         isOwn
-                          ? 'bg-primary text-primary-foreground'
-                          : 'dark:bg-[rgba(255,255,255,.1)] bg-muted'
+                          ? 'bg-primary text-primary-foreground rounded-b-[20px] rounded-tl-[20px]'
+                          : 'dark:bg-[rgba(255,255,255,.1)] bg-white mt-8 rounded-b-[20px] rounded-tr-[20px]'
                       } ${isDeleted ? 'opacity-60' : ''}`}
                     >
                       
-                      <p className={`text-sm `}>{message.content}</p>
+                      <p className={`text-sm rounded-b-20px font-bold`}>{message.content}</p>
                       
                      <div className="flex justify-between pt-1">
                      {message.replyTo && (

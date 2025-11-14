@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import { useLocation } from "react-router-dom"
 import { motion } from "framer-motion"
 import HorizontalLoader from "../components/HorizontalLoader"
 import { usePermissions } from "../hooks/usePermissions"
-import { Search, Plus, Edit, Trash2, Calendar, User, Clock, CheckCircle, AlertCircle, MoreVertical, Filter, ChevronDown, RefreshCw } from "lucide-react"
+import { Search, Plus, Edit, Trash2, Calendar, User, Clock, CheckCircle, AlertCircle, MoreVertical, Filter, ChevronDown, RefreshCw, Eye, FolderOpen, ArrowRight } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "../components/ui/button"
 import { Input } from "../components/ui/input"
@@ -11,6 +11,7 @@ import { Textarea } from "../components/ui/textarea"
 import { Checkbox } from "../components/ui/checkbox"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../components/ui/dropdown-menu"
+import { Badge } from "../components/ui/badge"
 import taskService from "../services/taskService"
 import { userService } from "../services/userService"
 import projectService from "../services/projectService"
@@ -22,6 +23,8 @@ import { getAvatarProps } from "../utils/avatarUtils"
 import TaskEditModal from "../components/TaskEditModal"
 import UserDetailsModal from "../components/UserDetailsModal"
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from "../utils/uiConstants"
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from "../components/ui/sheet"
+import { cn } from "../lib/utils"
 
 const Tasks = () => {
   const { user } = useAuth()
@@ -37,6 +40,8 @@ const Tasks = () => {
   const [selectedTasks, setSelectedTasks] = useState([])
   const [filterStatus, setFilterStatus] = useState("all")
   const [filterPriority, setFilterPriority] = useState("all")
+  const [selectedTaskDetails, setSelectedTaskDetails] = useState(null)
+  const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false)
   const [newTask, setNewTask] = useState({
     title: "",
     description: "",
@@ -63,6 +68,21 @@ const Tasks = () => {
     pages: 0
   })
 
+  const relatedTasks = useMemo(() => {
+    if (!selectedTaskDetails?.project) return []
+    const projectId = selectedTaskDetails.project.id || selectedTaskDetails.project._id
+    if (!projectId) return []
+
+    return tasks
+      .filter((task) => {
+        const currentProjectId = task.project?.id || task.project?._id
+        const taskId = task.id || task._id
+        const selectedId = selectedTaskDetails.id || selectedTaskDetails._id
+        return currentProjectId === projectId && taskId !== selectedId
+      })
+      .slice(0, 4)
+  }, [selectedTaskDetails, tasks])
+
 
   // Load tasks from API
   // Handle user avatar click
@@ -71,6 +91,21 @@ const Tasks = () => {
     setSelectedUserId(userId)
     setShowUserDetails(true)
     console.log('Modal should open now')
+  }
+
+  const handleViewTaskDetails = (task) => {
+    setSelectedTaskDetails(task)
+    setIsTaskSheetOpen(true)
+  }
+
+  const handleCloseTaskDetails = () => {
+    setIsTaskSheetOpen(false)
+    setSelectedTaskDetails(null)
+  }
+
+  const handleRelatedTaskClick = (task) => {
+    if (!task) return
+    handleViewTaskDetails(task)
   }
 
   const loadTasks = useCallback(async () => {
@@ -320,6 +355,42 @@ const Tasks = () => {
     }
   }
 
+  const formatLabel = (value) => {
+    if (!value) return 'N/A'
+    return value
+      .toString()
+      .replace(/_/g, ' ')
+      .replace(/\b\w/g, (char) => char.toUpperCase())
+  }
+
+  const getStatusBadgeStyles = (status) => {
+    switch (status) {
+      case 'completed':
+        return 'bg-emerald-500/15 text-emerald-600 border border-emerald-400/40'
+      case 'in_progress':
+        return 'bg-gray-500/15 text-gray-600 border border-gray-400/40'
+      case 'pending':
+        return 'bg-amber-500/15 text-amber-600 border border-amber-400/40'
+      case 'cancelled':
+        return 'bg-red-500/15 text-red-600 border border-red-400/40'
+      default:
+        return 'bg-gray-500/15 text-gray-600 border border-gray-400/40'
+    }
+  }
+
+  const getPriorityBadgeStyles = (priority) => {
+    switch (priority) {
+      case 'high':
+        return 'bg-red-500/15 text-red-600 border border-red-400/40'
+      case 'medium':
+        return 'bg-orange-500/15 text-orange-600 border border-orange-400/40'
+      case 'low':
+        return 'bg-green-500/15 text-green-600 border border-green-400/40'
+      default:
+        return 'bg-green-500/15 text-green-600 border border-green-400/40'
+    }
+  }
+
   const handleNewTask = async () => {
     if (!newTask.title.trim()) {
       toast.error("Please enter a task title")
@@ -452,7 +523,7 @@ const Tasks = () => {
       >
             {/* Header */}
             <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
                   <CheckCircle  size={20} />
                   </div>
                   <h1 className="text-2xl font-bold">Tasks Assigned</h1>
@@ -540,31 +611,31 @@ const Tasks = () => {
         <motion.div variants={itemVariants} className="bg-white dark:bg-black rounded-[10px] shadow-xl overflow-hidden">
           <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
-              <thead className="bg-gray-100 text-black border-b dark:border-gray-700 sticky top-0 z-10">
+              <thead className="bg-white dark:bg-black text-black dark:text-white border-b dark:border-gray-700 sticky top-0 z-10">
                 <tr>
                      
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
                     Task
                   </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
                     Priority
                   </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
                     Assigned To
                   </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
                     Assigned BY
                   </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
                     Project
                   </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
                     Due Date
                   </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
                     
                   </th>
                 </tr>
@@ -600,7 +671,10 @@ const Tasks = () => {
                     <td className="px-6 py-4">
                       <div>
                         <div className="flex items-center gap-2">
-                          <div className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                          <div className="text-sm font-semibold text-gray-900 flex items-center gap-2 dark:text-white truncate">
+                           {
+                            getStatusIcon(task.status)
+                           }
                             {task.title}
                           </div>
                           {user && user.id && (
@@ -723,6 +797,15 @@ const Tasks = () => {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2 justify-end">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleViewTaskDetails(task)}
+                          className="p-2 text-gray-400 h-10 hover:text-black dark:hover:text-white"
+                          title="View task details"
+                        >
+                          <Eye className="w-4 h-4 icon" />
+                        </Button>
                         {user && user.id && task.assignedBy?.id === user.id && (
                           <Button
                             variant="ghost"
@@ -834,7 +917,7 @@ const Tasks = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className=" bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+              className=" bg-white dark:bg-black rounded-[20px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
               
@@ -984,6 +1067,176 @@ const Tasks = () => {
             </motion.div>
           </motion.div>
         )}
+
+        <Sheet
+          open={isTaskSheetOpen}
+          onOpenChange={(open) => {
+            if (!open) {
+              handleCloseTaskDetails()
+            } else {
+              setIsTaskSheetOpen(true)
+            }
+          }}
+        >
+          <SheetContent
+            side="right"
+            className="w-full sm:max-w-md md:max-w-lg p-0  border-none"
+          >
+            {selectedTaskDetails ? (
+              <div className="flex h-full flex-col">
+                <div className="relative overflow-hidden rounded-b-[32px]  bg-white text-black px-6 py-7">
+                  <div className="absolute inset-0 opacity-20" />
+                  <div className="relative flex flex-col gap-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge
+                        className={cn(
+                          'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm border',
+                          getStatusBadgeStyles(selectedTaskDetails.status)
+                        )}
+                      >
+                        {getStatusIcon(selectedTaskDetails.status)}
+                        <span className="capitalize">{formatLabel(selectedTaskDetails.status)}</span>
+                      </Badge>
+                      <Badge
+                        className={cn(
+                          'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm border',
+                          getPriorityBadgeStyles(selectedTaskDetails.priority)
+                        )}
+                      >
+                        <AlertCircle className="w-3 h-3 icon" />
+                        <span className="capitalize">{formatLabel(selectedTaskDetails.priority)}</span>
+                      </Badge>
+                      {selectedTaskDetails.project && (
+                        <Badge className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm border border-gray-200 dark:border-gray-700 bg-white/10 text-black">
+                          <FolderOpen className="w-3 h-3 icon" />
+                          {selectedTaskDetails.project.name}
+                        </Badge>
+                      )}
+                    </div>
+                    <SheetHeader className="space-y-2">
+                      <SheetTitle className="text-xl font-semibold text-black leading-8">
+                        {selectedTaskDetails.title}
+                      </SheetTitle>
+                      <p className="text-xs font-semibold line-clamp-2 text-justify text-black/70 leading-6">
+                        {selectedTaskDetails.description || 'No description provided for this task.'}
+                      </p>
+                    </SheetHeader>
+                  
+                  </div>
+                </div>
+
+                <div className="flex-1 overflow-y-auto bg-white dark:bg-black px-6  space-y-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <Calendar className="w-4 h-4 text-gray-400 icon" />
+                        <div>
+                          {/* <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Due Date</p> */}
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {selectedTaskDetails.dueDate ? new Date(selectedTaskDetails.dueDate).toLocaleDateString() : 'No due date'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+                      <div className="flex items-center gap-3">
+                        <FolderOpen className="w-4 h-4 text-gray-400 icon" />
+                        <div>
+                          {/* <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Project</p> */}
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {selectedTaskDetails.project?.name || 'No project linked'}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+                      <img
+                        {...getAvatarProps(selectedTaskDetails.assignTo?.avatar, selectedTaskDetails.assignTo?.username || 'User')}
+                        alt={selectedTaskDetails.assignTo?.username || 'User Avatar'}
+                        className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-700"
+                      />
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">Assigned To</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {selectedTaskDetails.assignTo?.username || 'Unassigned'}
+                        </p>
+                        {selectedTaskDetails.assignTo?.email && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{selectedTaskDetails.assignTo.email}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+                      <img
+                        {...getAvatarProps(selectedTaskDetails.assignedBy?.avatar, selectedTaskDetails.assignedBy?.username || 'User')}
+                        alt={selectedTaskDetails.assignedBy?.username || 'Assigned By'}
+                        className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-700"
+                      />
+                      <div>
+                        <p className="text-[10px] font-bold  uppercase tracking-wide text-gray-500 dark:text-gray-400">Assigned By</p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                          {selectedTaskDetails.assignedBy?.username || 'Unknown'}
+                        </p>
+                        {selectedTaskDetails.assignedBy?.email && (
+                          <p className="text-xs text-gray-500 dark:text-gray-400">{selectedTaskDetails.assignedBy.email}</p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {relatedTasks.length > 0 && (
+                    <div className="shadow-sm">
+                    
+                      <div className="space-y-2">
+                        {relatedTasks.map((relatedTask) => {
+                          const relatedId = relatedTask.id || relatedTask._id
+                          return (
+                            <button
+                              key={relatedId}
+                              type="button"
+                              onClick={() => handleRelatedTaskClick(relatedTask)}
+                              className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-black px-4 py-3 text-left transition hover:-translate-y-0.5 hover:shadow-md"
+                            >
+                              <div className="flex items-center justify-between gap-3 p-3">
+                                <div className="flex flex-col">
+                                  <span className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
+                                    {relatedTask.title}
+                                  </span>
+                                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                                    DUE DATE : <span className="font-bold text-black">{relatedTask.dueDate ? new Date(relatedTask.dueDate).toLocaleDateString() : 'No due date'}</span>
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <Badge
+                                    className={cn(
+                                      'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium border backdrop-blur-sm',
+                                      getStatusBadgeStyles(relatedTask.status)
+                                    )}
+                                  >
+                                    {formatLabel(relatedTask.status)}
+                                  </Badge>
+                                  <ArrowRight className="w-4 h-4 text-gray-400 icon" />
+                                </div>
+                              </div>
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                 
+                </div>
+              </div>
+            ) : (
+              <div className="flex h-full items-center justify-center text-sm text-gray-500 dark:text-gray-400">
+                Select a task to view details.
+              </div>
+            )}
+          </SheetContent>
+        </Sheet>
 
         {/* Task Edit Modal */}
         <TaskEditModal

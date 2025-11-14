@@ -36,7 +36,7 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
+    <div className="min-h-screen bg-[#eee] dark:bg-[#111827]">
       <DashboardHeader />
       <div className="flex">
        
@@ -45,7 +45,7 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
        </div>
 
 
-        <div className={`${isOpen ? "md:pl-30" : ""} transition-all  flex-1 pr-10 md:pt-20 pt-25 pl-10 overflow-hidden`} >
+        <div className={`${isOpen ? "md:pl-65" : ""} transition-all  flex-1 pr-10 md:pt-20 pt-25 pl-10 overflow-hidden`} >
           {children}
         </div>
       </div>

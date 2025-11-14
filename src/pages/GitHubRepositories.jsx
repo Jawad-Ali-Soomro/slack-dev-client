@@ -4,9 +4,9 @@ import HorizontalLoader from '../components/HorizontalLoader'
 import { githubService } from '../services/githubService'
 import { Button } from '../components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table'
 import { Badge } from '../components/ui/badge'
 import { Input } from '../components/ui/input'
+import { getInputClasses } from '../utils/uiConstants'
 // Removed Dialog import - using custom modal
 import { Label } from '../components/ui/label'
 import { Textarea } from '../components/ui/textarea'
@@ -27,7 +27,8 @@ import {
   User,
   XCircle,
   Loader,
-  Import
+  Import,
+  Folder
 } from 'lucide-react'
 import { toast } from 'sonner'
 import GitHubUserReposModal from '../components/GitHubUserReposModal'
@@ -53,6 +54,8 @@ const GitHubRepositories = () => {
   })
   const [tagInput, setTagInput] = useState('')
   const navigate = useNavigate()
+
+  const tableHeadClass = 'sticky top-0 z-30 bg-white dark:bg-black px-6 py-4 text-left text-xs uppercase tracking-wider font-semibold text-gray-900 dark:text-white shadow-sm'
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
@@ -207,7 +210,7 @@ const GitHubRepositories = () => {
   return (
     <div className="ambient-light">
       <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
                   <Github  size={20} />
                   </div>
                   <h1 className="text-2xl font-bold">Your Repositories</h1>
@@ -222,11 +225,11 @@ const GitHubRepositories = () => {
               placeholder="Search repositories..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-[500px]"
+              className={getInputClasses('default', 'md', 'pl-10 w-full sm:w-[500px]')}
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-48 px-5 cursor-pointer">
+            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -257,27 +260,15 @@ const GitHubRepositories = () => {
         {/* Custom Create Modal */}
         {isCreateDialogOpen && (
           <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 bg-black/50 flex items-center justify-center z-50" onClick={() => setIsCreateDialogOpen(false)}>
-            <div className="bg-white dark:bg-black rounded-[30px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="text-xl ">Add New Repository</h2>
-                 
-                </div>
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => setIsCreateDialogOpen(false)}
-                  className={'w-12'}
-                >
-                  <XCircle className="h-4 w-4 icon" />
-                </Button>
-              </div>
+            <div className="bg-white dark:bg-black rounded-[20px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+           
               <div className="space-y-4">
                 <div>
                   <Input
                     value={formData.name}
                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="Repository Name"
+                    className={getInputClasses('default', 'md')}
                   />
                 </div>
                 <div>
@@ -285,6 +276,7 @@ const GitHubRepositories = () => {
                     value={formData.githubUrl}
                     onChange={(e) => setFormData(prev => ({ ...prev, githubUrl: e.target.value }))}
                     placeholder="GitHub URL (https://github.com/owner/repo)"
+                    className={getInputClasses('default', 'md')}
                   />
                 </div>
                 <div>
@@ -300,6 +292,7 @@ const GitHubRepositories = () => {
                       value={formData.language}
                       onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))}
                       placeholder="Language (JavaScript, Python, etc.)"
+                      className={getInputClasses('default', 'md')}
                     />
                   </div>
                   
@@ -366,6 +359,7 @@ const GitHubRepositories = () => {
                       onChange={(e) => setTagInput(e.target.value)}
                       placeholder="Add a tag"
                       onKeyPress={(e) => e.key === 'Enter' && addTag()}
+                      className={getInputClasses('default', 'md', 'flex-1')}
                     />
                     <Button type="button" className={'w-12'} onClick={addTag}><Plus /></Button>
                   </div>
@@ -414,49 +408,47 @@ const GitHubRepositories = () => {
         </div>
       ) : (
         <div className="bg-white dark:bg-black rounded-[10px] shadow-xl overflow-hidden">
-          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-            <Table>
-              <TableHeader className="bg-gray-100 text-black dark:border-gray-700 sticky top-0 z-10">
-                <TableRow>
-                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs   uppercase tracking-wider">
+          <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+            <table className="w-full">
+              <thead className="sticky top-0 z-20 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-700 shadow-sm">
+                <tr>
+                  <th className={tableHeadClass}>
                     Repository
-                  </TableHead>
-                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs   uppercase tracking-wider">
+                  </th>
+                  <th className={tableHeadClass}>
                     Owner
-                  </TableHead>
-                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs   uppercase tracking-wider">
+                  </th>
+                  <th className={tableHeadClass}>
                     Contributors
-                  </TableHead>
-                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs   uppercase tracking-wider">
+                  </th>
+                  <th className={tableHeadClass}>
                     Language
-                  </TableHead>
-                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs   uppercase tracking-wider">
+                  </th>
+                  <th className={tableHeadClass}>
                     Status
-                  </TableHead>
-                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs   uppercase tracking-wider">
-                    Updated
-                  </TableHead>
-                  <TableHead className="px-6 py-4 text-left dark:text-black text-xs   uppercase tracking-wider">
-                    
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  </th>
+                  <th className={tableHeadClass}>
+                    Last Updated
+                  </th>
+                  <th className={tableHeadClass}>
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredRepositories.map((repo) => (
-                  <TableRow key={repo._id} className="hover:bg-gray-50 dark:hover:bg-black transition-colors">
-                    <TableCell className="px-6 py-4">
+                  <tr key={repo._id} className="hover:bg-gray-50 dark:hover:bg-black transition-colors">
+                    <td className="px-6 py-4">
                       <div className="flex items-center">
                         
-                        <div className="ml-4">
-                          <div className="text-sm text-gray-900 dark:text-gray-100 flex items-center gap-2 font-bold">
-                            {/* <Code className="h-4 w-4 icon text-gray-500" /> */}
+                          <div className="text-sm text-gray-900 dark:text-gray-100 flex items-center gap-2 font-semibold">
+                            <Folder className="h-4 w-4 icon text-gray-500" />
                             {repo.name}
                           </div>
                           
-                        </div>
                       </div>
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
+                    </td>
+                    <td className="px-6 py-4">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-8 w-8">
                           {repo.owner?.avatar ? (
@@ -473,8 +465,8 @@ const GitHubRepositories = () => {
                           </div>
                         </div>
                       </div>
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
+                    </td>
+                    <td className="px-6 py-4">
                       <div className="flex -space-x-2">
                         {repo.contributors?.slice(0, 3).map((contributor, index) => (
                           <div key={index} className="relative">
@@ -493,8 +485,8 @@ const GitHubRepositories = () => {
                           </div>
                         )}
                       </div>
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
+                    </td>
+                    <td className="px-6 py-4">
                       {repo.language ? (
                         <Badge variant="secondary" className="bg-blue-500 text-white dark:bg-blue-900 dark:text-white px-3 py-2">
                           {repo.language}
@@ -502,8 +494,8 @@ const GitHubRepositories = () => {
                       ) : (
                         <span className="text-gray-400 dark:text-gray-500">-</span>
                       )}
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
+                    </td>
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
                         <Badge 
                           // variant={repo.isPrivate ? "destructive" : "outline"}
@@ -525,14 +517,14 @@ const GitHubRepositories = () => {
                           {repo.status}
                         </Badge>
                       </div>
-                    </TableCell>
-                    <TableCell className="px-6 py-4">
+                    </td>
+                    <td className="px-6 py-4">
                       <div className="flex items-center gap-1">
                         <Calendar className="h-4 w-4 icon" />
                         {formatDate(repo.updatedAt)}
                       </div>
-                    </TableCell>
-                    <TableCell className="px-6 py-4 text-right">
+                    </td>
+                    <td className="px-6 py-4 text-right">
                       <div className="flex items-center justify-end gap-1">
                         <Button 
                           variant="ghost" 
@@ -559,11 +551,11 @@ const GitHubRepositories = () => {
                           <Trash2 className="h-4 w-4 icon text-red-500" />
                         </Button>
                       </div>
-                    </TableCell>
-                  </TableRow>
+                    </td>
+                  </tr>
                 ))}
-              </TableBody>
-            </Table>
+              </tbody>
+            </table>
           </div>
         </div>
       )}
@@ -592,6 +584,7 @@ const GitHubRepositories = () => {
                 id="edit-name"
                 value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                className={getInputClasses('default', 'md')}
               />
             </div>
             <div>
@@ -599,6 +592,7 @@ const GitHubRepositories = () => {
                 id="edit-githubUrl"
                 value={formData.githubUrl}
                 onChange={(e) => setFormData(prev => ({ ...prev, githubUrl: e.target.value }))}
+                className={getInputClasses('default', 'md')}
               />
             </div>
             <div>
@@ -614,6 +608,7 @@ const GitHubRepositories = () => {
                   id="edit-language"
                   value={formData.language}
                   onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))}
+                  className={getInputClasses('default', 'md')}
                 />
               </div>
               <div className="flex items-center py-5 justify-end gap-2 h-full">
@@ -696,6 +691,7 @@ const GitHubRepositories = () => {
                   onChange={(e) => setTagInput(e.target.value)}
                   placeholder="Add a tag"
                   onKeyPress={(e) => e.key === 'Enter' && addTag()}
+                  className={getInputClasses('default', 'md', 'flex-1')}
                 />
                 <Button type="button" className="w-12" onClick={addTag}><Plus /></Button>
               </div>

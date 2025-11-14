@@ -141,11 +141,11 @@ const Friends = () => {
 
   document.title = "Friends - Manage Your Friends"
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
+    <div className="min-h-screen">
       <div className="mx-auto">
         {/* Header */}
         <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
                   <PiUserDuotone  size={20} />
                   </div>
                   <h1 className="text-2xl font-bold">Your Friends</h1>
@@ -155,7 +155,7 @@ const Friends = () => {
         {/* Stats Cards */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className={'bg-gray-100 border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
+            <Card className={'bg-white rounded-[20px] border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Friends</CardTitle>
                 <Users className="h-4 w-4 icon text-muted-foreground" />
@@ -164,7 +164,7 @@ const Friends = () => {
                 <div className="text-2xl font-bold">{stats.totalFriends}</div>
               </CardContent>
             </Card>
-            <Card className={'bg-gray-100 border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
+            <Card className={'bg-white rounded-[20px] border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Pending Received</CardTitle>
                 <Clock className="h-4 w-4 icon text-muted-foreground" />
@@ -173,7 +173,7 @@ const Friends = () => {
                 <div className="text-2xl font-bold">{stats.pendingReceivedRequests}</div>
               </CardContent>
             </Card>
-            <Card className={'bg-gray-100 border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
+            <Card className={'bg-white rounded-[20px] border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Pending Sent</CardTitle>
                 <Send className="h-4 w-4 icon text-muted-foreground" />
@@ -210,9 +210,9 @@ const Friends = () => {
 
           {/* Friends Tab */}
           <TabsContent value="friends" className="mt-6">
-            <Card className={'bg-white dark:bg-black'}>
+            <Card className={'bg-transparent dark:bg-black'}>
               <CardHeader>
-                <CardTitle>Your Friends</CardTitle>
+                <CardTitle className={'font-bold'}>Your Friends</CardTitle>
                 <CardDescription>
                   People you're connected with
                 </CardDescription>
@@ -231,7 +231,7 @@ const Friends = () => {
                         key={friendship.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center space-x-4 p-4 border rounded-[10px] hover:bg-gray-50 dark:bg-[rgba(255,255,255,.1)] bg-gray-100"
+                        className="flex items-center space-x-4 p-4 border rounded-[20px] hover:bg-gray-50 dark:bg-[rgba(255,255,255,.1)] bg-gray-100"
                       >
                         <Avatar 
                           className="cursor-pointer hover:scale-110 transition-transform"
@@ -269,9 +269,9 @@ const Friends = () => {
 
           {/* Received Requests Tab */}
           <TabsContent value="received" className="mt-6">
-            <Card className={'bg-white dark:bg-black'}>
+            <Card className={'bg-transparent dark:bg-black'}>
               <CardHeader>
-                <CardTitle>Received Requests</CardTitle>
+                <CardTitle className={'font-bold'}>Received Requests</CardTitle>
                 <CardDescription>
                   Friend requests waiting for your response
                 </CardDescription>
@@ -334,9 +334,9 @@ const Friends = () => {
 
           {/* Sent Requests Tab */}
           <TabsContent value="sent" className="mt-6">
-            <Card className={'bg-white dark:bg-black '}>
+            <Card className={'bg-transparent dark:bg-black '}>
               <CardHeader>
-                <CardTitle>Sent Requests</CardTitle>
+                <CardTitle className={'font-bold'}>Sent Requests</CardTitle>
                 <CardDescription>
                   Friend requests you've sent
                 </CardDescription>

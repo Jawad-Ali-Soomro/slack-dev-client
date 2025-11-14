@@ -25,7 +25,7 @@ export const SidebarProvider = ({ children }) => {
     setIsOpen(true)
   }
 
-  const isMobile = window.innerWidth <= 768
+  const isMobile = window.innerWidth <= 1200
 
   return (
     <SidebarContext.Provider value={{

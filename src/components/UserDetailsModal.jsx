@@ -108,7 +108,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 icon  flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-black/50 icon flex items-center backdrop-blur-sm justify-center p-4 z-50"
       onClick={onClose}
     >
       <motion.div
@@ -116,7 +116,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
         animate={{ scale: 1, opacity: 1, y: 0 }}
         exit={{ scale: 0.9, opacity: 0, y: 20 }}
         transition={{ type: "spring", damping: 25, stiffness: 300 }}
-        className="bg-white dark:bg-black rounded-[10px] shadow-2xl border border-gray-200/50 dark:border-gray-700/50 max-w-5xl w-full max-h-[90vh] overflow-hidden"
+        className="bg-white dark:bg-black rounded-[20px] shadow-2xl border border-gray-200/50 dark:border-gray-700/50 max-w-5xl w-full max-h-[90vh] overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {loading ? (
@@ -137,7 +137,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                       alt={user.username}
                       className="relative w-20 h-20 rounded-full border-4 border-gray-200 dark:border-gray-900 shadow-lg"
                     />
-                    {/* <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-[10px] border-3 border-white dark:border-gray-900 shadow-lg ${
+                    {/* <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-[20px] border-3 border-white dark:border-gray-900 shadow-lg ${
                       user.isActive ? 'bg-emerald-500' : 'bg-gray-400'
                     }`}></div> */}
                   </div>
@@ -149,7 +149,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                 </div>
                 <button
                   onClick={onClose}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200 p-2 hover:bg-gray-100 dark:hover:bg-black rounded-[10px]"
+                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors duration-200 p-2 hover:bg-gray-100 dark:hover:bg-black rounded-[20px]"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -184,7 +184,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                   <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     <div className="space-y-6">
                       <div className="space-y-4">
-                        <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[10px]">
+                        <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[20px]">
                           <Mail className="w-5 h-5 icon icon text-blue-500" />
                           <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">Email</p>
@@ -193,7 +193,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                         </div>
                         
                         {user.phone && (
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[10px]">
+                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[20px]">
                             <Phone className="w-5 h-5 icon icon text-green-500" />
                             <div>
                               <p className="text-sm text-gray-500 dark:text-gray-400">Phone</p>
@@ -203,7 +203,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                         )}
 
                         {user.userLocation && (
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[10px]">
+                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[20px]">
                             <MapPin className="w-5 h-5 icon icon text-red-500" />
                             <div>
                               <p className="text-sm text-gray-500 dark:text-gray-400">Location</p>
@@ -221,7 +221,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                           <h4 className="text-md  text-gray-900 dark:text-white">Social Links</h4>
                           <div className="space-y-3">
                             {user.socialLinks.website && (
-                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[10px]">
+                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[20px]">
                                 <Globe className="w-5 h-5 icon icon text-purple-500" />
                                 <div>
                                   <p className="text-sm text-gray-500 dark:text-gray-400">Website</p>
@@ -233,7 +233,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                               </div>
                             )}
                             {user.socialLinks.linkedin && (
-                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[10px]">
+                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[20px]">
                                 <Building className="w-5 h-5 icon icon text-blue-600" />
                                 <div>
                                   <p className="text-sm text-gray-500 dark:text-gray-400">LinkedIn</p>
@@ -245,7 +245,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                               </div>
                             )}
                             {user.socialLinks.github && (
-                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[10px]">
+                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[20px]">
                                 <Building className="w-5 h-5 icon icon text-gray-700" />
                                 <div>
                                   <p className="text-sm text-gray-500 dark:text-gray-400">GitHub</p>
@@ -257,7 +257,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                               </div>
                             )}
                             {user.socialLinks.twitter && (
-                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[10px]">
+                              <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[20px]">
                                 <Globe className="w-5 h-5 icon icon text-blue-400" />
                                 <div>
                                   <p className="text-sm text-gray-500 dark:text-gray-400">Twitter</p>
@@ -275,7 +275,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
 
                     <div className="space-y-6">
                       <div className="space-y-4">
-                        {/* <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[10px]">
+                        {/* <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[20px]">
                           <Calendar className="w-5 h-5 icon icon text-orange-500" />
                           <div>
                             <p className="text-sm text-gray-500 dark:text-gray-400">Joined</p>
@@ -284,7 +284,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                         </div> */}
                         
                         {user.dateOfBirth && (
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[10px]">
+                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[20px]">
                             <Calendar className="w-5 h-5 icon icon text-pink-500" />
                             <div>
                               <p className="text-sm text-gray-500 dark:text-gray-400">Date of Birth</p>
@@ -294,7 +294,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                         )}
 
                         {user.emailVerified !== undefined && (
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[10px]">
+                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[20px]">
                             <Mail className="w-5 h-5 icon icon text-emerald-500" />
                             <div>
                               <p className="text-sm text-gray-500 dark:text-gray-400">Email Status</p>
@@ -306,7 +306,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                         )}
 
 {user.website && (
-                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[10px]">
+                          <div className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-black rounded-[20px]">
                             <Globe className="w-5 h-5 icon icon text-indigo-500" />
                             <div>
                               <p className="text-sm text-gray-500 dark:text-gray-400">Website</p>
@@ -327,9 +327,9 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                   {/* Statistics Section */}
                   <div className="space-y-4">
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 rounded-[10px] border border-blue-200/50 dark:border-blue-700/50 hover:shadow-lg transition-shadow duration-200">
+                      <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 rounded-[20px] border border-blue-200/50 dark:border-blue-700/50 hover:shadow-lg transition-shadow duration-200">
                         <div className="flex items-center gap-3 text-blue-600 dark:text-blue-400 mb-3">
-                          <div className="p-2 bg-blue-500/10 rounded-[10px]">
+                          <div className="p-2 bg-blue-500/10 rounded-[20px]">
                             <Briefcase className="w-5 h-5 icon icon" />
                           </div>
                         </div>
@@ -337,9 +337,9 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                           {user.projects?.length || 0}
                         </p>
                       </div>
-                      <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-6 rounded-[10px] border border-purple-200/50 dark:border-purple-700/50 hover:shadow-lg transition-shadow duration-200">
+                      <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-6 rounded-[20px] border border-purple-200/50 dark:border-purple-700/50 hover:shadow-lg transition-shadow duration-200">
                         <div className="flex items-center gap-3 text-purple-600 dark:text-purple-400 mb-3">
-                          <div className="p-2 bg-purple-500/10 rounded-[10px]">
+                          <div className="p-2 bg-purple-500/10 rounded-[20px]">
                             <PiUsersDuotone className="w-5 h-5 icon icon" />
                           </div>
                           <span className="">Teams</span>
@@ -359,16 +359,16 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                   {user.projects && user.projects.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {user.projects.map((project, index) => (
-                        <div key={index} className="bg-white dark:bg-black p-5 rounded-[10px] border border-gray-200/50 dark:border-gray-700/50 hover:shadow-lg transition-all duration-200 hover:border-blue-300 dark:hover:border-blue-600">
+                        <div key={index} className="bg-white dark:bg-black p-5 rounded-[20px] border border-gray-200/50 dark:border-gray-700/50 hover:shadow-lg transition-all duration-200 hover:border-blue-300 dark:hover:border-blue-600">
                           <div className="flex items-start gap-4">
                             {project.logo && (
                               <div className="relative">
                                 <img
                                   src={project.logo.startsWith('http') ? project.logo : `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${project.logo}`}
                                   alt={project.name}
-                                  className="w-12 h-12 rounded-[10px] object-cover  border-gray-200 dark:border-gray-700 shadow-sm"
+                                  className="w-12 h-12 rounded-[20px] object-cover  border-gray-200 dark:border-gray-700 shadow-sm"
                                 />
-                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-[10px]"></div>
+                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-[20px]"></div>
                               </div>
                             )}
                             <div className="flex-1">
@@ -377,17 +377,17 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                                 {project.description}
                               </p>
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className={`px-3 py-1 rounded-[10px] text-xs  shadow-sm ${
+                                <span className={`px-3 py-1 rounded-[20px] text-xs  shadow-sm ${
                                   project.status === 'active' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300' :
                                   project.status === 'completed' ? 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200' :
                                   'bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-300'
                                 }`}>
                                   {project.status}
                                 </span>
-                                <span className={`px-3 py-1 rounded-[10px] text-xs  shadow-sm ${getRoleColor(project.role)}`}>
+                                <span className={`px-3 py-1 rounded-[20px] text-xs  shadow-sm ${getRoleColor(project.role)}`}>
                                   {project.role}
                                 </span>
-                                <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-[10px]">
+                                <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-[20px]">
                                   {project.progress}% complete
                                 </span>
                               </div>

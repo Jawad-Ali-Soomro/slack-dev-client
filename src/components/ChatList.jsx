@@ -56,7 +56,7 @@ const ChatList = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-[10px] h-8 w-8 border-b-2 border-primary"></div>
+        <div className="animate-spin rounded-[20px] h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
@@ -99,12 +99,12 @@ const ChatList = () => {
               return (
                 <Card
                   key={chat._id}
-                  className={`cursor-pointer border dark:bg-black bg-white ${
-                    isActive ? 'bg-muted border bg-white dark:bg-[rgba(255,255,255,.1)] bg-gray-100' : ''
+                  className={`cursor-pointer border dark:bg-black bg-transparent rounded-[20px] ${
+                    isActive ? 'bg-white border bg-white dark:bg-[rgba(255,255,255,.1)]' : ''
                   }`}
                   onClick={() => setCurrentChat(chat)}
                 >
-                  <CardContent className="p-3">
+                  <CardContent>
                     <div className="flex items-center gap-3">
                       <div className="relative">
                         <Avatar className="h-10 w-10 border border-gray-300 dark:border-gray-700">
@@ -114,7 +114,7 @@ const ChatList = () => {
                           </AvatarFallback>
                         </Avatar>
                         {isOnline && (
-                          <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500  border-background rounded-[10px]"></div>
+                          <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500  border-background rounded-[20px]"></div>
                         )}
                       </div>
                       

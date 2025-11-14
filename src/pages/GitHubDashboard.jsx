@@ -153,11 +153,11 @@ const GitHubDashboard = () => {
           transition={{ duration: 0.6 }}
         >
           {/* Modern GitHub Header */}
-          <div className="mb-16">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-between mb-8 gap-6">
+          <div className="">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
               <div className="flex-1">
               <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-gray-100 dark:bg-gray-800 rounded-full">
+                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
                   <Github  size={20} />
                   </div>
                  
@@ -180,7 +180,7 @@ const GitHubDashboard = () => {
            <StatsCard 
             title="Repositories"
             value={stats.totalRepositories}
-            color="blue"
+            color="neutral"
               icon={FolderOpen}
               subtitle="Total repositories"
               delay={0.1}
@@ -188,7 +188,7 @@ const GitHubDashboard = () => {
          <StatsCard
           title="Pull Requests"
           value={stats.totalPullRequests}
-          color="green"
+          color="neutral"
               icon={GitPullRequest}
               subtitle="Active pull requests"
               delay={0.2}
@@ -196,7 +196,7 @@ const GitHubDashboard = () => {
          <StatsCard
           title="Issues"
           value={stats.totalIssues}
-          color="orange"
+          color="neutral"
               icon={AlertCircle}
               subtitle="Open issues"
               delay={0.3}
@@ -220,7 +220,7 @@ const GitHubDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.0 }}
-                  className=" rounded-[30px] p-6 border"
+                  className=" rounded-[30px] p-6"
                 >
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center space-x-3">
@@ -280,7 +280,7 @@ const GitHubDashboard = () => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 1.1 + index * 0.1 }}
-                        className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
+                        className="flex items-center p-3 bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
                       >
                         <div
                           className="w-4 h-4 rounded-[30px] mr-3 shadow-sm"
@@ -304,7 +304,7 @@ const GitHubDashboard = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 1.2 }}
-                  className="border backdrop-blur-sm rounded-[30px] p-6 "
+                  className="backdrop-blur-sm rounded-[30px] p-6 "
                 >
                   <div className="flex items-center justify-between mb-6">
                     <div className="flex items-center space-x-3">
@@ -366,7 +366,7 @@ const GitHubDashboard = () => {
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 1.3 + index * 0.1 }}
-                        className={`flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[30px] ${item.name === "Total Activity" ? "col-span-2" : ""}`}
+                        className={`flex items-center p-3 bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[30px] ${item.name === "Total Activity" ? "col-span-2" : ""}`}
                       >
                         <div
                           className="w-4 h-4 rounded-[30px] mr-3 shadow-sm"

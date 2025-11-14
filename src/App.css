@@ -1,7 +1,7 @@
 * {
     font-family: "Alan Sans", sans-serif;
     /* font-weight:700; */
-    /* border-radius: 15px ; */
+    /* border-radius: 20px ; */
 }
 
 Button {
@@ -17,6 +17,14 @@ Textarea {
 }
 
 Select {
+  border-radius: 20px;
+}
+
+Badge {
+  border-radius: 20px;
+}
+
+span {
   border-radius: 20px;
 }
 

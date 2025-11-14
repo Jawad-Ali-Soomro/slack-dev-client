@@ -140,7 +140,7 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
           description: pr.body || '',
           githubUrl: pr.html_url,
           githubHash: pr.number.toString(),
-          repository: '', // Will be set by backend
+          repository: '' || null, // Will be set by backend
           labels: pr.labels?.map(label => label.name) || [],
           priority: 'medium'
         }
@@ -235,23 +235,10 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white dark:bg-black rounded-[30px] border p-6 max-w-3xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col"
+        className="bg-white dark:bg-black rounded-[20px] border p-6 max-w-3xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h2 className="text-xl ">Pull Requests</h2>
-           
-          </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            onClick={onClose}
-            className="w-12"
-          >
-            <XCircle className="h-4 w-4 icon" />
-          </Button>
-        </div>
+    
 
         {/* Repository Input */}
         <div className="flex gap-4 mb-6 items-center">
@@ -344,7 +331,7 @@ const GitHubPRsModal = ({ isOpen, onClose, onCreatePR }) => {
           <>
             {/* Search and Actions */}
             {userPRs.length > 0 && (
-              <div className="flex items-center justify-between mb-4 gap-4">
+              <div className="flex items-center mt-5 justify-between mb-4 gap-4">
                 <div className="flex-1">
                   <Input
                     value={searchTerm}
