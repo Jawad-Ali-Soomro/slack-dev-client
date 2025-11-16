@@ -141,16 +141,17 @@ const Friends = () => {
 
   document.title = "Friends - Manage Your Friends"
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen pt-10">
       <div className="mx-auto">
         {/* Header */}
-        <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
-                  <PiUserDuotone  size={20} />
+        <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+        <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
+        <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+                  <PiUserDuotone  size={15} />
                   </div>
                   <h1 className="text-2xl font-bold">Your Friends</h1>
                 </div>
-
+                </div>  
 
         {/* Stats Cards */}
         {stats && (

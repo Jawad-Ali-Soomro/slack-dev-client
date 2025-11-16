@@ -148,20 +148,19 @@ const GitHubDashboard = () => {
     <div className="min-h-screen ambient-light">
       <div className="mx-auto">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+         
         >
           {/* Modern GitHub Header */}
-          <div className="">
+          <div className="pt-10">
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
               <div className="flex-1">
-              <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
-                  <Github  size={20} />
+              <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+                <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
+                <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+                  <Github  size={15} />
                   </div>
-                 
                   <h1 className="text-2xl font-bold">Version Control Dashboard</h1>
+                </div>
                 </div>
 
                 

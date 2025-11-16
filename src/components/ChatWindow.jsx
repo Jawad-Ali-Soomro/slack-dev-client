@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useChat } from '../contexts/ChatContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
@@ -20,6 +21,8 @@ import {
   ArrowDown
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
+import EmojiPicker from 'emoji-picker-react';
+import UserDetailsModal from './UserDetailsModal';
 
 const ChatWindow = () => {
   const { 
@@ -40,16 +43,20 @@ const ChatWindow = () => {
   } = useChat();
   
   const { user } = useAuth();
+  const { theme } = useTheme();
   const [messageText, setMessageText] = useState('');
   const [editingMessage, setEditingMessage] = useState(null);
   const [replyTo, setReplyTo] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showUserDetails, setShowUserDetails] = useState(false);
   
   const inputRef = useRef(null);
   const fileInputRef = useRef(null);
   const messagesContainerRef = useRef(null);
+  const emojiPickerRef = useRef(null);
 
   useEffect(() => {
     if (currentChat) {
@@ -69,12 +76,10 @@ const ChatWindow = () => {
 
   // Auto-scroll to bottom when messages change (but not on initial load)
   useEffect(() => {
-    if (messages.length > 0) {
-      // Use requestAnimationFrame to ensure DOM is updated
+    if (messages.length > 0 && messagesContainerRef.current) {
+      // Use immediate scroll to prevent layout shift
       requestAnimationFrame(() => {
-        setTimeout(() => {
-          scrollToBottomLocal();
-        }, 50);
+        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
       });
     }
   }, [messages.length]);
@@ -131,12 +136,11 @@ const ChatWindow = () => {
     setMessageText('');
     stopTyping(currentChat._id);
     
-    // Scroll to bottom after sending message
-    requestAnimationFrame(() => {
-      setTimeout(() => {
-        scrollToBottomLocal();
-      }, 50);
-    });
+    // Scroll to bottom after sending message - use immediate scroll to prevent layout shift
+    if (messagesContainerRef.current) {
+      // Scroll immediately to prevent layout shift
+      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+    }
   };
 
   const handleTyping = (e) => {
@@ -181,6 +185,38 @@ const ChatWindow = () => {
     console.log('Files to upload:', files);
   };
 
+  const handleEmojiClick = (emojiData) => {
+    setMessageText(prev => prev + emojiData.emoji);
+    inputRef.current?.focus();
+  };
+
+  const handleUserAvatarClick = (userId) => {
+    if (userId) {
+      setSelectedUserId(userId);
+      setShowUserDetails(true);
+    }
+  };
+
+  // Close emoji picker when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
+        setShowEmojiPicker(false);
+      }
+    };
+
+    if (showEmojiPicker) {
+      // Use setTimeout to avoid immediate closure when clicking the button
+      setTimeout(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+      }, 0);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showEmojiPicker]);
+
   const formatMessageTime = (date) => {
     return formatDistanceToNow(new Date(date), { addSuffix: true });
   };
@@ -221,21 +257,20 @@ const ChatWindow = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="relative">
-              <Avatar className="h-10 w-10">
+              <Avatar 
+                className="h-10 w-10 cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => otherParticipant && handleUserAvatarClick(otherParticipant._id || otherParticipant.id)}
+              >
                 <AvatarImage src={getAvatarUrl(getChatAvatar(currentChat))} />
                 <AvatarFallback>
                   {getChatName(currentChat).charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              {isOnline && (
-                <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500  border-background rounded-[10px]"></div>
-              )}
+              {isOnline ? <div className="w-3 rounded-full absolute bottom-0 -right-1 h-3 bg-green-500"></div> : <div className="w-3 rounded-full absolute bottom-0 -right-1 h-3 bg-red-500"></div>}
+              
             </div>
             <div className='flex items-center gap-2'>
               <h3 className="font-bold">{getChatName(currentChat)}</h3>
-              <p className="text-sm text-muted-foreground font-bold">
-                {isOnline ? <span className="text-green-500 px-5 py-2 rounded-[10px] bg-green-500/10">Online</span> : <span className="text-red-500 font-bold px-5 py-2 rounded-[10px] bg-red-500/10">Offline</span>}
-              </p>
             </div>
           </div>
           
@@ -254,7 +289,7 @@ const ChatWindow = () => {
       </div>
 
       {/* Messages Container - Takes remaining space */}
-      <div className="flex-1 flex flex-col min-h-0 pb-26 relative">
+      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         {/* Messages - Scrollable Area */}
         <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 relative">
         {loading ? (
@@ -282,7 +317,11 @@ const ChatWindow = () => {
               >
                 <div className={`flex gap-2 max-w-[70%] ${isOwn ? 'flex-row-reverse rounded-[20px]' : 'flex-row rounded-[20px]'}`}>
                   {!isOwn && (
-                    <Avatar className="h-10 w-10 mt-1 border border-gray-200 dark:border-gray-600 p-1 rounded-[20px]">
+                    <Avatar 
+                      className="h-10 w-10 mt-1 border border-gray-200 dark:border-gray-600 p-1 rounded-[20px] cursor-pointer hover:opacity-80 transition-opacity"
+                      onClick={() => handleUserAvatarClick(message.sender._id || message.sender.id)}
+                      title={message.sender.username ? `View ${message.sender.username}'s profile` : 'View profile'}
+                    >
                       <AvatarImage src={getAvatarUrl(message.sender.avatar)} className='rounded-[20px]' />
                       <AvatarFallback>
                         {(message.sender.name || message.sender.username || 'U').charAt(0).toUpperCase()}
@@ -295,7 +334,7 @@ const ChatWindow = () => {
                       className={`px-5 py-3 relative ${
                         isOwn
                           ? 'bg-primary text-primary-foreground rounded-b-[20px] rounded-tl-[20px]'
-                          : 'dark:bg-[rgba(255,255,255,.1)] bg-white mt-8 rounded-b-[20px] rounded-tr-[20px]'
+                          : 'dark:bg-[rgba(255,255,255,.1)] bg-white mt-5 rounded-b-[20px] rounded-tr-[20px]'
                       } ${isDeleted ? 'opacity-60' : ''}`}
                     >
                       
@@ -314,7 +353,7 @@ const ChatWindow = () => {
                     </div>
                     
                     <div className={`flex items-center gap-2 text-xs text-muted-foreground ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
-                      <span>{formatMessageTime(message.createdAt)}</span>
+                      <span className='lowercase text-[10px] font-bold'>{formatMessageTime(message.createdAt)}</span>
                       
                       {isOwn && !isDeleted && (
                         <div className="flex items-center gap-1">
@@ -356,17 +395,7 @@ const ChatWindow = () => {
         )}
         
         {/* Scroll to bottom button */}
-        {showScrollButton && (
-          <div className="absolute bottom-4 right-4 z-10">
-            <Button
-              onClick={scrollToBottomLocal}
-              size="sm"
-              className="rounded-[10px] shadow-lg bg-primary hover:bg-primary/90"
-            >
-              <ArrowDown className="h-4 w-4 icon" />
-            </Button>
-          </div>
-        )}
+     
         
         {/* Typing indicator */}
         {typingUsers.length > 0 && (
@@ -409,8 +438,8 @@ const ChatWindow = () => {
           </div>
         )} */}
 
-        {/* Message Input - Fixed at Bottom */}
-        <div className="flex-shrink-0 border-t p-4 icon">
+      {/* Message Input - Fixed at Bottom */}
+      <div className="flex-shrink-0 border-t p-4 icon relative">
         <form onSubmit={handleSendMessage} className="flex items-center gap-2">
           <Button
             type="button"
@@ -427,19 +456,33 @@ const ChatWindow = () => {
             onChange={handleTyping}
             onKeyPress={handleKeyPress}
             placeholder={editingMessage ? "Edit message..." : replyTo ? "Aa" : "Aa"}
-            className="flex-1"
+            className="flex-1 border-gray-300"
             disabled={loading}
           />
           
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            className={'w-12'}
-            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
-          >
-            <Smile className="h-4 w-4 icon icon" />
-          </Button>
+          <div className="relative emoji-picker-wrapper" ref={emojiPickerRef}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className={'w-12 border-gray-300 border'}
+              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+            >
+              <Smile className="h-4 w-4 icon icon" />
+            </Button>
+            
+            {showEmojiPicker && (
+              <div className="absolute bottom-full right-0 mb-2 z-50">
+                <EmojiPicker
+                  onEmojiClick={handleEmojiClick}
+                  autoFocusSearch={false}
+                  theme={theme === 'dark' ? 'dark' : 'light'}
+                  width={350}
+                  height={400}
+                />
+              </div>
+            )}
+          </div>
           
           <Button
             type="submit"
@@ -460,6 +503,16 @@ const ChatWindow = () => {
         />
         </div>
       </div>
+
+      {/* User Details Modal */}
+      <UserDetailsModal
+        userId={selectedUserId}
+        isOpen={showUserDetails}
+        onClose={() => {
+          setShowUserDetails(false);
+          setSelectedUserId(null);
+        }}
+      />
     </div>
   );
 };

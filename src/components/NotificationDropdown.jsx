@@ -42,7 +42,7 @@ const NotificationDropdown = () => {
       case 'alert':
         return <AlertCircle className="w-4 h-4 icon text-red-500" />
       default:
-        return <Bell className="w-4 h-4 icon text-gray-500" />
+        return <Bell className="w-4 h-4 icon" />
     }
   }
 
@@ -63,9 +63,9 @@ const NotificationDropdown = () => {
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
         <Button
-          variant="ghost"
+          // variant="ghost"
           size="sm"
-          className="relative p-2 w-12 text-gray-500 hover:text-black dark:hover:text-white"
+          className="relative rounde-[25px] h-12  mx-2 w-12 bg-white hover:bg-gray-100 hover:border  text-black cursor-pointer rounded-full"
         >
           <Bell className="w-5 h-5 icon" />
           {unreadCount > 0 && (
@@ -78,12 +78,12 @@ const NotificationDropdown = () => {
       
       <DropdownMenuContent 
         align="end" 
-        className="w-80 bg-white dark:bg-black  border-gray-200 dark:border-gray-700 p-0"
+        className="w-80 bg-white dark:bg-black  border-gray-200 dark:border-gray-700 rounded-[20px] p-0"
       >
         {/* Header */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 icon">
           <div className="flex items-center justify-between">
-            <h3 className="text-lg  text-gray-900 dark:text-white">
+            <h3 className="text-lg  text-gray-900 dark:text-white font-bold">
               Notifications
             </h3>
             <div className="flex items-center gap-2">
@@ -124,7 +124,7 @@ const NotificationDropdown = () => {
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
-                  className={`p-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-black transition-colors ${
+                  className={`p-4 border-b border-gray-100 dark:border-gray-800 hover:bg-white dark:hover:bg-black transition-colors ${
                     !notification.isRead ? 'bg-blue-50 dark:bg-blue-900/20' : ''
                   }`}
                 >

@@ -73,11 +73,11 @@ const StatsCard = ({
           <div className="flex items-center justify-between w-full space-x-3">
            
             <div>
-              <h3 className="text-sm  text-gray-600 dark:text-gray-400 tracking-wide">
+              <h3 className="text-sm  text-gray-600 dark:text-gray-400 tracking-wide font-bold">
                 {title}
               </h3>
               {subtitle && (
-                <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                <p className="text-xs text-gray-500 dark:text-gray-500 mt-1 font-bold">
                   {subtitle}
                 </p>
               )}

@@ -131,7 +131,7 @@ function DropdownMenuLabel({
     <DropdownMenuPrimitive.Label
       data-slot="dropdown-menu-label"
       data-inset={inset}
-      className={cn("px-2 py-1.5 text-sm data-[inset]:pl-8", className)}
+      className={cn("px-2 py-1.5 text-sm font-bold data-[inset]:pl-8", className)}
       {...props} />
   );
 }
@@ -155,7 +155,7 @@ function DropdownMenuShortcut({
   return (
     <span
       data-slot="dropdown-menu-shortcut"
-      className={cn("text-muted-foreground ml-auto text-xs tracking-widest", className)}
+      className={cn("text-muted-foreground ml-auto text-xs tracking-widest font-bold", className)}
       {...props} />
   );
 }
@@ -177,7 +177,7 @@ function DropdownMenuSubTrigger({
       data-slot="dropdown-menu-sub-trigger"
       data-inset={inset}
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-default items-center rounded-[10px] px-2 py-1.5 text-sm outline-hidden select-none data-[inset]:pl-8",
+        "focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-default items-center rounded-[10px] px-2 py-1.5 text-sm font-bold outline-hidden select-none data-[inset]:pl-8",
         className
       )}
       {...props}>
@@ -195,7 +195,7 @@ function DropdownMenuSubContent({
     <DropdownMenuPrimitive.SubContent
       data-slot="dropdown-menu-sub-content"
       className={cn(
-        "bg-popover text-popover-foreground data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50000000 min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-[10px] border p-1",
+        "bg-popover text-popover-foreground font-bold data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 z-50000000 min-w-[8rem] origin-(--radix-dropdown-menu-content-transform-origin) overflow-hidden rounded-[10px] border p-1",
         className
       )}
       {...props} />

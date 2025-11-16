@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Badge } from './ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { MessageCircle, Plus, Search, Users } from 'lucide-react';
+import UserDetailsModal from './UserDetailsModal';
 
 const ChatList = () => {
   const { user } = useAuth();
@@ -32,6 +33,8 @@ const ChatList = () => {
   
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateChat, setShowCreateChat] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showUserDetails, setShowUserDetails] = useState(false);
 
   const filteredChats = chats.filter(chat => 
     getChatName(chat).toLowerCase().includes(searchTerm.toLowerCase())
@@ -49,6 +52,14 @@ const ChatList = () => {
       return messageDate.toLocaleDateString([], { weekday: 'short' });
     } else {
       return messageDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
+    }
+  };
+
+  const handleUserAvatarClick = (e, userId) => {
+    e.stopPropagation(); // Prevent chat selection
+    if (userId) {
+      setSelectedUserId(userId);
+      setShowUserDetails(true);
     }
   };
 
@@ -107,7 +118,11 @@ const ChatList = () => {
                   <CardContent>
                     <div className="flex items-center gap-3">
                       <div className="relative">
-                        <Avatar className="h-10 w-10 border border-gray-300 dark:border-gray-700">
+                        <Avatar 
+                          className="h-10 w-10 border border-gray-300 dark:border-gray-700 cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={(e) => otherParticipant && handleUserAvatarClick(e, otherParticipant._id || otherParticipant.id)}
+                          title={otherParticipant?.username ? `View ${otherParticipant.username}'s profile` : 'View profile'}
+                        >
                           <AvatarImage src={getAvatarUrl(chatAvatar)} />
                           <AvatarFallback>
                             {chatName.charAt(0).toUpperCase()}
@@ -160,6 +175,16 @@ const ChatList = () => {
           </div>
         )}
       </div>
+
+      {/* User Details Modal */}
+      <UserDetailsModal
+        userId={selectedUserId}
+        isOpen={showUserDetails}
+        onClose={() => {
+          setShowUserDetails(false);
+          setSelectedUserId(null);
+        }}
+      />
     </div>
   );
 };

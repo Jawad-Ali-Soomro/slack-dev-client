@@ -126,7 +126,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
 
   return (
     <div
-      className="fixed inset-0 bg-black/50 icon flex items-center justify-center z-100000 backdrop-blur-sm"
+      className="fixed inset-0 bg-black/50 icon flex items-center justify-center z-100 backdrop-blur-sm"
       onClick={onClose}
     >
       <Card

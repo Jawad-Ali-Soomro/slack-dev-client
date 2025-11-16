@@ -751,20 +751,19 @@ const Projects = () => {
   }
 
   return (
-    <div className="overflow-hidden pb-10">
+    <div className="overflow-hidden pb-10 pt-10">
       <motion.div
         className="mx-auto"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
+    
       >
-         <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
-                  <Folder  size={20} />
+         <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+          <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
+        <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+                  <Folder  size={15} />
                   </div>
                   <h1 className="text-2xl font-bold">My Projects</h1>
                 </div>
-
+      </div>
         {/* Header */}
         <motion.div variants={itemVariants} className="flex items-center justify-between mb-6">
           <div>
@@ -888,7 +887,7 @@ const Projects = () => {
               <motion.div
                 key={project.id}
                 variants={itemVariants}
-                className="dark:bg-[rgba(255,255,255,.1)] rounded-[10px] bg-white dark:border-none border  p-6 transition-shadow duration-300"
+                className="dark:bg-[rgba(255,255,255,.1)] rounded-[20px] bg-white dark:border-none border  p-6 transition-shadow duration-300"
               >
                 {/* Project Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -902,7 +901,7 @@ const Projects = () => {
                           className="w-8 h-8 rounded object-cover rounded-[10px] bg-gray-100  border border-gray-200 dark:border-gray-700"
                         />
                       )}
-                      <h3 className="text-lg  text-gray-900 dark:text-white line-clamp-1">
+                      <h3 className="text-lg  text-gray-900 dark:text-white font-bold line-clamp-1">
                         {project.name}
                       </h3>
                     </div>
@@ -1039,7 +1038,7 @@ const Projects = () => {
 
                 {/* Tags */}
                 {project.tags && project.tags.length > 0 && (
-                  <div className="flex flex-wrap gap-1 mb-4">
+                  <div className="flex flex-wrap gap-4 justify-start items-center mb-4">
                     {project.tags.slice(0, 3).map((tag, index) => (
                       <span
                         key={index}
@@ -1071,7 +1070,7 @@ const Projects = () => {
                           <img
                             {...getAvatarProps(member.user.avatar, member.user.username)}
                             alt={member.user.username}
-                            className="w-full h-full object-cover"
+                            className="w-full h-full object-cover rounded-[20px]"
                           />
                          
                         </div>
@@ -1538,7 +1537,7 @@ const Projects = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 icon  backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-100000"
+            className="fixed inset-0 bg-black/50 icon  backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-100"
             onClick={() => {
               setShowProjectDetails(false)
               setShowTasks(false)

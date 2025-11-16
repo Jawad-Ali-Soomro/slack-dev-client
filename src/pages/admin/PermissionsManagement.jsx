@@ -28,6 +28,7 @@ import permissionsService from '../../services/permissionsService';
 import { useAuth } from '../../contexts/AuthContext';
 import { getAvatarProps } from '../../utils/avatarUtils';
 import { toast } from 'sonner';
+import UserDetailsModal from '../../components/UserDetailsModal';
 
 const PermissionsManagement = () => {
   const { user } = useAuth();
@@ -36,6 +37,8 @@ const PermissionsManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [editingUser, setEditingUser] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showUserDetails, setShowUserDetails] = useState(false);
   const [permissions, setPermissions] = useState({
     canCreateTeam: false,
     canCreateProject: false,
@@ -71,6 +74,13 @@ const PermissionsManagement = () => {
   useEffect(() => {
     loadUsers();
   }, []);
+
+  const handleUserAvatarClick = (userId) => {
+    if (userId) {
+      setSelectedUserId(userId);
+      setShowUserDetails(true);
+    }
+  };
 
   const filteredUsers = users.filter(userItem => {
     const matchesSearch = userItem.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -176,16 +186,17 @@ const PermissionsManagement = () => {
   }
 
   return (
-    <div className="ambient-light">
+    <div className="ambient-light pt-10">
       <div className="mx-auto">
         {/* Header - no cards */}
-        <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-white  dark:bg-gray-800 rounded-full">
-                  <Shield  size={20} />
+        <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+        <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
+        <div className="flex p-3 bg-white  dark:bg-gray-800 rounded-full">
+                  <Shield  size={15} />
                   </div>
                   <h1 className="text-2xl font-bold">Permissions Management</h1>
                 </div>
-
+                </div>
 
         {/* Filters */}
         {/* Filters - no padding/cards */}
@@ -244,7 +255,9 @@ const PermissionsManagement = () => {
                         <img
                           {...getAvatarProps(userItem.avatar, userItem.username)}
                           alt={userItem.username}
-                          className="w-8 h-8 rounded-full object-cover"
+                          className="w-8 h-8 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => handleUserAvatarClick(userItem.id || userItem._id)}
+                          title={userItem.username ? `View ${userItem.username}'s profile` : 'View profile'}
                         />
                         <div>
                           <div className="text-sm font-medium text-gray-900 dark:text-white">{userItem.username}</div>
@@ -416,6 +429,16 @@ const PermissionsManagement = () => {
           </div>
         )}
       </div>
+
+      {/* User Details Modal */}
+      <UserDetailsModal
+        userId={selectedUserId}
+        isOpen={showUserDetails}
+        onClose={() => {
+          setShowUserDetails(false);
+          setSelectedUserId(null);
+        }}
+      />
     </div>
   );
 };

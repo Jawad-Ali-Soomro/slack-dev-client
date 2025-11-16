@@ -437,15 +437,16 @@ const TeamsManage = () => {
   }
 
   return (
-    <div>
+    <div className="pt-10">
       {/* Header */}
-      <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
-                  <PiUsersDuotone  size={20} />
+      <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+        <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
+          <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+                  <PiUsersDuotone  size={15} />
                   </div>
                   <h1 className="text-2xl font-bold">Your Teams</h1>
                 </div>
-
+                </div>
       <div className="flex items-center justify-between mb-6">
         <div>
         <div className="flex gap-4 justify-start items-center">
@@ -534,12 +535,12 @@ const TeamsManage = () => {
             <motion.div
               key={team.id}
               variants={itemVariants}
-              className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[10px] border dark:border-none p-6  transition-shadow duration-300"
+              className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[20px] border dark:border-none p-6  transition-shadow duration-300"
             >
               {/* Team Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h3 className="text-lg  text-gray-900 dark:text-white line-clamp-1">
+                  <h3 className="text-lg  text-gray-900 dark:text-white line-clamp-1 font-bold">
                     {team.name}
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
@@ -622,7 +623,7 @@ const TeamsManage = () => {
                             <img
                               {...getAvatarProps(member.user?.avatar, member.user?.username)}
                               alt={member.user?.username}
-                              className="w-10 h-10 rounded-[10px] object-cover  border-white dark:border-gray-900"
+                              className="w-10 h-10 rounded-[20px] object-cover  border-white dark:border-gray-900"
                             />
                          
                           </div>
@@ -833,13 +834,13 @@ const TeamsManage = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+            className="bg-white dark:bg-black rounded-[20px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl  text-gray-900 dark:text-white">
+                  <h2 className="text-2xl  text-gray-900 dark:text-white font-bold">
                     {selectedTeam.name}
                   </h2>
                   <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">

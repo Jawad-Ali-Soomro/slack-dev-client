@@ -27,6 +27,7 @@ import { getAvatarProps } from '../utils/avatarUtils'
 import StatsCard from '../components/StatsCard'
 import SkeletonLoader from '../components/SkeletonLoader'
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
+import UserDetailsModal from '../components/UserDetailsModal'
 
 const Teams = () => {
   const { user } = useAuth()
@@ -43,6 +44,8 @@ const Teams = () => {
   const [loading, setLoading] = useState(false)
   const [teams, setTeams] = useState([])
   const [stats, setStats] = useState(null)
+  const [selectedUserId, setSelectedUserId] = useState(null)
+  const [showUserDetails, setShowUserDetails] = useState(false)
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 12,
@@ -79,6 +82,13 @@ const Teams = () => {
       console.error('Failed to load stats:', error)
     }
   }, [])
+
+  const handleUserAvatarClick = (userId) => {
+    if (userId) {
+      setSelectedUserId(userId)
+      setShowUserDetails(true)
+    }
+  }
 
   // Load data on mount
   useEffect(() => {
@@ -343,8 +353,9 @@ const Teams = () => {
                     {team.members?.slice(0, 3).map((member, index) => (
                       <div
                         key={index}
-                        className="w-8 h-8 rounded-[10px]  border-white dark:border-gray-900 overflow-hidden"
+                        className="w-8 h-8 rounded-[10px]  border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
                         title={member.user?.username}
+                        onClick={() => handleUserAvatarClick(member.user?._id || member.user?.id)}
                       >
                         <img
                           {...getAvatarProps(member.user?.avatar, member.user?.username)}
@@ -455,6 +466,16 @@ const Teams = () => {
           </motion.div>
         )}
       </motion.div>
+
+      {/* User Details Modal */}
+      <UserDetailsModal
+        userId={selectedUserId}
+        isOpen={showUserDetails}
+        onClose={() => {
+          setShowUserDetails(false)
+          setSelectedUserId(null)
+        }}
+      />
     </div>
   )
 }

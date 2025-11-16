@@ -45,7 +45,10 @@ const Header = () => {
           {/* Login Button - Responsive sizing */}
           <button 
             onClick={() => navigate("/login")}
-            className="  w-[50px]  flex items-center justify-center h-[50px] md:py-4 rounded-full cursor-pointer bg-black text-white uppercase hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
+            className="  w-[50px]  flex items-center justify-center h-[50px] rounded-[25px] md:py-4 cursor-pointer bg-black text-white uppercase hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
+            style={{
+              borderRadius: '25px'
+            }}
           >
             <RiLoginCircleLine className="w-5 h-5 icon icon" />
           </button>

@@ -436,52 +436,18 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="min-h-screen ambient-light">
+    <div className="min-h-screen ambient-light pt-10">
       <div className="mx-auto">
       
           <div className="mb-16">
-            <div className="flex flex-col lg:flex-row lg:items-center justify-end mb-8 gap-6">
-              {/* <div className="flex-1">
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="flex items-center space-x-4 mb-4"
-                >
-                  <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-[30px] shadow-lg">
-                    <Activity className="w-8 h-8 text-white" />
-                  </div>
-                  <div>
-                    <h1 className="text-4xl lg:text-5xl  bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                      Dashboard
-                    </h1>
-                 
-                  </div>
-                </motion.div>
-                
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="space-y-2"
-                >
-                  <p className="text-lg text-gray-600 dark:text-gray-300">
-                    Welcome back, <span className=" text-blue-600 dark:text-blue-400">{user?.username}</span>
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    Here's your comprehensive workspace overview and performance metrics
-                  </p>
-                </motion.div>
-              </div> */}
 
-            
-            </div>
-
-                <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
-                  <LayoutDashboard  size={20} />
+                <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+                <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
+                <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+                  <LayoutDashboard  size={15} />
                   </div>
                   <h1 className="text-2xl font-bold">Dashboard</h1>
+                </div>
                 </div>
 
             {/* Quick stats bar */}

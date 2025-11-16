@@ -35,6 +35,7 @@ import {
 import { toast } from 'sonner'
 import GitHubIssuesModal from '../components/GitHubIssuesModal'
 import { getAvatarProps } from '../utils/avatarUtils'
+import UserDetailsModal from '../components/UserDetailsModal'
 
 const GitHubIssues = () => {
   const [issues, setIssues] = useState([])
@@ -50,6 +51,8 @@ const GitHubIssues = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
   const [isGitHubIssuesModalOpen, setIsGitHubIssuesModalOpen] = useState(false)
   const [editingIssue, setEditingIssue] = useState(null)
+  const [selectedUserId, setSelectedUserId] = useState(null)
+  const [showUserDetails, setShowUserDetails] = useState(false)
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -99,6 +102,13 @@ const GitHubIssues = () => {
       toast.error('Failed to fetch data')
     } finally {
       setLoading(false)
+    }
+  }
+
+  const handleUserAvatarClick = (userId) => {
+    if (userId) {
+      setSelectedUserId(userId)
+      setShowUserDetails(true)
     }
   }
 
@@ -314,13 +324,15 @@ const GitHubIssues = () => {
   }
 
   return (
-    <div className='ambient-light'>
+    <div className='ambient-light pt-10'>
       <div className="mb-6">
-      <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
-                  <Info  size={20} />
+      <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+        <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
+        <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+                  <Info  size={15} />
                   </div>
                   <h1 className="text-2xl font-bold">Your Issues</h1>
+                </div>
                 </div>
         <div className="flex items-center justify-between mb-4">
           <div>
@@ -579,7 +591,7 @@ const GitHubIssues = () => {
         </div>
       ) : (
         <div className="bg-white dark:bg-black rounded-[10px] shadow-xl overflow-hidden">
-          <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+            <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
               <thead className="sticky top-0 z-20 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-700 shadow-sm">
                 <tr>
@@ -647,7 +659,9 @@ const GitHubIssues = () => {
                           <img
                             {...getAvatarProps(issue.assignedTo?.avatar, issue.assignedTo?.username || 'User')}
                             alt={issue.assignedTo?.username || 'User'}
-                            className="w-6 h-6 rounded-full border border-gray-200 dark:border-gray-700"
+                            className="w-6 h-6 rounded-full border border-gray-200 dark:border-gray-700 cursor-pointer hover:opacity-80 transition-opacity"
+                            onClick={() => handleUserAvatarClick(issue.assignedTo?._id || issue.assignedTo?.id)}
+                            title={issue.assignedTo?.username ? `View ${issue.assignedTo.username}'s profile` : 'View profile'}
                           />
                           <span className="text-sm text-gray-900 dark:text-white">
                             {issue.assignedTo?.username || 'Unassigned'}
@@ -886,6 +900,16 @@ const GitHubIssues = () => {
         isOpen={isGitHubIssuesModalOpen}
         onClose={() => setIsGitHubIssuesModalOpen(false)}
         onCreateIssue={handleCreateFromGitHub}
+      />
+
+      {/* User Details Modal */}
+      <UserDetailsModal
+        userId={selectedUserId}
+        isOpen={showUserDetails}
+        onClose={() => {
+          setShowUserDetails(false)
+          setSelectedUserId(null)
+        }}
       />
     </div>
   )

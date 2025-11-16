@@ -10,6 +10,7 @@ import Typed from 'typed.js'
 const Indexing = () => {
 
   const el = React.useRef(null);
+  const elLast = React.useRef(null);
 
   React.useEffect(() => {
     const typed = new Typed(el.current, {
@@ -17,13 +18,20 @@ const Indexing = () => {
       typeSpeed: 50,
       loop: true,
       backSpeed: 50,
-      smartBackspace: true,
-      shuffle: true,
+      showCursor: false,
+    });
+
+    const typedLast = new Typed(elLast.current, {
+      strings: ['Started', 'Connected', 'Develpoed'],
+      typeSpeed: 50,
+      loop: true,
+      backSpeed: 50,
       showCursor: false,
     });
 
     return () => {
       typed.destroy();
+      typedLast.destroy();
     };
 
   }, []);
@@ -76,7 +84,7 @@ const Indexing = () => {
               className="text-[32px] md:text-[56px] p-5 md:p-0 mt-8 font-extrabold tracking-tight text-gray-900 dark:text-white" 
               style={{ fontWeight: 900 }}
             >
-              <span className="text">Manage</span> Your <span className="text">Projects</span> Like a <span className="text" ref={el}></span> !
+              <span className="text">Manage</span> Your <span className="text">Projects</span> Like A <span className="text" ref={el}></span> !
             </motion.h1>
             
             <motion.p 
@@ -433,13 +441,16 @@ const Indexing = () => {
         >
           <div className="max-w-4xl mx-auto text-center px-6">
             <motion.h2 
-              className="text-4xl  text-black dark:text-white mb-6 "
+              className="text-4xl font-bold text-black dark:text-white mb-6 "
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2, duration: 0.6 }}
               viewport={{ once: true }}
             >
-              Start?
+              <span className="font-black text-gray-500">
+
+              Let's Get <span className="font-black text-black" ref={elLast}></span> !
+              </span>
             </motion.h2>
             <motion.p 
               className="text-xl text-black dark:text-white mb-10 "
@@ -448,7 +459,7 @@ const Indexing = () => {
               transition={{ delay: 0.4, duration: 0.6 }}
               viewport={{ once: true }}
             >
-              Stay connected with thousands of developers who trust our platform
+              Let's get connected with thousands of developers who trust our platform
             </motion.p>
             <motion.button 
               className="w-[400px]  py-4 bg-black text-white rounded-full text-lg  transition-colors shadow-lg dark:bg-white dark:text-black font-bold cursor-pointer"

@@ -32,9 +32,9 @@ const Chat = () => {
   }, [markAsReadByType]);
 
   return (
-    <div className='max-h-[90vh]'>
+    <div className='h-[calc(100vh-5rem)]  flex flex-col'>
       {/* Header */}
-      <div className="border-b backdrop-blur icon pt-2">
+      <div className="flex-shrink-0 border-b backdrop-blur icon pt-2">
         <div className="flex h-14 items-center px-4">
          
           
@@ -71,7 +71,7 @@ const Chat = () => {
       </div>
 
       {/* Chat Interface */}
-      <div className="flex h-[calc(100vh-3.5rem)]">
+      <div className="flex flex-1 min-h-0">
         {isMobile ? (
           // Mobile view - show either chat list or chat window
           <div className="flex-1">

@@ -514,7 +514,7 @@ const Tasks = () => {
   document.title = "Tasks - Schedule & Manage"
 
   return (
-    <div className="overflow-hidden">
+    <div className="overflow-hidden pt-10">
       <motion.div
         className="mx-auto"
         variants={containerVariants}
@@ -522,11 +522,13 @@ const Tasks = () => {
         animate="visible"
       >
             {/* Header */}
-            <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
-                  <CheckCircle  size={20} />
+                <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+                <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
+                <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+                  <CheckCircle  size={15} />
                   </div>
                   <h1 className="text-2xl font-bold">Tasks Assigned</h1>
+                </div>
                 </div>
 
             <motion.div variants={itemVariants} className="mb-8">
@@ -609,7 +611,7 @@ const Tasks = () => {
 
         {/* Tasks Table */}
         <motion.div variants={itemVariants} className="bg-white dark:bg-black rounded-[10px] shadow-xl overflow-hidden">
-          <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
               <thead className="bg-white dark:bg-black text-black dark:text-white border-b dark:border-gray-700 sticky top-0 z-10">
                 <tr>
@@ -677,7 +679,7 @@ const Tasks = () => {
                            }
                             {task.title}
                           </div>
-                          {user && user.id && (
+                          {/* {user && user.id && (
                             <span className={`text-xs px-2 py-1 rounded-[30px] uppercase  truncate ${
                               task.assignTo?.id === user.id 
                                 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
@@ -685,7 +687,7 @@ const Tasks = () => {
                             }`}>
                               {task.assignTo?.id === user.id ? 'to me' : 'by me'}
                             </span>
-                          )}
+                          )} */}
                         </div>
                         {/* <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
                           {task.description}

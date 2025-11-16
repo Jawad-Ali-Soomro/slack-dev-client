@@ -26,6 +26,7 @@ import { toast } from 'sonner';
 import { Button } from '../../components/ui/button';
 import { getAvatarProps } from '../../utils/avatarUtils';
 import { PiUserDuotone, PiUsersDuotone } from 'react-icons/pi';
+import UserDetailsModal from '../../components/UserDetailsModal';
 
 const UserManagement = () => {
   const { user } = useAuth();
@@ -34,6 +35,8 @@ const UserManagement = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [permissionsFilter, setPermissionsFilter] = useState('all');
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showUserDetails, setShowUserDetails] = useState(false);
 
   // Check if user is admin
   useEffect(() => {
@@ -62,6 +65,13 @@ const UserManagement = () => {
   useEffect(() => {
     loadUsers();
   }, []);
+
+  const handleUserAvatarClick = (userId) => {
+    if (userId) {
+      setSelectedUserId(userId);
+      setShowUserDetails(true);
+    }
+  };
 
   const filteredUsers = users.filter(user => {
     const matchesSearch = user.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -117,14 +127,16 @@ const UserManagement = () => {
   }
 
   return (
-    <div className=" ambient-light">
+    <div className=" ambient-light pt-10">
       <div className="mx-auto">
         {/* Header - simple, no cards */}
-        <div className="flex py-6 gap-3 items-center">
-                  <div className="flex p-5 bg-white dark:bg-gray-800 rounded-full">
-                  <PiUsersDuotone  size={20} />
+        <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+        <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
+        <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+                  <PiUsersDuotone  size={15} />
                   </div>
                   <h1 className="text-2xl font-bold">User Management</h1>
+                </div>
                 </div>
         {/* <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -188,7 +200,7 @@ const UserManagement = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full rounded-[10px] overflow-hidden">
               <thead className="bg-white text-black rounded-[10px] dark:border-gray-700 sticky top-0 z-10">
                 <tr className="rounded-t-r-[10px]">
@@ -207,7 +219,9 @@ const UserManagement = () => {
                         <img
                           {...getAvatarProps(userItem.avatar, userItem.username)}
                           alt={userItem.username}
-                          className="w-8 h-8 rounded-full object-cover"
+                          className="w-8 h-8 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => handleUserAvatarClick(userItem.id || userItem._id)}
+                          title={userItem.username ? `View ${userItem.username}'s profile` : 'View profile'}
                         />
                         <div>
                           <div className="text-sm font-medium text-gray-900 dark:text-white">{userItem.username}</div>
@@ -259,6 +273,16 @@ const UserManagement = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* User Details Modal */}
+      <UserDetailsModal
+        userId={selectedUserId}
+        isOpen={showUserDetails}
+        onClose={() => {
+          setShowUserDetails(false);
+          setSelectedUserId(null);
+        }}
+      />
     </div>
   );
 };

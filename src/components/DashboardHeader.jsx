@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { User, Settings, LogOut, Camera, X, RefreshCw, Menu } from 'lucide-react'
+import { User, Settings, LogOut, Camera, X, RefreshCw, Menu, BookOpen, Store } from 'lucide-react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
@@ -12,6 +12,7 @@ import NotificationDropdown from './NotificationDropdown'
 import { useSidebar } from '../contexts/SidebarContext'
 import { RiMenu3Fill } from "react-icons/ri";
 import { ThemeToggle } from './ThemeToggle'
+import { PiUserDuotone } from 'react-icons/pi'
 
 const DashboardHeader = () => {
   const { user, logout } = useAuth()
@@ -151,7 +152,7 @@ const DashboardHeader = () => {
   return (
     <>
       {/* Dashboard Header */}
-      <header className="bg-[#eee] dark:bg-[#111827] z-50 icon  border-gray-300 dark:border-gray-700 px-6 py-4 border-b fixed w-full">
+      <header className="bg-[#eee] dark:bg-[#111827] z-5 icon  border-gray-300 dark:border-gray-700 px-6 py-4 border-b fixed w-full">
         <div className={`flex items-center justify-between `}>
 
           <div className="flex justify-center items-center gap-4">
@@ -161,13 +162,23 @@ const DashboardHeader = () => {
         >
           <RiMenu3Fill />
             </div>
-            <img src="/logo.png" className='w-[50px]' alt="" />
+            <img 
+              src="/logo.png" 
+              className={`w-[50px] transition-all duration-300 ease-in-out ${isOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}
+              alt="" 
+            />
       </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2">
 
-
-          {/* <ThemeToggle className='border-none text-sm' /> */}
-            {/* Notifications */}
+          
+        <div className="flex gap-2">
+         <div className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white cursor-pointer rounded-[20px]">
+         <BookOpen className='w-4 h-4 icon' />
+         </div>
+         <div className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white cursor-pointer rounded-[20px]">
+         <Store className='w-4 h-4 icon' />
+         </div>
+        </div>
             <NotificationDropdown />
 
             {/* User Info */}
@@ -213,7 +224,7 @@ const DashboardHeader = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-sm shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+            className="bg-white dark:bg-black rounded-[20px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
@@ -352,7 +363,7 @@ const DashboardHeader = () => {
                   className="flex-1"
                   disabled={loading}
                 >
-                  <Settings className="w-4 h-4 icon mr-2" />
+                  <PiUserDuotone className="w-4 h-4 icon mr-2" />
                   Edit Profile
                 </Button>
               ) : (
