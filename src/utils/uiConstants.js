@@ -68,7 +68,7 @@ export const getButtonClasses = (variant = 'primary', size = 'md', additionalCla
 
 // Standard input classes
 export const getInputClasses = (variant = 'default', size = 'md', additionalClasses = '') => {
-  const baseClasses = 'w-full rounded-[10px] transition-colors focus:outline-none focus:ring-1 focus:ring-offset-1'
+  const baseClasses = 'w-full rounded-[10px] transition-colors focus:outline-none bg-white dark:bg-transparent text-black dark:text-white focus:ring-1 focus:ring-offset-1'
   const variantClasses = INPUT_VARIANTS[variant] || INPUT_VARIANTS.default
   const sizeClasses = INPUT_SIZES[size] || INPUT_SIZES.md
   

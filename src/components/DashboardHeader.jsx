@@ -172,12 +172,14 @@ const DashboardHeader = () => {
 
           
         <div className="flex gap-2">
-         <div className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white cursor-pointer rounded-[20px]">
+         <div className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[20px]">
          <BookOpen className='w-4 h-4 icon' />
          </div>
-         <div className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white cursor-pointer rounded-[20px]">
+         <div className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[20px]">
          <Store className='w-4 h-4 icon' />
-         </div>
+         </div> 
+         <ThemeToggle className="flex w-12 h-12 flex items-center justify-center border-none  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] dark:hover:text-white hover:text-black cursor-pointer rounded-[20px]" />
+         
         </div>
             <NotificationDropdown />
 

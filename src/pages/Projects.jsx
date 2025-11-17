@@ -776,13 +776,13 @@ const Projects = () => {
                 placeholder="Search projects..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={getInputClasses('default', 'md', 'pl-10 w-[500px] h-13')}
+                className={getInputClasses('default', 'md', 'pl-10 w-[500px] h-13 bg-white dark:bg-[#111827] text-black dark:text-white')}
               />
             </div>
           </div>
           
           <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-40 px-5 cursor-pointer bg-white dark:bg-black h-13">
+            <SelectTrigger className="w-40 px-5 cursor-pointer bg-white dark:bg-[#111827] text-black dark:text-white h-13">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <
@@ -798,7 +798,7 @@ const Projects = () => {
           </Select>
           
           <Select value={filterPriority} onValueChange={setFilterPriority}>
-            <SelectTrigger className="w-40 bg-white px-5 cursor-pointer dark:bg-black h-13">
+            <SelectTrigger className="w-40 bg-white px-5 cursor-pointer dark:bg-[#111827] text-black dark:text-white h-13">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <
@@ -1559,10 +1559,10 @@ const Projects = () => {
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
                   <div>
-                    <h2 className="text-2xl  text-gray-900 dark:text-white">
+                    <h2 className="text-2xl  text-gray-900 dark:text-white font-bold">
                       {selectedProject.name}
                     </h2>
-                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                    <p className="text-sm text-gray-500 dark:text-gray-400 mt-1 font-medium">
                       Created by {selectedProject.createdBy?.username} • {new Date(selectedProject.createdAt).toLocaleDateString()}
                     </p>
                   </div>
@@ -1587,7 +1587,7 @@ const Projects = () => {
                   {/* Project Info */}
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Description</h3>
+                      <h3 className="text-sm  text-gray-900 dark:text-white mb-2 font-bold">Project Description</h3>
                       <p className="text-gray-600 dark:text-gray-400 text-sm text-justify line-clamp-1">
                         {selectedProject.description || 'No description provided'}
                       </p>
@@ -1611,14 +1611,14 @@ const Projects = () => {
                   
 
                     <div>
-                      <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Progress</h4>
+                      <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">Project Progress</h4>
                       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-[10px] h-2">
                         <div 
                           className="bg-green-500 h-2 rounded-[10px] transition-all duration-300"
                           style={{ width: `${selectedProject.progress || 0}%` }}
                         ></div>
                       </div>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 font-bold text-end">
                         {selectedProject.progress || 0}% complete
                       </p>
                     </div>
@@ -1643,7 +1643,6 @@ const Projects = () => {
                   {/* Members and Links */}
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Members ({selectedProject.members?.length || 0})</h3>
                       {/* {console.log('Rendering members:', selectedProject.members)} */}
                       <div className="space-y-2 max-h-45overflow-y-auto" key={refreshKey}>
                         {selectedProject.members && selectedProject.members.length > 0 ? selectedProject.members.map((member, index) => (
@@ -1676,12 +1675,12 @@ const Projects = () => {
 
                     <div>
                       <button
-                        onClick={() => setShowLinks(!showLinks)}
+                        onClick={() => setShowLinks(!showLinks) || setShowTasks(false) || setShowMeetings(false)}
                         className="flex items-center justify-between w-full cursor-pointer  text-left mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border rounded-[10px] transition-colors"
                       >
-                        <h3 className="text-lg  text-gray-900 dark:text-white flex items-center gap-2">
+                        <h3 className="text-sm  text-gray-900 dark:text-white flex items-center gap-2 font-bold">
                           <Link className="w-5 h-5 icon" />
-                          Links ({selectedProject.links?.length || 0})
+                          Project Links ({selectedProject.links?.length || 0})
                         </h3>
                         <ChevronDown 
                           className={`w-5 h-5 icon text-gray-500 transition-transform duration-200 ${
@@ -1747,12 +1746,12 @@ const Projects = () => {
                   {/* Tasks */}
                   <div>
                     <button
-                      onClick={() => setShowTasks(!showTasks)}
-                      className="flex items-center justify-between w-full text-left hover:bg-gray-50 cursor-pointer dark:hover:bg-gray-800 p-4 border rounded-[10px] transition-colors"
+                      onClick={() => setShowTasks(!showTasks) || setShowMeetings(false) || setShowLinks(false)}
+                      className="flex items-center justify-between w-full   text-left hover:bg-gray-50 cursor-pointer dark:hover:bg-gray-800 p-4 border rounded-[10px] transition-colors"
                     >
-                      <h3 className="text-lg  text-gray-900 dark:text-white flex items-center gap-2">
+                      <h3 className="text-sm  text-gray-900 dark:text-white flex items-center gap-2 font-bold">
                         <CheckCircle className="w-5 h-5 icon" />
-                        Tasks ({selectedProject.tasks?.length || 0})
+                        Project Tasks ({selectedProject.tasks?.length || 0})
                       </h3>
                       <ChevronDown 
                         className={`w-5 h-5 icon text-gray-500 transition-transform duration-200 ${
@@ -1769,7 +1768,7 @@ const Projects = () => {
                         transition={{ duration: 0.3 }}
                         className="overflow-hidden"
                       >
-                        <div className="space-y-2 max-h-20 overflow-y-auto px-6 py-2">
+                        <div className="space-y-2 max-h-50 overflow-y-auto px-6 py-2">
                           {selectedProject.tasks?.length > 0 ? (
                             selectedProject.tasks.map((task, index) => (
                               <motion.div 
@@ -1777,7 +1776,7 @@ const Projects = () => {
                                 initial={{ opacity: 0, y: 20 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.1 }}
-                                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]"
+                                className="flex items-center justify-between px-3 py-2 bg-gray-100 dark:bg-black rounded-[10px]"
                               >
                                 <div className="flex items-center gap-3">
                                   <div className={`w-3 h-3 rounded-[10px] ${
@@ -1817,12 +1816,12 @@ const Projects = () => {
                   {/* Meetings */}
                   <div>
                     <button
-                      onClick={() => setShowMeetings(!showMeetings)}
+                      onClick={() => {setShowMeetings(!showMeetings); setShowTasks(false); setShowLinks(false);}}
                       className="flex items-center justify-between w-full text-left cursor-pointer mb-4 hover:bg-gray-50 dark:hover:bg-gray-800 p-4 border rounded-[10px] transition-colors"
                     >
-                      <h3 className="text-lg  text-gray-900 dark:text-white flex items-center gap-2">
+                      <h3 className="text-sm  text-gray-900 dark:text-white flex items-center gap-2 font-bold">
                         <Calendar className="w-5 h-5 icon icon" />
-                        Meetings ({selectedProject.meetings?.length || 0})
+                        Project Meetings ({selectedProject.meetings?.length || 0})
                       </h3>
                       <ChevronDown 
                         className={`w-5 h-5 icon text-gray-500 transition-transform duration-200 ${
@@ -1839,7 +1838,7 @@ const Projects = () => {
                         transition={{ duration: 0.3 }}
                         className="overflow-hidden"
                       >
-                        <div className="space-y-2 max-h-20 overflow-y-auto px-6 py-2">
+                        <div className="space-y-2 max-h-50 overflow-y-auto px-6 py-2">
                           {selectedProject.meetings?.length > 0 ? (
                             selectedProject.meetings.map((meeting, index) => (
                               <motion.div 

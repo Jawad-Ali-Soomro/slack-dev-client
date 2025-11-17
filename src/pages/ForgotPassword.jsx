@@ -195,7 +195,7 @@ const ForgotPassword = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-6">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="floating-orb w-96 h-96 top-10 left-10 opacity-20"></div>

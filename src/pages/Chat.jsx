@@ -11,10 +11,10 @@ const Chat = () => {
 
   document.title = "Chat - Message Your Friends"
 
-  const { isConnected, unreadCount, error } = useChat();
+  const { isConnected, unreadCount, error, currentChat } = useChat();
   const { markAsReadByType } = useNotifications();
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 600);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -32,10 +32,10 @@ const Chat = () => {
   }, [markAsReadByType]);
 
   return (
-    <div className='h-[calc(100vh-5rem)]  flex flex-col'>
+    <div className={`h-[calc(100vh-7rem)] flex flex-col ${isMobile ? 'm-0' : ''}`}>
       {/* Header */}
       <div className="flex-shrink-0 border-b backdrop-blur icon pt-2">
-        <div className="flex h-14 items-center px-4">
+        <div className={`flex h-14 items-center ${isMobile ? 'px-2' : 'px-4'}`}>
          
           
           <div className="ml-auto flex items-center gap-2">
@@ -71,11 +71,15 @@ const Chat = () => {
       </div>
 
       {/* Chat Interface */}
-      <div className="flex flex-1 min-h-0">
+      <div className={`flex flex-1 min-h-0 ${isMobile ? 'm-0' : ''}`}>
         {isMobile ? (
-          // Mobile view - show either chat list or chat window
-          <div className="flex-1">
-            <ChatList />
+          // Mobile view - show either chat list or chat window based on selection
+          <div className="flex-1 w-full m-0">
+            {currentChat ? (
+              <ChatWindow isMobile={isMobile} />
+            ) : (
+              <ChatList />
+            )}
           </div>
         ) : (
           // Desktop view - show both side by side

@@ -457,12 +457,12 @@ const TeamsManage = () => {
               placeholder="Search teams..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-[500px] h-13 bg-white"
+              className="pl-10 w-[500px] h-13 bg-white dark:bg-[#111827] text-black dark:text-white border border-gray-200 dark:border-gray-700"
             />
           </div>
         {/* </div> */}
         <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-48 bg-white px-5 cursor-pointer dark:bg-black h-13">
+          <SelectTrigger className="w-48 bg-white px-5 cursor-pointer dark:bg-[#111827] text-black dark:text-white h-13">
             <SelectValue placeholder="Filter by status" />
           </SelectTrigger>
           <SelectContent>

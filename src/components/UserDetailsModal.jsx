@@ -372,23 +372,23 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                               </div>
                             )}
                             <div className="flex-1">
-                              <h4 className=" text-gray-900 dark:text-white text-lg mb-2">{project.name}</h4>
+                              <h4 className=" text-gray-900 dark:text-white text-lg mb-2 font-bold">{project.name}</h4>
                               <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
                                 {project.description}
                               </p>
                               <div className="flex items-center gap-2 flex-wrap">
                                 <span className={`px-3 py-1 rounded-[20px] text-xs  shadow-sm ${
                                   project.status === 'active' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300' :
-                                  project.status === 'completed' ? 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200' :
+                                  project.status === 'completed' ? 'bg-green-600 text-white uppercase font-bold text-gray-800 dark:bg-black dark:text-gray-200' :
                                   'bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-300'
                                 }`}>
                                   {project.status}
                                 </span>
-                                <span className={`px-3 py-1 rounded-[20px] text-xs  shadow-sm ${getRoleColor(project.role)}`}>
+                                <span className={`px-3 py-1 rounded-[20px] text-xs  shadow-sm uppercase font-bold bg-blue-600 text-white`}>
                                   {project.role}
                                 </span>
-                                <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-[20px]">
-                                  {project.progress}% complete
+                                <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-[20px] uppercase font-bold">
+                                  {project.progress}% 
                                 </span>
                               </div>
                             </div>

@@ -779,11 +779,11 @@ const Dashboard = () => {
                       <Target className="w-5 h-5  text-white dark:text-gray-800" />
                     </div>
                     <div>
-                      <h4 className="text-xl  text-gray-900 dark:text-white">
+                      <h4 className="text-xl  text-gray-900 dark:text-white font-bold">
                         Task Status
                       </h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Current distribution
+                      <p className="text-sm text-gray-600 dark:text-gray-400 font-bold">
+                        Current Task distribution
                       </p>
                     </div>
                   </div>
@@ -856,11 +856,11 @@ const Dashboard = () => {
                       <Video className="w-5 h-5  text-white dark:text-gray-800" />
                     </div>
                     <div>
-                      <h4 className="text-xl  text-gray-900 dark:text-white">
+                      <h4 className="text-xl  text-gray-900 dark:text-white font-bold">
                         Meeting Status
                       </h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">
-                        Current distribution
+                      <p className="text-sm text-gray-600 dark:text-gray-400 font-bold">
+                        Current Meeting distribution
                       </p>
                     </div>
                   </div>
@@ -941,10 +941,10 @@ const Dashboard = () => {
             <div className="mt-10">
               <div className="p-6 ">
               <div className="flex items-center justify-between mb-6">
-                <h4 className="text-lg  text-gray-800 dark:text-gray-200">
+                <h4 className="text-lg  text-gray-800 dark:text-gray-200 font-bold">
                   Project Status Distribution
                 </h4>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
+                <div className="text-sm text-gray-500 dark:text-gray-400 font-bold">
                   {stats.totalProjects} Total Projects
                 </div>
               </div>

@@ -36,9 +36,9 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
         description: meeting.description || '',
         type: meeting.type || 'in_person',
         status: meeting.status || 'scheduled',
-        assignedTo: meeting.assignedTo?.id || meeting.assignedTo || 'unassigned',
+        assignedTo: meeting.assignedTo?.id || meeting.assignedTo?._id || meeting.assignedTo || 'unassigned',
         attendees: meeting.attendees?.map(attendee => 
-          typeof attendee === 'string' ? attendee : attendee.id
+          typeof attendee === 'string' ? attendee : (attendee.id || attendee._id)
         ) || [],
         startDate: meeting.startDate ? new Date(meeting.startDate).toISOString().slice(0, 16) : '',
         endDate: meeting.endDate ? new Date(meeting.endDate).toISOString().slice(0, 16) : '',
@@ -90,23 +90,9 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
     }))
   }
 
-  const getFilteredUsers = () => {
-    if (!attendeeSearch.trim()) return users.slice(0, 5)
-    return users
-      .filter(user => 
-        user.username.toLowerCase().includes(attendeeSearch.toLowerCase()) ||
-        user.email.toLowerCase().includes(attendeeSearch.toLowerCase())
-      )
-      .slice(0, 5)
-  }
-
-  const getAttendeeUser = (userId) => {
-    return users.find(user => user._id === userId)
-  }
-
   const getAssignedUser = () => {
     if (!formData.assignedTo || formData.assignedTo === 'unassigned') return null
-    return users.find(user => user._id === formData.assignedTo)
+    return users.find(user => (user.id || user._id) === formData.assignedTo)
   }
 
   const handleSubmit = async (e) => {
@@ -187,7 +173,7 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-50000000"
+      className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-50"
       onClick={onClose}
     >
       <motion.div
@@ -201,7 +187,7 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl  text-black dark:text-white">
+              <h2 className="text-2xl  text-black dark:text-white font-bold">
                 Edit Meeting
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -280,7 +266,7 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
                           <img
                             {...getAvatarProps(assignedUser.avatar, assignedUser.username)}
                             alt={assignedUser.username}
-                            className="w-5 h-5 icon rounded-[10px]"
+                            className="w-5 h-5 rounded-[10px]"
                           />
                           <span>{assignedUser.username}</span>
                         </div>
@@ -288,19 +274,21 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="unassigned">Unassigned</SelectItem>
-                    {users.map((user) => (
-                      <SelectItem key={user.id} value={user.id}>
+                  <SelectItem value="unassigned">Unassigned</SelectItem>
+                  {users.map((user) => {
+                    const userId = user.id || user._id
+                    return (
+                    <SelectItem key={userId} value={userId}>
                         <div className="flex items-center gap-2">
                           <img
                             {...getAvatarProps(user.avatar, user.username)}
                             alt={user.username}
-                            className="w-5 h-5 icon rounded-[10px]"
+                            className="w-5 h-5 rounded-[10px]"
                           />
                           <span>{user.username}</span>
                         </div>
-                      </SelectItem>
-                    ))}
+                    </SelectItem>
+                  )})}
                   </SelectContent>
                 </Select>
               </div>

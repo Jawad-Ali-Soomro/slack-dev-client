@@ -73,9 +73,9 @@ const ChatList = () => {
   }
 
   return (
-    <div className="flex flex-col h-full border-r icon">
+    <div className="flex flex-col h-full md:border-r icon m-0 w-full">
       {/* Header */}
-      <div className="p-4 border-b icon">
+      <div className="p-2 md:p-4 border-b icon">
       
         
         <div className="relative">
@@ -84,7 +84,7 @@ const ChatList = () => {
             placeholder="Search chats..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white rounded-[10px]"
           />
         </div>
       </div>
@@ -98,7 +98,7 @@ const ChatList = () => {
             <p className="text-xs">Start a conversation with someone</p>
           </div>
         ) : (
-          <div className="space-y-1 p-2">
+          <div className="space-y-1 p-1 md:p-2">
             {filteredChats.map((chat) => {
               const isActive = currentChat?._id === chat._id;
               const chatName = getChatName(chat);
@@ -110,7 +110,7 @@ const ChatList = () => {
               return (
                 <Card
                   key={chat._id}
-                  className={`cursor-pointer border dark:bg-black bg-transparent rounded-[20px] ${
+                  className={`cursor-pointer border dark:bg-transparent bg-transparent rounded-[20px] ${
                     isActive ? 'bg-white border bg-white dark:bg-[rgba(255,255,255,.1)]' : ''
                   }`}
                   onClick={() => setCurrentChat(chat)}

@@ -31,7 +31,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
         description: task.description || '',
         priority: task.priority || 'medium',
         status: task.status || 'pending',
-        assignedTo: task.assignTo?.id || task.assignTo || 'unassigned',
+        assignedTo: task.assignTo?.id || task.assignTo?._id || task.assignTo || 'unassigned',
         dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
         tags: task.tags || []
       })
@@ -94,7 +94,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
 
   const getAssignedUser = () => {
     if (!formData.assignedTo || formData.assignedTo === 'unassigned') return null
-    return users.find(user => user._id === formData.assignedTo)
+    return users.find(user => (user.id || user._id) === formData.assignedTo)
   }
 
   const assignedUser = getAssignedUser()
@@ -106,7 +106,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 icon bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
       onClick={onClose}
     >
       <motion.div
@@ -120,7 +120,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-2xl  text-black dark:text-white">
+              <h2 className="text-2xl  text-black dark:text-white font-bold">
                 Edit Task
               </h2>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
@@ -200,7 +200,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                         <img
                           {...getAvatarProps(assignedUser.avatar, assignedUser.username)}
                           alt={assignedUser.username}
-                          className="w-5 h-5 icon rounded-[10px]"
+                          className="w-5 h-5 rounded-[10px]"
                         />
                         <span>{assignedUser.username}</span>
                       </div>
@@ -209,18 +209,20 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="unassigned">Unassigned</SelectItem>
-                  {users.map((user) => (
-                    <SelectItem key={user.id} value={user.id}>
+                  {users.map((user) => {
+                    const userId = user.id || user._id
+                    return (
+                    <SelectItem key={userId} value={userId}>
                       <div className="flex items-center gap-2">
                         <img
                           {...getAvatarProps(user.avatar, user.username)}
                           alt={user.username}
-                          className="w-5 h-5 icon rounded-[10px]"
+                          className="w-5 h-5 rounded-[10px]"
                         />
                         <span>{user.username}</span>
                       </div>
                     </SelectItem>
-                  ))}
+                  )})}
                 </SelectContent>
               </Select>
             </div>

@@ -63,7 +63,7 @@ const GitHubPullRequests = () => {
   const [labelInput, setLabelInput] = useState('')
   const navigate = useNavigate()
 
-  const tableHeadClass = 'sticky top-0 z-30 bg-white dark:bg-black px-6 py-4 text-left text-xs uppercase tracking-wider font-semibold text-gray-900 dark:text-white shadow-sm'
+  const tableHeadClass = 'sticky top-0 z-30 bg-white dark:bg-white px-6 py-4 text-left text-xs uppercase tracking-wider font-semibold text-gray-900  shadow-sm'
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
@@ -299,11 +299,11 @@ const GitHubPullRequests = () => {
               placeholder="Search pull requests..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={getInputClasses('default', 'md', 'pl-10 w-full sm:w-[500px]')}
+              className={getInputClasses('default', 'md', 'pl-10 w-full sm:w-[500px] bg-white dark:bg-[#111827] text-black dark:text-white')}
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-48 cursor-pointer px-5 bg-white">
+            <SelectTrigger className="w-48 cursor-pointer px-5 bg-white dark:bg-[#111827] text-black dark:text-white">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -315,7 +315,7 @@ const GitHubPullRequests = () => {
             </SelectContent>
           </Select>
           <Select value={repositoryFilter} onValueChange={setRepositoryFilter}>
-            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white">
+            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white dark:bg-[#111827] text-black dark:text-white">
               <SelectValue placeholder="Filter by repository" />
             </SelectTrigger>
             <SelectContent className="max-h-[400px]">
@@ -328,7 +328,7 @@ const GitHubPullRequests = () => {
             </SelectContent>
           </Select>
           <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white">
+            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white dark:bg-[#111827] text-black dark:text-white">
               <SelectValue placeholder="Filter by priority" />
             </SelectTrigger>
             <SelectContent>
@@ -360,7 +360,7 @@ const GitHubPullRequests = () => {
         {/* Custom Create Modal */}
         {isCreateDialogOpen && (
           <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 bg-black/50 flex items-center justify-center z-50" onClick={() => setIsCreateDialogOpen(false)}>
-            <div className="bg-white dark:bg-black border rounded-[20px] p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white dark:bg-[#111827] border rounded-[20px] p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
          
               <div className="space-y-4">
                 <div>
@@ -369,7 +369,7 @@ const GitHubPullRequests = () => {
                     value={formData.title}
                     onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
                     placeholder="Pull request title"
-                    className={getInputClasses('default', 'md')}
+                    className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white')}
                   />
                 </div>
                 <div>
@@ -387,7 +387,7 @@ const GitHubPullRequests = () => {
                       value={formData.githubUrl}
                       onChange={(e) => setFormData(prev => ({ ...prev, githubUrl: e.target.value }))}
                       placeholder="https://github.com/owner/repo/pull/123"
-                      className={getInputClasses('default', 'md')}
+                      className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white')}
                     />
                   </div>
                   <div>
@@ -396,14 +396,14 @@ const GitHubPullRequests = () => {
                       value={formData.githubHash}
                       onChange={(e) => setFormData(prev => ({ ...prev, githubHash: e.target.value }))}
                       placeholder="123"
-                      className={getInputClasses('default', 'md')}
+                      className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white')}
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <Select value={formData.repository} onValueChange={(value) => setFormData(prev => ({ ...prev, repository: value }))}>
-                      <SelectTrigger>
+                      <SelectTrigger className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white')}>
                         <SelectValue placeholder="Select repository" />
                       </SelectTrigger>
                       <SelectContent className="z-[60]">
@@ -417,7 +417,7 @@ const GitHubPullRequests = () => {
                   </div>
                   <div>
                     <Select value={formData.priority} onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}>
-                      <SelectTrigger>
+                      <SelectTrigger className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white')}>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="z-[60]">
@@ -437,7 +437,7 @@ const GitHubPullRequests = () => {
                       value={formData.estimatedHours}
                       onChange={(e) => setFormData(prev => ({ ...prev, estimatedHours: e.target.value }))}
                       placeholder="0"
-                      className={getInputClasses('default', 'md')}
+                      className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white')}
                     />
                   </div>
                   <div>
@@ -446,7 +446,7 @@ const GitHubPullRequests = () => {
                       type="date"
                       value={formData.dueDate}
                       onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
-                      className={getInputClasses('default', 'md')}
+                      className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white')}
                     />
                   </div>
                 </div>
@@ -455,14 +455,14 @@ const GitHubPullRequests = () => {
                     value={formData.assignedTo} 
                     onValueChange={(value) => setFormData(prev => ({ ...prev, assignedTo: value }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white')}>
                       <SelectValue placeholder="Select assigned user" />
                     </SelectTrigger>
                     <SelectContent className="z-[60]">
                       <SelectItem value="none">No one assigned</SelectItem>
                       {friends.map((friend) => (
                         <SelectItem key={friend._id} value={friend._id}>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 rounded-full cursor-pointer">
                             {friend.avatar ? (
                               <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${friend.avatar}`} alt={friend.username} className="w-5 h-5 icon rounded-full" />
                             ) : (
@@ -484,7 +484,7 @@ const GitHubPullRequests = () => {
                       onChange={(e) => setLabelInput(e.target.value)}
                       placeholder="Add a label"
                       onKeyPress={(e) => e.key === 'Enter' && addLabel()}
-                      className={getInputClasses('default', 'md', 'flex-1')}
+                      className={getInputClasses('default', 'md', 'flex-1 bg-white dark:bg-transparent text-black dark:text-white')}
                     />
                     <Button type="button" className={'w-12'} onClick={addLabel}><Plus /></Button>
                   </div>
@@ -522,7 +522,7 @@ const GitHubPullRequests = () => {
         <div className="text-center py-12">
           <GitPullRequest className="h-12 w-12 mx-auto mb-4 text-gray-400" />
           <h3 className="text-lg  mb-2">No pull requests found</h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-4">
+            <p className="text-gray-600 dark:text-[#111827] mb-4">
             {searchTerm ? 'Try adjusting your search terms' : 'You haven\'t logged any pull requests yet'}
           </p>
           <Button onClick={() => setIsCreateDialogOpen(true)}>
@@ -534,7 +534,7 @@ const GitHubPullRequests = () => {
         <div className="bg-white dark:bg-black rounded-[10px] shadow-xl overflow-hidden">
           <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
-              <thead className="sticky top-0 z-20 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-700 shadow-sm">
+              <thead className="sticky top-0 z-20 bg-white border-gray-200 dark:border-gray-700 shadow-sm">
                 <tr>
                   <th className={tableHeadClass}>
                     Pull Request
@@ -564,11 +564,11 @@ const GitHubPullRequests = () => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {pullRequests.map((pr) => (
-                  <tr key={pr._id} className="hover:bg-gray-50 dark:hover:bg-black transition-colors">
+                  <tr key={pr._id} className="hover:bg-gray-50 dark:hover:bg-[#111827] dark:bg-[#111827] transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         
-                          <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
+                            <div className="text-sm font-semibold text-black dark:text-white flex items-center gap-2">
                             {getStatusIcon(pr.status)}
                             {pr.title}
                           </div>
@@ -577,7 +577,7 @@ const GitHubPullRequests = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                      <div className="text-sm font-semibold text-black dark:text-white">
                         #{pr.githubHash}
                       </div>
                     </td>
@@ -587,7 +587,7 @@ const GitHubPullRequests = () => {
                       </Badge>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm font-semibold text-gray-900 dark:text-gray-100 truncate line-clamp-1">
+                      <div className="text-sm font-semibold text-black dark:text-white truncate line-clamp-1">
                         {pr.repository?.name || 'N/A'}
                       </div>
                     </td>
@@ -606,12 +606,12 @@ const GitHubPullRequests = () => {
                             onClick={() => handleUserAvatarClick(pr.assignedTo?._id || pr.assignedTo?.id)}
                             title={pr.assignedTo?.username ? `View ${pr.assignedTo.username}'s profile` : 'View profile'}
                           />
-                          <span className="text-sm text-gray-900 dark:text-white">
+                          <span className="text-sm text-black dark:text-white">
                             {pr.assignedTo?.username || 'Unassigned'}
                           </span>
                         </div>
                       ) : (
-                        <span className="text-sm text-gray-400 dark:text-gray-500">Unassigned</span>
+                        <span className="text-sm text-black dark:text-white">Unassigned</span>
                       )}
                     </td>
                     <td className="px-6 py-4">
@@ -621,7 +621,7 @@ const GitHubPullRequests = () => {
                           {formatDate(pr.dueDate)}
                         </div>
                       ) : (
-                        <span className="text-gray-400 dark:text-gray-500">-</span>
+                        <span className="text-black dark:text-white">-</span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-right">

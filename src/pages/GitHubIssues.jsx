@@ -70,7 +70,7 @@ const GitHubIssues = () => {
   const [labelInput, setLabelInput] = useState('')
   const navigate = useNavigate()
 
-  const tableHeadClass = 'sticky top-0 truncate z-30 bg-white dark:bg-black px-6 py-4 text-left text-xs uppercase tracking-wider font-semibold text-gray-900 dark:text-white shadow-sm'
+  const tableHeadClass = 'sticky top-0 truncate z-30 bg-white px-6 py-4 text-left text-xs uppercase tracking-wider font-semibold text-gray-900 shadow-sm'
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
@@ -343,11 +343,11 @@ const GitHubIssues = () => {
               placeholder="Search issues..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={getInputClasses('default', 'md', 'pl-10 w-full sm:w-[500px]')}
+              className={getInputClasses('default', 'md', 'pl-10 w-full sm:w-[500px] bg-white dark:bg-[#111827] text-black dark:text-white')}
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white ">
+            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white dark:bg-[#111827] text-black dark:text-white">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -359,7 +359,7 @@ const GitHubIssues = () => {
             </SelectContent>
           </Select>
           <Select value={repositoryFilter} onValueChange={setRepositoryFilter}>
-            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white ">
+            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white dark:bg-[#111827] text-black dark:text-white">
               <SelectValue placeholder="Filter by repository" />
             </SelectTrigger>
             <SelectContent className={'max-h-[400px]'}>
@@ -372,7 +372,7 @@ const GitHubIssues = () => {
             </SelectContent>
           </Select>
           <Select value={priorityFilter} onValueChange={setPriorityFilter}>
-            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white ">
+            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white dark:bg-[#111827] text-black dark:text-white">
               <SelectValue placeholder="Filter by priority" />
             </SelectTrigger>
             <SelectContent>
@@ -405,7 +405,7 @@ const GitHubIssues = () => {
         {/* Custom Create Modal */}
         {isCreateDialogOpen && (
           <div className="fixed inset-0 backdrop-blur-sm bg-black/50 bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsCreateDialogOpen(false)}>
-            <div className="bg-white dark:bg-black rounded-[20px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white dark:bg-[#111827] rounded-[20px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
              
               <div className="space-y-4">
                 <div>
@@ -414,7 +414,7 @@ const GitHubIssues = () => {
                     value={formData.title}
                     onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
                     placeholder="Issue title"
-                    className={getInputClasses('default', 'md')}
+                    className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white' )}
                   />
                 </div>
                 <div>
@@ -432,7 +432,7 @@ const GitHubIssues = () => {
                       value={formData.githubUrl}
                       onChange={(e) => setFormData(prev => ({ ...prev, githubUrl: e.target.value }))}
                       placeholder="https://github.com/owner/repo/issues/123"
-                      className={getInputClasses('default', 'md')}
+                      className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white' )}
                     />
                   </div>
                   <div>
@@ -441,14 +441,14 @@ const GitHubIssues = () => {
                       value={formData.githubHash}
                       onChange={(e) => setFormData(prev => ({ ...prev, githubHash: e.target.value }))}
                       placeholder="123"
-                      className={getInputClasses('default', 'md')}
+                      className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white' )}
                     />
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-4">
                   <div>
                     <Select value={formData.repository} onValueChange={(value) => setFormData(prev => ({ ...prev, repository: value }))}>
-                      <SelectTrigger>
+                      <SelectTrigger className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white' )}>
                         <SelectValue placeholder="Select repository" />
                       </SelectTrigger>
                       <SelectContent className="z-[60]">
@@ -462,7 +462,7 @@ const GitHubIssues = () => {
                   </div>
                   <div>
                     <Select value={formData.type} onValueChange={(value) => setFormData(prev => ({ ...prev, type: value }))}>
-                      <SelectTrigger>
+                      <SelectTrigger className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white' )}>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="z-[60]">
@@ -476,7 +476,7 @@ const GitHubIssues = () => {
                   </div>
                   <div>
                     <Select value={formData.priority} onValueChange={(value) => setFormData(prev => ({ ...prev, priority: value }))}>
-                      <SelectTrigger>
+                      <SelectTrigger className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white' )}>
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent className="z-[60]">
@@ -496,7 +496,7 @@ const GitHubIssues = () => {
                       value={formData.estimatedHours}
                       onChange={(e) => setFormData(prev => ({ ...prev, estimatedHours: e.target.value }))}
                       placeholder="0"
-                      className={getInputClasses('default', 'md')}
+                      className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white' )}
                     />
                   </div>
                   <div>
@@ -505,7 +505,7 @@ const GitHubIssues = () => {
                       type="date"
                       value={formData.dueDate}
                       onChange={(e) => setFormData(prev => ({ ...prev, dueDate: e.target.value }))}
-                      className={getInputClasses('default', 'md')}
+                      className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white' )}
                     />
                   </div>
                 </div>
@@ -514,7 +514,7 @@ const GitHubIssues = () => {
                     value={formData.assignedTo} 
                     onValueChange={(value) => setFormData(prev => ({ ...prev, assignedTo: value }))}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white' )}>
                       <SelectValue placeholder="Select assigned user" />
                     </SelectTrigger>
                     <SelectContent className="z-[60]">
@@ -543,7 +543,7 @@ const GitHubIssues = () => {
                       onChange={(e) => setLabelInput(e.target.value)}
                       placeholder="Add a label"
                       onKeyPress={(e) => e.key === 'Enter' && addLabel()}
-                      className={getInputClasses('default', 'md', 'flex-1')}
+                      className={getInputClasses('default', 'md', 'flex-1 bg-white dark:bg-transparent text-black dark:text-white' )}
                     />
                     <Button type="button" onClick={addLabel} className={'w-12'}><Plus /></Button>
                   </div>
@@ -620,13 +620,13 @@ const GitHubIssues = () => {
                     Tags
                   </th>
                   <th className={`${tableHeadClass} text-right`}>
-                    Actions
+                    
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {issues.map((issue) => (
-                  <tr key={issue._id} className="hover:bg-gray-50 dark:hover:bg-black transition-colors">
+                  <tr key={issue._id} className="hover:bg-gray-50 dark:hover:bg-[#111827] dark:bg-[#111827] transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                           <div className="text-sm font-semibold  truncate line-clamp-1 max-w-[300px]  text-gray-900 dark:text-gray-100 flex items-center gap-2">

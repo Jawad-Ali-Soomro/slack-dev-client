@@ -150,7 +150,7 @@ const VerifyEmail = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black dark:via-slate-900 dark:to-indigo-950 flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-6">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="floating-orb w-96 h-96 top-10 left-10 opacity-20"></div>
@@ -222,7 +222,7 @@ const VerifyEmail = () => {
                   value={digit}
                   onChange={(e) => handleOtpChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-12 h-12 text-center text-xl   border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline-none focus:border-blue-500 dark:bg-black dark:text-white"
+                  className="w-12 h-12 text-center text-xl  border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline-none focus:border-blue-500 dark:bg-[#111827] dark:text-white"
                 />
               ))}
             </div>
@@ -231,7 +231,7 @@ const VerifyEmail = () => {
             <motion.button
               onClick={handleVerify}
               disabled={loading || otp.join('').length !== 4}
-              className="w-full py-3 bg-black dark:bg-white text-white dark:text-black rounded-[10px]  transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 bg-black dark:bg-white text-white dark:text-black rounded-[10px]  transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >

@@ -58,7 +58,7 @@ const Indexing = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="flex flex-col items-center justify-center relative overflow-hidden bg-gray-50 dark:bg-black">
+    <div className="flex flex-col items-center justify-center relative overflow-hidden">
         {/* Floating Background Orbs */}
         <div className="floating-orb w-96 h-96 top-10 left-10 opacity-30"></div>
         <div className="floating-orb w-64 h-64 top-1/3 right-20 opacity-20" style={{animationDelay: '2s'}}></div>
@@ -216,18 +216,18 @@ const Indexing = () => {
             ].map((feature, index) => (
               <motion.div
                 key={index}
-                className="p-6 md:p-8 bg-gray-100 dark:bg-[rgba(255,255,255,0.1)] rounded-[10px] shadow-lg overflow-hidden transition-transform"
+                className="p-6 md:p-8 bg-white dark:bg-[rgba(255,255,255,0.1)] rounded-[20px] shadow-lg overflow-hidden transition-transform"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
                 whileHover={{ y: -6 }}
                 viewport={{ once: true }}
               >
-                <div className="w-full h-48 mb-6 rounded-[10px] overflow-hidden">
+                <div className="w-full h-48 mb-6 rounded-[20px] overflow-hidden">
                   <img 
                     src={feature.image} 
                     alt={feature.title}
-                    className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <div className="w-[80px] h-[80px] bg-[rgba(0,0,0,0.1)] rounded-full flex items-center justify-center mb-4 dark:bg-[rgba(255,255,255,0.1)]">
@@ -241,7 +241,7 @@ const Indexing = () => {
                 <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                   {feature.description}
                 </p>
-                <button className="text-xs  text-white w-12 h-12 bg-black border-black dark:border-white rounded-full mt-4 ml-auto flex items-center justify-center dark:bg-white dark:text-black"><ArrowRight /></button>
+                <button className="text-xs text-white w-12 h-12 bg-black border-black dark:border-white mt-4 ml-auto flex items-center justify-center dark:bg-white dark:text-black rounded-[30px]"><ArrowRight /></button>
               </motion.div>
             ))}
           </div>
@@ -249,7 +249,7 @@ const Indexing = () => {
 
         {/* Stats Section */}
         <motion.section 
-          className="w-full bg-gray-100 dark:bg-[rgba(255,255,255,0.1)] icon py-16 relative"
+          className="w-full bg-white dark:bg-[rgba(255,255,255,0.1)] icon py-16 relative"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           transition={{ duration: 0.8 }}
@@ -332,7 +332,7 @@ const Indexing = () => {
             ].map((testimonial, index) => (
               <motion.div
                 key={index}
-                className="p-8 bg-gray-100 dark:bg-[rgba(255,255,255,0.1)] rounded-[10px] relative overflow-hidden"
+                className="p-8 bg-white dark:bg-[rgba(255,255,255,0.1)] rounded-[20px] relative overflow-hidden"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.2, duration: 0.6 }}

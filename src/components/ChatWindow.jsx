@@ -18,13 +18,14 @@ import {
   Reply,
   Edit,
   Trash2,
-  ArrowDown
+  ArrowDown,
+  ArrowLeft
 } from 'lucide-react';
 import { formatDistanceToNow } from 'date-fns';
 import EmojiPicker from 'emoji-picker-react';
 import UserDetailsModal from './UserDetailsModal';
 
-const ChatWindow = () => {
+const ChatWindow = ({ isMobile = false }) => {
   const { 
     currentChat, 
     messages, 
@@ -39,7 +40,8 @@ const ChatWindow = () => {
     startTyping,
     stopTyping,
     messagesEndRef,
-    loading 
+    loading,
+    setCurrentChat
   } = useChat();
   
   const { user } = useAuth();
@@ -251,11 +253,22 @@ const ChatWindow = () => {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className={`flex flex-col h-full ${isMobile ? 'm-0 w-full' : ''}`}>
       {/* Header */}
-      <div className="flex-shrink-0 border-b icon p-4">
+      <div className={`flex-shrink-0 border-b icon ${isMobile ? 'p-2' : 'p-4'}`}>
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            {isMobile && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setCurrentChat(null)}
+                className="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+                title="Back to chat list"
+              >
+                <ArrowLeft className="h-5 w-5 icon" />
+              </Button>
+            )}
             <div className="relative">
               <Avatar 
                 className="h-10 w-10 cursor-pointer hover:opacity-80 transition-opacity"
@@ -291,7 +304,7 @@ const ChatWindow = () => {
       {/* Messages Container - Takes remaining space */}
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
         {/* Messages - Scrollable Area */}
-        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 relative">
+        <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto space-y-4 relative ${isMobile ? 'p-2' : 'p-4'}`}>
         {loading ? (
           <div className="flex items-center justify-center h-full">
             <div className="animate-spin rounded-[10px] h-8 w-8 border-b-2 border-primary"></div>
@@ -439,7 +452,7 @@ const ChatWindow = () => {
         )} */}
 
       {/* Message Input - Fixed at Bottom */}
-      <div className="flex-shrink-0 border-t p-4 icon relative">
+      <div className={`flex-shrink-0 border-t icon relative ${isMobile ? 'p-2' : 'p-4'}`}>
         <form onSubmit={handleSendMessage} className="flex items-center gap-2">
           <Button
             type="button"

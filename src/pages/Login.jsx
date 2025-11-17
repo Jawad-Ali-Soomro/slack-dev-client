@@ -4,6 +4,7 @@ import { Eye, EyeOff, Mail, Lock, ArrowLeft, X } from "lucide-react"
 import { Link, useNavigate } from "react-router-dom"
 import { useAuth } from "../contexts/AuthContext"
 import { toast } from "sonner"
+import { Input } from "@/components/ui/input"
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false)
@@ -108,7 +109,7 @@ const Login = () => {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-6">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="floating-orb w-96 h-96 top-10 left-10 opacity-20"></div>
@@ -179,13 +180,13 @@ const Login = () => {
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 transform icon -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
-                <input
+                <Input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-4 text-sm py-3 border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
-                  placeholder="Enter your email"
+                 placeholder="Enter your email"
+                 className={'pl-10'}
                   required
                 />
               </div>
@@ -198,12 +199,12 @@ const Login = () => {
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform icon -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
-                <input
+                <Input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-10 pr-12 py-3 text-sm border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline focus:outline-1 focus:outline-gray-300 focus:border-gray-100 dark:focus:outline-[rgba(255,255,255,.2)] dark:focus:border-[rgba(255,255,255,.1)] dark:bg-black dark:text-white"
+                  className={'pl-10'}
                   placeholder="Enter your password"
                   required
                 />

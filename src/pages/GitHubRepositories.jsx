@@ -55,7 +55,7 @@ const GitHubRepositories = () => {
   const [tagInput, setTagInput] = useState('')
   const navigate = useNavigate()
 
-  const tableHeadClass = 'sticky top-0 z-30 bg-white dark:bg-black px-6 py-4 text-left text-xs uppercase tracking-wider font-semibold text-gray-900 dark:text-white shadow-sm'
+  const tableHeadClass = 'sticky top-0 z-30 bg-white dark:text-black px-6 py-4 text-left text-xs uppercase tracking-wider font-semibold text-gray-900 shadow-sm'
 
   useEffect(() => {
     const debounceTimer = setTimeout(() => {
@@ -227,11 +227,11 @@ const GitHubRepositories = () => {
               placeholder="Search repositories..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className={getInputClasses('default', 'md', 'pl-10 w-full sm:w-[500px]')}
+              className={getInputClasses('default', 'md', 'pl-10 w-full sm:w-[500px] bg-white dark:bg-[#111827] text-black dark:text-white')}
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white">
+            <SelectTrigger className="w-48 px-5 cursor-pointer bg-white dark:bg-[#111827] text-black dark:text-white">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -262,7 +262,7 @@ const GitHubRepositories = () => {
         {/* Custom Create Modal */}
         {isCreateDialogOpen && (
           <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 bg-black/50 flex items-center justify-center z-50" onClick={() => setIsCreateDialogOpen(false)}>
-            <div className="bg-white dark:bg-black rounded-[20px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="bg-white dark:bg-[#111827] rounded-[20px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
            
               <div className="space-y-4">
                 <div>
@@ -270,7 +270,7 @@ const GitHubRepositories = () => {
                     value={formData.name}
                     onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                     placeholder="Repository Name"
-                    className={getInputClasses('default', 'md')}
+                    className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white')}
                   />
                 </div>
                 <div>
@@ -278,7 +278,7 @@ const GitHubRepositories = () => {
                     value={formData.githubUrl}
                     onChange={(e) => setFormData(prev => ({ ...prev, githubUrl: e.target.value }))}
                     placeholder="GitHub URL (https://github.com/owner/repo)"
-                    className={getInputClasses('default', 'md')}
+                    className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white')}
                   />
                 </div>
                 <div>
@@ -294,7 +294,7 @@ const GitHubRepositories = () => {
                       value={formData.language}
                       onChange={(e) => setFormData(prev => ({ ...prev, language: e.target.value }))}
                       placeholder="Language (JavaScript, Python, etc.)"
-                      className={getInputClasses('default', 'md')}
+                      className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white')}
                     />
                   </div>
                   
@@ -311,13 +311,13 @@ const GitHubRepositories = () => {
                       }
                     }}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className={getInputClasses('default', 'md', 'bg-white dark:bg-transparent text-black dark:text-white')}>
                       <SelectValue placeholder="Select contributors from friends" />
                     </SelectTrigger>
                     <SelectContent className="z-[60]">
                       {friends.map((friend) => (
                         <SelectItem key={friend._id} value={friend._id}>
-                          <div className="flex items-center gap-2">
+                          <div className="flex items-center gap-2 rounded-full">
                             {friend.avatar ? (
                               <img src={`${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${friend.avatar}`} alt={friend.username} className="w-5 h-5 icon rounded-full" />
                             ) : (
@@ -361,7 +361,7 @@ const GitHubRepositories = () => {
                       onChange={(e) => setTagInput(e.target.value)}
                       placeholder="Add a tag"
                       onKeyPress={(e) => e.key === 'Enter' && addTag()}
-                      className={getInputClasses('default', 'md', 'flex-1')}
+                      className={getInputClasses('default', 'md', 'flex-1 bg-white dark:bg-transparent text-black dark:text-white')}
                     />
                     <Button type="button" className={'w-12'} onClick={addTag}><Plus /></Button>
                   </div>
@@ -409,10 +409,10 @@ const GitHubRepositories = () => {
           </Button>
         </div>
       ) : (
-        <div className="bg-white dark:bg-black rounded-[10px] shadow-xl overflow-hidden">
+        <div className="bg-whitedark:bg-[#111827] rounded-[10px] shadow-xl overflow-hidden">
           <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
-              <thead className="sticky top-0 z-20 bg-white dark:bg-black border-b border-gray-200 dark:border-gray-700 shadow-sm">
+              <thead className="sticky top-0 z-20 bg-white dark:bg-[white] border-b border-gray-200 dark:border-gray-700 shadow-sm">
                 <tr>
                   <th className={tableHeadClass}>
                     Repository
@@ -439,7 +439,7 @@ const GitHubRepositories = () => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredRepositories.map((repo) => (
-                  <tr key={repo._id} className="hover:bg-gray-50 dark:hover:bg-black transition-colors">
+                  <tr key={repo._id} className="hover:bg-gray-50 dark:hover:bg-[#111827] bg-white dark:bg-[#111827] transition-colors">
                     <td className="px-6 py-4">
                       <div className="flex items-center">
                         
@@ -565,7 +565,7 @@ const GitHubRepositories = () => {
       {/* Custom Edit Modal */}
       {isEditDialogOpen && (
         <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsEditDialogOpen(false)}>
-          <div className="bg-white dark:bg-black border rounded-[10px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-whitedark:bg-[#111827] border rounded-[10px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-xl ">Edit Repository</h2>

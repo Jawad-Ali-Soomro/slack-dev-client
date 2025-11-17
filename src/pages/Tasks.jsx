@@ -536,22 +536,22 @@ const Tasks = () => {
                 <div>
                 <motion.div variants={itemVariants}>
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1 max-w-3xl">
+            <div className="relative flex-1 max-w-3xl dark:bg-[#111827]">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-10 icon" />
               <Input
                 type="text"
                 placeholder="Search tasks..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={getInputClasses('default', 'md', 'w-full pl-10 w-[500px] pr-4 h-13')}
+                className={getInputClasses('default', 'md', 'w-full pl-10 w-[500px] pr-4 h-13 dark:bg-[#111827]')}
               />
             </div>
             <div className="flex gap-3">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-[180px] px-5 h-13 h-13 bg-white dark:bg-black cursor-pointer dark:text-white">
+                <SelectTrigger className="w-[180px] px-5 h-13 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
                   <SelectValue   placeholder="All Status" />
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-black ">
+                <SelectContent className="bg-white dark:bg-[#111827] ">
                   <SelectItem className={'h-10 cursor-pointer px-5'} value="all">All Status</SelectItem>
                   <SelectItem className={'h-10 cursor-pointer px-5'} value="pending">Pending</SelectItem>
                   <SelectItem className={'h-10 cursor-pointer px-5'} value="in_progress">In Progress</SelectItem>
@@ -560,10 +560,10 @@ const Tasks = () => {
                 </SelectContent>
               </Select>
               <Select value={filterPriority} onValueChange={setFilterPriority}>
-                <SelectTrigger className="w-[180px] px-5 h-13 bg-white dark:bg-black cursor-pointer dark:text-white">
+                <SelectTrigger className="w-[180px] px-5 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
                   <SelectValue placeholder="All Priority" />
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-black">
+                <SelectContent className="bg-white dark:bg-[#111827]">
                   <SelectItem className={'h-10 cursor-pointer px-5'} value="all">All Priority</SelectItem>
                   <SelectItem className={'h-10 cursor-pointer px-5'} value="high">High</SelectItem>
                   <SelectItem className={'h-10 cursor-pointer px-5'} value="medium">Medium</SelectItem>
@@ -610,34 +610,34 @@ const Tasks = () => {
       
 
         {/* Tasks Table */}
-        <motion.div variants={itemVariants} className="bg-white dark:bg-black rounded-[10px] shadow-xl overflow-hidden">
+        <motion.div variants={itemVariants} className="bg-white dark:bg-transparent rounded-[10px] shadow-xl overflow-hidden">
           <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full">
-              <thead className="bg-white dark:bg-black text-black dark:text-white border-b dark:border-gray-700 sticky top-0 z-10">
+              <thead className="bg-white dark:bg-white dark:text-black text-black border-b dark:border-gray-700 sticky top-0 z-10">
                 <tr>
                      
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
                     Task
                   </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
                     Priority
                   </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
                     Assigned To
                   </th>
-                      <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
+                      <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
                     Assigned BY
                   </th>
-                    <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
+                    <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
                     Project
                   </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
                     Due Date
                   </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-white uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
                     
                   </th>
                 </tr>
@@ -664,7 +664,7 @@ const Tasks = () => {
                       filteredTasks.map((task) => (
                   <motion.tr
                     key={task.id}
-                    className={`hover:bg-gray-50 dark:hover:bg-black transition-colors ${selectedTasks.includes(task.id) ? 'bg-gray-100 dark:bg-black' : ''}`}
+                    className={`hover:bg-gray-50 dark:hover:bg-black transition-colors ${selectedTasks.includes(task.id) ? 'bg-gray-100 dark:bg-transparent' : ''}`}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.2 }}
@@ -707,7 +707,7 @@ const Tasks = () => {
                             {task.status}
                           </button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="start" className="bg-white dark:bg-black border-gray-200 dark:border-gray-700">
+                        <DropdownMenuContent align="start" className="bg-white dark:bg-transparent border-gray-200 dark:border-gray-700">
                           <DropdownMenuItem 
                             onClick={() => handleStatusChange(task.id, 'pending')}
                             className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
@@ -838,7 +838,7 @@ const Tasks = () => {
                               <MoreVertical className="w-4 h-4 icon" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-white dark:bg-black border-gray-200 dark:border-gray-700">
+                          <DropdownMenuContent align="end" className="bg-white dark:bg-transparent border-gray-200 dark:border-gray-700">
                             {user && user.id && task.assignedBy?.id === user.id && (
                               <DropdownMenuItem className="text-black h-12 px-5 cursor-pointer  dark:text-white hover:bg-gray-100 dark:hover:bg-black">
                                 <Edit className="w-4 h-4 mr-2 icon" />
@@ -853,7 +853,7 @@ const Tasks = () => {
                                     Change Status
                                   </DropdownMenuItem>
                                 </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" className="bg-white dark:bg-black border-gray-200 dark:border-gray-700">
+                                <DropdownMenuContent align="end" className="bg-white dark:bg-transparent border-gray-200 dark:border-gray-700">
                                   <DropdownMenuItem 
                                     onClick={() => handleStatusChange(task.id, 'pending')}
                                     className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
@@ -919,7 +919,7 @@ const Tasks = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className=" bg-white dark:bg-black rounded-[20px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+              className=" bg-white dark:bg-[#111827] rounded-[20px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
               
@@ -932,7 +932,7 @@ const Tasks = () => {
                     type="text"
                     value={newTask.title}
                     onChange={(e) => setNewTask({...newTask, title: e.target.value})}
-                    className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white"
+                    className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white"
                     placeholder="Enter task title"
                   />
                 </div>
@@ -944,7 +944,7 @@ const Tasks = () => {
                   <Textarea
                     value={newTask.description}
                     onChange={(e) => setNewTask({...newTask, description: e.target.value})}
-                    className="w-full border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white"
+                    className="w-full border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white"
                     placeholder="Enter task description"
                     rows="3"
                   />
@@ -956,10 +956,10 @@ const Tasks = () => {
                       Priority
                     </label> */}
                     <Select value={newTask.priority} onValueChange={(value) => setNewTask({...newTask, priority: value})}>
-                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white">
+                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white">
                         <SelectValue placeholder="Select priority" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-black border-gray-200 dark:border-gray-700">
+                      <SelectContent className="bg-white dark:bg-transparent border-gray-200 dark:border-gray-700">
                         <SelectItem className={'h-10 cursor-pointer px-5'} value="low">Low</SelectItem>
                         <SelectItem className={'h-10 cursor-pointer px-5'} value="medium">Medium</SelectItem>
                         <SelectItem className={'h-10 cursor-pointer px-5'} value="high">High</SelectItem>
@@ -975,7 +975,7 @@ const Tasks = () => {
                       type="date"
                       value={newTask.dueDate}
                       onChange={(e) => setNewTask({...newTask, dueDate: e.target.value})}
-                      className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white"
+                      className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white"
                     />
                   </div>
                 </div>
@@ -994,11 +994,11 @@ const Tasks = () => {
                           setShowAssignedToSuggestions(true)
                         }
                       }}
-                      className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white"
+                      className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white"
                       placeholder="Type to search users..."
                     />
                     {showAssignedToSuggestions && assignedToSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black border-gray-200 dark:border-gray-700 rounded-[30px] shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-transparent border-gray-200 dark:border-gray-700 rounded-[30px] shadow-lg max-h-48 overflow-y-auto">
                         {assignedToSuggestions.map((user) => (
                               <div
                                 key={user.id}
@@ -1031,10 +1031,10 @@ const Tasks = () => {
                 <div>
                   {/* Project Selection */}
                   <Select value={newTask.projectId} onValueChange={(value) => setNewTask({...newTask, projectId: value})}>
-                    <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-black text-black dark:text-white">
+                    <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white">
                       <SelectValue placeholder="Select project (optional)" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-black border-gray-200 dark:border-gray-700">
+                    <SelectContent className="bg-white dark:bg-transparent border-gray-200 dark:border-gray-700">
                       <SelectItem className={'h-10 cursor-pointer px-5'} value="none">No Project</SelectItem>
                       {projects.map((project) => (
                         <SelectItem className={'h-10 cursor-pointer px-5'} key={project.id} value={project.id}>
@@ -1086,7 +1086,7 @@ const Tasks = () => {
           >
             {selectedTaskDetails ? (
               <div className="flex h-full flex-col">
-                <div className="relative overflow-hidden rounded-b-[32px]  bg-white text-black px-6 py-7">
+                <div className="relative overflow-hidden rounded-b-[32px]  text-black dark:text-white px-6 py-7">
                   <div className="absolute inset-0 opacity-20" />
                   <div className="relative flex flex-col gap-4">
                     <div className="flex flex-wrap items-center gap-2">
@@ -1109,17 +1109,17 @@ const Tasks = () => {
                         <span className="capitalize">{formatLabel(selectedTaskDetails.priority)}</span>
                       </Badge>
                       {selectedTaskDetails.project && (
-                        <Badge className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm border border-gray-200 dark:border-gray-700 bg-white/10 text-black">
+                        <Badge className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm border border-gray-200 dark:border-gray-700 bg-white/10 text-black dark:text-white ">
                           <FolderOpen className="w-3 h-3 icon" />
                           {selectedTaskDetails.project.name}
                         </Badge>
                       )}
                     </div>
                     <SheetHeader className="space-y-2">
-                      <SheetTitle className="text-xl font-semibold text-black leading-8">
+                      <SheetTitle className="text-xl font-semibold text-black dark:text-white leading-8">
                         {selectedTaskDetails.title}
                       </SheetTitle>
-                      <p className="text-xs font-semibold line-clamp-2 text-justify text-black/70 leading-6">
+                      <p className="text-xs font-semibold line-clamp-2 text-justify text-black/70 dark:text-white/70 leading-6">
                         {selectedTaskDetails.description || 'No description provided for this task.'}
                       </p>
                     </SheetHeader>
@@ -1127,7 +1127,7 @@ const Tasks = () => {
                   </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto bg-white dark:bg-black px-6  space-y-6">
+                <div className="flex-1 overflow-y-auto text-black dark:text-white px-6  space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
                       <div className="flex items-center gap-3">
@@ -1199,15 +1199,15 @@ const Tasks = () => {
                               key={relatedId}
                               type="button"
                               onClick={() => handleRelatedTaskClick(relatedTask)}
-                              className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-black px-4 py-3 text-left transition hover:-translate-y-0.5 hover:shadow-md"
+                              className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-transparent px-4 py-3 text-left transition hover:-translate-y-0.5 hover:shadow-md"
                             >
                               <div className="flex items-center justify-between gap-3 p-3">
                                 <div className="flex flex-col">
                                   <span className="text-sm font-medium text-gray-900 dark:text-white line-clamp-1">
                                     {relatedTask.title}
                                   </span>
-                                  <span className="text-xs text-gray-500 dark:text-gray-400">
-                                    DUE DATE : <span className="font-bold text-black">{relatedTask.dueDate ? new Date(relatedTask.dueDate).toLocaleDateString() : 'No due date'}</span>
+                                  <span className="text-xs text-gray-500 dark:text-white/70">
+                                    DUE DATE : <span className="font-bold text-black dark:text-white">{relatedTask.dueDate ? new Date(relatedTask.dueDate).toLocaleDateString() : 'No due date'}</span>
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-2">

@@ -167,11 +167,11 @@ const UserManagement = () => {
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-white dark:bg-gray-800 rounded-[10px]"
+                className="pl-10 bg-white dark:bg-[#111827] text-black dark:text-white border border-gray-200 dark:border-gray-700 rounded-[10px]"
               />
             </div>
             <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-44 h-12 px-5 bg-white dark:bg-gray-800 rounded-[10px]">
+              <SelectTrigger className="w-44 h-12 px-5 bg-white dark:bg-[#111827] text-black dark:text-white rounded-[10px]">
                 <SelectValue placeholder="Filter by role" />
               </SelectTrigger>
               <SelectContent>
@@ -182,7 +182,7 @@ const UserManagement = () => {
               </SelectContent>
             </Select>
             <Select value={permissionsFilter} onValueChange={setPermissionsFilter}>
-              <SelectTrigger className="w-44 h-12 bg-white dark:bg-gray-800 rounded-[10px]">
+              <SelectTrigger className="w-44 h-12 bg-white dark:bg-[#111827] text-black dark:text-white rounded-[10px]">
                 <SelectValue placeholder="Filter by permissions" />
               </SelectTrigger>
               <SelectContent>
@@ -213,7 +213,7 @@ const UserManagement = () => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredUsers.map((userItem) => (
-                  <tr key={userItem.id} className="bg-white hover:bg-gray-50 dark:hover:bg-black">
+                  <tr key={userItem.id} className="bg-white dark:bg-[#111827] hover:bg-gray-50 dark:hover:bg-black">
                     <td className="px-5 py-2">
                       <div className="flex items-center gap-3">
                         <img
