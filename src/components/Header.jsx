@@ -13,7 +13,7 @@ const Header = () => {
   const isActive = (path) => location.pathname === path
   
   const getLinkClasses = (path) => {
-    const baseClasses = " text-sm hidden md:block hover:text-gray-700 dark:hover:text-gray-500 text-black transition-all duration-300  relative"
+    const baseClasses = " text-sm font-bold hidden md:block hover:text-gray-700 dark:hover:text-gray-500 text-black transition-all duration-300  relative"
     const activeClasses = "text-black icon border-none"
     const inactiveClasses = "text-gray-500  border-transparent"
     

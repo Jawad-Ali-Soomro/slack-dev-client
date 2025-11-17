@@ -1050,7 +1050,7 @@ const Dashboard = () => {
                           "h-12 rounded-[14px] border flex font-bold items-center justify-center text-sm transition-colors",
                           d ? "border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900" : "border-transparent",
                           isToday ? "ring-2 ring-black dark:ring-white" : "",
-                          isSelected ? "bg-white dark:bg-black  text-black dark:text-white border-none" : "text-gray-800 dark:text-gray-200"
+                          isSelected ? "bg-white text-black border-none" : "text-gray-800 dark:text-gray-200"
                         ].join(' ')}
                         disabled={!d}
                         aria-label={d ? d.toDateString() : 'empty'}

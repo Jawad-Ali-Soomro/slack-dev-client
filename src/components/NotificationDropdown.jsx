@@ -27,8 +27,16 @@ const NotificationDropdown = () => {
     addNotification(testNotification)
   }
 
-  // Notifications are now loaded automatically by the context
-  // No need to load when dropdown opens
+  const handleOpenChange = (open) => {
+    setIsOpen(open)
+    if (open) {
+      loadNotifications({ force: true })
+    }
+  }
+
+  const handleRefresh = () => {
+    loadNotifications({ force: true })
+  }
 
   // Get notification icon based on type
   const getNotificationIcon = (type) => {
@@ -60,7 +68,7 @@ const NotificationDropdown = () => {
 
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button
           // variant="ghost"
@@ -82,12 +90,20 @@ const NotificationDropdown = () => {
       >
         {/* Header */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 icon">
-          <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between">
             <h3 className="text-lg  text-gray-900 dark:text-white font-bold">
               Notifications
             </h3>
             <div className="flex items-center gap-2">
-             
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleRefresh}
+                  className="p-1 h-6 w-6 text-gray-500 hover:text-blue-600"
+                  disabled={loading}
+                >
+                  <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
+                </Button>
              
               {unreadCount > 0 && (
                 <Button

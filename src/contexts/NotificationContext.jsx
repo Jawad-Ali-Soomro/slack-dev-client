@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
 import { toast } from 'sonner'
 import notificationService from '../services/notificationService'
 import { useAuth } from './AuthContext'
@@ -27,8 +27,17 @@ export const NotificationProvider = ({ children }) => {
     code: 0
   })
 
+  const lastFetchRef = useRef(0)
+
   // Load notifications
-  const loadNotifications = useCallback(async () => {
+  const loadNotifications = useCallback(async (options = {}) => {
+    const { force = false } = options
+    const now = Date.now()
+    if (!force && now - lastFetchRef.current < 5000) {
+      return
+    }
+    lastFetchRef.current = now
+
     try {
       setLoading(true)
       const response = await notificationService.getNotifications() 
@@ -288,7 +297,7 @@ export const NotificationProvider = ({ children }) => {
   // Load notifications automatically when user is authenticated
   useEffect(() => {
     if (user) {
-      loadNotifications()
+      loadNotifications({ force: true })
     } else {
       setNotifications([])
       setUnreadCount(0)
@@ -303,16 +312,23 @@ export const NotificationProvider = ({ children }) => {
     }
   }, [user, loadNotifications])
 
-  // Set up periodic refresh of notifications every 30 seconds when user is authenticated
+  // Refresh when window gains focus or tab becomes visible
   useEffect(() => {
     if (!user) return
 
-    const interval = setInterval(() => {
-      loadNotifications()
-    }, 30000) // 30 seconds
+    const handleFocus = () => loadNotifications({ force: true })
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadNotifications({ force: true })
+      }
+    }
+
+    window.addEventListener('focus', handleFocus)
+    document.addEventListener('visibilitychange', handleVisibilityChange)
 
     return () => {
-      clearInterval(interval)
+      window.removeEventListener('focus', handleFocus)
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
     }
   }, [user, loadNotifications])
 
