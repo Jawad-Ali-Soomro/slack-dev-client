@@ -313,7 +313,7 @@ const Dashboard = () => {
     for (let i = 6; i >= 0; i--) {
       const date = new Date();
       date.setDate(date.getDate() - i);
-      const dayName = date.toLocaleDateString("en-US", { weekday: "short" });
+      const dayName = date.toLocaleDateString("en-US", { weekday: "long" });
 
       const tasksOnDay = tasks.filter((task) => {
         const taskDate = new Date(task.createdAt);
@@ -332,9 +332,9 @@ const Dashboard = () => {
 
       days.push({
         day: dayName,
-        tasks: tasksOnDay,
-        meetings: meetingsOnDay,
-        projects: projectsOnDay,
+        Task: tasksOnDay,
+        Meeting: meetingsOnDay,
+        Project: projectsOnDay,
       });
     }
     return days;
@@ -663,21 +663,24 @@ const Dashboard = () => {
                     <XAxis dataKey="day" stroke="#9CA3AF" />
                     <YAxis stroke="#9CA3AF" />
                     <Tooltip contentStyle={{
-                      border: "1px solid #9CA3AF",
+                      border: "none",
                       borderRadius: "15px",
                       color: "black",
-                      padding: "10px 30px",
+                      padding: "10px 50px",
                       boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
                       // backdropFilter: "blur(10px)",
+                      fontWeight: 600,
+                      justifyContent: "space-between"
                     }} />
                     <Legend />
 
                     {/* Tasks line */}
                     <Line
                       type="monotone"
-                      dataKey="tasks"
+                      dataKey="Task"
                       stroke="#3B82F6"
                       strokeWidth={3}
+                      fontWeight={900}
                       dot={{ r: 5, fill: "#3B82F6" }}
                       style={{
                         textTransform: ''
@@ -687,7 +690,7 @@ const Dashboard = () => {
                     {/* Meetings line */}
                     <Line
                       type="monotone"
-                      dataKey="meetings"
+                      dataKey="Meeting"
                       stroke="#10B981"
                       strokeWidth={3}
                       dot={{ r: 5, fill: "#10B981" }}
@@ -696,7 +699,7 @@ const Dashboard = () => {
                     {/* Projects line */}
                     <Line
                       type="monotone"
-                      dataKey="projects"
+                      dataKey="Project"
                       stroke="#8B5CF6"
                       strokeWidth={3}
                       dot={{ r: 5, fill: "#8B5CF6" }}

@@ -1384,7 +1384,7 @@ const Meetings = () => {
           >
             {selectedMeetingDetails ? (
               <div className="flex h-full flex-col">
-                <div className="relative overflow-hidden rounded-b-[32px] bg-white text-black px-6 py-7">
+                <div className="relative overflow-hidden bg-white dark:bg-[#111827] text-black dark:text-white px-6 py-7">
                   <div className="relative flex flex-col gap-4">
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge
@@ -1408,17 +1408,17 @@ const Meetings = () => {
                         <span className="capitalize">{formatLabel(selectedMeetingDetails.type)}</span>
                       </Badge>
                       {selectedMeetingDetails.project && (
-                        <Badge className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm border border-gray-200 dark:border-gray-700 bg-white/10 text-black">
+                        <Badge className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm border border-gray-200 dark:border-gray-700 bg-white/10 text-black dark:text-white">
                           <FolderOpen className="w-3 h-3 icon" />
                           {selectedMeetingDetails.project.name}
                         </Badge>
                       )}
                     </div>
                     <SheetHeader className="space-y-2">
-                      <SheetTitle className="text-xl font-semibold text-black leading-8">
+                      <SheetTitle className="text-xl font-semibold text-black dark:text-white leading-8">
                         {selectedMeetingDetails.title}
                       </SheetTitle>
-                      <p className="text-xs font-semibold line-clamp-2 text-justify text-black/70 leading-6">
+                      <p className="text-xs font-semibold line-clamp-2 text-justify text-black/70 dark:text-white/70 leading-6">
                         {selectedMeetingDetails.description || 'No description provided for this meeting.'}
                       </p>
                     </SheetHeader>
@@ -1484,15 +1484,15 @@ const Meetings = () => {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
+                    <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm truncate overflow-hidden">
                       <img
                         {...getAvatarProps(selectedMeetingDetails.assignedTo?.avatar, selectedMeetingDetails.assignedTo?.username || 'User')}
                         alt={selectedMeetingDetails.assignedTo?.username || 'User Avatar'}
                         className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-700"
                       />
-                      <div>
+                      <div className="truncate">
                         <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">Assigned To</p>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                           {selectedMeetingDetails.assignedTo?.username || 'Unassigned'}
                         </p>
                         {selectedMeetingDetails.assignedTo?.email && (
@@ -1522,17 +1522,17 @@ const Meetings = () => {
                     {selectedMeetingDetails.attendees && selectedMeetingDetails.attendees.length > 0 ? (
                       <div className="space-y-2">
                         {selectedMeetingDetails.attendees.slice(0, 6).map((attendee, index) => (
-                          <div key={index} className="flex items-center gap-3 p-3 bg-gray-100 rounded-[20px]">
+                          <div key={index} className="flex items-center gap-3 p-3 bg-gray-100 dark:bg-[#111827] rounded-[20px]">
                             <img
                               {...getAvatarProps(attendee.avatar, attendee.username || attendee.name)}
                               alt={attendee.username || attendee.name || 'Attendee'}
                               className="w-8 h-8 rounded-full border border-gray-200 dark:border-gray-700"
                             />
                             <div className="w-full justify-between items-center flex">
-                              <p className="text-sm font-medium text-gray-900 dark:text-white">
+                              <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                                 {attendee.username || attendee.name || 'Attendee'}
                               </p>
-                             <span className="px-5 py-2 bg-white text-[10px] uppercase font-bold">Attendee</span>
+                             <span className="px-5 py-2 bg-white dark:bg-[black] text-[10px] uppercase font-bold">Attendee</span>
                             </div>
                           </div>
                         ))}

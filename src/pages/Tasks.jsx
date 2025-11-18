@@ -1160,9 +1160,9 @@ const Tasks = () => {
                         alt={selectedTaskDetails.assignTo?.username || 'User Avatar'}
                         className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-700"
                       />
-                      <div>
+                      <div className="truncate">
                         <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">Assigned To</p>
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
                           {selectedTaskDetails.assignTo?.username || 'Unassigned'}
                         </p>
                         {selectedTaskDetails.assignTo?.email && (

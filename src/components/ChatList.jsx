@@ -138,7 +138,7 @@ const ChatList = () => {
                           <h3 className="font-medium text-sm truncate">
                             {chatName}
                           </h3>
-                          <span className="text-xs text-muted-foreground">
+                          <span className="text-xs text-muted-foreground truncate w-fit">
                             {formatTime(chat.lastMessageAt)}
                           </span>
                         </div>
