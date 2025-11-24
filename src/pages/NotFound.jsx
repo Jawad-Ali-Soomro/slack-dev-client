@@ -37,20 +37,16 @@ const NotFound = () => {
         initial="hidden"
         animate="visible"
       >
+
+        <img src="not.png" alt="" />
         {/* 404 Number */}
-        <motion.div variants={itemVariants} className="mb-8">
-          <h1 className="text-6xl sm:text-8xl lg:text-9xl  text-gray-300 dark:text-gray-600 mb-4">
-            404
-          </h1>
-        </motion.div>
+    
 
         {/* Error Message */}
-        <motion.div variants={itemVariants} className="mb-8">
-          <h2 className="text-2xl sm:text-3xl  text-gray-900 dark:text-white mb-4">
-            Page Not Found
-          </h2>
-          <p className="text-base sm:text-lg text-gray-600 dark:text-gray-400 mb-6 px-4">
-            The page you're looking for doesn't exist or has been moved.
+        <motion.div variants={itemVariants} className="mb-8 mt-10">
+        
+          <p className="text-base sm:text-lg font-bold text-gray-600 dark:text-gray-400 mb-6 px-4">
+            Oops! the page you're looking for doesn't exist or has been moved.
           </p>
         </motion.div>
 
@@ -62,31 +58,26 @@ const NotFound = () => {
           variants={itemVariants} 
           className="flex flex-col  gap-3 sm:gap-4 justify-center items-center px-4 w-full"
         >
-          <Button
-            onClick={() => navigate('/')}
-            className="w-[300px] flex items-center justify-center gap-2 px-6 py-3 bg-black text-white hover:bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-colors"
-          >
-            Go Home
-          </Button>
+        
           
           <Button
             onClick={() => navigate(-1)}
             variant="outline"
-            className="flex items-center w-[300px] justify-center gap-2 px-6 py-3  border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black transition-colors"
+            className="flex font-black items-center w-[300px] justify-center gap-2 px-6 py-3  border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black transition-colors"
           >
-            Go Back
+            <ArrowLeft /> 
           </Button>
         </motion.div>
 
         {/* Additional Help */}
         <motion.div variants={itemVariants} className="mt-8 sm:mt-12 px-4">
-          <p className="text-sm text-gray-500 dark:text-gray-400">
+          <p className="text-sm text-gray-500 dark:text-gray-400 font-bold">
             Need help? Try searching for what you're looking for or{' '}
             <button
               onClick={() => navigate('/contact')}
               className="text-blue-600 dark:text-blue-400 hover:underline focus:outline-none focus:underline"
             >
-              contact support
+              Contact Support
             </button>
           </p>
         </motion.div>

@@ -307,7 +307,7 @@ const ChatWindow = ({ isMobile = false }) => {
         <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto space-y-4 relative ${isMobile ? 'p-2' : 'p-4'}`}>
         {loading ? (
           <div className="flex items-center justify-center h-full">
-            <div className="animate-spin rounded-[10px] h-8 w-8 border-b-2 border-primary"></div>
+            <div className="animate-spin rounded-[10px] h-8 w-8 border-b-2 rounded-full border-primary"></div>
           </div>
         ) : messages.length === 0 ? (
           <div className="flex items-center justify-center h-full text-muted-foreground">

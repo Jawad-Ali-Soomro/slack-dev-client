@@ -449,7 +449,7 @@ const Indexing = () => {
             >
               <span className="font-black text-gray-500">
 
-              Let's Get <span className="font-black text-black" ref={elLast}></span> !
+              Let's Get <span className="font-black text-black dark:text-white" ref={elLast}></span> !
               </span>
             </motion.h2>
             <motion.p 

@@ -1085,14 +1085,14 @@ const Tasks = () => {
             className="w-full sm:max-w-md md:max-w-lg p-0  border-none"
           >
             {selectedTaskDetails ? (
-              <div className="flex h-full flex-col">
+              <div className="flex h-full bg-white flex-col">
                 <div className="relative overflow-hidden rounded-b-[32px]  text-black dark:text-white px-6 py-7">
                   <div className="absolute inset-0 opacity-20" />
                   <div className="relative flex flex-col gap-4">
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge
                         className={cn(
-                          'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm border',
+                          'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs f  ont-medium backdrop-blur-sm border',
                           getStatusBadgeStyles(selectedTaskDetails.status)
                         )}
                       >

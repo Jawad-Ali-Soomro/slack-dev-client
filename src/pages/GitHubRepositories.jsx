@@ -564,11 +564,11 @@ const GitHubRepositories = () => {
 
       {/* Custom Edit Modal */}
       {isEditDialogOpen && (
-        <div className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center z-50" onClick={() => setIsEditDialogOpen(false)}>
-          <div className="bg-whitedark:bg-[#111827] border rounded-[10px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+        <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50" onClick={() => setIsEditDialogOpen(false)}>
+          <div className="bg-white dark:bg-[#111827] border rounded-[10px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-xl ">Edit Repository</h2>
+                <h2 className="text-xl font-bold">Edit Repository</h2>
               
               </div>
               <Button 
@@ -651,7 +651,7 @@ const GitHubRepositories = () => {
                     <SelectItem key={friend._id} value={friend._id}>
                       <div className="flex items-center gap-2">
                         {friend.avatar ? (
-                          <img src={`http://localhost:4000${friend.avatar}`} alt={friend.username} className="w-5 h-5 icon rounded-full" />
+                          <img src={`http://localhost:4000${friend.avatar}`} alt={friend.username} className="w-5 h-5 rounded-full" />
                         ) : (
                           <div className="w-5 h-5 icon rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white  text-xs">
                             {friend.username?.charAt(0)?.toUpperCase() || 'U'}
@@ -674,7 +674,7 @@ const GitHubRepositories = () => {
                       }))
                     }}>
                       {contributor?.avatar ? (
-                        <img src={`http://localhost:4000${contributor.avatar}`} alt={contributor.username} className="w-4 h-4 icon rounded-full" />
+                        <img src={`http://localhost:4000${contributor.avatar}`} alt={contributor.username} className="w-4 h-4 rounded-full" />
                       ) : (
                         <div className="w-4 h-4 icon rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white  text-xs">
                           {contributor?.username?.charAt(0)?.toUpperCase() || 'U'}

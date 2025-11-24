@@ -134,7 +134,7 @@ const GitHubUserReposModal = ({ isOpen, onClose, onCreateRepository, existingRep
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white dark:bg-black rounded-[20px] border p-6 max-w-3xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col"
+        className="bg-white dark:bg-black rounded-[20px] border p-6 max-w-2xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
       
@@ -149,9 +149,9 @@ const GitHubUserReposModal = ({ isOpen, onClose, onCreateRepository, existingRep
               onKeyPress={(e) => e.key === 'Enter' && fetchUserRepos()}
             />
           </div>
-          <Button onClick={fetchUserRepos} disabled={loading || !username.trim()} className={'w-[200px]'}>
+          <Button onClick={fetchUserRepos} disabled={loading || !username.trim()} className={'w-[50px]'}>
             {loading ? <Loader className="h-4 w-4 icon animate-spin" /> : <Search className="h-4 w-4 icon" />}
-            {loading ? 'Fetching...' : 'Fetch Repos'}
+            {/* {loading ? 'Fetching...' : 'Fetch Repos'} */}
           </Button>
         </div>
 

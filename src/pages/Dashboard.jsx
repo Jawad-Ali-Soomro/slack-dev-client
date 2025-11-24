@@ -289,23 +289,6 @@ const Dashboard = () => {
     { name: "Blocked", value: stats.overdueTasks, color: "#EF4444" },
   ];
 
-  const priorityData = [
-    {
-      name: "Critical",
-      value: tasks.filter((task) => task.priority === "high").length,
-      color: "#EF4444",
-    },
-    {
-      name: "High Priority",
-      value: tasks.filter((task) => task.priority === "medium").length,
-      color: "#F59E0B",
-    },
-    {
-      name: "Low Priority",
-      value: tasks.filter((task) => task.priority === "low").length,
-      color: "#10B981",
-    },
-  ];
 
   // Weekly combined data (last 7 days)
   const getWeeklyData = () => {
@@ -350,23 +333,6 @@ const Dashboard = () => {
     { name: "Cancelled", value: stats.cancelledMeetings, color: "#EF4444" },
   ];
 
-  const meetingTypeData = [
-    {
-      name: "Remote",
-      value: meetings.filter((meeting) => meeting.type === "online").length,
-      color: "#3B82F6",
-    },
-    {
-      name: "in-person",
-      value: meetings.filter((meeting) => meeting.type === "in-person").length,
-      color: "#10B981",
-    },
-    {
-      name: "Hybrid",
-      value: meetings.filter((meeting) => meeting.type === "hybrid").length,
-      color: "#F59E0B",
-    },
-  ];
 
   // Project chart data
   const projectStatusData = [
@@ -384,25 +350,6 @@ const Dashboard = () => {
     },
   ];
 
-  // Project progress trend data
-  const projectProgressData = [
-    { week: 1, completionRate: 15, targetRate: 20 },
-    { week: 2, completionRate: 28, targetRate: 25 },
-    { week: 3, completionRate: 35, targetRate: 30 },
-    { week: 4, completionRate: 42, targetRate: 35 },
-    { week: 5, completionRate: 38, targetRate: 40 },
-    { week: 6, completionRate: 45, targetRate: 45 },
-    { week: 7, completionRate: 52, targetRate: 50 },
-    { week: 8, completionRate: 48, targetRate: 55 },
-    { week: 9, completionRate: 58, targetRate: 60 },
-    { week: 10, completionRate: 65, targetRate: 65 },
-    { week: 11, completionRate: 72, targetRate: 70 },
-    { week: 12, completionRate: 78, targetRate: 75 },
-    { week: 13, completionRate: 82, targetRate: 80 },
-    { week: 14, completionRate: 85, targetRate: 85 },
-    { week: 15, completionRate: 88, targetRate: 90 },
-    { week: 16, completionRate: 92, targetRate: 95 },
-  ];
 
   const projectPriorityData = [
     {
