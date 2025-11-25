@@ -58,7 +58,7 @@ const Indexing = () => {
   const navigate = useNavigate()
 
   return (
-    <div className="flex flex-col items-center justify-center relative overflow-hidden">
+    <div className="flex flex-col items-center justify-center relative overflow-hidden bg-background">
         {/* Floating Background Orbs */}
         <div className="floating-orb w-96 h-96 top-10 left-10 opacity-30"></div>
         <div className="floating-orb w-64 h-64 top-1/3 right-20 opacity-20" style={{animationDelay: '2s'}}></div>

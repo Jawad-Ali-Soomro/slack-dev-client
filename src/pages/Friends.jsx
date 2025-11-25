@@ -138,6 +138,7 @@ const Friends = () => {
     req.sender.id === user?.id && req.status === 'pending'
   )
 
+  console.log(activeTab)
 
   document.title = "Friends - Manage Your Friends"
   return (
@@ -199,15 +200,35 @@ const Friends = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-15">
-          <TabsList className="grid w-full grid-cols-3 h-15">
-            <TabsTrigger className={"h-13 cursor-pointer"} value="friends">Friends ({friends.length})</TabsTrigger>
-            <TabsTrigger className={"h-13 cursor-pointer"} value="received">
-              Received ({pendingReceivedRequests.length})
-            </TabsTrigger>
-            <TabsTrigger className={"h-13 cursor-pointer"} value="sent">
-              Sent ({pendingSentRequests.length})
-            </TabsTrigger>
-          </TabsList>
+        <TabsList className="grid w-full grid-cols-3 h-15">
+  <TabsTrigger
+    value="friends"
+    className={`h-13 cursor-pointer ${
+      activeTab === 'friends' ? 'bg-white text-black' : ''
+    }`}
+  >
+    Friends ({friends.length})
+  </TabsTrigger>
+
+  <TabsTrigger
+    value="received"
+    className={`h-13 cursor-pointer ${
+      activeTab === 'received' ? 'bg-white text-black' : ''
+    }`}
+  >
+    Received ({pendingReceivedRequests.length})
+  </TabsTrigger>
+
+  <TabsTrigger
+    value="sent"
+    className={`h-13 cursor-pointer ${
+      activeTab === 'sent' ? 'bg-white text-black' : ''
+    }`}
+  >
+    Sent ({pendingSentRequests.length})
+  </TabsTrigger>
+</TabsList>
+
 
           {/* Friends Tab */}
           <TabsContent  value="friends" className="mt-6">

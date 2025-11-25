@@ -33,11 +33,13 @@ const Header = () => {
      
       </div>
 
-        <div className="flex gap-2 w-[400px] justify-between items-center uppercase px-10 bg-white rounded-full border h-14 ">
+        <div className="md:flex hidden gap-2 w-[400px] justify-between items-center uppercase px-10 bg-white rounded-full border h-14 ">
       <Link className={getLinkClasses("/")} style={{fontWeight:" 700 !important"}} to="/">Home</Link>
             <Link className={getLinkClasses("/about")} style={{fontWeight:" 700 !important"}} to="/about">About</Link>
             <Link className={getLinkClasses("/contact")} style={{fontWeight:" 700 !important"}} to="/contact">Contact</Link>
       </div>
+          
+          
           <div className="flex items-center gap-2 md:gap-4">
           {/* Social Media Icons - Hidden on mobile */}
        

@@ -8,7 +8,8 @@ import {
   LogOut,
   KeyIcon,
   ChevronDown,
-  Dock
+  Dock,
+  Compass
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSidebar } from '../contexts/SidebarContext'
@@ -38,6 +39,11 @@ const Sidebar = () => {
       badgeCount: 0
     },
     {
+      title: 'Explore',
+      icon: Compass,
+      path: '/dashboard/explore',
+    },
+    {
       title: 'Tasks',
       icon: CheckSquare,
       path: '/dashboard/tasks',
@@ -49,18 +55,7 @@ const Sidebar = () => {
       path: '/dashboard/meetings',
       badgeCount: unreadCounts.meetings
     },
-    {
-      title: 'Flow',
-      icon: GoWorkflow,
-      path: '/dashboard/github',
-      hasDropdown: true,
-      dropdownItems: [
-        { title: 'Dashboard', icon: LayoutDashboard, path: '/dashboard/github' },
-        { title: 'Repositories', icon: RepoIcon, path: '/dashboard/github/repositories' },
-        { title: 'Pull Requests', icon: GitPullRequest, path: '/dashboard/github/pull-requests' },
-        { title: 'Issues', icon: AlertCircle, path: '/dashboard/github/issues' }
-      ]
-    },
+    
     {
       title: 'Projects',
       icon: IoFolderOpenOutline,
@@ -79,7 +74,7 @@ const Sidebar = () => {
       path: '/dashboard/friends',
       badgeCount: 0
     },
-    ...(user?.role === 'admin'
+    ...(user?.role === 'admin' || user?.role === 'superadmin'
       ? [
           {
             title: 'Admin',
@@ -135,10 +130,20 @@ const Sidebar = () => {
                     <>
                       <button
                         onClick={() => {
-                          if (item.title === 'Flow')
-                            setGithubDropdownOpen(!githubDropdownOpen)
-                          if (item.title === 'Admin')
-                            setAdminDropdownOpen(!adminDropdownOpen)
+                          if (item.title === 'Flow') {
+                            setGithubDropdownOpen((prev) => {
+                              const next = !prev
+                              if (next) setAdminDropdownOpen(false)
+                              return next
+                            })
+                          }
+                          if (item.title === 'Admin') {
+                            setAdminDropdownOpen((prev) => {
+                              const next = !prev
+                              if (next) setGithubDropdownOpen(false)
+                              return next
+                            })
+                          }
                         }}
                         className={`flex items-center px-5 gap-4 cursor-pointer justify-start relative w-[220px] h-[50px] rounded-[20px] transition-colors duration-200
                           ${active

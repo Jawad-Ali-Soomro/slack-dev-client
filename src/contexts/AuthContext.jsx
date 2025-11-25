@@ -123,6 +123,29 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  // Role checking utilities
+  const isSuperadmin = useMemo(() => {
+    return user?.role === 'superadmin'
+  }, [user])
+
+  const isAdmin = useMemo(() => {
+    return user?.role === 'admin' || user?.role === 'superadmin'
+  }, [user])
+
+  const isUser = useMemo(() => {
+    return user?.role === 'user' || !user?.role
+  }, [user])
+
+  const hasRole = useMemo(() => {
+    return (role) => {
+      if (!user) return false
+      if (role === 'superadmin') return user.role === 'superadmin'
+      if (role === 'admin') return user.role === 'admin' || user.role === 'superadmin'
+      if (role === 'user') return true // All authenticated users have user role
+      return false
+    }
+  }, [user])
+
   const value = useMemo(() => ({
     user,
     token,
@@ -131,8 +154,14 @@ export const AuthProvider = ({ children }) => {
     login,
     logout,
     forgotPassword,
-    verifyOTP
-  }), [user, token, isAuthenticated, loading])
+    verifyOTP,
+    // Role utilities
+    isSuperadmin,
+    isAdmin,
+    isUser,
+    hasRole,
+    userRole: user?.role || 'user'
+  }), [user, token, isAuthenticated, loading, isSuperadmin, isAdmin, isUser, hasRole])
 
   return (
     <AuthContext.Provider value={value}>

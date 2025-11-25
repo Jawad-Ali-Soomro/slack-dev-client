@@ -179,14 +179,14 @@ const DashboardHeader = () => {
          <Link to="/store" className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[20px]">
          <Store className='w-4 h-4 icon' />
          </Link> 
-         <ThemeToggle className="flex w-12 h-12 flex items-center justify-center border-none  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] dark:hover:text-white hover:text-black cursor-pointer rounded-[20px]" />
+         <ThemeToggle className="flex w-12 h-12 flex hidden md:block items-center justify-center border-none  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] dark:hover:text-white hover:text-black cursor-pointer rounded-[20px]" />
          
         </div>
             <NotificationDropdown />
 
             {/* User Info */}
             <div className="flex items-center gap-3 ">
-              <div className="text-right">
+              <div className="text-right hidden md:block">
                 <div className="text-sm font-medium text-gray-900 dark:text-white">
                   {user?.username || 'User'}
                 </div>
@@ -197,11 +197,11 @@ const DashboardHeader = () => {
                 onClick={handleOpenProfileModal}
                 className="relative group"
               >
-                <div className="w-10 h-10 p-1 overflow-hidden rounded-full border border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
+                <div className="w-12 h-12 p-1 overflow-hidden rounded-[20px] border border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
                   <img
                     {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
                     alt={user?.username || 'User'}
-                    className="w-full h-full object-cover rounded-full"
+                    className="w-full h-full rounded-[15px]"
                   />
                 </div>
               

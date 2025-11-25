@@ -962,15 +962,7 @@ const Projects = () => {
                               <Settings className="w-4 h-4 icon mr-2 icon" />
                               Edit Members
                             </DropdownMenuItem>
-                            <
-// @ts-ignore
-                            DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => {
-                              setSelectedProject(project)
-                              setShowLinksModal(true)
-                            }}>
-                              <Link className="w-4 h-4 icon mr-2 icon" />
-                              Manage Links
-                            </DropdownMenuItem>
+                           
                             <
 // @ts-ignore
                             DropdownMenuItem className="h-10 px-5 cursor-pointer text-red-600" 
@@ -1129,7 +1121,7 @@ const Projects = () => {
                         size="sm"
                         onClick={() => handlePageChange(pageNum)}
                         disabled={loading}
-                        className={`h-8 w-8 p-0 ${
+                        className={`h-12 w-12 p-0 ${
                           pagination.page === pageNum 
                             ? 'bg-gray-600 text-white hover:bg-gray-700' 
                             : 'hover:bg-gray-100 dark:hover:bg-gray-800'
@@ -1945,7 +1937,7 @@ const Projects = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 backdrop-blur-sm icon bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50"
             onClick={() => setShowProgressModal(false)}
           >
             <motion.div
@@ -1956,7 +1948,7 @@ const Projects = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl  text-gray-900 dark:text-white">
+                <h2 className="text-xl  text-gray-900 dark:text-white font-bold">
                   Update Progress
                 </h2>
                 <button
@@ -2012,7 +2004,7 @@ const Projects = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 backdrop-blur-sm icon bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50"
             onClick={() => setShowMembersModal(false)}
           >
             <motion.div
@@ -2024,7 +2016,7 @@ const Projects = () => {
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl  text-gray-900 dark:text-white">
+                  <h2 className="text-xl  text-gray-900 dark:text-white font-bold">
                     Manage Members - {selectedProject.name}
                   </h2>
                   <button
@@ -2138,7 +2130,7 @@ const Projects = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm  bg-opacity-50 flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 backdrop-blur-sm icon bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50"
             onClick={() => setShowLinksModal(false)}
           >
             <motion.div
@@ -2150,7 +2142,7 @@ const Projects = () => {
             >
               <div className="p-6">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl  text-gray-900 dark:text-white">
+                  <h2 className="text-xl  text-gray-900 dark:text-white font-bold">
                     Manage Links
                   </h2>
                   <button

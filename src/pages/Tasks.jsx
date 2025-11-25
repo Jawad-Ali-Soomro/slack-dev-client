@@ -803,7 +803,7 @@ const Tasks = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleViewTaskDetails(task)}
-                          className="p-2 text-gray-400 h-10 hover:text-black dark:hover:text-white"
+                          className="p-2 text-gray-400 h-10 w-10 hover:text-black dark:hover:text-white"
                           title="View task details"
                         >
                           <Eye className="w-4 h-4 icon" />
@@ -813,7 +813,7 @@ const Tasks = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleEditTask(task)}
-                            className="p-2 text-gray-400 h-10 hover:text-black dark:hover:text-white"
+                            className="p-2 text-gray-400 h-10 w-10 hover:text-black dark:hover:text-white"
                           >
                             <Edit className="w-4 h-4 icon" />
                           </Button>
@@ -823,7 +823,7 @@ const Tasks = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteTask(task.id)}
-                            className="p-2 text-gray-400 h-10 hover:text-red-600"
+                            className="p-2 text-gray-400 h-10 w-10 hover:text-red-600"
                           >
                             <Trash2 className="w-4 h-4 icon" />
                           </Button>
@@ -833,7 +833,7 @@ const Tasks = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="p-2 text-gray-400 h-10 hover:text-black dark:hover:text-white"
+                              className="p-2 text-gray-400 h-10 w-10 hover:text-black dark:hover:text-white"
                             >
                               <MoreVertical className="w-4 h-4 icon" />
                             </Button>

@@ -52,14 +52,11 @@ import meetingService from "../services/meetingService";
 import projectService from "../services/projectService";
 import { toast } from "sonner";
 import StatsCard from "../components/StatsCard";
-import { PiUsersDuotone } from "react-icons/pi";
-import { RiDashboard2Fill } from "react-icons/ri";
-import { BsDashCircle } from "react-icons/bs";
-
+import { useSidebar } from "../contexts/SidebarContext";
 const Dashboard = () => {
 
   document.title = "Dashboard"
-
+  const { isMobile } = useSidebar();
   const { user } = useAuth();
   const { permissions, loading: permissionsLoading } = usePermissions();
   const [stats, setStats] = useState({
@@ -351,23 +348,6 @@ const Dashboard = () => {
   ];
 
 
-  const projectPriorityData = [
-    {
-      name: "High",
-      value: projects.filter((project) => project.priority === "high").length,
-      color: "#EF4444",
-    },
-    {
-      name: "Medium",
-      value: projects.filter((project) => project.priority === "medium").length,
-      color: "#F59E0B",
-    },
-    {
-      name: "Low",
-      value: projects.filter((project) => project.priority === "low").length,
-      color: "#10B981",
-    },
-  ];
 
  
 
@@ -388,7 +368,7 @@ const Dashboard = () => {
       
           <div className="mb-16">
 
-                <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+                <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
                 <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
                 <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
                   <LayoutDashboard  size={15} />
@@ -402,7 +382,7 @@ const Dashboard = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-4"
+              className="grid grid-cols-1 md:grid-cols-4 gap-4"
             >
               <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-purple-200 dark:border-gray-700">
                 <div className="flex items-center space-x-3">
@@ -582,7 +562,7 @@ const Dashboard = () => {
                   </div>
                 </div>
               </div> */}
-              <div className=" rounded-[30px]">
+              <div className="rounded-[30px] hidden md:block">
                 <div className="flex items-center justify-end py-10 mb-6">
                 
                   <div className="flex items-center space-x-4">
@@ -722,7 +702,7 @@ const Dashboard = () => {
               className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 pt-8 border-t border-gray-200/50 dark:border-gray-700/50"
             >
               {/* Task Status Distribution */}
-              <div className="backdrop-blur-sm rounded-[30px] p-6 border-gray-200">
+              <div className="backdrop-blur-sm rounded-[30px] p-6 border-gray-300 dark:border-gray-700 border">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center space-x-3">
                     <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[30px]">
@@ -799,7 +779,7 @@ const Dashboard = () => {
               </div>
 
               {/* Meeting Status Distribution */}
-              <div className="rounded-[30px] p-6">
+              <div className="rounded-[30px] p-6 border-gray-300 dark:border-gray-700 border">
                 <div className="flex items-center justify-between mb-8">
                   <div className="flex items-center space-x-3">
                     <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[30px]">
@@ -889,7 +869,7 @@ const Dashboard = () => {
 
             {/* Project Status Distribution */}
             <div className="mt-10">
-              <div className="p-6 ">
+              <div className="p-6 border-gray-300 dark:border-gray-700 border rounded-[30px]">
               <div className="flex items-center justify-between mb-6">
                 <h4 className="text-lg  text-gray-800 dark:text-gray-200 font-bold">
                   Project Status Distribution
@@ -952,7 +932,7 @@ const Dashboard = () => {
 
             {/* Schedule Calendar */}
             <div className="mt-10">
-              <div className="rounded-[30px] p-6">
+              <div className="rounded-[30px] p-6 border-gray-300 dark:border-gray-700 border">
                 <div className="flex items-center justify-end mb-6">
                   {/* <div className="flex items-center space-x-3">
                     <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[30px]">
@@ -1014,7 +994,7 @@ const Dashboard = () => {
                 {/* Actions */}
                 <div className="mt-6 flex items-end justify-end">
                 
-                  <div className="flex gap-3 flex-col sn:flex-row">
+                  <div className="flex gap-3 flex-col sm:flex-row md:flex-col mt-2">
                     <button
                       onClick={() => {
                         if (!permissions.canCreateTask) {

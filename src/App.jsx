@@ -21,13 +21,8 @@ import Tasks from './pages/Tasks'
 import Meetings from './pages/Meetings'
 import Projects from './pages/Projects'
 import Chat from './pages/Chat'
-// import GitHubDashboard from './pages/GitHubDashboard'
-import GitHubRepositories from './pages/GitHubRepositories'
-import GitHubPullRequests from './pages/GitHubPullRequests'
-import GitHubIssues from './pages/GitHubIssues'
 import NotFound from './pages/NotFound'
 import { Toaster } from 'sonner'
-import GitHubDashboard from './pages/GitHubDashboard'
 import UserManagement from './pages/admin/UserManagement'
 import PermissionsManagement from './pages/admin/PermissionsManagement'
 
@@ -148,38 +143,9 @@ function App() {
             </ProtectedRoute>
           } 
         />
-        <Route 
-          path="/dashboard/github" 
-          element={
-            <ProtectedRoute requireAuth={true}>
-              <GitHubDashboard />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/dashboard/github/repositories" 
-          element={
-            <ProtectedRoute requireAuth={true}>
-              <GitHubRepositories />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/dashboard/github/pull-requests" 
-          element={
-            <ProtectedRoute requireAuth={true}>
-              <GitHubPullRequests />
-            </ProtectedRoute>
-          } 
-        />
-        <Route 
-          path="/dashboard/github/issues" 
-          element={
-            <ProtectedRoute requireAuth={true}>
-              <GitHubIssues />
-            </ProtectedRoute>
-          } 
-        />
+
+       
+       
         
         {/* Admin Routes - Require admin role */}
         <Route 

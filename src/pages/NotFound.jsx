@@ -38,7 +38,7 @@ const NotFound = () => {
         animate="visible"
       >
 
-        <img src="not.png" alt="" />
+        <img src="/not.png" alt="" />
         {/* 404 Number */}
     
 

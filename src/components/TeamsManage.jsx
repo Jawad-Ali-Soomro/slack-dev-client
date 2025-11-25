@@ -687,7 +687,7 @@ const TeamsManage = () => {
                         size="sm"
                         onClick={() => handlePageChange(pageNum)}
                         disabled={loading}
-                        className={`h-8 w-8 p-0 ${
+                        className={`h-12 w-12 p-0 ${
                           pagination.page === pageNum 
                             ? 'bg-gray-600 text-white hover:bg-gray-700' 
                             : 'hover:bg-gray-100 dark:hover:bg-gray-800'

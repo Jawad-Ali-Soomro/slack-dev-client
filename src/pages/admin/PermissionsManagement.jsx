@@ -31,7 +31,9 @@ import { toast } from 'sonner';
 import UserDetailsModal from '../../components/UserDetailsModal';
 
 const PermissionsManagement = () => {
-  const { user } = useAuth();
+  const { user, isAdmin, isSuperadmin } = useAuth();
+  const isTeamScopedAdmin = isAdmin && !isSuperadmin;
+  const canFilterByRole = isSuperadmin;
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -48,13 +50,13 @@ const PermissionsManagement = () => {
     canViewAllData: false
   });
 
-  // Check if user is admin
+  // Check if user is admin or superadmin
   useEffect(() => {
-    if (user?.role !== 'admin') {
-      toast.error('Access denied. Admin role required.');
+    if (!isAdmin && !isSuperadmin) {
+      toast.error('Access denied. Admin or Superadmin role required.');
       window.location.href = '/dashboard';
     }
-  }, [user]);
+  }, [isAdmin, isSuperadmin]);
 
   const loadUsers = async () => {
     try {
@@ -72,8 +74,10 @@ const PermissionsManagement = () => {
   };
 
   useEffect(() => {
-    loadUsers();
-  }, []);
+    if (isAdmin || isSuperadmin) {
+      loadUsers();
+    }
+  }, [isAdmin, isSuperadmin]);
 
   const handleUserAvatarClick = (userId) => {
     if (userId) {
@@ -186,7 +190,7 @@ const PermissionsManagement = () => {
   }
 
   return (
-    <div className="ambient-light pt-10">
+    <div className="ambient-light mt-10">
       <div className="mx-auto">
         {/* Header - no cards */}
         <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
@@ -206,6 +210,11 @@ const PermissionsManagement = () => {
           transition={{ delay: 0.2 }}
           className="mb-4"
         >
+          {isTeamScopedAdmin && (
+            <div className="bg-amber-50 border w-fit border-amber-200 text-amber-900 text-sm rounded-[12px] px-6 py-3 font-bold mb-2">
+              Admins can only view and manage permissions for members of teams they created. Contact a superadmin for full access.
+            </div>
+          )}
           <div className="flex flex-col md:flex-row gap-3">
             <div className="relative flex-1 max-w-[500px]">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 icon" />
@@ -216,8 +225,12 @@ const PermissionsManagement = () => {
                 className="pl-10 bg-white dark:bg-[#111827] text-black dark:text-white border border-gray-200 dark:border-gray-700 rounded-[10px] "
               />
             </div>
-            <Select value={roleFilter} onValueChange={setRoleFilter}>
-              <SelectTrigger className="w-44 h-12 px-5 bg-white dark:bg-[#111827] text-black dark:text-white rounded-[10px]">
+            <Select 
+              value={roleFilter} 
+              onValueChange={setRoleFilter}
+              disabled={!canFilterByRole}
+            >
+              <SelectTrigger className="w-44 h-12 px-5 bg-white dark:bg-[#111827] text-black dark:text-white rounded-[10px] disabled:opacity-60 disabled:cursor-not-allowed">
                 <SelectValue placeholder="Filter by role" />
               </SelectTrigger>
               <SelectContent>
@@ -293,8 +306,8 @@ const PermissionsManagement = () => {
                 <Edit className="w-4 h-4 icon icon" />
                         </Button>
                         {userItem.permissions && (
-                          <Button variant="outline" size="sm" clas onClick={() => handleDeletePermissions(userItem.id)} className="text-red-600 w-12 hover:text-red-700">
-                <X className="w-4 h-4 icon icon" />
+                          <Button variant="outline" size="sm" onClick={() => handleDeletePermissions(userItem.id)} className="text-red-600 w-12 hover:text-red-700">
+                            <X className="w-4 h-4 icon" />
                           </Button>
                         )}
                       </div>

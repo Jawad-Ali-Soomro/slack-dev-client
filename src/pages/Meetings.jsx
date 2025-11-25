@@ -926,7 +926,7 @@ const Meetings = () => {
                           variant="ghost"
                           size="sm"
                           onClick={() => handleViewMeetingDetails(meeting)}
-                          className="p-2 text-gray-400 hover:text-black dark:hover:text-white"
+                          className="p-2 text-gray-400 h-10 w-10 hover:text-black dark:hover:text-white"
                           title="View meeting details"
                         >
                           <Eye className="w-4 h-4 icon" />
@@ -936,7 +936,7 @@ const Meetings = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleEditMeeting(meeting)}
-                            className="p-2 text-gray-400 hover:text-black dark:hover:text-white"
+                            className="p-2 text-gray-400 h-10 w-10 hover:text-black dark:hover:text-white"
                           >
                             <Edit className="w-4 h-4 icon icon" />
                           </Button>
@@ -946,7 +946,7 @@ const Meetings = () => {
                             variant="ghost"
                             size="sm"
                             onClick={() => handleDeleteMeeting(meeting.id)}
-                            className="p-2 text-gray-400 hover:text-red-600"
+                            className="p-2 text-gray-400 h-10 w-10 hover:text-red-600"
                           >
                             <Trash2 className="w-4 h-4 icon icon" />
                           </Button>
@@ -956,7 +956,7 @@ const Meetings = () => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="p-2 text-gray-400 h-10 hover:text-black dark:hover:text-white"
+                              className="p-2 text-gray-400 h-10 w-10 hover:text-black dark:hover:text-white"
                             >
                               <MoreVertical className="w-4 h-4 icon icon" />
                             </Button>

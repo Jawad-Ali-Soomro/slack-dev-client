@@ -154,5 +154,16 @@ export const authService = {
     localStorage.removeItem('token')
     localStorage.removeItem('verificationEmail')
     window.location.href = '/login'
+  },
+
+  // Create user (Admin/Superadmin only)
+  createUser: async (userData) => {
+    try {
+      const response = await axiosInstance.post('/api/auth/register', userData)
+      return response.data
+    } catch (error) {
+      console.error('AuthService createUser error:', error)
+      throw new Error(error.response?.data?.message || 'Failed to create user')
+    }
   }
 }

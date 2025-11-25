@@ -167,7 +167,7 @@ const VerifyEmail = () => {
         {/* Verification Card */}
         <motion.div
           variants={itemVariants}
-          className="p-5 md:p-8 md:shadow-2xl md:border-gray-300 md:rounded-[10px] md:dark:border-gray-700 md:border"
+          className="p-5 md:p-8 md:shadow-2xl md:border-gray-300 md:rounded-[20px] md:dark:border-gray-700 md:border"
         >
           {/* Back Button */}
           <motion.div variants={itemVariants} className="mb-6">
@@ -176,7 +176,6 @@ const VerifyEmail = () => {
               className="flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors text-sm"
             >
               <ArrowLeft className="w-4 h-4 icon" />
-              Back to Login
             </Link>
           </motion.div>
 
@@ -222,7 +221,7 @@ const VerifyEmail = () => {
                   value={digit}
                   onChange={(e) => handleOtpChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-12 h-12 text-center text-xl  border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline-none focus:border-blue-500 dark:bg-[#111827] dark:text-white"
+                  className="w-20 h-20 text-center text-xl  border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline-none focus:border-blue-500 dark:bg-[#111827] dark:text-white"
                 />
               ))}
             </div>
@@ -231,7 +230,7 @@ const VerifyEmail = () => {
             <motion.button
               onClick={handleVerify}
               disabled={loading || otp.join('').length !== 4}
-                className="w-full py-3 bg-black dark:bg-white text-white dark:text-black rounded-[10px]  transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 bg-black dark:bg-white font-bold text-white dark:text-black rounded-[10px]  transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
