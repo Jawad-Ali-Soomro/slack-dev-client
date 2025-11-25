@@ -756,7 +756,7 @@ const Projects = () => {
         className="mx-auto"
     
       >
-         <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+         <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
           <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
         <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
                   <Folder  size={15} />
@@ -765,24 +765,25 @@ const Projects = () => {
                 </div>
       </div>
         {/* Header */}
-        <motion.div variants={itemVariants} className="flex items-center justify-between mb-6">
+        <motion.div variants={itemVariants} className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
           <div>
-          <motion.div variants={itemVariants} className="flex flex-wrap justify-start items-center gap-4 ">
-          <div className="">
-            <div className="relative">
+          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row gap-4 w-full">
+          <div className="w-full md:w-auto">
+            <div className="relative max-w-3xl">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon icon" />
               <Input
                 type="text"
                 placeholder="Search projects..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={getInputClasses('default', 'md', 'pl-10 w-[500px] h-13 bg-white dark:bg-[#111827] text-black dark:text-white')}
+                className={getInputClasses('default', 'md', 'pl-10 w-full md:w-[500px] w-full h-13 bg-white dark:bg-[#111827] text-black dark:text-white')}
               />
             </div>
           </div>
           
-          <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="w-40 px-5 cursor-pointer bg-white dark:bg-[#111827] text-black dark:text-white h-13">
+        <div className="flex gap-4 w-full">
+        <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="md:w-[180px] w-1/2 px-5 cursor-pointer bg-white dark:bg-[#111827] text-black dark:text-white h-13">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <
@@ -798,7 +799,7 @@ const Projects = () => {
           </Select>
           
           <Select value={filterPriority} onValueChange={setFilterPriority}>
-            <SelectTrigger className="w-40 bg-white px-5 cursor-pointer dark:bg-[#111827] text-black dark:text-white h-13">
+            <SelectTrigger className="md:w-[180px] w-1/2 bg-white px-5 cursor-pointer dark:bg-[#111827] text-black dark:text-white h-13">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <
@@ -811,6 +812,7 @@ const Projects = () => {
               <SelectItem className={'px-5 h-10 cursor-pointer'} value="urgent">Urgent</SelectItem>
             </SelectContent>
           </Select>
+        </div>
         </motion.div>
               </div>
           <div className="flex items-center gap-4">
@@ -825,7 +827,7 @@ const Projects = () => {
                 }
                 setShowNewProjectPopup(true);
               }}
-              className={'w-[200px] rounded-[10px] rounded-[10px] h-12 font-bold'}
+              className={'md:w-[200px] w-full rounded-[10px] rounded-[10px] h-12 font-bold'}
             >
               New Project
             </Button>
@@ -876,7 +878,7 @@ const Projects = () => {
                   setShowNewProjectPopup(true);
                 }}
                 disabled={!permissions.canCreateProject}
-                className={'w-[200px]'}
+                className={'md:w-[200px] w-full'}
               >
                 <Plus className="w-4 h-4 icon mr-2 icon" />
                 Create Project

@@ -522,7 +522,7 @@ const Tasks = () => {
         animate="visible"
       >
             {/* Header */}
-                <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+                <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
                 <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
                 <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
                   <CheckCircle  size={15} />
@@ -536,19 +536,19 @@ const Tasks = () => {
                 <div>
                 <motion.div variants={itemVariants}>
           <div className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1 max-w-3xl dark:bg-[#111827]">
+            <div className="relative max-w-3xl dark:bg-[#111827]">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 z-10 icon" />
               <Input
                 type="text"
                 placeholder="Search tasks..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={getInputClasses('default', 'md', 'w-full pl-10 w-[500px] pr-4 h-13 dark:bg-[#111827]')}
+                className={getInputClasses('default', 'md', 'w-full pl-10 md:w-[500px] pr-4 h-13 dark:bg-[#111827]')}
               />
             </div>
             <div className="flex gap-3">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-[180px] px-5 h-13 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
+                <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
                   <SelectValue   placeholder="All Status" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-[#111827] ">
@@ -560,7 +560,7 @@ const Tasks = () => {
                 </SelectContent>
               </Select>
               <Select value={filterPriority} onValueChange={setFilterPriority}>
-                <SelectTrigger className="w-[180px] px-5 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
+                <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
                   <SelectValue placeholder="All Priority" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-[#111827]">
@@ -579,7 +579,7 @@ const Tasks = () => {
               {selectedTasks.length > 0 && (
                 <motion.button
                   onClick={handleBulkDelete}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-[30px]  hover:bg-red-700 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-[30px] md:w-[200px] w-[400px] hover:bg-red-700 transition-colors"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
@@ -596,7 +596,7 @@ const Tasks = () => {
                   }
                   setShowNewTaskPopup(true);
                 }}
-                className={'w-[200px] rounded-[10px] h-12 font-bold'}
+                className={'md:w-[200px] w-full rounded-[10px] h-12 font-bold'}
               >
                 Schedule Task
               </Button>

@@ -280,7 +280,7 @@ const UserManagement = () => {
     <div className="ambient-light mt-10">
       <div className="mx-auto">
         {/* Header */}
-        <div className="flex py-6 gap-3 items-center justify-between fixed z-10 -top-3">
+        <div className="flex py-6 gap-3 items-center justify-between fixed z-10 md:-top-3 -top-30 z-10">
           <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
             <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
               <PiUsersDuotone size={15} />
@@ -311,32 +311,33 @@ const UserManagement = () => {
             </div>
           )}
           <div className="flex flex-col md:flex-row gap-3">
-            <div className="relative flex-1 max-w-[500px]">
+            <div className="relative flex-1 md:w-auto w-full">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 icon" />
               <Input
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-white dark:bg-[#111827] text-black dark:text-white border border-gray-200 dark:border-gray-700 rounded-[10px]"
+                className="pl-10 w-full md:w-[500px] bg-white dark:bg-[#111827] text-black dark:text-white border border-gray-200 dark:border-gray-700 rounded-[10px]"
               />
             </div>
+            <div className="flex gap-3 w-full">
             <Select 
               value={roleFilter} 
               onValueChange={setRoleFilter} 
               disabled={!isSuperadmin}
             >
-              <SelectTrigger className="w-44 h-12 px-5 bg-white dark:bg-[#111827] text-black dark:text-white rounded-[10px] disabled:opacity-60 disabled:cursor-not-allowed">
+              <SelectTrigger className="md:w-[180px] w-1/2 px-5 cursor-pointer bg-white dark:bg-[#111827] text-black dark:text-white h-13">
                 <SelectValue placeholder="Filter by role" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem className={'px-5 cursor-pointer h-10'} value="all">All Roles</SelectItem>
+                <SelectItem className={'h-10 px-5 cursor-pointer'} value="all">All Roles</SelectItem>
                 <SelectItem className={'px-5 cursor-pointer h-10'} value="user">User</SelectItem>
                 <SelectItem className={'px-5 cursor-pointer h-10'} value="admin">Admin</SelectItem>
                 <SelectItem className={'px-5 cursor-pointer h-10'} value="superadmin">Super Admin</SelectItem>
               </SelectContent>
             </Select>
             <Select value={permissionsFilter} onValueChange={setPermissionsFilter}>
-              <SelectTrigger className="w-44 h-12 bg-white dark:bg-[#111827] text-black dark:text-white rounded-[10px]">
+              <SelectTrigger className="md:w-[180px] w-1/2 bg-white px-5 cursor-pointer dark:bg-[#111827] text-black dark:text-white h-13">
                 <SelectValue placeholder="Filter by permissions" />
               </SelectTrigger>
               <SelectContent>
@@ -345,6 +346,7 @@ const UserManagement = () => {
                 <SelectItem className={'px-5 cursor-pointer h-10'} value="without_permissions">Without Permissions</SelectItem>
               </SelectContent>
             </Select>
+            </div>
           </div>
         </motion.div>
 
@@ -360,7 +362,7 @@ const UserManagement = () => {
                 <tr className="rounded-t-r-[10px]">
                   <th className="px-5 py-4 rounded-[10px] text-left text-xs text-black dark:text-black uppercase tracking-wider">User</th>
                   <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider">Role</th>
-                  <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider">Email Verification</th>
+                  <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider truncate">Email Verification</th>
                   <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider">Permissions</th>
                   <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider">Joined</th>
                   <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider"></th>
@@ -402,7 +404,7 @@ const UserManagement = () => {
                       <td className="px-5 py-2">
                         <div className="flex items-center gap-2">
                           <Shield className="w-4 h-4 icon text-gray-400" />
-                          <span className="text-sm text-gray-600 dark:text-gray-400">{getPermissionCount(userItem.permissions)} permissions</span>
+                          <span className="text-sm text-gray-600 dark:text-gray-400 truncate">{getPermissionCount(userItem.permissions)} Permissions</span>
                         </div>
                       </td>
                       <td className="px-5 py-2">

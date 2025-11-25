@@ -193,7 +193,7 @@ const PermissionsManagement = () => {
     <div className="ambient-light mt-10">
       <div className="mx-auto">
         {/* Header - no cards */}
-        <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+        <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
         <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
         <div className="flex p-3 bg-white  dark:bg-gray-800 rounded-full">
                   <Shield  size={15} />
@@ -215,31 +215,33 @@ const PermissionsManagement = () => {
               Admins can only view and manage permissions for members of teams they created. Contact a superadmin for full access.
             </div>
           )}
-          <div className="flex flex-col md:flex-row gap-3">
-            <div className="relative flex-1 max-w-[500px]">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 icon" />
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4 icon" />
               <Input
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 bg-white dark:bg-[#111827] text-black dark:text-white border border-gray-200 dark:border-gray-700 rounded-[10px] "
+                className="pl-10 pr-4 py-3 bg-white dark:bg-[#111827] text-black dark:text-white border border-gray-200 dark:border-gray-700 rounded-[10px]"
               />
             </div>
-            <Select 
-              value={roleFilter} 
-              onValueChange={setRoleFilter}
-              disabled={!canFilterByRole}
-            >
-              <SelectTrigger className="w-44 h-12 px-5 bg-white dark:bg-[#111827] text-black dark:text-white rounded-[10px] disabled:opacity-60 disabled:cursor-not-allowed">
-                <SelectValue placeholder="Filter by role" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem className={'px-5 cursor-pointer h-10'} value="all">All Roles</SelectItem>
-                <SelectItem className={'px-5 cursor-pointer h-10'} value="user">User</SelectItem>
-                <SelectItem className={'px-5 cursor-pointer h-10'} value="admin">Admin</SelectItem>
-                <SelectItem className={'px-5 cursor-pointer h-10'} value="superadmin">Super Admin</SelectItem>
-              </SelectContent>
-            </Select>
+            <div className="flex items-center w-full sm:w-auto">
+              <Select 
+                value={roleFilter} 
+                onValueChange={setRoleFilter}
+                disabled={!canFilterByRole}
+              >
+                <SelectTrigger className="md:w-44 w-full sm:w-44 h-12 px-5 bg-white dark:bg-[#111827] text-black dark:text-white rounded-[10px] disabled:opacity-60 disabled:cursor-not-allowed">
+                  <SelectValue placeholder="Filter by role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem className={'px-5 cursor-pointer h-10'} value="all">All Roles</SelectItem>
+                  <SelectItem className={'px-5 cursor-pointer h-10'} value="user">User</SelectItem>
+                  <SelectItem className={'px-5 cursor-pointer h-10'} value="admin">Admin</SelectItem>
+                  <SelectItem className={'px-5 cursor-pointer h-10'} value="superadmin">Super Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </motion.div>
 
@@ -293,7 +295,7 @@ const PermissionsManagement = () => {
                             {userItem.permissions.canViewAllData && (<Badge variant="outline" className="text-xs">All Data</Badge>)}
                           </>
                         ) : (
-                          <span className="text-sm text-gray-500 dark:text-gray-400">No permissions</span>
+                          <span className="text-sm text-gray-500 dark:text-gray-400 truncate">No permissions</span>
                         )}
                       </div>
                     </td>

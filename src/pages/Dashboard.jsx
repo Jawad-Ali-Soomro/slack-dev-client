@@ -752,7 +752,7 @@ const Dashboard = () => {
                   </PieChart>
                 </ResponsiveContainer>
 
-                <div className="grid grid-cols-2 gap-3 mt-6">
+                <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-6">
                   {statusData.map((item, index) => (
                     <motion.div
                       key={index}
@@ -829,7 +829,7 @@ const Dashboard = () => {
                   </PieChart>
                 </ResponsiveContainer>
 
-                <div className="grid grid-cols-2 gap-3 mt-6">
+                <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-6">
                   {meetingStatusData.map((item, index) => (
                     <motion.div
                       key={index}
@@ -903,7 +903,7 @@ const Dashboard = () => {
                   />
                 </PieChart>
               </ResponsiveContainer>
-              <div className="grid grid-cols-2 gap-3 mt-6">
+              <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-6">
                 {projectStatusData.map((item, index) => (
                   <motion.div
                     key={index}

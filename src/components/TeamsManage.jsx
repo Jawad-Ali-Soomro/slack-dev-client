@@ -439,7 +439,7 @@ const TeamsManage = () => {
   return (
     <div className="pt-10">
       {/* Header */}
-      <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+      <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
         <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
           <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
                   <PiUsersDuotone  size={15} />
@@ -447,47 +447,49 @@ const TeamsManage = () => {
                   <h1 className="text-2xl font-bold">Your Teams</h1>
                 </div>
                 </div>
-      <div className="flex items-center justify-between mb-6">
-        <div>
-        <div className="flex gap-4 justify-start items-center">
-        {/* <div className="bg-white dark:bg-black"> */}
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon icon" />
-            <Input
-              placeholder="Search teams..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-[500px] h-13 bg-white dark:bg-[#111827] text-black dark:text-white border border-gray-200 dark:border-gray-700"
-            />
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <div className="w-full">
+          <div className="flex flex-col sm:flex-row gap-4 w-full">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon icon" />
+              <Input
+                placeholder="Search teams..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-3 w-full md:w-[500px] h-13 bg-white dark:bg-[#111827] text-black dark:text-white border border-gray-200 dark:border-gray-700"
+              />
+            </div>
+            <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+              <Select value={filterStatus} onValueChange={setFilterStatus}>
+                <SelectTrigger className="md:w-[180px] w-full sm:w-[180px] px-5 cursor-pointer bg-white dark:bg-[#111827] text-black dark:text-white h-13">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem className={'h-10 px-5 cursor-pointer'} value="all">All Teams</SelectItem>
+                  <SelectItem className={'h-10 px-5 cursor-pointer'} value="active">Active</SelectItem>
+                  <SelectItem className={'h-10 px-5 cursor-pointer'} value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
-        {/* </div> */}
-        <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-48 bg-white px-5 cursor-pointer dark:bg-[#111827] text-black dark:text-white h-13">
-            <SelectValue placeholder="Filter by status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem className={'h-10 px-5 cursor-pointer'} value="all">All Teams</SelectItem>
-            <SelectItem className={'h-10 px-5 cursor-pointer'} value="active">Active</SelectItem>
-            <SelectItem className={'h-10 px-5 cursor-pointer'} value="inactive">Inactive</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
         </div>
-       
-       {
-        permissions.canCreateTeam &&  <Button
-        onClick={() => {
-          if (!permissions.canCreateTeam) {
-            toast.error('You do not have permission to create teams. Contact an admin.');
-            return;
+
+        <div className="flex items-center gap-3">
+          {
+            permissions.canCreateTeam &&  <Button
+            onClick={() => {
+              if (!permissions.canCreateTeam) {
+                toast.error('You do not have permission to create teams. Contact an admin.');
+                return;
+              }
+              setShowNewTeamModal(true);
+            }}
+            className={'md:w-[200px] w-full rounded-[10px] h-12 font-bold'}
+          >
+            New Team
+          </Button>
           }
-          setShowNewTeamModal(true);
-        }}
-        className={'w-[200px] rounded-[10px] h-12 font-bold'}
-      >
-        New Team
-      </Button>
-       }
+        </div>
       </div>
 
       {/* Filters */}
@@ -517,7 +519,7 @@ const TeamsManage = () => {
                 setShowNewTeamModal(true);
               }} 
               disabled={!permissions.canCreateTeam}
-              className={'w-[200px]'}
+              className={'md:w-[200px] w-full'}
             >
               <Plus className="w-4 h-4 icon mr-2 icon" />
               Create Team
@@ -687,7 +689,7 @@ const TeamsManage = () => {
                         size="sm"
                         onClick={() => handlePageChange(pageNum)}
                         disabled={loading}
-                        className={`h-12 w-12 p-0 ${
+                        className={`h-12 w-12 p-0 md:w-[120px] w-full ${
                           pagination.page === pageNum 
                             ? 'bg-gray-600 text-white hover:bg-gray-700' 
                             : 'hover:bg-gray-100 dark:hover:bg-gray-800'

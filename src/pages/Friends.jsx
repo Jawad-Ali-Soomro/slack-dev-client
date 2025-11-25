@@ -145,7 +145,7 @@ const Friends = () => {
     <div className="min-h-screen pt-10">
       <div className="mx-auto">
         {/* Header */}
-        <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+        <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
         <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
         <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
                   <PiUserDuotone  size={15} />
@@ -199,12 +199,14 @@ const Friends = () => {
         </div>
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full h-15">
-        <TabsList className="grid w-full grid-cols-3 h-15">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
+        <TabsList className="flex flex-col sm:flex-row w-full md:w-auto h-auto gap-3 bg-transparent p-0">
   <TabsTrigger
     value="friends"
-    className={`h-13 cursor-pointer ${
-      activeTab === 'friends' ? 'bg-white text-black' : ''
+    className={`min-h-[56px] cursor-pointer flex-1 w-full rounded-[12px] border px-6 py-3 text-sm font-semibold tracking-wide transition-all duration-200 ${
+      activeTab === 'friends'
+        ? 'bg-white text-black border-gray-200 shadow-md'
+        : 'bg-transparent text-gray-400 dark:text-gray-300 border-gray-200/30 dark:border-gray-700 hover:border-gray-400/60'
     }`}
   >
     Friends ({friends.length})
@@ -212,8 +214,10 @@ const Friends = () => {
 
   <TabsTrigger
     value="received"
-    className={`h-13 cursor-pointer ${
-      activeTab === 'received' ? 'bg-white text-black' : ''
+    className={`min-h-[56px] cursor-pointer flex-1 w-full rounded-[12px] border px-6 py-3 text-sm font-semibold tracking-wide transition-all duration-200 ${
+      activeTab === 'received'
+        ? 'bg-white text-black border-gray-200 shadow-md'
+        : 'bg-transparent text-gray-400 dark:text-gray-300 border-gray-200/30 dark:border-gray-700 hover:border-gray-400/60'
     }`}
   >
     Received ({pendingReceivedRequests.length})
@@ -221,8 +225,10 @@ const Friends = () => {
 
   <TabsTrigger
     value="sent"
-    className={`h-13 cursor-pointer ${
-      activeTab === 'sent' ? 'bg-white text-black' : ''
+    className={`min-h-[56px] cursor-pointer flex-1 w-full rounded-[12px] border px-6 py-3 text-sm font-semibold tracking-wide transition-all duration-200 ${
+      activeTab === 'sent'
+        ? 'bg-white text-black border-gray-200 shadow-md'
+        : 'bg-transparent text-gray-400 dark:text-gray-300 border-gray-200/30 dark:border-gray-700 hover:border-gray-400/60'
     }`}
   >
     Sent ({pendingSentRequests.length})

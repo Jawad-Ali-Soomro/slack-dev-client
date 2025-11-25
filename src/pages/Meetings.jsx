@@ -598,7 +598,7 @@ const Meetings = () => {
         animate="visible"
       >
         {/* Header */}
-          <div className="flex py-6 gap-3 items-center fixed z-10 -top-3 z-10">
+          <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
                     <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
                     <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
                   <Calendar  size={15} />
@@ -619,12 +619,12 @@ const Meetings = () => {
                 placeholder="Search meetings..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-[500px] pl-10 pr-4 py-3 border border-gray-200 h-13 dark:border-gray-700   bg-white dark:bg-[#111827] text-black dark:text-white"
+                className="md:w-[500px] w-full pl-10 pr-4 py-3 border border-gray-200 h-13 dark:border-gray-700   bg-white dark:bg-[#111827] text-black dark:text-white"
               />
             </div>
             <div className="flex gap-3">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="w-[180px] px-5 h-13 bg-white cursor-pointer dark:bg-[#111827] dark:text-white">
+                <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 bg-white cursor-pointer dark:bg-[#111827] dark:text-white">
                   <SelectValue placeholder="All Status" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-[#111827]  border-gray-200 dark:border-gray-700">
@@ -636,7 +636,7 @@ const Meetings = () => {
                 </SelectContent>
               </Select>
               <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger className="w-[180px] px-5 h-13 bg-white cursor-pointer dark:bg-[#111827] dark:text-white">
+                <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 bg-white cursor-pointer dark:bg-[#111827] dark:text-white">
                   <SelectValue placeholder="All Types" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-[#111827]  border-gray-200 dark:border-gray-700">
@@ -654,7 +654,7 @@ const Meetings = () => {
               {selectedMeetings.length > 0 && (
                 <motion.button
                   onClick={handleBulkDelete}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-[30px]  hover:bg-red-700 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-[30px] md:w-[200px] w-[400px] hover:bg-red-700 transition-colors"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
@@ -672,7 +672,7 @@ const Meetings = () => {
                   }
                   setShowNewMeetingPopup(true);
                 }}
-                className={'w-[200px] rounded-[10px] h-12 font-bold'}
+                className={'md:w-[200px] w-full rounded-[10px] h-12 font-bold'}
               >
                 Schedule Meeting
               </Button>
