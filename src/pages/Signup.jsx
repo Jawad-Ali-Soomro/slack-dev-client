@@ -104,14 +104,14 @@ const Signup = () => {
             </motion.div>
             <motion.h1 
               variants={itemVariants}
-              className="text-3xl  text-gray-900 dark:text-white mb-2"
+              className="text-2xl  text-gray-900 dark:text-white mb-2 font-black"
               style={{ fontWeight: 800 }}
             >
               Get On Board!
             </motion.h1>
             <motion.p 
               variants={itemVariants}
-              className="text-gray-600 dark:text-gray-300"
+              className="text-gray-600 dark:text-gray-300 text-sm font-black"
               style={{ fontWeight: 800 }}
             >
               Join thousands of devs!
@@ -125,9 +125,7 @@ const Signup = () => {
           <motion.form variants={itemVariants} onSubmit={handleSubmit} className="space-y-4">
             {/* Username Input */}
             <div>
-              <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
-                Your Full Name
-              </label>
+           
               <div className="relative">
                 <PiUserDuotone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon icon" />
                 <Input
@@ -135,7 +133,7 @@ const Signup = () => {
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
-                 className={'pl-10'}
+                 className="w-full pl-10 h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white"
                   placeholder="Enter your username"
                   required
                 />
@@ -144,9 +142,7 @@ const Signup = () => {
 
             {/* Email Input */}
             <div>
-              <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
-                Email Address
-              </label>
+            
               <div className="relative">
                 <Mail className="absolute icon left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
                 <Input
@@ -154,7 +150,7 @@ const Signup = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                 className={'pl-10'}
+                 className="w-full pl-10 h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white"
                   placeholder="Enter your email"
                   required
                 />
@@ -163,9 +159,7 @@ const Signup = () => {
 
             {/* Password Input */}
             <div>
-              <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
-                Password
-              </label>
+             
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 icon transform -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
                 <Input
@@ -174,7 +168,7 @@ const Signup = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   
-                  className={'pl-10'} 
+                  className="w-full pl-10 h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white"
                   placeholder="Create a password"
                   required
                 />

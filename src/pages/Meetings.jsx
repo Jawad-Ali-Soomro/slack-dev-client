@@ -613,7 +613,7 @@ const Meetings = () => {
             <motion.div variants={itemVariants}>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon z-50 icon" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon  icon" />
               <Input
                 type="text"
                 placeholder="Search meetings..."

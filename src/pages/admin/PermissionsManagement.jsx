@@ -215,14 +215,14 @@ const PermissionsManagement = () => {
               Admins can only view and manage permissions for members of teams they created. Contact a superadmin for full access.
             </div>
           )}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="relative flex-1">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4 icon" />
               <Input
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-3 bg-white dark:bg-[#111827] text-black dark:text-white border border-gray-200 dark:border-gray-700 rounded-[10px]"
+                className="pl-10 pr-4 py-3 bg-white dark:bg-[#111827] text-black dark:text-white border border-gray-200 dark:border-gray-700 w-full md:w-[500px] rounded-[10px]"
               />
             </div>
             <div className="flex items-center w-full sm:w-auto">

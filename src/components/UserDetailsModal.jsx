@@ -24,15 +24,15 @@ import {
 import { Button } from './ui/button'
 import { getAvatarProps } from '../utils/avatarUtils'
 import { userService } from '../services/userService'
-import postService from '../services/postService'
+import { exploreService } from '../services/exploreService'
 import { PiUserDuotone, PiUsersDuotone } from "react-icons/pi";
 
 const UserDetailsModal = ({ userId, isOpen, onClose }) => {
   const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(false)
   const [activeTab, setActiveTab] = useState('overview')
-  const [userPosts, setUserPosts] = useState([])
-  const [loadingPosts, setLoadingPosts] = useState(false)
+  const [publicProjects, setPublicProjects] = useState([])
+  const [loadingPublicProjects, setLoadingPublicProjects] = useState(false)
 
   useEffect(() => {
     if (isOpen && userId) {
@@ -41,8 +41,12 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
   }, [isOpen, userId])
 
   useEffect(() => {
-    if (activeTab === 'posts' && userId) {
-      loadUserPosts()
+    setPublicProjects([])
+  }, [userId])
+
+  useEffect(() => {
+    if (activeTab === 'projects' && userId) {
+      loadPublicProjects()
     }
   }, [activeTab, userId])
 
@@ -59,15 +63,34 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
     }
   }
 
-  const loadUserPosts = async () => {
+  useEffect(() => {
+    if (user) {
+      loadPublicProjects()
+    }
+  }, [user])
+
+  const loadPublicProjects = async () => {
     try {
-      setLoadingPosts(true)
-      const response = await postService.getUserPosts(userId, { limit: 10 })
-      setUserPosts(response.posts || [])
+      setLoadingPublicProjects(true)
+      // Get all public projects and filter to show only those created by this user
+      const response = await exploreService.getPublicProjects({ page: 1, limit: 100, createdBy: userId })
+      if (response.projects) {
+        // Filter to only show projects created by this user
+        const userPublicProjects = response.projects.filter(project => {
+          const projectCreatorId = project.createdBy?.id || project.createdBy?._id || project.createdBy
+          const currentUserId = userId?.toString() || userId
+          return projectCreatorId?.toString() === currentUserId?.toString()
+        })
+        setPublicProjects(userPublicProjects.map(project => ({
+          project,
+          type: 'created'
+        })))
+      }
     } catch (error) {
-      console.error('Failed to load user posts:', error)
+      console.error('Failed to load public projects:', error)
+      setPublicProjects([])
     } finally {
-      setLoadingPosts(false)
+      setLoadingPublicProjects(false)
     }
   }
 
@@ -334,7 +357,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                           </div>
                         </div>
                         <p className="text-3xl  text-blue-700 dark:text-blue-300 font-bold">
-                          {user.projects?.length || 0}
+                          {publicProjects?.length || 0}
                         </p>
                       </div>
                       <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20 p-6 rounded-[20px] border border-purple-200/50 dark:border-purple-700/50 hover:shadow-lg transition-shadow duration-200">
@@ -356,52 +379,114 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
 
               {activeTab === 'projects' && (
                 <div className="space-y-4">
-                  {user.projects && user.projects.length > 0 ? (
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {user.projects.map((project, index) => (
-                        <div key={index} className="bg-white dark:bg-black p-5 rounded-[20px] border border-gray-200/50 dark:border-gray-700/50 hover:shadow-lg transition-all duration-200 hover:border-blue-300 dark:hover:border-blue-600">
-                          <div className="flex items-start gap-4">
-                            {project.logo && (
-                              <div className="relative">
-                                <img
-                                  src={project.logo.startsWith('http') ? project.logo : `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${project.logo}`}
-                                  alt={project.name}
-                                  className="w-12 h-12 rounded-[20px] object-cover  border-gray-200 dark:border-gray-700 shadow-sm"
-                                />
-                                <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-[20px]"></div>
-                              </div>
-                            )}
-                            <div className="flex-1">
-                              <h4 className=" text-gray-900 dark:text-white text-lg mb-2 font-bold">{project.name}</h4>
-                              <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
-                                {project.description}
-                              </p>
-                              <div className="flex items-center gap-2 flex-wrap">
-                                <span className={`px-3 py-1 rounded-[20px] text-xs  shadow-sm ${
-                                  project.status === 'active' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300' :
-                                  project.status === 'completed' ? 'bg-green-600 text-white uppercase font-bold text-gray-800 dark:bg-black dark:text-gray-200' :
-                                  'bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-300'
-                                }`}>
-                                  {project.status}
-                                </span>
-                                <span className={`px-3 py-1 rounded-[20px] text-xs  shadow-sm uppercase font-bold bg-blue-600 text-white`}>
-                                  {project.role}
-                                </span>
-                                <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-[20px] uppercase font-bold">
-                                  {project.progress}% 
-                                </span>
+                  {loadingPublicProjects ? (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                    </div>
+                  ) : (() => {
+                    // Filter out team projects (projects with teamId) from user.projects
+                    const ownedProjects = (user.projects || []).filter(project => project.role === 'creator')
+                    
+                    // Combine owned projects and public projects
+                    const allProjects = [
+                      ...ownedProjects.map(project => ({
+                        ...project,
+                        type: 'owned',
+                        isPublic: false
+                      })),
+                      ...publicProjects.map(item => {
+                        const project = item.project || item
+                        return {
+                          id: project._id || project.id,
+                          name: project.title,
+                          description: project.description,
+                          logo: project.previewImages?.[0] || null,
+                          status: project.isActive ? 'active' : 'inactive',
+                          role: item.type === 'created' ? 'creator' : 'purchased',
+                          progress: 0,
+                          type: item.type,
+                          isPublic: true,
+                          price: project.price,
+                          category: project.category
+                        }
+                      })
+                    ]
+
+                    return allProjects.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {allProjects.map((project, index) => (
+                          <div key={project.id || index} className="bg-white dark:bg-black p-5 rounded-[20px] border border-gray-200/50 dark:border-gray-700/50 hover:shadow-lg transition-all duration-200 hover:border-blue-300 dark:hover:border-blue-600">
+                            <div className="flex items-start gap-4">
+                              {project.logo && (
+                                <div className="relative">
+                                  <img
+                                    src={project.logo.startsWith('http') 
+                                      ? project.logo 
+                                      : `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${project.logo}`}
+                                    alt={project.name}
+                                    className="w-12 h-12 rounded-[20px] object-cover border-gray-200 dark:border-gray-700 shadow-sm"
+                                  />
+                                  <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-[20px]"></div>
+                                </div>
+                              )}
+                              <div className="flex-1">
+                                <h4 className="text-gray-900 dark:text-white text-lg mb-2 font-bold">{project.name}</h4>
+                                <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2 mb-3">
+                                  {project.description}
+                                </p>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                  {project.isPublic ? (
+                                    <>
+                                      {project.price && (
+                                        <span className="px-3 py-1 rounded-[20px] text-xs shadow-sm bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300">
+                                          ${project.price}
+                                        </span>
+                                      )}
+                                      <span className={`px-3 py-1 rounded-[20px] text-xs shadow-sm uppercase font-bold ${
+                                        project.type === 'created' 
+                                          ? 'bg-blue-600 text-white' 
+                                          : 'bg-purple-600 text-white'
+                                      }`}>
+                                        {project.type === 'created' ? 'Created' : 'Purchased'}
+                                      </span>
+                                      {project.category && (
+                                        <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-[20px] uppercase font-bold">
+                                          {project.category}
+                                        </span>
+                                      )}
+                                    </>
+                                  ) : (
+                                    <>
+                                      <span className={`px-3 py-1 rounded-[20px] text-xs shadow-sm ${
+                                        project.status === 'active' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/20 dark:text-emerald-300' :
+                                        project.status === 'completed' ? 'bg-green-600 text-white uppercase font-bold text-gray-800 dark:bg-black dark:text-gray-200' :
+                                        'bg-amber-100 text-amber-800 dark:bg-amber-900/20 dark:text-amber-300'
+                                      }`}>
+                                        {project.status}
+                                      </span>
+                                      <span className={`px-3 py-1 rounded-[20px] text-xs shadow-sm uppercase font-bold bg-blue-600 text-white`}>
+                                        {project.role}
+                                      </span>
+                                      {project.progress !== undefined && (
+                                        <span className="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded-[20px] uppercase font-bold">
+                                          {project.progress}% 
+                                        </span>
+                                      )}
+                                    </>
+                                  )}
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-                      <Briefcase className="w-12 h-12 mx-auto mb-2 opacity-50" />
-                      <p>No projects found</p>
-                    </div>
-                  )}
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                        <Briefcase className="w-12 h-12 mx-auto mb-2 opacity-50" />
+                        <p>No projects found</p>
+                      </div>
+                    )
+                  })()}
                 </div>
               )}
 

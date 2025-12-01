@@ -84,7 +84,7 @@ const Indexing = () => {
               className="text-[32px] md:text-[56px] p-5 md:p-0 mt-8 font-extrabold tracking-tight text-gray-900 dark:text-white" 
               style={{ fontWeight: 900 }}
             >
-              <span className="text">Manage</span> Your <span className="text">Projects</span> Like A <span className="text" ref={el}></span> !
+              <span className="text">Manage</span> Your <span className="text">Projects</span> Like A <br /> <span className="text" ref={el}></span> !
             </motion.h1>
             
             <motion.p 

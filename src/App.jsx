@@ -25,6 +25,8 @@ import NotFound from './pages/NotFound'
 import { Toaster } from 'sonner'
 import UserManagement from './pages/admin/UserManagement'
 import PermissionsManagement from './pages/admin/PermissionsManagement'
+import MyBoughtProjects from './pages/MyBoughtProjects'
+import Explore from './pages/Explore'
 
 function App() {
   return (
@@ -114,10 +116,27 @@ function App() {
                   element={
                     <ProtectedRoute requireAuth={true}>
                       <Projects />
-                    </ProtectedRoute>
+                     </ProtectedRoute>
+                  } 
+                />
+
+<Route 
+                  path="/dashboard/my-bought-projects" 
+                  element={
+                    <ProtectedRoute requireAuth={true}>
+                      <MyBoughtProjects />
+                     </ProtectedRoute>
                   } 
                 />
              
+             <Route 
+                  path="/dashboard/explore" 
+                  element={
+                    <ProtectedRoute requireAuth={true}>
+                      <Explore />
+                     </ProtectedRoute>
+                  } 
+                />
               
         <Route 
           path="/dashboard/teams" 

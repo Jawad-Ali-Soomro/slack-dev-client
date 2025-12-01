@@ -80,12 +80,19 @@ export const AuthProvider = ({ children }) => {
   }
 
 
-  const logout = () => {
-    localStorage.removeItem('authToken')
-    localStorage.removeItem('userData')
-    setToken(null)
-    setUser(null)
-    setIsAuthenticated(false)
+  const logout = async () => {
+    try {
+      await authService.logout()
+    } catch (error) {
+      console.error('Logout failed, clearing local state anyway:', error)
+    } finally {
+      localStorage.removeItem('authToken')
+      localStorage.removeItem('userData')
+      setToken(null)
+      setUser(null)
+      setIsAuthenticated(false)
+      window.location.href = '/login'
+    }
   }
 
   const forgotPassword = async (email) => {

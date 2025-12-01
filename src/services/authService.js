@@ -150,10 +150,14 @@ export const authService = {
   },
 
   // Logout
-  logout: () => {
-    localStorage.removeItem('token')
-    localStorage.removeItem('verificationEmail')
-    window.location.href = '/login'
+  logout: async () => {
+    try {
+      const response = await axiosInstance.post('/api/auth/logout')
+      return response.data
+    } catch (error) {
+      console.error('Logout error:', error)
+      throw new Error(error.response?.data?.message || 'Logout failed')
+    }
   },
 
   // Create user (Admin/Superadmin only)

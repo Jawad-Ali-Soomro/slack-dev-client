@@ -9,7 +9,8 @@ import {
   KeyIcon,
   ChevronDown,
   Dock,
-  Compass
+  Compass,
+  Package
 } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { useSidebar } from '../contexts/SidebarContext'
@@ -26,7 +27,6 @@ const Sidebar = () => {
   const { isAuthenticated, logout, user } = useAuth()
   const { unreadCounts } = useNotifications()
   const location = useLocation()
-  const [githubDropdownOpen, setGithubDropdownOpen] = useState(false)
   const [adminDropdownOpen, setAdminDropdownOpen] = useState(false)
 
   const isActive = (path) => location.pathname === path
@@ -42,6 +42,11 @@ const Sidebar = () => {
       title: 'Explore',
       icon: Compass,
       path: '/dashboard/explore',
+    },
+    {
+      title: 'Purchased',
+      icon: Package,
+      path: '/dashboard/my-bought-projects',
     },
     {
       title: 'Tasks',
@@ -82,7 +87,7 @@ const Sidebar = () => {
             path: '/dashboard/admin',
             hasDropdown: true,
             dropdownItems: [
-              { title: 'Manage Team', icon: PiUsersDuotone, path: '/dashboard/admin/users' },
+              { title: 'Manage', icon: PiUsersDuotone, path: '/dashboard/admin/users' },
               { title: 'Permissions', icon: KeyIcon, path: '/dashboard/admin/permissions' }
             ]
           }
@@ -130,19 +135,8 @@ const Sidebar = () => {
                     <>
                       <button
                         onClick={() => {
-                          if (item.title === 'Flow') {
-                            setGithubDropdownOpen((prev) => {
-                              const next = !prev
-                              if (next) setAdminDropdownOpen(false)
-                              return next
-                            })
-                          }
                           if (item.title === 'Admin') {
-                            setAdminDropdownOpen((prev) => {
-                              const next = !prev
-                              if (next) setGithubDropdownOpen(false)
-                              return next
-                            })
+                            setAdminDropdownOpen((prev) => !prev)
                           }
                         }}
                         className={`flex items-center px-5 gap-4 cursor-pointer justify-start relative w-[220px] h-[50px] rounded-[20px] transition-colors duration-200
@@ -158,8 +152,7 @@ const Sidebar = () => {
                       </button>
 
                       <AnimatePresence>
-                        {((item.title === 'Flow' && githubDropdownOpen) ||
-                          (item.title === 'Admin' && adminDropdownOpen)) && (
+                        {(item.title === 'Admin' && adminDropdownOpen) && (
                           <motion.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}

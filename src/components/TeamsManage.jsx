@@ -450,7 +450,7 @@ const TeamsManage = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div className="w-full">
           <div className="flex flex-col sm:flex-row gap-4 w-full">
-            <div className="relative flex-1">
+            <div className="relative ">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon icon" />
               <Input
                 placeholder="Search teams..."
@@ -1025,21 +1025,7 @@ const TeamsManage = () => {
                 )}
               </div>
 
-              {isTeamOwner(selectedTeam) && (
-                <div className="flex gap-3 mt-6 pt-4 border-t border-gray-200 justify-end w-full dark:border-gray-700">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowTeamDetails(false)
-                    setShowMembersModal(true)
-                  }}
-                    className="w-1/3 hover:text-white  bg-black dark:bg-white text-white dark:text-black dark:text-black hover:bg-black dark:hover:bg-white border-none hover:border-none"
-                >
-                    <PiUsersDuotone className="w-4 h-4 icon mr-2 icon" />
-                    Edit Members
-                </Button>
-              </div>
-              )}
+            
             </div>
           </motion.div>
         </motion.div>

@@ -982,7 +982,7 @@ const Projects = () => {
 
                 {/* Status and Priority */}
                 <div className="flex gap-2 mb-4">
-                  <span className={`inline-flex items-center border gap-1 uppercase px-4 py-2 rounded-[10px] text-[10px] font-medium ${getStatusColor(project.status)}`}>
+                  <span className={`inline-flex items-center border gap-1 uppercase px-4 py-2 rounded-[10px] text-[10px] font-medium w-auto  ${getStatusColor(project.status)}`}>
                     {getStatusIcon(project.status)}
                     {project.status.replace('_', ' ')}
                   </span>
@@ -1589,7 +1589,7 @@ const Projects = () => {
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <span className={`inline-flex items-center gap-1 px-4 py-2 uppercase  rounded-[10px] text-xs font-medium ${getStatusColor(selectedProject.status)}`}>
+                        <span className={`inline-flex items-center gap-1 px-4 w-full py-2 uppercase  rounded-[10px] text-xs font-medium ${getStatusColor(selectedProject.status)}`}>
                           {getStatusIcon(selectedProject.status)}
                           {selectedProject.status}
                         </span>
@@ -1736,7 +1736,7 @@ const Projects = () => {
                 </div>
 
                 {/* Tasks and Meetings Section */}
-                <div className="mt-6 grid grid-cols-1 lg:grid-cols-1 gap-6">
+                <div className="mt-0 grid grid-cols-1 lg:grid-cols-1 gap-6">
                   {/* Tasks */}
                   <div>
                     <button
@@ -1878,56 +1878,7 @@ const Projects = () => {
                   </div>
                 </div>
 
-                {isProjectOwner(selectedProject) && (
-                  <div className="flex gap-3 mt-6 pt-4  icon border-gray-200 dark:border-gray-700">
-                    <
-// @ts-ignore
-                    Button
-                      onClick={() => {
-                        setProjectProgress(selectedProject.progress || 0)
-                        setShowProgressModal(true)
-                      }}
-                      className="flex-1 h-12 rounded-[10px]"
-                    >
-                      <TrendingUp className="w-4 h-4 icon mr-2" />
-                      Update Progress
-                    </Button>
-                    <
-// @ts-ignore
-                    Button
-                      variant="outline"
-                      onClick={() => {
-                        setShowMembersModal(true)
-                      }}
-                      className="flex-1 h-12 rounded-[10px]"
-                    >
-                      <PiUsersDuotone className="w-4 h-4 icon mr-2" />
-                      Edit Members
-                    </Button>
-                    <
-// @ts-ignore
-                    Button
-                      variant="outline"
-                      onClick={() => {
-                        setShowLinksModal(true)
-                      }}
-                      className="flex-1 h-12 rounded-[10px]"
-                    >
-                      <Link className="w-4 h-4 icon mr-2" />
-                      Manage Links
-                    </Button>
-                    <
-// @ts-ignore
-                    Button
-                      variant="outline"
-                      onClick={() => handleViewProject(selectedProject)}
-                      className="flex-1 h-12 rounded-[10px]"
-                    >
-                      <RefreshCw className="w-4 h-4 icon mr-2" />
-                      Refresh
-                    </Button>
-                  </div>
-                )}
+               
               </div>
             </motion.div>
           </motion.div>
