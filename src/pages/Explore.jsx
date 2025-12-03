@@ -493,7 +493,7 @@ const Explore = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-                className="bg-white dark:bg-gray-900 rounded-[32px] p-6 md:p-8 max-w-5xl w-full h-[65vh] flex flex-col shadow-2xl overflow-hidden"
+                className="bg-white dark:bg-gray-900 rounded-[32px] p-6 md:p-8 max-w-5xl w-full flex flex-col shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex-shrink-0 flex  gap-4 border-b border-gray-100 dark:border-gray-800 pb-2">

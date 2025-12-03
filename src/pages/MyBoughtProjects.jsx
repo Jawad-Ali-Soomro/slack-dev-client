@@ -320,7 +320,7 @@ const MyBoughtProjects = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-gray-900 rounded-[32px] p-6 md:p-8 max-w-5xl w-full h-[70vh] flex flex-col shadow-2xl overflow-hidden"
+            className="bg-white dark:bg-gray-900 rounded-[32px] p-6 md:p-8 max-w-5xl w-full flex flex-col shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}

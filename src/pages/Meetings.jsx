@@ -336,14 +336,35 @@ const Meetings = () => {
 
   const getTypeColor = (type) => {
     switch (type) {
-      case "online": return "text-white bg-gray-500 border border-gray-500 px-4 py-2 min-w-[80px]"
-      case "in-person": return "text-white bg-green-500 border border-green-500 px-4 py-2 min-w-[80px]"
-      case "hybrid": return "text-white bg-yellow-500 border border-yellow-500 px-4 py-2 min-w-[80px]"
-      default: return "text-white bg-yellow-500 border border-yellow-500 px-4 py-2 min-w-[80px]"
+      case "online": return "text-white bg-gray-500 border border-gray-500 px-2 py-2"
+      case "in-person": return "text-white bg-green-500 border border-green-500 px-2 py-2"
+      case "hybrid": return "text-white bg-yellow-500 border border-yellow-500 px-2 py-2"
+      default: return "text-white bg-yellow-500 border border-yellow-500 px-2 py-2"
     }
   }
 
-  const getStatusColor = (status) => {
+  // Check if meeting is overdue
+  const isMeetingOverdue = (meeting) => {
+    if (!meeting.endDate) return false
+    if (meeting.status === 'completed' || meeting.status === 'cancelled') return false
+    
+    const endDate = new Date(meeting.endDate)
+    const now = new Date()
+    return endDate < now
+  }
+
+  const getDisplayStatus = (meeting) => {
+    const overdue = isMeetingOverdue(meeting)
+    if (overdue) {
+      return "overdue"
+    }
+    return meeting.status
+  }
+
+  const getStatusColor = (status, isOverdue = false) => {
+    if (isOverdue) {
+      return "text-white bg-red-600 border border-red-600 px-4 py-2 min-w-[100px]"
+    }
     switch (status) {
       case "completed": return "text-white bg-green-500 border border-green-500 px-4 py-2 min-w-[100px]"
       case "pregress": return "text-white bg-gray-500 border border-gray-500 px-4 py-2 min-w-[100px]"
@@ -353,7 +374,10 @@ const Meetings = () => {
     }
   }
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (status, isOverdue = false) => {
+    if (isOverdue) {
+      return <AlertCircle className="w-4 h-4 icon icon" />
+    }
     switch (status) {
       case "completed": return <CheckCircle className="w-4 h-4 icon icon" />
       case "pregress": return <Clock className="w-4 h-4 icon icon" />
@@ -371,7 +395,10 @@ const Meetings = () => {
       .replace(/\b\w/g, (char) => char.toUpperCase())
   }
 
-  const getMeetingStatusBadgeStyles = (status) => {
+  const getMeetingStatusBadgeStyles = (status, isOverdue = false) => {
+    if (isOverdue) {
+      return 'bg-red-500/15 text-red-600 border border-red-400/40'
+    }
     switch (status) {
       case 'completed':
         return 'bg-emerald-500/15 text-emerald-600 border border-emerald-400/40'
@@ -381,6 +408,8 @@ const Meetings = () => {
       case 'in_progress':
         return 'bg-gray-500/15 text-gray-600 border border-gray-400/40'
       case 'cancelled':
+        return 'bg-red-500/15 text-red-600 border border-red-400/40'
+      case 'overdue':
         return 'bg-red-500/15 text-red-600 border border-red-400/40'
       default:
         return 'bg-gray-500/15 text-gray-600 border border-gray-400/40'
@@ -589,6 +618,62 @@ const Meetings = () => {
     window.open(meetingLink, '_blank')
   }
 
+  const handleScheduleZoomMeeting = async () => {
+    if (!newMeeting.title.trim()) {
+      toast.error("Please enter a meeting title first")
+      return
+    }
+
+    try {
+      setLoading(true)
+      
+      // Calculate duration in minutes
+      let duration = 60 // default 60 minutes
+      if (newMeeting.startDate && newMeeting.endDate) {
+        const start = new Date(newMeeting.startDate)
+        const end = new Date(newMeeting.endDate)
+        duration = Math.max(1, Math.round((end - start) / (1000 * 60)))
+      }
+
+      // Format start time (optional for Jitsi, but we'll include it if available)
+      let startTime
+      if (newMeeting.startDate) {
+        const date = new Date(newMeeting.startDate)
+        // If no time specified, default to 9 AM
+        if (date.getHours() === 0 && date.getMinutes() === 0) {
+          date.setHours(9, 0, 0, 0)
+        }
+        startTime = date.toISOString()
+      }
+
+      const meetingData = {
+        topic: newMeeting.title,
+        startTime: startTime,
+        duration: duration,
+        agenda: newMeeting.description || '',
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+      }
+
+      const response = await meetingService.createZoomMeeting(meetingData)
+      
+      if (response.meeting && response.meeting.joinUrl) {
+        setNewMeeting({
+          ...newMeeting,
+          meetingLink: response.meeting.joinUrl,
+          location: newMeeting.location || 'Video Meeting'
+        })
+        toast.success("Video meeting created successfully! Meeting link has been added.")
+      } else {
+        toast.error("Failed to get meeting link")
+      }
+    } catch (error) {
+      console.error('Error creating video meeting:', error)
+      toast.error(error.message || 'Failed to create video meeting.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
     <div className="overflow-hidden pt-10">
       <motion.div
@@ -697,14 +782,12 @@ const Meetings = () => {
                     Meeting
                   </th>
                   <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
-                    Type
+                    
                   </th>
                   <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
-                    Organizer
-                  </th>
+                 
                   <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
                     Participants
                   </th>
@@ -775,39 +858,49 @@ const Meetings = () => {
                         )} */}
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-2">
                       <span className={`inline-flex items-center rounded-[30px] uppercase text-xs  truncate ${getTypeColor(meeting.type)}`}>
-                        {meeting.type === 'online' && <Video className="w-4 h-4 icon mr-1 icon" />}
-                        {meeting.type === 'in-person' && <MapPin className="w-4 h-4 icon mr-1 icon" />}
-                        {meeting.type === 'hybrid' && <Calendar className="w-4 h-4 icon mr-1 icon" />}
-                        {meeting.type.replaceAll("-", " ")}
+                        {meeting.type === 'online' && <Video className="w-4 h-4 icon icon" />}
+                        {meeting.type === 'in-person' && <MapPin className="w-4 h-4 icon icon" />}
+                        {meeting.type === 'hybrid' && <Calendar className="w-4 h-4 icon icon" />}
+                        {/* {meeting.type.replaceAll("-", " ")} */}
                       </span>
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-2">
-                        <span className={`inline-flex items-center gap-1 rounded-[30px] text-xs  truncate uppercase ${getStatusColor(meeting.status)}`}>
-                          {getStatusIcon(meeting.status)}
-                          {meeting.status}
-                        </span>
+                        {(() => {
+                          const overdue = isMeetingOverdue(meeting)
+                          const displayStatus = getDisplayStatus(meeting)
+                          return (
+                            <span className={`inline-flex items-center gap-1 rounded-[30px] text-xs  truncate uppercase ${getStatusColor(meeting.status, overdue)}`}>
+                              {getStatusIcon(meeting.status, overdue)}
+                              {displayStatus}
+                            </span>
+                          )
+                        })()}
                         {/* Quick Status Update Buttons */}
-                        {meeting.status === 'scheduled' && (
-                          <div className="flex gap-1">
-                            <button
-                              onClick={() => handleStatusChangeWithConfirmation(meeting.id, 'completed', meeting.title)}
-                              className="p-1 rounded-full bg-green-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/40 transition-colors"
-                              title="Mark as Completed"
-                            >
-                              <CheckCircle className="w-4 h-4 icon text-green-600 dark:text-green-400" />
-                            </button>
-                            <button
-                              onClick={() => handleStatusChangeWithConfirmation(meeting.id, 'cancelled', meeting.title)}
-                              className="p-1 rounded-full bg-red-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/40 transition-colors"
-                              title="Cancel Meeting"
-                            >
-                              <AlertCircle className="w-4 h-4 icon text-red-600 dark:text-red-400" />
-                            </button>
-                          </div>
-                        )}
+                        {(() => {
+                          const overdue = isMeetingOverdue(meeting)
+                          const isScheduled = meeting.status === 'scheduled' || overdue
+                          return isScheduled && !overdue && (
+                            <div className="flex gap-1">
+                              <button
+                                onClick={() => handleStatusChangeWithConfirmation(meeting.id, 'completed', meeting.title)}
+                                className="p-1 rounded-full bg-green-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/40 transition-colors"
+                                title="Mark as Completed"
+                              >
+                                <CheckCircle className="w-4 h-4 icon text-green-600 dark:text-green-400" />
+                              </button>
+                              <button
+                                onClick={() => handleStatusChangeWithConfirmation(meeting.id, 'cancelled', meeting.title)}
+                                className="p-1 rounded-full bg-red-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/40 transition-colors"
+                                title="Cancel Meeting"
+                              >
+                                <AlertCircle className="w-4 h-4 icon text-red-600 dark:text-red-400" />
+                              </button>
+                            </div>
+                          )
+                        })()}
                         {meeting.status === 'completed' && (
                           <button
                             onClick={() => handleStatusChangeWithConfirmation(meeting.id, 'cancelled', meeting.title)}
@@ -826,24 +919,6 @@ const Meetings = () => {
                             <CheckCircle className="w-4 h-4 icon text-green-600 dark:text-green-400" />
                           </button>
                         )}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 w-[150px] rounded-[30px]">
-                      <div className="flex items-center gap-3">
-                        <img 
-                          {...getAvatarProps(
-                            meeting.assignedTo?.avatar, 
-                            meeting.assignedTo?.username
-                          )}
-                          alt={meeting.assignedTo?.username || "User"}
-                          className="w-8 h-8 rounded-[30px] object-cover  border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
-                          onClick={() => meeting.assignedTo?.id && handleUserAvatarClick(meeting.assignedTo.id)}
-                          title={meeting.assignedTo?.username ? `View ${meeting.assignedTo.username}'s profile` : ''}
-                        />
-                        <div>
-                         
-                        
-                        </div>
                       </div>
                     </td>
                     <td className="px-6 py-4 w-[180px] rounded-[30px]">
@@ -952,34 +1027,10 @@ const Meetings = () => {
                           </Button>
                         )}
                         <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="p-2 text-gray-400 h-10 w-10 hover:text-black dark:hover:text-white"
-                            >
-                              <MoreVertical className="w-4 h-4 icon icon" />
-                            </Button>
-                          </DropdownMenuTrigger>
+                        
                           <DropdownMenuContent align="end" className="bg-white dark:bg-[#111827]  border-gray-200 dark:border-gray-700">
-                            {user && user.id && meeting.assignedBy?.id === user.id && (
-                              <DropdownMenuItem 
-                                onClick={() => handleEditMeeting(meeting)}
-                                className="text-black h-12 px-5 cursor-pointer dark:text-white hover:bg-gray-100 dark:hover:bg-black"
-                              >
-                                <Edit className="w-4 h-4 icon mr-2 icon" />
-                                Edit Meeting
-                              </DropdownMenuItem>
-                            )}
-                            {user && user.id && meeting.assignedBy?.id === user.id && (
-                              <DropdownMenuItem 
-                                onClick={() => handleEditMeeting(meeting)}
-                                className="text-black dark:text-white h-12 px-5 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
-                              >
-                                <Calendar className="w-4 h-4 icon mr-2 icon" />
-                                Reschedule
-                              </DropdownMenuItem>
-                            )}
+                           
+                          
                             {/* Status Update Options */}
                             {meeting.status === 'scheduled' && (
                               <>
@@ -1195,13 +1246,31 @@ const Meetings = () => {
                   {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                     Meeting Link (Optional)
                   </label> */}
-                  <Input
-                    type="url"
-                    value={newMeeting.meetingLink}
-                    onChange={(e) => setNewMeeting({...newMeeting, meetingLink: e.target.value})}
-                    className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-[#111827] text-black dark:text-white"
-                    placeholder="Enter meeting link"
-                  />
+                  <div className="flex gap-2">
+                    <Input
+                      type="url"
+                      value={newMeeting.meetingLink}
+                      onChange={(e) => setNewMeeting({...newMeeting, meetingLink: e.target.value})}
+                      className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-[#111827] text-black dark:text-white"
+                      placeholder="Enter meeting link or create Zoom meeting"
+                    />
+                    <Button
+                      type="button"
+                      onClick={handleScheduleZoomMeeting}
+                      disabled={loading || !newMeeting.title}
+                      className={`${getButtonClasses('secondary', 'md', 'whitespace-nowrap')} disabled:opacity-50 disabled:cursor-not-allowed`}
+                      title={!newMeeting.title ? "Please enter a meeting title first" : "Create video meeting (Jitsi Meet)"}
+                    >
+                      {loading ? (
+                        <span className="loader w-4 h-4"></span>
+                      ) : (
+                        <>
+                          <Video className="w-4 h-4 icon mr-2 icon" />
+                          Schedule Video Meeting
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </div>
 
                 {/* Attendees Section */}
@@ -1258,7 +1327,7 @@ const Meetings = () => {
                         {newMeeting.attendees.map((attendee) => (
                           <div
                             key={attendee.id}
-                            className="flex items-center gap-2 bg-gray-100 dark:bg-gray-700 px-3 py-2 rounded-[30px]"
+                            className="flex items-center gap-2 bg-gray-100 dark:bg-black px-3 py-2 rounded-[30px]"
                           >
                             <img 
                               {...getAvatarProps(attendee.avatar, attendee.username || attendee.name)}
@@ -1358,7 +1427,7 @@ const Meetings = () => {
                   className={`${getButtonClasses('primary', 'md', 'flex-1')} disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   {loading ? (
-                    <span className="loader w-5 h-5 icon"></span>
+                    <span className="loader w-5 h-5"></span>
                   ) : (
                     'Schedule'
                   )}
@@ -1390,11 +1459,11 @@ const Meetings = () => {
                       <Badge
                         className={cn(
                           'inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm border',
-                          getMeetingStatusBadgeStyles(selectedMeetingDetails.status)
+                          getMeetingStatusBadgeStyles(selectedMeetingDetails.status, isMeetingOverdue(selectedMeetingDetails))
                         )}
                       >
-                        {getStatusIcon(selectedMeetingDetails.status)}
-                        <span className="capitalize">{formatLabel(selectedMeetingDetails.status)}</span>
+                        {getStatusIcon(selectedMeetingDetails.status, isMeetingOverdue(selectedMeetingDetails))}
+                        <span className="capitalize">{formatLabel(getDisplayStatus(selectedMeetingDetails))}</span>
                       </Badge>
                       <Badge
                         className={cn(
@@ -1466,7 +1535,7 @@ const Meetings = () => {
                       <div className="flex items-center gap-3">
                         <Video className="w-4 h-4 text-gray-400 icon" />
                         <div>
-                          {selectedMeetingDetails.meetingLink ? (
+                          {selectedMeetingDetails.meetingLink && !isMeetingOverdue(selectedMeetingDetails) ? (
                             <a
                               href={selectedMeetingDetails.meetingLink}
                               target="_blank"
@@ -1476,7 +1545,7 @@ const Meetings = () => {
                               Join Meeting
                             </a>
                           ) : (
-                            <p className="text-sm text-gray-900 dark:text-white">Not provided</p>
+                            <p className="text-sm text-gray-900 dark:text-white">{isMeetingOverdue(selectedMeetingDetails) ? 'Meeting Overdue' : 'Not provided'}</p>
                           )}
                         </div>
                       </div>
@@ -1522,7 +1591,7 @@ const Meetings = () => {
                     {selectedMeetingDetails.attendees && selectedMeetingDetails.attendees.length > 0 ? (
                       <div className="space-y-2">
                         {selectedMeetingDetails.attendees.slice(0, 6).map((attendee, index) => (
-                          <div key={index} className="flex items-center gap-3 p-3 bg-gray-100 dark:bg-[#111827] rounded-[20px]">
+                          <div key={index} className="flex items-center gap-3 p-3 bg-gray-100 dark:bg-gray-800 rounded-[20px]">
                             <img
                               {...getAvatarProps(attendee.avatar, attendee.username || attendee.name)}
                               alt={attendee.username || attendee.name || 'Attendee'}
@@ -1574,10 +1643,10 @@ const Meetings = () => {
                                   <Badge
                                     className={cn(
                                       'inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium border backdrop-blur-sm',
-                                      getMeetingStatusBadgeStyles(relatedMeeting.status)
+                                      getMeetingStatusBadgeStyles(relatedMeeting.status, isMeetingOverdue(relatedMeeting))
                                     )}
                                   >
-                                    {formatLabel(relatedMeeting.status)}
+                                    {formatLabel(getDisplayStatus(relatedMeeting))}
                                   </Badge>
                                   <ArrowRight className="w-4 h-4 text-gray-400 icon" />
                                 </div>

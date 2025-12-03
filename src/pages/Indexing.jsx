@@ -447,9 +447,13 @@ const Indexing = () => {
               transition={{ delay: 0.2, duration: 0.6 }}
               viewport={{ once: true }}
             >
-              <span className="font-black text-gray-500">
+              <span className="font-black text-gray-500" style={{
+                fontWeight: 800
+              }}>
 
-              Let's Get <span className="font-black text-black dark:text-white" ref={elLast}></span> !
+              Let's Get <span className="font-black text-black dark:text-white" style={{
+                fontWeight: 800
+              }} ref={elLast}></span> !
               </span>
             </motion.h2>
             <motion.p 

@@ -78,6 +78,16 @@ const meetingService = {
     } catch (error) {
       throw error.response?.data || error.message
     }
+  },
+
+  // Create Zoom meeting
+  createZoomMeeting: async (meetingData) => {
+    try {
+      const response = await axios.post('/api/meetings/zoom', meetingData)
+      return response.data
+    } catch (error) {
+      throw error.response?.data || error.message
+    }
   }
 }
 

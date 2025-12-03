@@ -1085,7 +1085,7 @@ const Tasks = () => {
             className="w-full sm:max-w-md md:max-w-lg p-0  border-none"
           >
             {selectedTaskDetails ? (
-              <div className="flex h-full bg-white flex-col">
+              <div className="flex h-full bg-white dark:bg-gray-900 flex-col">
                 <div className="relative overflow-hidden rounded-b-[32px]  text-black dark:text-white px-6 py-7">
                   <div className="absolute inset-0 opacity-20" />
                   <div className="relative flex flex-col gap-4">
