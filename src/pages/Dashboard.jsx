@@ -1,48 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import HorizontalLoader from "../components/HorizontalLoader";
 import { usePermissions } from "../hooks/usePermissions";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  LineChart,
-  Line,
-  Area,
-  AreaChart,
-  Legend,
-} from "recharts";
+import ReactECharts from "echarts-for-react";
 import {
   CheckCircle,
-  Clock,
-  AlertCircle,
-  TrendingUp,
-  Users,
-  Calendar,
   Target,
   Activity,
-  ArrowUp,
-  ArrowDown,
   Video,
-  MapPin,
-  XCircle,
-  Zap,
-  Star,
-  Award,
-  BarChart3,
-  PieChart as PieChartIcon,
-  RefreshCw,
-  Eye,
-  Filter,
-  MoreHorizontal,
   LayoutDashboard,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
@@ -52,13 +18,11 @@ import meetingService from "../services/meetingService";
 import projectService from "../services/projectService";
 import { toast } from "sonner";
 import StatsCard from "../components/StatsCard";
-import { useSidebar } from "../contexts/SidebarContext";
 const Dashboard = () => {
 
-  document.title = "Dashboard"
-  const { isMobile } = useSidebar();
+  document.title = "Dashboard";
   const { user } = useAuth();
-  const { permissions, loading: permissionsLoading } = usePermissions();
+  const { permissions } = usePermissions();
   const [stats, setStats] = useState({
     totalTasks: 0,
     completedTasks: 0,
@@ -279,12 +243,76 @@ const Dashboard = () => {
   }, [user]);
 
   // Chart data
-  const statusData = [
-    { name: "Deployed", value: stats.completedTasks, color: "#10B981",  },
+  const statusData = useMemo(() => [
+    { name: "Deployed", value: stats.completedTasks, color: "#10B981" },
     { name: "In Development", value: stats.inProgressTasks, color: "#3B82F6" },
     { name: "Backlog", value: stats.pendingTasks, color: "#F59E0B" },
     { name: "Blocked", value: stats.overdueTasks, color: "#EF4444" },
-  ];
+  ], [stats.completedTasks, stats.inProgressTasks, stats.pendingTasks, stats.overdueTasks]);
+
+  // Nightingale chart option for Task Status
+  const nightingaleOption = useMemo(() => {
+    const chartData = statusData.map((item) => ({
+      value: item.value || 0,
+      name: item.name,
+      itemStyle: {
+        color: item.color,
+      },
+      selected: item.name === "Deployed", // Highlight "Deployed"
+    }));
+
+    // Filter out items with zero values to avoid chart issues
+    const filteredData = chartData.filter(item => item.value > 0);
+
+    return {
+      tooltip: {
+        trigger: "item",
+        formatter: "{b}: {c} ({d}%)",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        borderColor: "transparent",
+        textStyle: {
+          color: "#fff",
+        },
+        borderRadius: 15,
+        padding: [10, 15],
+      },
+      legend: {
+        show: false,
+      },
+      series: [
+        {
+          name: "Task Status",
+          type: "pie",
+          radius: ["30%", "70%"],
+          center: ["50%", "50%"],
+          roseType: "area",
+          selectedMode: "single",
+          selectedOffset: 8,
+          itemStyle: {
+            borderRadius: 8,
+            borderColor: "#fff",
+            borderWidth: 2,
+          },
+          label: {
+            show: true,
+            formatter: "{b}\n{d}%",
+            fontSize: 12,
+            fontWeight: "bold",
+          },
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: "rgba(0, 0, 0, 0.5)",
+            },
+            scale: true,
+            scaleSize: 5,
+          },
+          data: filteredData.length > 0 ? filteredData : chartData,
+        },
+      ],
+    };
+  }, [statusData]);
 
 
   // Weekly combined data (last 7 days)
@@ -323,16 +351,78 @@ const Dashboard = () => {
   const weeklyData = getWeeklyData();
 
   // Meeting chart data
-  const meetingStatusData = [
+  const meetingStatusData = useMemo(() => [
     { name: "Scheduled", value: stats.scheduledMeetings, color: "#3B82F6" },
     { name: "Concluded", value: stats.completedMeetings, color: "#10B981" },
     { name: "Draft", value: stats.pendingMeetings, color: "#F59E0B" },
     { name: "Cancelled", value: stats.cancelledMeetings, color: "#EF4444" },
-  ];
+  ], [stats.scheduledMeetings, stats.completedMeetings, stats.pendingMeetings, stats.cancelledMeetings]);
 
+  // Meeting Status ECharts option
+  const meetingStatusOption = useMemo(() => {
+    const chartData = meetingStatusData.map((item) => ({
+      value: item.value || 0,
+      name: item.name,
+      itemStyle: {
+        color: item.color,
+      },
+      selected: item.name === "Scheduled", // Highlight "Scheduled"
+    }));
+
+    const filteredData = chartData.filter(item => item.value > 0);
+
+    return {
+      tooltip: {
+        trigger: "item",
+        formatter: "{b}: {c} ({d}%)",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        borderColor: "transparent",
+        textStyle: {
+          color: "#fff",
+        },
+        borderRadius: 15,
+        padding: [10, 15],
+      },
+      legend: {
+        show: false,
+      },
+      series: [
+        {
+          name: "Meeting Status",
+          type: "pie",
+          radius: ["40%", "70%"],
+          center: ["50%", "50%"],
+          avoidLabelOverlap: false,
+          selectedMode: "single",
+          selectedOffset: 8,
+          itemStyle: {
+            borderRadius: 8,
+            borderColor: "#fff",
+            borderWidth: 2,
+          },
+          label: {
+            show: true,
+            formatter: "{b}\n{d}%",
+            fontSize: 12,
+            fontWeight: "bold",
+          },
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: "rgba(0, 0, 0, 0.5)",
+            },
+            scale: true,
+            scaleSize: 5,
+          },
+          data: filteredData.length > 0 ? filteredData : chartData,
+        },
+      ],
+    };
+  }, [meetingStatusData]);
 
   // Project chart data
-  const projectStatusData = [
+  const projectStatusData = useMemo(() => [
     { name: "Active", value: stats.activeProjects, color: "#10B981" },
     {
       name: "Planning",
@@ -345,7 +435,177 @@ const Dashboard = () => {
       value: projects.filter((project) => project.status === "on_hold").length,
       color: "#F59E0B",
     },
-  ];
+  ], [stats.activeProjects, stats.completedProjects, projects]);
+
+  // Project Status ECharts option
+  const projectStatusOption = useMemo(() => {
+    const chartData = projectStatusData.map((item) => ({
+      value: item.value || 0,
+      name: item.name,
+      itemStyle: {
+        color: item.color,
+      },
+      selected: item.name === "Active", // Highlight "Active"
+    }));
+
+    const filteredData = chartData.filter(item => item.value > 0);
+
+    return {
+      tooltip: {
+        trigger: "item",
+        formatter: "{b}: {c} ({d}%)",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        borderColor: "transparent",
+        textStyle: {
+          color: "#fff",
+        },
+        borderRadius: 15,
+        padding: [10, 15],
+      },
+      legend: {
+        show: false,
+      },
+      series: [
+        {
+          name: "Project Status",
+          type: "pie",
+          radius: ["30%", "60%"],
+          center: ["50%", "50%"],
+          avoidLabelOverlap: false,
+          selectedMode: "single",
+          selectedOffset: 8,
+          itemStyle: {
+            borderRadius: 6,
+            borderColor: "#fff",
+            borderWidth: 2,
+          },
+          label: {
+            show: true,
+            formatter: "{b}\n{d}%",
+            fontSize: 11,
+            fontWeight: "bold",
+          },
+          emphasis: {
+            itemStyle: {
+              shadowBlur: 10,
+              shadowOffsetX: 0,
+              shadowColor: "rgba(0, 0, 0, 0.5)",
+            },
+            scale: true,
+            scaleSize: 5,
+          },
+          data: filteredData.length > 0 ? filteredData : chartData,
+        },
+      ],
+    };
+  }, [projectStatusData]);
+
+  // Weekly Activity ECharts option
+  const weeklyActivityOption = useMemo(() => {
+    return {
+      tooltip: {
+        trigger: "axis",
+        backgroundColor: "rgba(0, 0, 0, 0.8)",
+        borderColor: "transparent",
+        textStyle: {
+          color: "#fff",
+        },
+        borderRadius: 15,
+        padding: [10, 15],
+      },
+      legend: {
+        data: ["Tasks", "Meetings", "Projects"],
+        bottom: 0,
+        textStyle: {
+          color: "#9CA3AF",
+        },
+      },
+      grid: {
+        left: "3%",
+        right: "4%",
+        bottom: "15%",
+        containLabel: true,
+      },
+      xAxis: {
+        type: "category",
+        boundaryGap: false,
+        data: weeklyData.map((item) => item.day),
+        axisLine: {
+          lineStyle: {
+            color: "#9CA3AF",
+          },
+        },
+        axisLabel: {
+          color: "#9CA3AF",
+        },
+      },
+      yAxis: {
+        type: "value",
+        axisLine: {
+          lineStyle: {
+            color: "#9CA3AF",
+          },
+        },
+        axisLabel: {
+          color: "#9CA3AF",
+        },
+        splitLine: {
+          lineStyle: {
+            color: "#9CA3AF",
+            opacity: 0.3,
+            type: "dashed",
+          },
+        },
+      },
+      series: [
+        {
+          name: "Tasks",
+          type: "line",
+          data: weeklyData.map((item) => item.Task),
+          smooth: true,
+          lineStyle: {
+            width: 3,
+            color: "#3B82F6",
+          },
+          itemStyle: {
+            color: "#3B82F6",
+          },
+          symbol: "circle",
+          symbolSize: 6,
+        },
+        {
+          name: "Meetings",
+          type: "line",
+          data: weeklyData.map((item) => item.Meeting),
+          smooth: true,
+          lineStyle: {
+            width: 3,
+            color: "#10B981",
+          },
+          itemStyle: {
+            color: "#10B981",
+          },
+          symbol: "circle",
+          symbolSize: 6,
+        },
+        {
+          name: "Projects",
+          type: "line",
+          data: weeklyData.map((item) => item.Project),
+          smooth: true,
+          lineStyle: {
+            width: 3,
+            color: "#8B5CF6",
+          },
+          itemStyle: {
+            color: "#8B5CF6",
+          },
+          symbol: "circle",
+          symbolSize: 6,
+        },
+      ],
+    };
+  }, [weeklyData]);
 
 
 
@@ -486,42 +746,6 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <StatsCard
-              title="In Progress"
-              value={stats.inProgressTasks}
-              ={Clock}
-              color="purple"
-              subtitle="Being worked on"
-              delay={0.5}
-            />
-            <StatsCard
-              title="Scheduled"
-              value={stats.scheduledMeetings}
-              ={Calendar}
-              color="cyan"
-              subtitle="Upcoming meetings"
-              delay={0.6}
-            />
-            <StatsCard
-              title="Concluded"
-              value={stats.completedMeetings}
-              ={Award}
-              color="orange"
-              trend="up"
-              trendValue={stats.meetingCompletionRate}
-              subtitle="Successfully completed"
-              delay={0.7}
-            />
-            <StatsCard
-              title="Avg Progress"
-              value={`${stats.averageProgress}%`}
-              ={TrendingUp}
-              color="purple"
-              subtitle="Overall completion"
-              delay={0.8}
-            />
-          </div> */}
 
           {/* Analytics Dashboard */}
           <motion.div
@@ -539,29 +763,6 @@ const Dashboard = () => {
               transition={{ delay: 1.3 }}
               className="mt-10"
             >
-              {/* <div className="flex items-center justify-end mb-8">
-               
-                <div className="flex items-center space-x-6">
-                  <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4  bg-gradient-to-r from-blue-500 to-blue-600 rounded-[30px]"></div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Tasks
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4  bg-gradient-to-r from-purple-500 to-purple-600 rounded-[30px]"></div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Meetings
-                    </span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <div className="w-4 h-4  bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-[30px]"></div>
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Projects
-                    </span>
-                  </div>
-                </div>
-              </div> */}
               <div className="rounded-[30px] hidden md:block">
                 <div className="flex items-center justify-end py-10 mb-6">
                 
@@ -580,117 +781,15 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </div>
-                <ResponsiveContainer width="100%" height={400}>
-                  <LineChart data={weeklyData}>
-                    <CartesianGrid
-                      strokeDasharray="3 2"
-                      stroke="#9CA3AF"
-                      opacity={0.3}
-                    />
-                    <XAxis dataKey="day" stroke="#9CA3AF" />
-                    <YAxis stroke="#9CA3AF" />
-                    <Tooltip contentStyle={{
-                      border: "none",
-                      borderRadius: "15px",
-                      color: "black",
-                      padding: "10px 50px",
-                      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-                      // backdropFilter: "blur(10px)",
-                      fontWeight: 600,
-                      justifyContent: "space-between"
-                    }} />
-                    <Legend />
-
-                    {/* Tasks line */}
-                    <Line
-                      type="monotone"
-                      dataKey="Task"
-                      stroke="#3B82F6"
-                      strokeWidth={3}
-                      fontWeight={900}
-                      dot={{ r: 5, fill: "#3B82F6" }}
-                      style={{
-                        textTransform: ''
-                      }}
-                    />
-
-                    {/* Meetings line */}
-                    <Line
-                      type="monotone"
-                      dataKey="Meeting"
-                      stroke="#10B981"
-                      strokeWidth={3}
-                      dot={{ r: 5, fill: "#10B981" }}
-                    />
-
-                    {/* Projects line */}
-                    <Line
-                      type="monotone"
-                      dataKey="Project"
-                      stroke="#8B5CF6"
-                      strokeWidth={3}
-                      dot={{ r: 5, fill: "#8B5CF6" }}
-                    />
-
-                    {/* Gradient defs */}
-                    <defs>
-                      <linearGradient
-                        id="colorTasks"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop
-                          offset="5%"
-                          stopColor="#6B7280"
-                          stopOpacity={0.9}
-                        />
-                        <stop
-                          offset="95%"
-                          stopColor="#6B7280"
-                          stopOpacity={0.3}
-                        />
-                      </linearGradient>
-                      <linearGradient
-                        id="colorMeetings"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop
-                          offset="5%"
-                          stopColor="#4B5563"
-                          stopOpacity={0.9}
-                        />
-                        <stop
-                          offset="95%"
-                          stopColor="#4B5563"
-                          stopOpacity={0.3}
-                        />
-                      </linearGradient>
-                      <linearGradient
-                        id="colorProjects"
-                        x1="0"
-                        y1="0"
-                        x2="0"
-                        y2="1"
-                      >
-                        <stop
-                          offset="5%"
-                          stopColor="#374151"
-                          stopOpacity={0.9}
-                        />
-                        <stop
-                          offset="95%"
-                          stopColor="#374151"
-                          stopOpacity={0.3}
-                        />
-                      </linearGradient>
-                    </defs>
-                  </LineChart>
-                </ResponsiveContainer>
+                <div style={{ width: "100%", height: "400px" }}>
+                  <ReactECharts
+                    option={weeklyActivityOption}
+                    style={{ height: "100%", width: "100%" }}
+                    opts={{ renderer: "svg" }}
+                    notMerge={true}
+                    lazyUpdate={true}
+                  />
+                </div>
               </div>
             </motion.div>
 
@@ -726,31 +825,21 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </div>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={statusData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={120}
-                      paddingAngle={8}
-                      dataKey="value"
-                    >
-                      {statusData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{
-                        border: "none",
-                        borderRadius: "15px",
-                        color: "white",
-                        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-                      }}
+                <div style={{ width: "100%", height: "300px" }}>
+                  {statusData.some(item => item.value > 0) ? (
+                    <ReactECharts
+                      option={nightingaleOption}
+                      style={{ height: "100%", width: "100%" }}
+                      opts={{ renderer: "svg" }}
+                      notMerge={true}
+                      lazyUpdate={true}
                     />
-                  </PieChart>
-                </ResponsiveContainer>
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
+                      <p>No task data available</p>
+                    </div>
+                  )}
+                </div>
 
                 <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-6">
                   {statusData.map((item, index) => (
@@ -803,31 +892,21 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </div>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={meetingStatusData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={60}
-                      outerRadius={120}
-                      paddingAngle={8}
-                      dataKey="value"
-                    >
-                      {meetingStatusData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip
-                      contentStyle={{
-                        border: "none",
-                        borderRadius: "15px",
-                        color: "white",
-                        boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-                      }}
+                <div style={{ width: "100%", height: "300px" }}>
+                  {meetingStatusData.some(item => item.value > 0) ? (
+                    <ReactECharts
+                      option={meetingStatusOption}
+                      style={{ height: "100%", width: "100%" }}
+                      opts={{ renderer: "svg" }}
+                      notMerge={true}
+                      lazyUpdate={true}
                     />
-                  </PieChart>
-                </ResponsiveContainer>
+                  ) : (
+                    <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
+                      <p>No meeting data available</p>
+                    </div>
+                  )}
+                </div>
 
                 <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-6">
                   {meetingStatusData.map((item, index) => (
@@ -864,9 +943,6 @@ const Dashboard = () => {
             transition={{ delay: 1.7, duration: 0.6 }}
             className="mb-20 grid grid-cols-1 lg:grid-cols-2 gap-8"
           >
-            {/* Project Chart Header */}
-            
-
             {/* Project Status Distribution */}
             <div className="mt-10">
               <div className="p-6 border-gray-300 dark:border-gray-700 border rounded-[30px]">
@@ -878,31 +954,21 @@ const Dashboard = () => {
                   {stats.totalProjects} Total Projects
                 </div>
               </div>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={projectStatusData}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={50}
-                    outerRadius={100}
-                    paddingAngle={5}
-                    dataKey="value"
-                  >
-                    {projectStatusData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip
-                    contentStyle={{
-                      border: "none",
-                      borderRadius: "15px",
-                      color: "white",
-                      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)",
-                    }}
+              <div style={{ width: "100%", height: "300px" }}>
+                {projectStatusData.some(item => item.value > 0) ? (
+                  <ReactECharts
+                    option={projectStatusOption}
+                    style={{ height: "100%", width: "100%" }}
+                    opts={{ renderer: "svg" }}
+                    notMerge={true}
+                    lazyUpdate={true}
                   />
-                </PieChart>
-              </ResponsiveContainer>
+                ) : (
+                  <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
+                    <p>No project data available</p>
+                  </div>
+                )}
+              </div>
               <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-6">
                 {projectStatusData.map((item, index) => (
                   <motion.div
@@ -934,15 +1000,6 @@ const Dashboard = () => {
             <div className="mt-10">
               <div className="rounded-[30px] p-6 border-gray-300 dark:border-gray-700 border">
                 <div className="flex items-center justify-end mb-6">
-                  {/* <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[30px]">
-                      <Calendar className="w-5 h-5  text-white dark:text-gray-800" />
-                    </div>
-                    <div>
-                      <h4 className="text-lg  text-gray-800 dark:text-gray-200">Schedule</h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400">Plan tasks or meetings</p>
-                    </div>
-                  </div> */}
                   <div className="flex items-center gap-2">
                     <button
                       onClick={() => setCalendarMonth(addMonths(calendarMonth, -1))}
@@ -1025,13 +1082,8 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-        </motion.div>
-
-        {/* Recent Activity Feed */}
-
-        
-      <motion.div />
-      </div>
+          </motion.div>
+        </div>
 
       {/* User Details Modal */}
       <UserDetailsModal

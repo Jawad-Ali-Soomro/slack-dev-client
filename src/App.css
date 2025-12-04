@@ -1,13 +1,17 @@
 * {
-    /* font-family: "Alan Sans", sans-serif; */
-    font-family: "Syne", sans-serif;
-    /* font-family: " Bricolage Grotesque", sans-serif; */
-    font-weight: 700;
-    /* border-radius: 20px !important; */
+    font-family: "Alan Sans", sans-serif;
+    /* font-family: "Syne", sans-serif; */
 }
 
-Button {
-  border-radius: 20px;
+
+
+.syne {
+    font-family: "Syne", sans-serif;
+}
+
+
+Button, img  {
+  border-radius: 30px;
 }
 
 Input {

@@ -461,7 +461,7 @@ const TeamsManage = () => {
             </div>
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="md:w-[180px] w-full sm:w-[180px] px-5 cursor-pointer bg-white dark:bg-[#111827] text-black dark:text-white h-13">
+                <SelectTrigger className="md:w-[180px] w-full sm:w-[180px] px-5 cursor-pointer bg-white dark:bg-[#111827] h-13">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>

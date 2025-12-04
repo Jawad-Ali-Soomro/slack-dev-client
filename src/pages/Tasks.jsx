@@ -610,8 +610,8 @@ const Tasks = () => {
       
 
         {/* Tasks Table */}
-        <motion.div variants={itemVariants} className="bg-white dark:bg-transparent rounded-[10px] shadow-xl overflow-hidden">
-          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+        <motion.div variants={itemVariants} className="bg-white dark:bg-transparent rounded-[20px] shadow-xl overflow-hidden">
+          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 rounded-[20px]">
             <table className="w-full">
               <thead className="bg-white dark:bg-white dark:text-black text-black border-b dark:border-gray-700 sticky top-0 z-10">
                 <tr>

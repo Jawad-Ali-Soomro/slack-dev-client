@@ -1,4 +1,4 @@
-import { Menu, Github, Linkedin, Instagram, LogIn } from "lucide-react"
+import { Menu, Github, Linkedin, Instagram, LogIn, Home, Info, Phone } from "lucide-react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
 import { useSidebar } from "../contexts/SidebarContext"
 import { useAuth } from "../contexts/AuthContext"
@@ -33,11 +33,7 @@ const Header = () => {
      
       </div>
 
-        <div className="md:flex hidden gap-2 w-[400px] justify-between items-center uppercase px-10 bg-white rounded-full border h-14 ">
-      <Link className={getLinkClasses("/")} style={{fontWeight:" 700 !important"}} to="/">Home</Link>
-            <Link className={getLinkClasses("/about")} style={{fontWeight:" 700 !important"}} to="/about">About</Link>
-            <Link className={getLinkClasses("/contact")} style={{fontWeight:" 700 !important"}} to="/contact">Contact</Link>
-      </div>
+     
           
           
           <div className="flex items-center gap-2 md:gap-4">
@@ -52,6 +48,7 @@ const Header = () => {
               borderRadius: '25px'
             }}
           >
+            
             <RiLoginCircleLine className="w-5 h-5 icon icon" />
           </button>
         </div>

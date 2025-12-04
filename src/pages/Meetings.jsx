@@ -772,9 +772,9 @@ const Meetings = () => {
     
 
         {/* Meetings Table */}
-        <motion.div variants={itemVariants} className="bg-white dark:bg-[#111827] rounded-[10px] shadow-xl overflow-hidden">
+        <motion.div variants={itemVariants} className="bg-white dark:bg-[#111827] rounded-[20px] shadow-xl overflow-hidden">
           <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-            <table className="w-full">
+            <table className="w-full rounded-[30px]">
               <thead className="bg-white rounded-[20px] text-black border-gray-200 dark:border-gray-700 sticky top-0 z-10">
                 <tr>
                      

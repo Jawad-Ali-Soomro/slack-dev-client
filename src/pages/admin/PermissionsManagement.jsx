@@ -231,7 +231,7 @@ const PermissionsManagement = () => {
                 onValueChange={setRoleFilter}
                 disabled={!canFilterByRole}
               >
-                <SelectTrigger className="md:w-44 w-full sm:w-44 h-12 px-5 bg-white dark:bg-[#111827] text-black dark:text-white rounded-[10px] disabled:opacity-60 disabled:cursor-not-allowed">
+                <SelectTrigger className="md:w-44 w-full sm:w-44 h-12 px-5 bg-white dark:bg-[#111827] rounded-[10px] disabled:opacity-60 disabled:cursor-not-allowed">
                   <SelectValue placeholder="Filter by role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -251,7 +251,7 @@ const PermissionsManagement = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="overflow-x-auto max-h-[600px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+          <div className="overflow-x-auto max-h-[600px] overflow-y-auto rounded-[20px] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full rounded-[10px] overflow-hidden">
               <thead className="bg-white text-black dark:border-gray-700 sticky top-0 z-10">
                 <tr>

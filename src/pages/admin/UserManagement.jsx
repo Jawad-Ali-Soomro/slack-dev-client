@@ -326,7 +326,7 @@ const UserManagement = () => {
               onValueChange={setRoleFilter} 
               disabled={!isSuperadmin}
             >
-              <SelectTrigger className="md:w-[180px] w-1/2 px-5 cursor-pointer bg-white dark:bg-[#111827] text-black dark:text-white h-13">
+              <SelectTrigger className="md:w-[180px] w-1/2 px-5 cursor-pointer bg-white dark:bg-[#111827] h-13">
                 <SelectValue placeholder="Filter by role" />
               </SelectTrigger>
               <SelectContent>
@@ -337,7 +337,7 @@ const UserManagement = () => {
               </SelectContent>
             </Select>
             <Select value={permissionsFilter} onValueChange={setPermissionsFilter}>
-              <SelectTrigger className="md:w-[180px] w-1/2 bg-white px-5 cursor-pointer dark:bg-[#111827] text-black dark:text-white h-13">
+              <SelectTrigger className="md:w-[180px] w-1/2 bg-white px-5 cursor-pointer dark:bg-[#111827] h-13">
                 <SelectValue placeholder="Filter by permissions" />
               </SelectTrigger>
               <SelectContent>
@@ -356,7 +356,7 @@ const UserManagement = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+          <div className="overflow-x-auto max-h-[700px] overflow-y-auto rounded-[20px] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full rounded-[10px] overflow-hidden">
               <thead className="bg-white text-black rounded-[10px] dark:border-gray-700 sticky top-0 z-10">
                 <tr className="rounded-t-r-[10px]">

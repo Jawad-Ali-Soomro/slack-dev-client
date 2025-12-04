@@ -27,6 +27,7 @@ import UserManagement from './pages/admin/UserManagement'
 import PermissionsManagement from './pages/admin/PermissionsManagement'
 import MyBoughtProjects from './pages/MyBoughtProjects'
 import Explore from './pages/Explore'
+import LearnPoint from './pages/LearnPoint'
 
 function App() {
   return (
@@ -159,6 +160,14 @@ function App() {
           element={
             <ProtectedRoute requireAuth={true}>
               <Chat />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/learn-point" 
+          element={
+            <ProtectedRoute requireAuth={true}>
+              <LearnPoint />
             </ProtectedRoute>
           } 
         />

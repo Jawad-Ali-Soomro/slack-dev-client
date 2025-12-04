@@ -176,9 +176,7 @@ const DashboardHeader = () => {
          <Link to="/learn-point" className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[20px]">
          <Book className='w-4 h-4 icon' />
          </Link>
-         <Link to="/store" className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[20px]">
-         <Store className='w-4 h-4 icon' />
-         </Link> 
+        
          <ThemeToggle className="flex w-12 h-12  hidden md:flex items-center justify-center border-none  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] dark:hover:text-white hover:text-black cursor-pointer rounded-[20px]" />
          
         </div>

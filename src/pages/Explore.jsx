@@ -496,7 +496,7 @@ const Explore = () => {
                 className="bg-white dark:bg-gray-900 rounded-[32px] p-6 md:p-8 max-w-5xl w-full flex flex-col shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex-shrink-0 flex  gap-4 border-b border-gray-100 dark:border-gray-800 pb-2">
+            <div className="flex-shrink-0 flex  gap-4  pb-2">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{selectedProject.title}</h2>
@@ -538,7 +538,7 @@ const Explore = () => {
                 <div className="rounded-3xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900/60 shadow-sm p-6">
                   {/* <p className="text-sm text-gray-500 dark:text-gray-400">Price</p> */}
                   <div className="flex items-baseline gap-2 mt-2">
-                    <span className="text-4xl font-bold text-gray-900 dark:text-white">${selectedProject.price}</span>
+                    <span className="text-4xl font-bold text-gray-900 dark:text-white syne">${selectedProject.price}</span>
                   </div>
                   <div className="mt-4 space-y-3 text-sm text-gray-600 dark:text-gray-300">
                     <div className="flex items-center justify-between">
@@ -563,7 +563,7 @@ const Explore = () => {
                       <img
                         {...getAvatarProps(selectedProject.createdBy.avatar, selectedProject.createdBy.username)}
                         alt={selectedProject.createdBy.username}
-                        className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-700"
+                        className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-700 p-1"
                       />
                     ) : (
                       <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-lg font-semibold text-gray-500">
@@ -601,7 +601,7 @@ const Explore = () => {
                           toast.error('Failed to download project')
                         }
                       }}
-                      className="w-full h-12 text-base font-semibold"
+                      className="w-full h-12 text-base font-semibold syne"
                     >
                       <Download className="w-5 h-5 mr-2" />
                       Download project
@@ -609,11 +609,11 @@ const Explore = () => {
                   ) : (
                     <Button
                       onClick={() => handleStartCheckout(selectedProject)}
-                      className="w-full h-12 text-base font-semibold"
+                      className="w-full h-12 text-base font-semibold syne"
                       disabled={isPreparingCheckout}
                     >
                       <ShoppingCart className="w-5 h-5 mr-2" />
-                      {isPreparingCheckout ? 'Preparing checkout...' : `Purchase for ${selectedProject.price}`}
+                      {isPreparingCheckout ? 'Preparing checkout...' : `Purchase $${selectedProject.price}`}
                     </Button>
                   )}
                 
