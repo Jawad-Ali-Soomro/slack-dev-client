@@ -231,7 +231,7 @@ const PermissionsManagement = () => {
                 onValueChange={setRoleFilter}
                 disabled={!canFilterByRole}
               >
-                <SelectTrigger className="md:w-44 w-full sm:w-44 h-12 px-5 bg-white dark:bg-[#111827] rounded-[10px] disabled:opacity-60 disabled:cursor-not-allowed">
+                <SelectTrigger className="md:w-44 w-full sm:w-44 h-12 px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[#111827] rounded-[10px] disabled:opacity-60 disabled:cursor-not-allowed">
                   <SelectValue placeholder="Filter by role" />
                 </SelectTrigger>
                 <SelectContent>

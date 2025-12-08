@@ -359,6 +359,7 @@ const Dashboard = () => {
   ], [stats.scheduledMeetings, stats.completedMeetings, stats.pendingMeetings, stats.cancelledMeetings]);
 
   // Meeting Status ECharts option
+  console.log(meetingStatusData);
   const meetingStatusOption = useMemo(() => {
     const chartData = meetingStatusData.map((item) => ({
       value: item.value || 0,
@@ -366,7 +367,7 @@ const Dashboard = () => {
       itemStyle: {
         color: item.color,
       },
-      selected: item.name === "Scheduled", // Highlight "Scheduled"
+      selected: item.name == "Scheduled", // Highlight "Scheduled"
     }));
 
     const filteredData = chartData.filter(item => item.value > 0);

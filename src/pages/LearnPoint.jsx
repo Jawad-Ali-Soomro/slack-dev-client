@@ -978,11 +978,11 @@ const LearnPoint = () => {
                       
                       {/* Department and Subject */}
                       <div className="flex flex-wrap gap-2 mb-2">
-                        <Badge className="bg-blue-100 text-blue-800 text-[10px] dark:bg-blue-900 dark:text-blue-200">
+                        <Badge className="bg-blue-100 text-blue-800 text-[10px] px-4 py-2 font-bold dark:bg-blue-900 dark:text-blue-200">
                           <GraduationCap className="w-3 h-3 mr-1" />
                           {note.department}
                         </Badge>
-                        <Badge className="bg-green-100 text-green-800 text-[10px] dark:bg-green-900 dark:text-green-200">
+                        <Badge className="bg-green-100 text-green-800 text-[10px] px-4 py-2 font-bold  dark:bg-green-900 dark:text-green-200">
                           <BookOpen className="w-3 h-3 mr-1" />
                           {note.subject}
                         </Badge>

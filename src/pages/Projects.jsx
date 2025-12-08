@@ -783,7 +783,7 @@ const Projects = () => {
           
         <div className="flex gap-4 w-full">
         <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="md:w-[180px] w-1/2 px-5 cursor-pointer bg-white dark:bg-[#111827] h-13">
+            <SelectTrigger className="md:w-[180px] w-1/2 px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[#111827] h-13">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <
@@ -799,7 +799,7 @@ const Projects = () => {
           </Select>
           
           <Select value={filterPriority} onValueChange={setFilterPriority}>
-            <SelectTrigger className="md:w-[180px] w-1/2 bg-white px-5 cursor-pointer dark:bg-[#111827] th-13">
+            <SelectTrigger className="md:w-[180px] w-1/2 bg-white px-5 text-gray-600 dark:text-white cursor-pointer dark:bg-[#111827] h-13">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <
