@@ -10,6 +10,8 @@ import {
   Activity,
   Video,
   LayoutDashboard,
+  Calendar as CalendarIcon,
+  Clock,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import UserDetailsModal from "../components/UserDetailsModal";
@@ -76,6 +78,30 @@ const Dashboard = () => {
     }
     return days;
   };
+
+  // Get events for a specific date
+  const getEventsForDate = useCallback((date) => {
+    if (!date) return { tasks: [], meetings: [], total: 0 };
+    
+    const dateStr = date.toDateString();
+    const dayTasks = tasks.filter((task) => {
+      if (!task.dueDate) return false;
+      const taskDate = new Date(task.dueDate);
+      return taskDate.toDateString() === dateStr;
+    });
+    
+    const dayMeetings = meetings.filter((meeting) => {
+      if (!meeting.startDate) return false;
+      const meetingDate = new Date(meeting.startDate);
+      return meetingDate.toDateString() === dateStr;
+    });
+    
+    return {
+      tasks: dayTasks,
+      meetings: dayMeetings,
+      total: dayTasks.length + dayMeetings.length
+    };
+  }, [tasks, meetings]);
 
   // Handle user avatar click
   const handleUserAvatarClick = (userId) => {
@@ -999,87 +1025,153 @@ const Dashboard = () => {
 
             {/* Schedule Calendar */}
             <div className="mt-10">
-              <div className="rounded-[30px] p-6 border-gray-300 dark:border-gray-700 border">
-                <div className="flex items-center justify-end mb-6">
+              <div className="rounded-[30px] p-6 border-gray-300 dark:border-gray-700 border bg-white dark:bg-[#111827] shadow-sm">
+                {/* Calendar Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full">
+                      <CalendarIcon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">
+                      Calendar
+                    </h3>
+                  </div>
                   <div className="flex items-center gap-2">
                     <button
+                      onClick={() => {
+                        const today = new Date();
+                        setSelectedDate(today);
+                        setCalendarMonth(today);
+                      }}
+                      className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    >
+                      Today
+                    </button>
+                    <button
                       onClick={() => setCalendarMonth(addMonths(calendarMonth, -1))}
-                      className="px-3 py-2 rounded-[30px] w-10 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900"
+                      className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                       aria-label="Previous month"
                     >
-                      ‹
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      </svg>
                     </button>
-                    <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <div className="text-sm font-semibold text-gray-800 dark:text-gray-200 min-w-[140px] text-center">
                       {calendarMonth.toLocaleString('default', { month: 'long' })} {calendarMonth.getFullYear()}
                     </div>
                     <button
                       onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))}
-                      className="px-3 py-2 rounded-[30px] w-10 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900"
+                      className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                       aria-label="Next month"
                     >
-                      ›
+                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
                     </button>
                   </div>
                 </div>
 
                 {/* Calendar grid */}
-                <div className="grid grid-cols-7 gap-2">
+                <div className="grid grid-cols-7 gap-2 mb-4">
                   {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((d) => (
-                    <div key={d} className="text-xs font-bold text-gray-500 dark:text-gray-400 text-start py-1">{d}</div>
+                    <div key={d} className="text-xs font-semibold text-gray-500 dark:text-gray-400 text-center py-2">
+                      {d}
+                    </div>
                   ))}
                   {getMonthDaysGrid(calendarMonth).map((d, idx) => {
                     const isToday = d && isSameDay(d, new Date());
                     const isSelected = d && isSameDay(d, selectedDate);
+                    const events = d ? getEventsForDate(d) : { tasks: [], meetings: [], total: 0 };
+                    const hasEvents = events.total > 0;
+                    
                     return (
                       <button
                         key={idx}
                         onClick={() => d && setSelectedDate(d)}
                         className={[
-                          "h-12 rounded-[14px] border flex font-bold items-center justify-center text-sm transition-colors",
-                          d ? "border-gray-300 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-900" : "border-transparent",
-                          isToday ? "ring-2 ring-black dark:ring-white" : "",
-                          isSelected ? "bg-white text-black border-none" : "text-gray-800 dark:text-gray-200"
+                          "relative h-14 rounded-xl border flex flex-col items-center justify-center text-sm transition-all duration-200 group",
+                          d ? "border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-md cursor-pointer" : "border-transparent cursor-default",
+                          isToday ? "ring-2 ring-blue-500 dark:ring-blue-400 ring-offset-1" : "",
+                          isSelected 
+                            ? "bg-blue-50 dark:bg-blue-900/30 border-blue-400 dark:border-blue-500 text-blue-700 dark:text-blue-300 font-bold" 
+                            : "text-gray-800 dark:text-gray-200",
+                          hasEvents && !isSelected ? "bg-gray-50 dark:bg-gray-800/50" : ""
                         ].join(' ')}
                         disabled={!d}
                         aria-label={d ? d.toDateString() : 'empty'}
                       >
-                        {d ? d.getDate() : ''}
+                        {d && (
+                          <>
+                            <span className={isSelected ? "text-blue-700 dark:text-blue-300" : ""}>
+                              {d.getDate()}
+                            </span>
+                            {hasEvents && (
+                              <div className="flex items-center gap-0.5 mt-0.5">
+                                {events.tasks.length > 0 && (
+                                  <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                                )}
+                                {events.meetings.length > 0 && (
+                                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                                )}
+                              </div>
+                            )}
+                            {events.total > 2 && (
+                              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">
+                                {events.total}
+                              </span>
+                            )}
+                          </>
+                        )}
                       </button>
                     );
                   })}
                 </div>
 
-                {/* Actions */}
-                <div className="mt-6 flex items-end justify-end">
-                
-                  <div className="flex gap-3 flex-col sm:flex-row md:flex-col mt-2">
-                    <button
-                      onClick={() => {
-                        if (!permissions.canCreateTask) {
-                          toast.error('You do not have permission to create tasks. Contact an admin.');
-                          return;
-                        }
-                        navigate('/dashboard/tasks', { state: { date: selectedDate.toISOString(), openModal: true } });
-                      }}
-                      disabled={!permissions.canCreateTask}
-                      className="w-[250px] h-12 font-bold rounded-[15px] text-sm bg-white dark:bg-white text-black hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Schedule Task
-                    </button>
-                    <button
-                      onClick={() => {
-                        if (!permissions.canCreateMeeting) {
-                          toast.error('You do not have permission to create meetings. Contact an admin.');
-                          return;
-                        }
-                        navigate('/dashboard/meetings', { state: { date: selectedDate.toISOString(), openModal: true } });
-                      }}
-                      disabled={!permissions.canCreateMeeting}
-                      className="w-[250px] h-12 rounded-[15px] text-sm border border-gray-300 font-bold dark:border-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Schedule Meeting
-                    </button>
+                {/* Selected Date Events */}
+          
+
+                {/* Legend */}
+                <div className="flex items-center justify-end gap-4  border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Tasks</span>
                   </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-3 h-3 rounded-full bg-blue-500"></div>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">Meetings</span>
+                  </div>
+                </div>
+
+                {/* Actions */}
+                <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                  <button
+                    onClick={() => {
+                      if (!permissions.canCreateTask) {
+                        toast.error('You do not have permission to create tasks. Contact an admin.');
+                        return;
+                      }
+                      navigate('/dashboard/tasks', { state: { date: selectedDate.toISOString(), openModal: true } });
+                    }}
+                    disabled={!permissions.canCreateTask}
+                    className="flex-1 h-12 font-semibold rounded-xl text-sm bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    <Target className="w-4 h-4" />
+                    Schedule Task
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (!permissions.canCreateMeeting) {
+                        toast.error('You do not have permission to create meetings. Contact an admin.');
+                        return;
+                      }
+                      navigate('/dashboard/meetings', { state: { date: selectedDate.toISOString(), openModal: true } });
+                    }}
+                    disabled={!permissions.canCreateMeeting}
+                    className="flex-1 h-12 rounded-xl text-sm border-2 border-blue-500 dark:border-blue-400 font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    <Video className="w-4 h-4" />
+                    Schedule Meeting
+                  </button>
                 </div>
               </div>
             </div>
