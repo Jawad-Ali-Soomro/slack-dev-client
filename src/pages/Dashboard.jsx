@@ -11,7 +11,6 @@ import {
   Video,
   LayoutDashboard,
   Calendar as CalendarIcon,
-  Clock,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import UserDetailsModal from "../components/UserDetailsModal";
@@ -102,14 +101,6 @@ const Dashboard = () => {
       total: dayTasks.length + dayMeetings.length
     };
   }, [tasks, meetings]);
-
-  // Handle user avatar click
-  const handleUserAvatarClick = (userId) => {
-    console.log("Dashboard avatar clicked for user ID:", userId);
-    setSelectedUserId(userId);
-    setShowUserDetails(true);
-    console.log("Modal should open now");
-  };
 
   // Load dashboard data
   const loadDashboardData = useCallback(async () => {
@@ -266,7 +257,7 @@ const Dashboard = () => {
     if (user && user.id) {
       loadDashboardData();
     }
-  }, [user]);
+  }, [user, loadDashboardData]);
 
   // Chart data
   const statusData = useMemo(() => [
@@ -385,7 +376,6 @@ const Dashboard = () => {
   ], [stats.scheduledMeetings, stats.completedMeetings, stats.pendingMeetings, stats.cancelledMeetings]);
 
   // Meeting Status ECharts option
-  console.log(meetingStatusData);
   const meetingStatusOption = useMemo(() => {
     const chartData = meetingStatusData.map((item) => ({
       value: item.value || 0,
@@ -393,7 +383,7 @@ const Dashboard = () => {
       itemStyle: {
         color: item.color,
       },
-      selected: item.name == "Scheduled", // Highlight "Scheduled"
+      selected: item.name === "Scheduled", // Highlight "Scheduled"
     }));
 
     const filteredData = chartData.filter(item => item.value > 0);
@@ -634,10 +624,6 @@ const Dashboard = () => {
     };
   }, [weeklyData]);
 
-
-
- 
-
   if (loading) {
     return (
       <HorizontalLoader 
@@ -652,17 +638,15 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen ambient-light pt-10">
       <div className="mx-auto">
-      
-          <div className="mb-16">
-
-                <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
-                <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
-                <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
-                  <LayoutDashboard  size={15} />
-                  </div>
-                  <h1 className="text-2xl font-bold">Dashboard</h1>
-                </div>
-                </div>
+        <div className="mb-16">
+          <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30">
+            <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
+              <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+                <LayoutDashboard size={15} />
+              </div>
+              <h1 className="text-2xl font-bold">Dashboard</h1>
+            </div>
+          </div>
 
             {/* Quick stats bar */}
             <motion.div
@@ -1126,9 +1110,6 @@ const Dashboard = () => {
                     );
                   })}
                 </div>
-
-                {/* Selected Date Events */}
-          
 
                 {/* Legend */}
                 <div className="flex items-center justify-end gap-4  border-gray-200 dark:border-gray-700">
