@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 // @ts-ignore
 import HorizontalLoader from '../components/HorizontalLoader'
 import { usePermissions } from '../hooks/usePermissions'
-import { 
+import {  
   Search, 
   Plus, 
   Edit, 
@@ -1168,7 +1168,7 @@ const Projects = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[20px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-gray-900 rounded-[20px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
             
@@ -1183,7 +1183,7 @@ const Projects = () => {
                       value={newProject.name}
                       onChange={(e) => setNewProject({...newProject, name: e.target.value})}
                       placeholder="Project name *"
-                      className="w-full h-12 rounded-[10px]"
+                      className="w-full h-12 rounded-[10px] border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                       required
                     />
                   </div>
@@ -1193,14 +1193,14 @@ const Projects = () => {
                       value={newProject.description}
                       onChange={(e) => setNewProject({...newProject, description: e.target.value})}
                       placeholder="Project description *"
-                      className="w-full h-12 rounded-[10px]"
+                      className="w-full h-12 rounded-[10px] border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                       rows="3"
                       required
                     />
                   </div>
                   <div>
                     <Select value={newProject.teamId || "none"} onValueChange={(value) => setNewProject({...newProject, teamId: value === "none" ? "" : value})}>
-                      <SelectTrigger className="w-full h-12">
+                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white">
                         <SelectValue placeholder="Select Team (Optional)" />
                       </SelectTrigger>
                       <
@@ -1226,7 +1226,7 @@ const Projects = () => {
                         <img
                           src={URL.createObjectURL(newProject.logo)}
                           alt="Project logo preview"
-                          className="w-16 h-16 rounded-[10px] object-cover  border-gray-200 dark:border-gray-700"
+                          className="w-16 h-16 rounded-[10px] object-cover  border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900"
                         />
                         <button
                           type="button"
@@ -1237,11 +1237,9 @@ const Projects = () => {
                         </button>
                       </div>
                     ) : (
-                      <div className="w-16 h-16 border dark:border-gray-600 rounded-[10px] flex items-center justify-center">
-                        <Camera className="w-6 h-6 text-gray-400 icon" />
-                      </div>
+                      null
                     )}
-                    <div>
+                    <div className="w-full flex justify-center items-center">
                       <input
                         type="file"
                         accept="image/*"
@@ -1256,7 +1254,7 @@ const Projects = () => {
                       />
                       <label
                         htmlFor="logo-upload"
-                        className="cursor-pointer border inline-flex items-center px-10 py-5 border border-gray-300 dark:border-gray-600 rounded-[10px] shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-gray-700"
+                        className="cursor-pointer border inline-flex items-center justify-center px-10 py-5 w-full border border-gray-300 dark:border-gray-600 rounded-[30px] shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-700"
                       >
                         <Camera className="w-4 h-4 icon mr-2 icon" />
                         {newProject.logo ? 'Change Logo' : 'Upload Logo'}
@@ -1270,7 +1268,7 @@ const Projects = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Select value={newProject.status} onValueChange={(value) => setNewProject({...newProject, status: value})}>
-                      <SelectTrigger className="w-full h-12">
+                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white">
                         <SelectValue placeholder="Status" />
                       </SelectTrigger>
                       <
@@ -1286,7 +1284,7 @@ const Projects = () => {
                   </div>
                   <div>
                     <Select value={newProject.priority} onValueChange={(value) => setNewProject({...newProject, priority: value})}>
-                      <SelectTrigger className="w-full h-12">
+                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white">
                         <SelectValue placeholder="Priority" />
                       </SelectTrigger>
                       <
@@ -1308,7 +1306,7 @@ const Projects = () => {
                       value={newProject.startDate}
                       onChange={(e) => setNewProject({...newProject, startDate: e.target.value})}
                       placeholder="Start date *"
-                      className="w-full h-12 rounded-[10px]"
+                      className="w-full h-12 rounded-[10px] border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                       required
                     />
                   </div>
@@ -1318,7 +1316,7 @@ const Projects = () => {
                       value={newProject.endDate}
                       onChange={(e) => setNewProject({...newProject, endDate: e.target.value})}
                       placeholder="End date"
-                      className="w-full h-12 rounded-[10px]"
+                      className="w-full h-12 rounded-[10px] border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                     />
                   </div>
                 </div>
@@ -1332,7 +1330,7 @@ const Projects = () => {
                       value={memberSearch}
                       onChange={(e) => handleMemberSearch(e.target.value)}
                       placeholder="Add team members"
-                      className="w-full h-12 rounded-[10px]"
+                      className="w-full h-12 rounded-[10px] border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                     />
                     {showMemberSuggestions && memberSuggestions.length > 0 && (
                       <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black  border-gray-200 dark:border-gray-700 rounded-[10px] shadow-lg max-h-48 overflow-y-auto">
@@ -1394,7 +1392,7 @@ const Projects = () => {
                       value={newLink.title}
                       onChange={(e) => setNewLink({...newLink, title: e.target.value})}
                       placeholder="Link title"
-                      className="flex-1 h-12 rounded-[10px]"
+                      className="flex-1 h-12 rounded-[10px] border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                     />
                     <
 // @ts-ignore
@@ -1402,10 +1400,10 @@ const Projects = () => {
                       value={newLink.url}
                       onChange={(e) => setNewLink({...newLink, url: e.target.value})}
                       placeholder="URL"
-                      className="flex-1 h-12 rounded-[10px]"
+                      className="flex-1 h-12 rounded-[10px] border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                     />
                     <Select value={newLink.type} onValueChange={(value) => setNewLink({...newLink, type: value})}>
-                      <SelectTrigger className="w-32 h-12 cursor-pointer">
+                      <SelectTrigger className="w-32 h-12 cursor-pointer border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white">
                         <SelectValue />
                       </SelectTrigger>
                       <
@@ -1455,12 +1453,12 @@ const Projects = () => {
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
                       placeholder="Add a tag"
-                      className="flex-1 h-12 rounded-[10px]"
+                      className="flex-1 h-12 rounded-[10px] border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                     />
                     <
 // @ts-ignore
-                    Button type="button" onClick={handleAddTag} variant="outline">
+                    Button type="button" onClick={handleAddTag} variant="outline" className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white">
                       Add
                     </Button>
                   </div>
@@ -1497,7 +1495,7 @@ const Projects = () => {
                     type="button"
                     variant="outline"
                     onClick={() => setShowNewProjectPopup(false)}
-                    className="flex-1 h-12 rounded-[10px]"
+                    className="flex-1 h-12 rounded-[10px] border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                     disabled={loading}
                   >
                     Cancel
@@ -1506,11 +1504,11 @@ const Projects = () => {
 // @ts-ignore
                   Button
                     type="submit"
-                    className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[10px]"
+                    className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[10px] border-gray-200 dark:border-gray-700 bg-black dark:bg-white text-white dark:text-black "
                     disabled={loading}
                   >
                     {loading ? (
-                      <span className="loader w-5 h-5 icon"></span>
+                      <span className="loader w-5 h-5"></span>
                     ) : (
                       'Create Project'
                     )}

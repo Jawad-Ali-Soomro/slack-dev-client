@@ -734,7 +734,7 @@ const TeamsManage = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-[20px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full"
+            className="bg-white dark:bg-gray-900 rounded-[20px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="p-6">
@@ -748,6 +748,7 @@ const TeamsManage = () => {
                     onChange={(e) => setNewTeam({...newTeam, name: e.target.value})}
                     placeholder="Enter team name"
                     required  
+                    className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                   />
                 </div>
 
@@ -758,6 +759,7 @@ const TeamsManage = () => {
                     onChange={(e) => setNewTeam({...newTeam, description: e.target.value})}
                     placeholder="Enter team description"
                     rows={3}
+                    className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                   />
                 </div>
 
