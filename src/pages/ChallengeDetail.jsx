@@ -136,9 +136,11 @@ const ChallengeDetail = () => {
 
       setCodeOutput(output.trim() || 'No output')
       
-      // Auto-fill answer if empty
-      if (!userAnswer.trim() && output.trim()) {
+      // Always auto-fill answer with code output
+      if (output.trim()) {
         setUserAnswer(output.trim())
+      } else {
+        setUserAnswer('')
       }
     } catch (error) {
       setCodeError(error.message || 'Failed to execute code')
@@ -153,7 +155,7 @@ const ChallengeDetail = () => {
     }
 
     if (!userAnswer.trim()) {
-      toast.error('Please run your code first and provide the answer/output')
+      toast.error('Please run your code first to generate the answer/output')
       return
     }
 
@@ -280,7 +282,7 @@ const ChallengeDetail = () => {
           <div className="lg:col-span-1 flex flex-col min-h-0 min-w-0">
             {/* Instructions Panel */}
             <div className="bg-white dark:bg-gray-800 rounded-[30px] border-2 border-gray-200 dark:border-gray-700 shadow-lg flex flex-col min-h-0">
-              <div className="p-5 border-b-2 border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+              <div className="p-5 border-b-2 border-gray-200 rounded-t-[20px] dark:border-gray-700 flex-shrink-0 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl shadow-md">
                     <FileText className="w-5 h-5 text-white" />
@@ -300,7 +302,7 @@ const ChallengeDetail = () => {
           </div>
 
           {/* Right Column - Code Editor */}
-          <div className="lg:col-span-2 flex flex-col min-h-0 h-[500px] relative">
+          <div className="lg:col-span-2 flex flex-col min-h-0 h-[550px] relative">
             <div className="bg-white dark:bg-gray-800 rounded-[30px] border-2 border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden flex flex-col flex-1 min-h-0">
               <div className="p-4 border-b-2 border-gray-200 dark:border-gray-700 flex items-center justify-between flex-shrink-0 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
                 <div className="flex items-center gap-3">
@@ -370,21 +372,21 @@ const ChallengeDetail = () => {
 
                   {!isCompleted && (
                     <>
-                      {/* Answer Input Section */}
+                      {/* Answer Display Section (Auto-filled from code execution) */}
                       <div className="p-4 border-t-2 border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gray-50 dark:bg-gray-900/50">
                         <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 block flex items-center gap-2">
                           <Target className="w-4 h-4" />
-                          Your Answer (Output):
+                          Your Answer (Auto-filled from code output):
                         </label>
-                        <textarea
+                        {/* <textarea
                           value={userAnswer}
-                          onChange={(e) => setUserAnswer(e.target.value)}
-                          placeholder="Run your code first, then enter the output/answer here..."
-                          className="w-full p-3 border-2 border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono text-sm focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
+                          readOnly
+                          placeholder="Run your code to see the output here..."
+                          className="w-full p-3 border-2 border-gray-300 dark:border-gray-700 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm cursor-not-allowed opacity-90"
                           rows={3}
-                        />
+                        /> */}
                         <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                          💡 Tip: Click "Run Code" to execute your solution and see the output
+                          💡 This answer is automatically set when you run your code. Click "Run Code" to execute your solution.
                         </p>
                       </div>
 

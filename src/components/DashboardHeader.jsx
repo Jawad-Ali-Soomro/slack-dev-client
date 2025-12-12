@@ -32,6 +32,7 @@ const DashboardHeader = () => {
   const [loading, setLoading] = useState(false)
   const [awards, setAwards] = useState([])
   const [totalPoints, setTotalPoints] = useState(0)
+  const [headerAwards, setHeaderAwards] = useState([])
 
   // Initialize profile data when user changes
   useEffect(() => {
@@ -45,6 +46,22 @@ const DashboardHeader = () => {
       })
       setAvatarPreview(user.avatar || '')
     }
+  }, [user])
+
+  // Fetch awards for header display
+  useEffect(() => {
+    const fetchHeaderAwards = async () => {
+      if (user) {
+        try {
+          const awardsResponse = await awardService.getMyAwards()
+          setHeaderAwards(awardsResponse.awards || [])
+          setTotalPoints(awardsResponse.totalPoints || 0)
+        } catch (error) {
+          console.error('Failed to fetch header awards:', error)
+        }
+      }
+    }
+    fetchHeaderAwards()
   }, [user])
 
   // Fetch real-time profile data when modal opens
@@ -205,20 +222,41 @@ const DashboardHeader = () => {
                 </div>
               </div>
               
-              {/* Avatar Button */}
-              <button
-                onClick={handleOpenProfileModal}
-                className="relative group"
-              >
-                <div className="w-12 h-12 p-1 overflow-hidden rounded-[20px] border border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
-                  <img
-                    {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
-                    alt={user?.username || 'User'}
-                    className="w-full h-full rounded-[15px]"
-                  />
-                </div>
-              
-              </button>
+              {/* Avatar with Awards */}
+              <div className="flex flex-col items-center gap-1">
+                <button
+                  onClick={handleOpenProfileModal}
+                  className="relative group"
+                >
+                  <div className="w-12 h-12 p-1 overflow-hidden rounded-[20px] border border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
+                    <img
+                      {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
+                      alt={user?.username || 'User'}
+                      className="w-full h-full rounded-[15px]"
+                    />
+                  </div>
+                </button>
+                
+                {/* Small Awards/Stars at Bottom of Avatar */}
+                {headerAwards.length > 0 && (
+                  <div className="flex items-center gap-0.5">
+                    {headerAwards.slice(0, 4).map((award, idx) => (
+                      <div
+                        key={idx}
+                        className="text-[10px] leading-none"
+                        title={`${award.name}: ${award.description}`}
+                      >
+                        {award.icon}
+                      </div>
+                    ))}
+                    {headerAwards.length > 4 && (
+                      <div className="text-[8px] text-gray-500 dark:text-gray-400 font-medium">
+                        +{headerAwards.length - 4}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
             {/* Logout Button */}
@@ -272,7 +310,7 @@ const DashboardHeader = () => {
 
             {/* Avatar Section */}
             <div className="flex flex-col items-center mb-6">
-              <div className="relative group mb-4">
+              <div className="relative group mb-2">
                 <div className="w-20 h-20 rounded-full p-2 overflow-hidden border-1 border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
                   <img
                     {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
@@ -291,6 +329,27 @@ const DashboardHeader = () => {
                   />
                 </label>
               </div>
+              
+              {/* Small Awards/Stars at Bottom of Avatar */}
+              {awards.length > 0 && (
+                <div className="flex items-center gap-1 mt-2 mb-2">
+                  {awards.slice(0, 5).map((award, idx) => (
+                    <div
+                      key={idx}
+                      className="text-xs leading-none"
+                      title={`${award.name}: ${award.description}`}
+                    >
+                      {award.icon}
+                    </div>
+                  ))}
+                  {awards.length > 5 && (
+                    <div className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                      +{awards.length - 5}
+                    </div>
+                  )}
+                </div>
+              )}
+              
               <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
                 {loading ? 'Uploading...' : 'Click the camera icon to upload a new avatar'}
               </p>
@@ -310,29 +369,6 @@ const DashboardHeader = () => {
                   </div>
                 )}
               </div>
-              
-              {/* Awards Display */}
-              {awards.length > 0 && (
-                <div className="mt-6 w-full">
-                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-center">
-                    🏆 Awards Earned
-                  </h3>
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {awards.map((award, idx) => (
-                      <div
-                        key={idx}
-                        className="flex flex-col items-center p-3 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800"
-                        title={award.description}
-                      >
-                        <div className="text-3xl mb-1">{award.icon}</div>
-                        <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 text-center">
-                          {award.name}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </div>
 
             {/* Profile Form */}
