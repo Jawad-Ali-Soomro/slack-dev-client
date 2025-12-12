@@ -15,11 +15,13 @@ import {
   Eye,
   Plus,
   UserPlus,
-  X
+  X,
+  MoreVertical
 } from 'lucide-react';
 import { Input } from '../../components/ui/input';
 import { Badge } from '../../components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../components/ui/select';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../../components/ui/dropdown-menu';
 import HorizontalLoader from '../../components/HorizontalLoader';
 import { useAuth } from '../../contexts/AuthContext';
 import { toast } from 'sonner';
@@ -411,59 +413,60 @@ const UserManagement = () => {
                         <div className="text-sm text-gray-600 dark:text-gray-400">{getJoinedDate(userItem.id || userItem._id, userItem.createdAt)}</div>
                       </td>
                       <td className="px-5 py-2 flex items-center justify-end">
-                        <div className="flex items-center gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-10 h-10 bg-transparent border-none"
-                            title="View Details"
-                            onClick={() => handleViewDetails(userItem.id || userItem._id)}
-                          >
-                            <Eye className="w-4 h-4 icon" />
-                          </Button>
-                          {canAssignRoles && (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
                             <Button
                               variant="outline"
                               size="sm"
-                              className="w-10 h-10 bg-transparent border-none"
-                              title="Change Role"
-                              onClick={() => handleEditRole(userItem)}
+                              className="w-10 h-10 bg-transparent border-none hover:bg-gray-100 dark:hover:bg-gray-800 rounded-[20px]"
                             >
-                              <Edit className="w-4 h-4 icon" />
+                              <MoreVertical className="w-4 h-4 icon" />
                             </Button>
-                          )}
-                          {canUpdateVerification && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="w-10 h-10 bg-transparent border-none"
-                              title="Update Email Verification"
-                              onClick={() => handleEditVerification(userItem)}
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end" className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-[20px]">
+                            <DropdownMenuItem
+                              className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer h-10 px-4"
+                              onClick={() => handleViewDetails(userItem.id || userItem._id)}
                             >
-                              <Mail className="w-4 h-4 icon" />
-                            </Button>
-                          )}
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-10 h-10 bg-transparent border-none"
-                            title="Edit Permissions"
-                            onClick={() => window.location.href = `/dashboard/admin/permissions?userId=${userItem.id || userItem._id}`}
-                          >
-                            <Shield className="w-4 h-4 icon" />
-                          </Button>
-                          {isSuperadmin && userItem.role !== 'superadmin' && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              className="w-10 h-10 text-red-600 hover:text-red-700"
-                              title="Delete User"
-                              onClick={() => handleDeleteUser(userItem.id || userItem._id)}
+                              <Eye className="w-4 h-4 mr-2 icon" />
+                              View Details
+                            </DropdownMenuItem>
+                            {canAssignRoles && (
+                              <DropdownMenuItem
+                                className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer h-10 px-4"
+                                onClick={() => handleEditRole(userItem)}
+                              >
+                                <Edit className="w-4 h-4 mr-2 icon" />
+                                Change Role
+                              </DropdownMenuItem>
+                            )}
+                            {canUpdateVerification && (
+                              <DropdownMenuItem
+                                className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer h-10 px-4"
+                                onClick={() => handleEditVerification(userItem)}
+                              >
+                                <Mail className="w-4 h-4 mr-2 icon" />
+                                Update Email Verification
+                              </DropdownMenuItem>
+                            )}
+                            <DropdownMenuItem
+                              className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer h-10 px-4"
+                              onClick={() => window.location.href = `/dashboard/admin/permissions?userId=${userItem.id || userItem._id}`}
                             >
-                              <Trash2 className="w-4 h-4 icon" />
-                            </Button>
-                          )}
-                        </div>
+                              <Shield className="w-4 h-4 mr-2 icon" />
+                              Edit Permissions
+                            </DropdownMenuItem>
+                            {isSuperadmin && userItem.role !== 'superadmin' && (
+                              <DropdownMenuItem
+                                className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer h-10 px-4"
+                                onClick={() => handleDeleteUser(userItem.id || userItem._id)}
+                              >
+                                <Trash2 className="w-4 h-4 mr-2 icon" />
+                                Delete User
+                              </DropdownMenuItem>
+                            )}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                       </td>
                     </tr>
                   ))

@@ -21,6 +21,7 @@ import { toast } from "sonner";
 import StatsCard from "../components/StatsCard";
 const Dashboard = () => {
 
+  
   document.title = "Dashboard";
   const { user } = useAuth();
   const { permissions } = usePermissions();

@@ -28,13 +28,15 @@ import PermissionsManagement from './pages/admin/PermissionsManagement'
 import MyBoughtProjects from './pages/MyBoughtProjects'
 import Explore from './pages/Explore'
 import LearnPoint from './pages/LearnPoint'
+import Challenges from './pages/Challenges'
+import ChallengeDetail from './pages/ChallengeDetail'
 
 function App() {
   return (
    <div className='bg-white dark:bg-[#111827]'>
      <Router>
       <Toaster 
-        position="top-right"
+        position="top-center"
         richColors
         closeButton
         toastOptions={{
@@ -171,9 +173,25 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        <Route 
+          path="/dashboard/challenges" 
+          element={
+            <ProtectedRoute requireAuth={true}>
+              <Challenges />
+            </ProtectedRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard/challenges/:id" 
+          element={
+            <ProtectedRoute requireAuth={true}>
+              <ChallengeDetail />
+            </ProtectedRoute>
+          } 
+        />
 
        
-       
+        
         
         {/* Admin Routes - Require admin role */}
         <Route 

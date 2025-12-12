@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { User, Settings, LogOut, Camera, X, RefreshCw, Menu, BookOpen, Store, BookHeart, Book } from 'lucide-react'
+import { User, Settings, LogOut, Camera, X, RefreshCw, Menu, BookOpen, Store, BookHeart, Book, Trophy } from 'lucide-react'
 import { Button } from './ui/button'
 import { Input } from './ui/input'
 import { Textarea } from './ui/textarea'
 import { useAuth } from '../contexts/AuthContext'
 import { toast } from 'sonner'
 import profileService from '../services/profileService'
+import awardService from '../services/awardService'
 import { getAvatarProps } from '../utils/avatarUtils'
 import NotificationDropdown from './NotificationDropdown'
 import { useSidebar } from '../contexts/SidebarContext'
@@ -29,6 +30,8 @@ const DashboardHeader = () => {
   const [avatarFile, setAvatarFile] = useState(null)
   const [avatarPreview, setAvatarPreview] = useState('')
   const [loading, setLoading] = useState(false)
+  const [awards, setAwards] = useState([])
+  const [totalPoints, setTotalPoints] = useState(0)
 
   // Initialize profile data when user changes
   useEffect(() => {
@@ -59,6 +62,15 @@ const DashboardHeader = () => {
         phone: profileUser.phone || ''
       })
       setAvatarPreview(profileUser.avatar || '')
+      
+      // Fetch awards
+      try {
+        const awardsResponse = await awardService.getMyAwards()
+        setAwards(awardsResponse.awards || [])
+        setTotalPoints(awardsResponse.totalPoints || 0)
+      } catch (error) {
+        console.error('Failed to fetch awards:', error)
+      }
     } catch (error) {
       console.error('Failed to fetch profile:', error)
       toast.error('Failed to load profile data')
@@ -176,6 +188,9 @@ const DashboardHeader = () => {
          <Link to="/learn-point" className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[20px]">
          <Book className='w-4 h-4 icon' />
          </Link>
+         <Link to="/dashboard/challenges" className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[20px]">
+         <Trophy className='w-4 h-4 icon' />
+         </Link>
         
          <ThemeToggle className="flex w-12 h-12  hidden md:flex items-center justify-center border-none  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] dark:hover:text-white hover:text-black cursor-pointer rounded-[20px]" />
          
@@ -281,14 +296,43 @@ const DashboardHeader = () => {
               </p>
               
               {/* User Stats */}
-              <div className="flex gap-4 mt-4 text-center">
-                
+              <div className="flex gap-4 mt-4 text-center flex-wrap justify-center">
                 <div className="px-5 py-2 bg-gray-100 dark:bg-black rounded-sm">
                   <div className="text-sm font-medium text-green-600 dark:text-green-400">
                     {user?.emailVerified ? 'Verified' : 'Pending'}
                   </div>
                 </div>
+                {totalPoints > 0 && (
+                  <div className="px-5 py-2 bg-gray-100 dark:bg-black rounded-sm">
+                    <div className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                      {totalPoints} Points
+                    </div>
+                  </div>
+                )}
               </div>
+              
+              {/* Awards Display */}
+              {awards.length > 0 && (
+                <div className="mt-6 w-full">
+                  <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-3 text-center">
+                    🏆 Awards Earned
+                  </h3>
+                  <div className="flex flex-wrap gap-2 justify-center">
+                    {awards.map((award, idx) => (
+                      <div
+                        key={idx}
+                        className="flex flex-col items-center p-3 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800"
+                        title={award.description}
+                      >
+                        <div className="text-3xl mb-1">{award.icon}</div>
+                        <div className="text-xs font-semibold text-gray-700 dark:text-gray-300 text-center">
+                          {award.name}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Profile Form */}

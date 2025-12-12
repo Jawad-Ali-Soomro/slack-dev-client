@@ -55,6 +55,8 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
       setLoading(true)
       const response = await userService.getUserDetails(userId)
       console.log('User details response:', response)
+      console.log('User awards:', response.user?.awards)
+      console.log('User totalChallengePoints:', response.user?.totalChallengePoints)
       setUser(response.user)
     } catch (error) {
       console.error('Failed to load user details:', error)
@@ -371,7 +373,57 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                           {user.teams?.length || 0}
                         </p>
                       </div>
+                    </div>
                     
+                    {/* Awards and Points Section */}
+                    <div className="space-y-4">
+                      <h4 className="text-md font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                        <Award className="w-5 h-5 text-yellow-500" />
+                        Challenge Achievements
+                      </h4>
+                      
+                      <div className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 p-4 rounded-[20px] border border-yellow-200/50 dark:border-yellow-700/50">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <p className="text-sm text-gray-500 dark:text-gray-400">Total Points</p>
+                            <p className="text-2xl font-bold text-yellow-700 dark:text-yellow-300">
+                              {user.totalChallengePoints !== undefined && user.totalChallengePoints !== null 
+                                ? user.totalChallengePoints 
+                                : 0}
+                            </p>
+                          </div>
+                          <Award className="w-8 h-8 text-yellow-500" />
+                        </div>
+                      </div>
+                      
+                      {user.awards && user.awards.length > 0 ? (
+                        <div className="space-y-3">
+                          <p className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                            Awards Earned ({user.awards.length})
+                          </p>
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                            {user.awards.map((award, idx) => (
+                              <div
+                                key={idx}
+                                className="flex flex-col items-center p-4 bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800 hover:shadow-lg transition-all duration-200"
+                                title={award.description}
+                              >
+                                <div className="text-4xl mb-2">{award.icon}</div>
+                                <div className="text-xs font-bold text-gray-700 dark:text-gray-300 text-center">
+                                  {award.name}
+                                </div>
+                                <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">
+                                  {award.pointsRequired} pts
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="bg-gray-50 dark:bg-black p-4 rounded-[20px] border border-gray-200 dark:border-gray-700">
+                          <p className="text-sm text-gray-500 dark:text-gray-400">No awards earned yet</p>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
