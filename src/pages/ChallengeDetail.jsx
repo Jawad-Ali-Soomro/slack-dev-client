@@ -159,6 +159,12 @@ const ChallengeDetail = () => {
       return
     }
 
+    // Check if user is the creator (already defined at component level, but double-check here)
+    if (isCreator) {
+      toast.error('You cannot solve challenges that you created yourself')
+      return
+    }
+
     try {
       setSubmitting(true)
       const response = await challengeService.submitSolution(challenge._id, userSolution, userAnswer)
@@ -174,14 +180,9 @@ const ChallengeDetail = () => {
           // Show special toast for awards
           toast.success(
             <div>
-              <div className="font-bold mb-2">🎉 Award Unlocked!</div>
               {response.newlyEarnedAwards.map((award, idx) => (
-                <div key={idx} className="flex items-center gap-2 mb-1">
-                  <span className="text-2xl">{award.icon}</span>
-                  <div>
-                    <div className="font-semibold">{award.name}</div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">{award.description}</div>
-                  </div>
+                <div key={idx} className="flex items-center gap-2">
+                  <div className="font-bold">New Award Unlocked! {award.icon}</div>
                 </div>
               ))}
             </div>,
@@ -222,6 +223,13 @@ const ChallengeDetail = () => {
   if (!challenge) {
     return null
   }
+
+  // Check if current user is the creator of this challenge
+  const isCreator = challenge && user && challenge.createdBy && (
+    challenge.createdBy._id === user.id || 
+    challenge.createdBy === user.id ||
+    (typeof challenge.createdBy === 'string' && challenge.createdBy === user.id)
+  )
 
   return (
     <div className="ambient-light overflow-hidden flex flex-col">
@@ -372,44 +380,58 @@ const ChallengeDetail = () => {
 
                   {!isCompleted && (
                     <>
-                      {/* Answer Display Section (Auto-filled from code execution) */}
-                      <div className="p-4 border-t-2 border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gray-50 dark:bg-gray-900/50">
-                        <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 block flex items-center gap-2">
-                          <Target className="w-4 h-4" />
-                          Your Answer (Auto-filled from code output):
-                        </label>
-                        {/* <textarea
-                          value={userAnswer}
-                          readOnly
-                          placeholder="Run your code to see the output here..."
-                          className="w-full p-3 border-2 border-gray-300 dark:border-gray-700 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white font-mono text-sm cursor-not-allowed opacity-90"
-                          rows={3}
-                        /> */}
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                          💡 This answer is automatically set when you run your code. Click "Run Code" to execute your solution.
-                        </p>
-                      </div>
+                      {/* Check if user is creator */}
+                      {isCreator ? (
+                        <div className="p-4 border-t-2 border-gray-200 dark:border-gray-700 flex-shrink-0 bg-yellow-50 dark:bg-yellow-900/20">
+                          <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-400">
+                            <X className="w-5 h-5" />
+                            <p className="text-sm font-semibold">
+                              You cannot solve challenges that you created yourself
+                            </p>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          {/* Answer Display Section (Auto-filled from code execution) */}
+                          <div className="p-4 border-t-2 border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gray-50 dark:bg-gray-900/50">
+                            <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 block flex items-center gap-2">
+                              <Target className="w-4 h-4" />
+                              Your Answer (Auto-filled from code output):
+                            </label>
+                            {/* <textarea
+                              value={userAnswer}
+                              onChange={(e) => setUserAnswer(e.target.value)}
+                              placeholder="Run your code first, then enter the output/answer here..."
+                              className="w-full p-3 border-2 border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono text-sm focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
+                              rows={3}
+                            /> */}
+                            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+                              💡 This answer is automatically set when you run your code. Click "Run Code" to execute your solution.
+                            </p>
+                          </div>
 
-                      {/* Submit Button */}
-                      <div className="p-4 border-t-2 border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gray-50 dark:bg-gray-900/50">
-                        <Button
-                          onClick={handleSubmitSolution}
-                          disabled={!userSolution.trim() || !userAnswer.trim() || submitting}
-                          className="w-full h-12 rounded-xl bg-gradient-to-r from-black to-gray-800 dark:from-white dark:to-gray-200 text-white dark:text-black hover:opacity-90 shadow-lg font-semibold transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
-                        >
-                          {submitting ? (
-                            <>
-                              <Clock className="w-5 h-5 mr-2 animate-spin" />
-                              Submitting...
-                            </>
-                          ) : (
-                            <>
-                              <CheckCircle className="w-5 h-5 mr-2" />
-                              Submit Answer
-                            </>
-                          )}
-                        </Button>
-                      </div>
+                          {/* Submit Button */}
+                          <div className="p-4 border-t-2 border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gray-50 dark:bg-gray-900/50">
+                            <Button
+                              onClick={handleSubmitSolution}
+                              disabled={!userSolution.trim() || !userAnswer.trim() || submitting}
+                              className="w-full h-12 rounded-xl bg-gradient-to-r from-black to-gray-800 dark:from-white dark:to-gray-200 text-white dark:text-black hover:opacity-90 shadow-lg font-semibold transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                              {submitting ? (
+                                <>
+                                  <Clock className="w-5 h-5 mr-2 animate-spin" />
+                                  Submitting...
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle className="w-5 h-5 mr-2" />
+                                  Submit Answer
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                        </>
+                      )}
                     </>
                   )}
                 </div>

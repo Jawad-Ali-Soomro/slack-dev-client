@@ -84,7 +84,7 @@ const Challenges = () => {
     category: '',
     instructions: '',
     starterCode: '',
-    solution: '',
+    answer: '',
     testCases: '',
     points: 10,
     tags: '',
@@ -163,8 +163,8 @@ const Challenges = () => {
       return
     }
 
-    if (!newChallenge.title || !newChallenge.description || !newChallenge.category || !newChallenge.instructions) {
-      toast.error('Please fill in all required fields')
+    if (!newChallenge.title || !newChallenge.description || !newChallenge.category || !newChallenge.instructions || !newChallenge.answer) {
+      toast.error('Please fill in all required fields including the answer')
       return
     }
 
@@ -201,7 +201,7 @@ const Challenges = () => {
         category: '',
         instructions: '',
         starterCode: '',
-        solution: '',
+        answer: '',
         testCases: '',
         points: 10,
         tags: '',
@@ -244,7 +244,7 @@ const Challenges = () => {
       category: challenge.category,
       instructions: challenge.instructions,
       starterCode: challenge.starterCode || '',
-      solution: challenge.solution || '',
+      answer: challenge.answer || '',
       testCases: challenge.testCases
         ? challenge.testCases.map((tc) => `${tc.input}|${tc.expectedOutput}|${tc.description || ''}`).join('\n')
         : '',
@@ -564,20 +564,13 @@ const Challenges = () => {
                 rows={5}
                 className="font-mono text-sm"
               />
-              <Textarea
-                placeholder="Solution (optional)"
-                value={newChallenge.solution}
-                onChange={(e) => setNewChallenge({ ...newChallenge, solution: e.target.value })}
-                rows={5}
+              <Input
+                placeholder="Expected Answer/Output *"
+                value={newChallenge.answer}
+                onChange={(e) => setNewChallenge({ ...newChallenge, answer: e.target.value })}
                 className="font-mono text-sm"
               />
-              <Textarea
-                placeholder="Test Cases (one per line, format: input|expectedOutput|description)"
-                value={newChallenge.testCases}
-                onChange={(e) => setNewChallenge({ ...newChallenge, testCases: e.target.value })}
-                rows={3}
-                className="font-mono text-sm"
-              />
+              
             
               <div className="grid grid-cols-2 gap-4">
                 <Input
