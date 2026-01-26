@@ -427,7 +427,7 @@ const Explore = () => {
                     </div>
                     {/* Title - Bottom Left (shown on hover) */}
                     <div className="absolute bottom-0 left-0 right-0 h-full flex items-end bg-gradient-to-t from-black/80 via-black/60 to-transparent p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                      <h3 className="text-lg font-bold text-white line-clamp-2">
+                      <h3 className="text-lg font-bold text-white line-clamp-1">
                         {project.title}
                       </h3>
                     </div>
@@ -452,7 +452,7 @@ const Explore = () => {
                     </div>
                     {/* Title - Bottom Left (shown on hover) */}
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                      <h3 className="text-lg font-bold text-white line-clamp-2">
+                      <h3 className="text-lg font-bold text-white line-clamp-1">
                         {project.title}
                       </h3>
                     </div>
@@ -499,7 +499,7 @@ const Explore = () => {
             <div className="flex-shrink-0 flex  gap-4  pb-2">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">{selectedProject.title}</h2>
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white line-clamp-1">{selectedProject.title}</h2>
                   {/* <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Added {new Date(selectedProject.createdAt || selectedProject.updatedAt || Date.now()).toLocaleDateString()}</p> */}
                 </div>
                

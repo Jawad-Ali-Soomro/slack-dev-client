@@ -55,8 +55,6 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
       setLoading(true)
       const response = await userService.getUserDetails(userId)
       console.log('User details response:', response)
-      console.log('User awards:', response.user?.awards)
-      console.log('User totalChallengePoints:', response.user?.totalChallengePoints)
       setUser(response.user)
     } catch (error) {
       console.error('Failed to load user details:', error)
