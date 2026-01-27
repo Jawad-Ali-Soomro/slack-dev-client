@@ -187,8 +187,7 @@ const ChallengeDetail = () => {
           toast.error('Wrong answer! You earned 0 points.')
         }
       }
-      
-      // Reload challenge to get updated data
+
       await loadChallenge()
     } catch (error) {
       console.error('Error submitting solution:', error)
@@ -213,7 +212,6 @@ const ChallengeDetail = () => {
     return null
   }
 
-  // Check if current user is the creator of this challenge
   const isCreator = challenge && user && challenge.createdBy && (
     challenge.createdBy._id === user.id || 
     challenge.createdBy === user.id ||

@@ -1,7 +1,7 @@
 import axiosInstance from '../lib/axios'
 
 export const authService = {
-  // Register user
+
   register: async (userData) => {
     try {
       const response = await axiosInstance.post('/api/auth/register', userData)
@@ -9,23 +9,19 @@ export const authService = {
       return response.data
     } catch (error) {
       console.error('AuthService register error:', error)
-      
-      // Handle 400 errors (validation errors, duplicate email/username)
+
       if (error.response?.status === 400 && error.response?.data?.message) {
         throw new Error(error.response.data.message)
       }
-      
-      // Handle 409 errors (conflict - duplicate data)
+
       if (error.response?.status === 409 && error.response?.data?.message) {
         throw new Error(error.response.data.message)
       }
-      
-      // For other errors, throw them
+
       throw new Error(error.response?.data?.message || 'Registration failed')
     }
   },
 
-  // Login user
   login: async (credentials) => {
     try {
       const response = await axiosInstance.post('/api/auth/login', credentials)
@@ -47,29 +43,25 @@ export const authService = {
       }
     } catch (error) {
       console.error('AuthService login error:', error)
-      
-      // Handle 400 errors that might contain useful data
+
       if (error.response?.status === 400 && error.response?.data?.message) {
         return {
           success: false,
           message: error.response.data.message
         }
       }
-      
-      // Handle 401 errors (invalid credentials)
+
       if (error.response?.status === 401 && error.response?.data?.message) {
         return {
           success: false,
           message: error.response.data.message
         }
       }
-      
-      // For other errors, throw them
+
       throw new Error(error.response?.data?.message || 'Login failed')
     }
   },
 
-  // Verify email with OTP
   verifyEmail: async (email, otp) => {
     try {
       const response = await axiosInstance.post('/api/auth/verify-email', { email, otp })
@@ -92,7 +84,6 @@ export const authService = {
     }
   },
 
-  // Resend OTP
   resendOtp: async (email) => {
     try {
       const response = await axiosInstance.post('/api/auth/resend-otp', { email })
@@ -115,7 +106,6 @@ export const authService = {
     }
   },
 
-  // Forgot password
   forgotPassword: async (email) => {
     try {
       const response = await axiosInstance.post('/api/auth/forgot-password', { email })
@@ -127,7 +117,6 @@ export const authService = {
     }
   },
 
-  // Reset password
   resetPassword: async (email, otp, newPassword) => {
     try {
       const response = await axiosInstance.post('/api/auth/reset-password', { 
@@ -143,13 +132,11 @@ export const authService = {
     }
   },
 
-  // Get current user
   getCurrentUser: async () => {
     const response = await axiosInstance.get('/api/auth/profile')
     return response.data
   },
 
-  // Logout
   logout: async () => {
     try {
       const response = await axiosInstance.post('/api/auth/logout')
@@ -160,7 +147,6 @@ export const authService = {
     }
   },
 
-  // Create user (Admin/Superadmin only)
   createUser: async (userData) => {
     try {
       const response = await axiosInstance.post('/api/auth/register', userData)

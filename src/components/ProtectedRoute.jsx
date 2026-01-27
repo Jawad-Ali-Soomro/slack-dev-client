@@ -13,7 +13,6 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
   const { isOpen, toggleSidebar, isMobile } = useSidebar();
   const location = useLocation();
 
-  // Show loading spinner while checking auth status
   if (loading) {
     return (
       <HorizontalLoader 
@@ -25,12 +24,10 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
     );
   }
 
-  // If route requires authentication and user is not authenticated
   if (requireAuth && !isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
-  // If route requires no authentication (like login/signup) and user is authenticated
   if (!requireAuth && isAuthenticated) {
     return <Navigate to="/dashboard" replace />;
   }

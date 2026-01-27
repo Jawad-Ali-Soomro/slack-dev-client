@@ -53,15 +53,14 @@ export const AuthProvider = ({ children }) => {
       
       const result = await authService.login(credentials)
       if (result.success) {
-        // Store in localStorage only if we have a token (successful login)
+
         if (result.token) {
           localStorage.setItem('authToken', result.token)
           setToken(result.token)
           setUser(result.user)
           setIsAuthenticated(true)
         }
-        
-        // Return the full result including emailSent flag
+
         return { 
           success: true, 
           user: result.user, 
@@ -98,8 +97,7 @@ export const AuthProvider = ({ children }) => {
   const forgotPassword = async (email) => {
     try {
       setLoading(true)
-      
-      // Simulate API call
+
       await new Promise(resolve => setTimeout(resolve, 1000))
       
       return { success: true, message: 'Reset code sent to email' }
@@ -113,11 +111,9 @@ export const AuthProvider = ({ children }) => {
   const verifyOTP = async (otp) => {
     try {
       setLoading(true)
-      
-      // Simulate API call
+
       await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      // Mock OTP verification (accept any 4-digit code)
+
       if (otp.length === 4) {
         return { success: true, message: 'OTP verified successfully' }
       } else {
@@ -130,7 +126,6 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  // Role checking utilities
   const isSuperadmin = useMemo(() => {
     return user?.role === 'superadmin'
   }, [user])
@@ -162,7 +157,7 @@ export const AuthProvider = ({ children }) => {
     logout,
     forgotPassword,
     verifyOTP,
-    // Role utilities
+
     isSuperadmin,
     isAdmin,
     isUser,

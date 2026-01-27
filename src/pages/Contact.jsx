@@ -45,7 +45,7 @@ const Contact = () => {
           <motion.p 
             variants={itemVariants}
             className="text-xl max-w-3xl mx-auto "
-            // style={{ fontWeight: 800 }}
+
           >
             Get in touch with our team for support, partnerships, or questions
           </motion.p>

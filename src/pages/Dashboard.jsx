@@ -35,7 +35,7 @@ const Dashboard = () => {
     tasksThisWeek: 0,
     tasksThisMonth: 0,
     completionRate: 0,
-    // Meeting stats
+
     totalMeetings: 0,
     scheduledMeetings: 0,
     completedMeetings: 0,
@@ -44,7 +44,7 @@ const Dashboard = () => {
     meetingsThisWeek: 0,
     meetingsThisMonth: 0,
     meetingCompletionRate: 0,
-    // Project stats
+
     totalProjects: 0,
     activeProjects: 0,
     completedProjects: 0,
@@ -60,7 +60,6 @@ const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [calendarMonth, setCalendarMonth] = useState(new Date());
 
-  // Calendar helpers
   const startOfMonth = (date) => new Date(date.getFullYear(), date.getMonth(), 1);
   const endOfMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0);
   const addMonths = (date, months) => new Date(date.getFullYear(), date.getMonth() + months, 1);
@@ -69,7 +68,7 @@ const Dashboard = () => {
     const start = startOfMonth(monthDate);
     const end = endOfMonth(monthDate);
     const days = [];
-    // Leading blanks (Sun=0 ... Sat=6) but we'll render Mon-Sun layout visually with CSS order
+
     const leading = (start.getDay() + 6) % 7; // convert to Mon=0 ... Sun=6
     for (let i = 0; i < leading; i++) {
       days.push(null);
@@ -80,7 +79,6 @@ const Dashboard = () => {
     return days;
   };
 
-  // Get events for a specific date
   const getEventsForDate = useCallback((date) => {
     if (!date) return { tasks: [], meetings: [], total: 0 };
     
@@ -104,12 +102,10 @@ const Dashboard = () => {
     };
   }, [tasks, meetings]);
 
-  // Load dashboard data
   const loadDashboardData = useCallback(async () => {
     try {
       setLoading(true);
 
-      // Get all tasks for the current user
       const taskResponse = await taskService.getTasks({
         page: 1,
         limit: 100,
@@ -117,7 +113,6 @@ const Dashboard = () => {
 
       const allTasks = taskResponse.tasks || [];
 
-      // Filter tasks based on authorization - show only tasks assigned to or assigned by current user
       const userTasks = allTasks.filter((task) => {
         if (!user || !user.id) return false;
         return task.assignTo?.id === user.id || task.assignedBy?.id === user.id;
@@ -125,7 +120,6 @@ const Dashboard = () => {
 
       setTasks(userTasks);
 
-      // Get all meetings for the current user
       const meetingResponse = await meetingService.getMeetings({
         page: 1,
         limit: 100,
@@ -133,7 +127,6 @@ const Dashboard = () => {
 
       const allMeetings = meetingResponse.meetings || [];
 
-      // Filter meetings based on authorization - show only meetings assigned to or assigned by current user
       const userMeetings = allMeetings.filter((meeting) => {
         if (!user || !user.id) return false;
         return (
@@ -144,7 +137,6 @@ const Dashboard = () => {
 
       setMeetings(userMeetings);
 
-      // Get projects for the current user
       const projectResponse = await projectService.getProjects({
         page: 1,
         limit: 100,
@@ -153,16 +145,13 @@ const Dashboard = () => {
       const allProjects = projectResponse.projects || [];
       setProjects(allProjects);
 
-      // Get project statistics from backend
       const projectStatsResponse = await projectService.getProjectStats();
       const projectStats = projectStatsResponse.stats || {};
 
-      // Calculate statistics
       const now = new Date();
       const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
       const oneMonthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
-      // Task statistics
       const totalTasks = userTasks.length;
       const completedTasks = userTasks.filter(
         (task) => task.status === "completed"
@@ -191,7 +180,6 @@ const Dashboard = () => {
       const completionRate =
         totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
 
-      // Meeting statistics
       const totalMeetings = userMeetings.length;
       const scheduledMeetings = userMeetings.filter(
         (meeting) => meeting.status === "scheduled"
@@ -219,7 +207,6 @@ const Dashboard = () => {
           ? Math.round((completedMeetings / totalMeetings) * 100)
           : 0;
 
-      // Project statistics from backend
       const totalProjects = projectStats.totalProjects || 0;
       const activeProjects = projectStats.activeProjects || 0;
       const completedProjects = projectStats.completedProjects || 0;
@@ -261,7 +248,6 @@ const Dashboard = () => {
     }
   }, [user, loadDashboardData]);
 
-  // Chart data
   const statusData = useMemo(() => [
     { name: "Deployed", value: stats.completedTasks, color: "#10B981" },
     { name: "In Development", value: stats.inProgressTasks, color: "#3B82F6" },
@@ -269,7 +255,6 @@ const Dashboard = () => {
     { name: "Blocked", value: stats.overdueTasks, color: "#EF4444" },
   ], [stats.completedTasks, stats.inProgressTasks, stats.pendingTasks, stats.overdueTasks]);
 
-  // Nightingale chart option for Task Status
   const nightingaleOption = useMemo(() => {
     const chartData = statusData.map((item) => ({
       value: item.value || 0,
@@ -280,7 +265,6 @@ const Dashboard = () => {
       selected: item.name === "Deployed", // Highlight "Deployed"
     }));
 
-    // Filter out items with zero values to avoid chart issues
     const filteredData = chartData.filter(item => item.value > 0);
 
     return {
@@ -333,8 +317,6 @@ const Dashboard = () => {
     };
   }, [statusData]);
 
-
-  // Weekly combined data (last 7 days)
   const getWeeklyData = () => {
     const days = [];
     for (let i = 6; i >= 0; i--) {
@@ -369,7 +351,6 @@ const Dashboard = () => {
 
   const weeklyData = getWeeklyData();
 
-  // Meeting chart data
   const meetingStatusData = useMemo(() => [
     { name: "Scheduled", value: stats.scheduledMeetings, color: "#3B82F6" },
     { name: "Concluded", value: stats.completedMeetings, color: "#10B981" },
@@ -377,7 +358,6 @@ const Dashboard = () => {
     { name: "Cancelled", value: stats.cancelledMeetings, color: "#EF4444" },
   ], [stats.scheduledMeetings, stats.completedMeetings, stats.pendingMeetings, stats.cancelledMeetings]);
 
-  // Meeting Status ECharts option
   const meetingStatusOption = useMemo(() => {
     const chartData = meetingStatusData.map((item) => ({
       value: item.value || 0,
@@ -440,7 +420,6 @@ const Dashboard = () => {
     };
   }, [meetingStatusData]);
 
-  // Project chart data
   const projectStatusData = useMemo(() => [
     { name: "Active", value: stats.activeProjects, color: "#10B981" },
     {
@@ -456,7 +435,6 @@ const Dashboard = () => {
     },
   ], [stats.activeProjects, stats.completedProjects, projects]);
 
-  // Project Status ECharts option
   const projectStatusOption = useMemo(() => {
     const chartData = projectStatusData.map((item) => ({
       value: item.value || 0,
@@ -519,7 +497,6 @@ const Dashboard = () => {
     };
   }, [projectStatusData]);
 
-  // Weekly Activity ECharts option
   const weeklyActivityOption = useMemo(() => {
     return {
       tooltip: {

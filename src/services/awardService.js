@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const awardService = {
-  // Get user's awards
+
   getMyAwards: async () => {
     try {
       const response = await axios.get('/api/awards/my-awards')
@@ -11,7 +11,6 @@ const awardService = {
     }
   },
 
-  // Get all available awards
   getAllAwards: async () => {
     try {
       const response = await axios.get('/api/awards/all')

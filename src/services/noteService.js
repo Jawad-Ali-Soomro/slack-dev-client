@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const noteService = {
-  // Get all notes with filters
+
   getNotes: async (filters = {}) => {
     try {
       const queryParams = new URLSearchParams()
@@ -19,7 +19,6 @@ const noteService = {
     }
   },
 
-  // Get note by ID
   getNoteById: async (noteId) => {
     try {
       const response = await axios.get(`/api/notes/${noteId}`)
@@ -29,7 +28,6 @@ const noteService = {
     }
   },
 
-  // Create note
   createNote: async (noteData) => {
     try {
       const formData = new FormData()
@@ -59,7 +57,6 @@ const noteService = {
     }
   },
 
-  // Update note
   updateNote: async (noteId, noteData) => {
     try {
       const formData = new FormData()
@@ -89,7 +86,6 @@ const noteService = {
     }
   },
 
-  // Delete note
   deleteNote: async (noteId) => {
     try {
       const response = await axios.delete(`/api/notes/${noteId}`)
@@ -99,7 +95,6 @@ const noteService = {
     }
   },
 
-  // Get all departments
   getDepartments: async () => {
     try {
       const response = await axios.get('/api/notes/departments')
@@ -109,7 +104,6 @@ const noteService = {
     }
   },
 
-  // Get subjects by department
   getSubjectsByDepartment: async (department) => {
     try {
       const response = await axios.get(`/api/notes/subjects/${encodeURIComponent(department)}`)

@@ -90,7 +90,6 @@ const Challenges = () => {
     tags: '',
   })
 
-  // Load categories
   const loadCategories = useCallback(async () => {
     try {
       const response = await challengeService.getCategories()
@@ -103,17 +102,14 @@ const Challenges = () => {
     }
   }, [])
 
-  // Load challenges
   const loadChallenges = useCallback(async () => {
     try {
       setLoading(true)
-      
-      // If "My Completed" tab is active, load completed challenges
+
       if (activeTab === 'completed') {
         const response = await challengeService.getMyChallenges()
         let completedChallenges = response.challenges || []
-        
-        // Apply filters to completed challenges
+
         if (selectedDifficulty && selectedDifficulty !== 'all') {
           completedChallenges = completedChallenges.filter(c => c.difficulty === selectedDifficulty)
         }
@@ -131,7 +127,7 @@ const Challenges = () => {
         setChallenges(completedChallenges)
         setTotalPoints(response.totalPoints || 0)
       } else {
-        // Load all challenges with filters
+
         const filters = {
           difficulty: selectedDifficulty && selectedDifficulty !== 'all' ? selectedDifficulty : undefined,
           category: selectedCategory && selectedCategory !== 'all' ? selectedCategory : undefined,
@@ -157,7 +153,7 @@ const Challenges = () => {
   }, [loadChallenges])
 
   const handleCreateChallenge = async () => {
-    // Check if user has enough points (50+) to create a challenge
+
     if (!editingChallenge && totalPoints < 50) {
       toast.error(`You need at least 50 challenge points to create a challenge. You currently have ${totalPoints} points.`)
       return
@@ -258,8 +254,6 @@ const Challenges = () => {
     navigate(`/dashboard/challenges/${challengeId}`)
   }
 
-
-  // Load completed challenges and total points
   useEffect(() => {
     const loadCompletedChallenges = async () => {
       try {

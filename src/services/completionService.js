@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const completionService = {
-  // Mark a task as completed by a user (one-time only)
+
   markTaskCompleted: async (taskId) => {
     try {
       const response = await axios.post(`/api/completions/tasks/${taskId}`)
@@ -12,7 +12,6 @@ const completionService = {
     }
   },
 
-  // Mark a meeting as completed by a user (one-time only)
   markMeetingCompleted: async (meetingId) => {
     try {
       const response = await axios.post(`/api/completions/meetings/${meetingId}`)
@@ -23,7 +22,6 @@ const completionService = {
     }
   },
 
-  // Mark a project milestone as completed by a user (one-time only)
   markProjectMilestoneCompleted: async (projectId, milestoneId) => {
     try {
       const response = await axios.post(`/api/completions/projects/${projectId}/milestones/${milestoneId}`)
@@ -34,7 +32,6 @@ const completionService = {
     }
   },
 
-  // Check if a user has completed a specific task
   isTaskCompleted: async (taskId) => {
     try {
       const response = await axios.get(`/api/completions/tasks/${taskId}/status`)
@@ -45,7 +42,6 @@ const completionService = {
     }
   },
 
-  // Check if a user has completed a specific meeting
   isMeetingCompleted: async (meetingId) => {
     try {
       const response = await axios.get(`/api/completions/meetings/${meetingId}/status`)
@@ -56,7 +52,6 @@ const completionService = {
     }
   },
 
-  // Get user's completion statistics
   getCompletionStats: async () => {
     try {
       const response = await axios.get('/api/completions/stats')
@@ -67,7 +62,6 @@ const completionService = {
     }
   },
 
-  // Get completion history for a user
   getCompletionHistory: async (filters = {}) => {
     try {
       const response = await axios.get('/api/completions/history', { params: filters })

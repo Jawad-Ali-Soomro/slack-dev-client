@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const postService = {
-  // Create a new post
+
   createPost: async (postData) => {
     try {
       const response = await axios.post('/api/posts', postData)
@@ -11,7 +11,6 @@ const postService = {
     }
   },
 
-  // Get posts with pagination and filtering
   getPosts: async (params = {}) => {
     try {
       const response = await axios.get('/api/posts', { params })
@@ -21,7 +20,6 @@ const postService = {
     }
   },
 
-  // Get a single post
   getPost: async (postId) => {
     try {
       const response = await axios.get(`/api/posts/${postId}`)
@@ -31,7 +29,6 @@ const postService = {
     }
   },
 
-  // Like/Unlike a post
   toggleLike: async (postId) => {
     try {
       const response = await axios.post(`/api/posts/${postId}/like`)
@@ -41,7 +38,6 @@ const postService = {
     }
   },
 
-  // Bookmark/Unbookmark a post
   toggleBookmark: async (postId) => {
     try {
       const response = await axios.post(`/api/posts/${postId}/bookmark`)
@@ -51,7 +47,6 @@ const postService = {
     }
   },
 
-  // Add comment to a post
   addComment: async (postId, content) => {
     try {
       const response = await axios.post(`/api/posts/${postId}/comments`, { content })
@@ -61,7 +56,6 @@ const postService = {
     }
   },
 
-  // Like/Unlike a comment
   toggleCommentLike: async (postId, commentId) => {
     try {
       const response = await axios.post(`/api/posts/${postId}/comments/${commentId}/like`)
@@ -71,7 +65,6 @@ const postService = {
     }
   },
 
-  // Share a post
   sharePost: async (postId) => {
     try {
       const response = await axios.post(`/api/posts/${postId}/share`)
@@ -81,7 +74,6 @@ const postService = {
     }
   },
 
-  // Update a post
   updatePost: async (postId, postData) => {
     try {
       const response = await axios.put(`/api/posts/${postId}`, postData)
@@ -91,7 +83,6 @@ const postService = {
     }
   },
 
-  // Delete a post
   deletePost: async (postId) => {
     try {
       const response = await axios.delete(`/api/posts/${postId}`)
@@ -101,7 +92,6 @@ const postService = {
     }
   },
 
-  // Pin/Unpin a post
   togglePin: async (postId) => {
     try {
       const response = await axios.post(`/api/posts/${postId}/pin`)
@@ -111,7 +101,6 @@ const postService = {
     }
   },
 
-  // Get user's posts
   getUserPosts: async (userId, params = {}) => {
     try {
       const response = await axios.get(`/api/posts/user/${userId}`, { params })
@@ -121,7 +110,6 @@ const postService = {
     }
   },
 
-  // Get trending posts
   getTrendingPosts: async (params = {}) => {
     try {
       const response = await axios.get('/api/posts/trending', { params })
@@ -131,7 +119,6 @@ const postService = {
     }
   },
 
-  // Get post comments with pagination
   getPostComments: async (postId, params = {}) => {
     try {
       const response = await axios.get(`/api/posts/${postId}/comments`, { params })
@@ -141,7 +128,6 @@ const postService = {
     }
   },
 
-  // Update a comment
   updateComment: async (postId, commentId, content) => {
     try {
       const response = await axios.put(`/api/posts/${postId}/comments/${commentId}`, { content })
@@ -151,7 +137,6 @@ const postService = {
     }
   },
 
-  // Delete a comment
   deleteComment: async (postId, commentId) => {
     try {
       const response = await axios.delete(`/api/posts/${postId}/comments/${commentId}`)
@@ -161,7 +146,6 @@ const postService = {
     }
   },
 
-  // Add a reply to a comment
   addReply: async (postId, commentId, content) => {
     try {
       const response = await axios.post(`/api/posts/${postId}/comments/${commentId}/replies`, { content })
@@ -171,7 +155,6 @@ const postService = {
     }
   },
 
-  // Add reaction to a comment
   addCommentReaction: async (postId, commentId, reactionType) => {
     try {
       const response = await axios.post(`/api/posts/${postId}/comments/${commentId}/reactions`, { reactionType })

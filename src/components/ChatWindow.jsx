@@ -66,7 +66,6 @@ const ChatWindow = ({ isMobile = false }) => {
     }
   }, [currentChat, markAsRead]);
 
-  // Custom scroll to bottom function for better control
   const scrollToBottomLocal = () => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTo({
@@ -76,20 +75,18 @@ const ChatWindow = ({ isMobile = false }) => {
     }
   };
 
-  // Auto-scroll to bottom when messages change (but not on initial load)
   useEffect(() => {
     if (messages.length > 0 && messagesContainerRef.current) {
-      // Use immediate scroll to prevent layout shift
+
       requestAnimationFrame(() => {
         messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
       });
     }
   }, [messages.length]);
 
-  // Scroll to bottom when current chat changes
   useEffect(() => {
     if (currentChat) {
-      // Wait for messages to load, then scroll
+
       const timer = setTimeout(() => {
         if (messages.length > 0) {
           scrollToBottomLocal();
@@ -100,15 +97,13 @@ const ChatWindow = ({ isMobile = false }) => {
     }
   }, [currentChat]);
 
-  // Initial scroll to bottom when component mounts with messages
   useEffect(() => {
     if (messages.length > 0 && messagesContainerRef.current) {
-      // Force immediate scroll to bottom on mount
+
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - 200;
     }
   }, []);
 
-  // Handle scroll events to show/hide scroll-to-bottom button
   useEffect(() => {
     const messagesContainer = messagesContainerRef.current;
     if (!messagesContainer) return;
@@ -137,10 +132,9 @@ const ChatWindow = ({ isMobile = false }) => {
     
     setMessageText('');
     stopTyping(currentChat._id);
-    
-    // Scroll to bottom after sending message - use immediate scroll to prevent layout shift
+
     if (messagesContainerRef.current) {
-      // Scroll immediately to prevent layout shift
+
       messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
     }
   };
@@ -197,7 +191,6 @@ const ChatWindow = ({ isMobile = false }) => {
     }
   };
 
-  // Close emoji picker when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (emojiPickerRef.current && !emojiPickerRef.current.contains(event.target)) {
@@ -206,7 +199,7 @@ const ChatWindow = ({ isMobile = false }) => {
     };
 
     if (showEmojiPicker) {
-      // Use setTimeout to avoid immediate closure when clicking the button
+
       setTimeout(() => {
         document.addEventListener('mousedown', handleClickOutside);
       }, 0);
@@ -223,9 +216,9 @@ const ChatWindow = ({ isMobile = false }) => {
 
   const getAvatarUrl = (avatar) => {
     if (!avatar) return null;
-    // If avatar is already a full URL, return as is
+
     if (avatar.startsWith('http')) return avatar;
-    // If avatar is a relative path, prefix with server URL
+
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
     return `${apiUrl}${avatar.startsWith('/') ? '' : '/'}${avatar}`;
   };

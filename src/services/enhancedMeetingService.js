@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const enhancedMeetingService = {
-  // Create a new meeting
+
   createMeeting: async (meetingData) => {
     try {
       const response = await axios.post('/api/meetings', meetingData)
@@ -11,7 +11,6 @@ const enhancedMeetingService = {
     }
   },
 
-  // Get all meetings with filters
   getMeetings: async (filters = {}) => {
     try {
       const queryParams = new URLSearchParams()
@@ -30,7 +29,6 @@ const enhancedMeetingService = {
     }
   },
 
-  // Get meeting by ID
   getMeetingById: async (meetingId) => {
     try {
       const response = await axios.get(`/api/meetings/${meetingId}`)
@@ -40,7 +38,6 @@ const enhancedMeetingService = {
     }
   },
 
-  // Update meeting
   updateMeeting: async (meetingId, updateData) => {
     try {
       const response = await axios.put(`/api/meetings/${meetingId}`, updateData)
@@ -50,7 +47,6 @@ const enhancedMeetingService = {
     }
   },
 
-  // Update meeting status
   updateMeetingStatus: async (meetingId, status) => {
     try {
       const response = await axios.put(`/api/meetings/${meetingId}/status`, { status })
@@ -60,7 +56,6 @@ const enhancedMeetingService = {
     }
   },
 
-  // Reschedule meeting
   rescheduleMeeting: async (meetingId, rescheduleData) => {
     try {
       const response = await axios.put(`/api/meetings/${meetingId}/reschedule`, rescheduleData)
@@ -70,7 +65,6 @@ const enhancedMeetingService = {
     }
   },
 
-  // Reassign meeting
   reassignMeeting: async (meetingId, assignedTo) => {
     try {
       const response = await axios.put(`/api/meetings/${meetingId}/reassign`, { assignedTo })
@@ -80,7 +74,6 @@ const enhancedMeetingService = {
     }
   },
 
-  // Update meeting attendees
   updateAttendees: async (meetingId, attendees) => {
     try {
       const response = await axios.put(`/api/meetings/${meetingId}/attendees`, { attendees })
@@ -90,7 +83,6 @@ const enhancedMeetingService = {
     }
   },
 
-  // Delete meeting
   deleteMeeting: async (meetingId) => {
     try {
       const response = await axios.delete(`/api/meetings/${meetingId}`)
@@ -100,7 +92,6 @@ const enhancedMeetingService = {
     }
   },
 
-  // Get meeting statistics
   getMeetingStats: async () => {
     try {
       const response = await axios.get('/api/meetings/stats')

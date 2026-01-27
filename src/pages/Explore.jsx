@@ -230,7 +230,7 @@ const Explore = () => {
     if (type === 'zipFile') {
       const file = e.target.files?.[0]
       if (file) {
-        // Validate file type
+
         if (!file.name.toLowerCase().endsWith('.zip') && file.type !== 'application/zip' && file.type !== 'application/x-zip-compressed') {
           toast.error('Please select a valid ZIP file')
           e.target.value = ''
@@ -245,7 +245,7 @@ const Explore = () => {
         e.target.value = ''
         return
       }
-      // Validate image files
+
       const validFiles = files.filter(file => file.type.startsWith('image/'))
       if (validFiles.length !== files.length) {
         toast.error('Please select only image files')

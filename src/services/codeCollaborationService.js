@@ -2,7 +2,7 @@ import axiosInstance from "../lib/axios";
 
 
 export const codeCollaborationService = {
-  // Create a new code session
+
   createSession: async (sessionData) => {
     try {
       const response = await axiosInstance.post('/api/code-collaboration', sessionData);
@@ -13,7 +13,6 @@ export const codeCollaborationService = {
     }
   },
 
-  // Get session by ID
   getSessionById: async (sessionId) => {
     try {
       const response = await axiosInstance.get(`/api/code-collaboration/${sessionId}`);
@@ -24,7 +23,6 @@ export const codeCollaborationService = {
     }
   },
 
-  // Get user's sessions
   getUserSessions: async (page = 1, limit = 10) => {
     try {
       const response = await axiosInstance.get(`/api/code-collaboration/user/sessions?page=${page}&limit=${limit}`);
@@ -35,7 +33,6 @@ export const codeCollaborationService = {
     }
   },
 
-  // Get public sessions
   getPublicSessions: async (page = 1, limit = 10, language = null) => {
     try {
       const params = new URLSearchParams({ page, limit });
@@ -49,7 +46,6 @@ export const codeCollaborationService = {
     }
   },
 
-  // Join a session
   joinSession: async (sessionId) => {
     try {
       const response = await axiosInstance.post(`/api/code-collaboration/${sessionId}/join`);
@@ -60,7 +56,6 @@ export const codeCollaborationService = {
     }
   },
 
-  // Leave a session
   leaveSession: async (sessionId) => {
     try {
       const response = await axiosInstance.post(`/api/code-collaboration/${sessionId}/leave`);
@@ -71,7 +66,6 @@ export const codeCollaborationService = {
     }
   },
 
-  // Update code
   updateCode: async (sessionId, code, cursorPosition = null) => {
     try {
       const response = await axiosInstance.put(`/api/code-collaboration/${sessionId}/code`, {
@@ -85,7 +79,6 @@ export const codeCollaborationService = {
     }
   },
 
-  // Update cursor position
   updateCursor: async (sessionId, cursorPosition) => {
     try {
       const response = await axiosInstance.put(`/api/code-collaboration/${sessionId}/cursor`, {
@@ -98,7 +91,6 @@ export const codeCollaborationService = {
     }
   },
 
-  // Get session stats
   getSessionStats: async () => {
     try {
       const response = await axiosInstance.get('/api/code-collaboration/stats/overview');
@@ -109,7 +101,6 @@ export const codeCollaborationService = {
     }
   },
 
-  // End a session
   endSession: async (sessionId) => {
     try {
       const response = await axiosInstance.put(`/api/code-collaboration/${sessionId}/end`);
@@ -120,7 +111,6 @@ export const codeCollaborationService = {
     }
   },
 
-  // Delete a session permanently
   deleteSession: async (sessionId) => {
     try {
       const response = await axiosInstance.delete(`/api/code-collaboration/${sessionId}`);
@@ -131,7 +121,6 @@ export const codeCollaborationService = {
     }
   },
 
-  // Generate invite code
   generateInviteCode: async (sessionId) => {
     try {
       const response = await axiosInstance.post(`/api/code-collaboration/${sessionId}/invite-code`);
@@ -142,7 +131,6 @@ export const codeCollaborationService = {
     }
   },
 
-  // Join session by invite code
   joinByInviteCode: async (inviteCode) => {
     try {
       const response = await axiosInstance.post(`/api/code-collaboration/join/${inviteCode}`);
@@ -153,7 +141,6 @@ export const codeCollaborationService = {
     }
   },
 
-  // Get session by invite code (for preview)
   getSessionByInviteCode: async (inviteCode) => {
     try {
       const response = await axiosInstance.get(`/api/code-collaboration/join/${inviteCode}`);
@@ -164,7 +151,6 @@ export const codeCollaborationService = {
     }
   },
 
-  // Invite user to session
   inviteUser: async (sessionId, invitedUserId) => {
     try {
       const response = await axiosInstance.post(`/api/code-collaboration/${sessionId}/invite`, {

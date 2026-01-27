@@ -34,7 +34,6 @@ const DashboardHeader = () => {
   const [totalPoints, setTotalPoints] = useState(0)
   const [headerAwards, setHeaderAwards] = useState([])
 
-  // Initialize profile data when user changes
   useEffect(() => {
     if (user) {
       setProfileData({
@@ -48,7 +47,6 @@ const DashboardHeader = () => {
     }
   }, [user])
 
-  // Fetch awards for header display
   useEffect(() => {
     const fetchHeaderAwards = async () => {
       if (user) {
@@ -64,7 +62,6 @@ const DashboardHeader = () => {
     fetchHeaderAwards()
   }, [user])
 
-  // Fetch real-time profile data when modal opens
   const fetchProfileData = async () => {
     try {
       setLoading(true)
@@ -79,8 +76,7 @@ const DashboardHeader = () => {
         phone: profileUser.phone || ''
       })
       setAvatarPreview(profileUser.avatar || '')
-      
-      // Fetch awards
+
       try {
         const awardsResponse = await awardService.getMyAwards()
         setAwards(awardsResponse.awards || [])
@@ -96,7 +92,6 @@ const DashboardHeader = () => {
     }
   }
 
-  // Handle modal open
   const handleOpenProfileModal = () => {
     setShowProfileModal(true)
     fetchProfileData()
@@ -105,19 +100,16 @@ const DashboardHeader = () => {
   const handleProfileUpdate = async () => {
     try {
       setLoading(true)
-      
-      // Update profile data
+
       const response = await profileService.updateProfile(profileData)
-      
-      // Update user data in context/localStorage
+
       const updatedUser = { ...user, ...response.user }
       localStorage.setItem('userData', JSON.stringify(updatedUser))
       
       toast.success('Profile updated successfully!')
       setIsEditing(false)
       setShowProfileModal(false)
-      
-      // Reload page to update user context
+
       window.location.reload()
     } catch (error) {
       console.error('Profile update error:', error)
@@ -131,13 +123,11 @@ const DashboardHeader = () => {
     const file = event.target.files[0]
     if (!file) return
 
-    // Validate file type
     if (!file.type.startsWith('image/')) {
       toast.error('Please select a valid image file')
       return
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
       toast.error('Image size should be less than 5MB')
       return
@@ -145,11 +135,9 @@ const DashboardHeader = () => {
 
     try {
       setLoading(true)
-      
-      // Upload avatar to server
+
       const response = await profileService.uploadAvatar(file)
-      
-      // Update avatar preview with full URL
+
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
       const avatarUrl = response.user.avatar.startsWith('http') 
         ? response.user.avatar 
@@ -157,14 +145,12 @@ const DashboardHeader = () => {
       
       setAvatarPreview(avatarUrl)
       setAvatarFile(file)
-      
-      // Update user data in context/localStorage
+
       const updatedUser = { ...user, avatar: response.user.avatar }
       localStorage.setItem('userData', JSON.stringify(updatedUser))
       
       toast.success('Avatar uploaded successfully!')
-      
-      // Reload page to update user context
+
       window.location.reload()
     } catch (error) {
       console.error('Avatar upload error:', error)

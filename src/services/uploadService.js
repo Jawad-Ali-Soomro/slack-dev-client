@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const uploadService = {
-  // Upload single image
+
   uploadSingleImage: async (file) => {
     try {
       const formData = new FormData()
@@ -18,7 +18,6 @@ const uploadService = {
     }
   },
 
-  // Upload multiple images
   uploadMultipleImages: async (files) => {
     try {
       const formData = new FormData()
@@ -37,7 +36,6 @@ const uploadService = {
     }
   },
 
-  // Delete image
   deleteImage: async (filename) => {
     try {
       const response = await axios.delete(`/api/upload/${filename}`)
@@ -47,7 +45,6 @@ const uploadService = {
     }
   },
 
-  // Get image URL
   getImageUrl: (filename) => {
     return `${axios.defaults.baseURL}/uploads/posts/${filename}`
   }

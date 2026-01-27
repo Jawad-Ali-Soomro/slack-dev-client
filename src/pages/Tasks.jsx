@@ -84,8 +84,6 @@ const Tasks = () => {
   }, [selectedTaskDetails, tasks])
 
 
-  // Load tasks from API
-  // Handle user avatar click
   const handleUserAvatarClick = (userId) => {
     setSelectedUserId(userId)
     setShowUserDetails(true)
@@ -118,12 +116,10 @@ const Tasks = () => {
       
       const response = await taskService.getTasks(filters)
       const allTasks = response.tasks || []
-      
-      // Filter tasks based on authorization - show only tasks assigned to or assigned by current user
+
       const authorizedTasks = allTasks.filter(task => {
         if (!user || !user.id) return false
-        
-        // Show tasks where current user is assigned to or assigned by
+
         return task.assignTo?.id === user.id || task.assignedBy?.id === user.id
       })
       
@@ -139,7 +135,6 @@ const Tasks = () => {
     }
   }, [filterStatus, filterPriority, pagination.page, pagination.limit, user])
 
-  // Load tasks on component mount and when filters change
   useEffect(() => {
     console.log('Tasks useEffect triggered:', { user: user?.id, filterStatus, filterPriority })
     if (user && user.id) {
@@ -147,14 +142,12 @@ const Tasks = () => {
     }
   }, [filterStatus, filterPriority, user])
 
-  // Mark task notifications as read when user visits this page
   useEffect(() => {
     if (user && user.id) {
       markAsReadByType('tasks')
     }
   }, [user, markAsReadByType])
 
-  // Handle navigation state for opening modal
   useEffect(() => {
     if (location.state?.openModal && location.state?.date) {
       const date = new Date(location.state.date)
@@ -166,13 +159,11 @@ const Tasks = () => {
     }
   }, [location.state])
 
-  // Load friends from API
   const loadUsers = async () => {
     try {
       const response = await friendService.getFriends()
       const friends = response.friends || []
-      
-      // Transform friends data to match the expected format and filter out current user
+
       const transformedUsers = friends
         .map(friendship => ({
           id: friendship.friend.id,
@@ -191,7 +182,6 @@ const Tasks = () => {
     }
   }
 
-  // Load projects from API
   const loadProjects = async () => {
     try {
       const response = await projectService.getProjects({ limit: 100 })
@@ -203,7 +193,6 @@ const Tasks = () => {
     }
   }
 
-  // Load teams from API
   const loadTeams = async () => {
     try {
       const response = await teamService.getTeams({ limit: 100 })
@@ -213,7 +202,6 @@ const Tasks = () => {
     }
   }
 
-  // Load team members
   const loadTeamMembers = async (teamId) => {
     if (!teamId) {
       setTeamMembers([])
@@ -230,37 +218,33 @@ const Tasks = () => {
     }
   }
 
-  // Update available users based on project selection
   const updateAvailableUsers = useCallback(() => {
     if (newTask.projectId && newTask.projectId !== "none") {
-      // Find the selected project
+
       const selectedProject = projects.find(p => p.id === newTask.projectId)
       if (selectedProject && selectedProject.teamId) {
-        // If project has a team, load team members
+
         loadTeamMembers(selectedProject.teamId)
       } else {
-        // If no team, show all users
+
         setAvailableUsers(users)
       }
     } else {
-      // If no project selected, show all users
+
       setAvailableUsers(users)
     }
   }, [newTask.projectId, projects, users])
 
-  // Load users and projects on component mount
   useEffect(() => {
     loadUsers()
     loadProjects()
     loadTeams()
   }, [])
 
-  // Initialize available users when users are loaded
   useEffect(() => {
     setAvailableUsers(users)
   }, [users])
 
-  // Update available users when project changes
   useEffect(() => {
     updateAvailableUsers()
   }, [updateAvailableUsers])
@@ -303,7 +287,7 @@ const Tasks = () => {
   const handleAssignedToChange = async (value) => {
     setNewTask({...newTask, assignedTo: value, assignedToId: ""})
     if (value.length > 0) {
-      // Filter available users based on search term
+
       const filtered = availableUsers.filter(user => 
         (user.username || user.name).toLowerCase().includes(value.toLowerCase()) ||
         user.email.toLowerCase().includes(value.toLowerCase())
@@ -402,8 +386,7 @@ const Tasks = () => {
 
     try {
       setLoading(true)
-      
-      // Check if we have a valid user ID
+
       if (!newTask.assignedToId) {
         toast.error("Please select a user to assign the task to")
         return
@@ -419,15 +402,13 @@ const Tasks = () => {
       }
 
       const response = await taskService.createTask(taskData)
-      
-      // Clear caches to ensure fresh data
+
       try {
         await taskService.clearTaskCaches()
       } catch (cacheError) {
         console.warn('Cache clear failed:', cacheError)
       }
-      
-      // Reload tasks to get the updated list
+
       await loadTasks()
       
       setNewTask({ title: "", description: "", priority: "medium", assignedTo: "", assignedToId: "", dueDate: "", projectId: "none" })
@@ -469,7 +450,6 @@ const Tasks = () => {
     }
   }
 
-  // Edit task functions
   const handleEditTask = (task) => {
     setEditingTask(task)
     setShowEditModal(true)

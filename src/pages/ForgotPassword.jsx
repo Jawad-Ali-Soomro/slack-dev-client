@@ -15,8 +15,7 @@ const ForgotPassword = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  
-  // Refs for OTP inputs
+
   const otpRefs = [useRef(), useRef(), useRef(), useRef()]
 
   const handleEmailSubmit = async (e) => {
@@ -50,21 +49,20 @@ const ForgotPassword = () => {
   }
 
   const handleOtpChange = (index, value) => {
-    // Only allow single digit
+
     if (value.length > 1) return
     
     const newOtp = [...otp]
     newOtp[index] = value
     setOtp(newOtp)
-    
-    // Auto-focus next input
+
     if (value && index < 3) {
       otpRefs[index + 1].current.focus()
     }
   }
 
   const handleOtpKeyDown = (index, e) => {
-    // Handle backspace
+
     if (e.key === 'Backspace' && !otp[index] && index > 0) {
       otpRefs[index - 1].current.focus()
     }

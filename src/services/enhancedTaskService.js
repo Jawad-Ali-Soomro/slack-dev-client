@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const enhancedTaskService = {
-  // Create a new task
+
   createTask: async (taskData) => {
     try {
       const response = await axios.post('/api/tasks', taskData)
@@ -11,7 +11,6 @@ const enhancedTaskService = {
     }
   },
 
-  // Get all tasks with filters
   getTasks: async (filters = {}) => {
     try {
       const queryParams = new URLSearchParams()
@@ -30,7 +29,6 @@ const enhancedTaskService = {
     }
   },
 
-  // Get task by ID
   getTaskById: async (taskId) => {
     try {
       const response = await axios.get(`/api/tasks/${taskId}`)
@@ -40,7 +38,6 @@ const enhancedTaskService = {
     }
   },
 
-  // Update task
   updateTask: async (taskId, updateData) => {
     try {
       const response = await axios.put(`/api/tasks/${taskId}`, updateData)
@@ -50,7 +47,6 @@ const enhancedTaskService = {
     }
   },
 
-  // Update task status
   updateTaskStatus: async (taskId, status) => {
     try {
       const response = await axios.put(`/api/tasks/${taskId}/status`, { status })
@@ -60,7 +56,6 @@ const enhancedTaskService = {
     }
   },
 
-  // Reassign task
   reassignTask: async (taskId, assignTo) => {
     try {
       const response = await axios.put(`/api/tasks/${taskId}/reassign`, { assignTo })
@@ -70,7 +65,6 @@ const enhancedTaskService = {
     }
   },
 
-  // Delete task
   deleteTask: async (taskId) => {
     try {
       const response = await axios.delete(`/api/tasks/${taskId}`)
@@ -80,7 +74,6 @@ const enhancedTaskService = {
     }
   },
 
-  // Get task statistics
   getTaskStats: async () => {
     try {
       const response = await axios.get('/api/tasks/stats')
@@ -90,7 +83,6 @@ const enhancedTaskService = {
     }
   },
 
-  // Clear all task caches
   clearTaskCaches: async () => {
     try {
       const response = await axios.post('/api/tasks/clear-cache')

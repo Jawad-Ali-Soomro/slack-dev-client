@@ -23,7 +23,6 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
   const [newTag, setNewTag] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Initialize form data when task changes
   useEffect(() => {
     if (task) {
       setFormData({

@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const teamService = {
-  // Get all teams
+
   getTeams: async (filters = {}) => {
     try {
       const queryParams = new URLSearchParams()
@@ -18,7 +18,6 @@ const teamService = {
     }
   },
 
-  // Get team by ID
   getTeamById: async (teamId) => {
     try {
       const response = await axios.get(`/api/teams/${teamId}`)
@@ -28,7 +27,6 @@ const teamService = {
     }
   },
 
-  // Create team
   createTeam: async (teamData) => {
     try {
       const response = await axios.post('/api/teams', teamData)
@@ -38,7 +36,6 @@ const teamService = {
     }
   },
 
-  // Update team
   updateTeam: async (teamId, teamData) => {
     try {
       const response = await axios.put(`/api/teams/${teamId}`, teamData)
@@ -48,7 +45,6 @@ const teamService = {
     }
   },
 
-  // Delete team
   deleteTeam: async (teamId) => {
     try {
       const response = await axios.delete(`/api/teams/${teamId}`)
@@ -58,7 +54,6 @@ const teamService = {
     }
   },
 
-  // Get team statistics
   getTeamStats: async () => {
     try {
       const response = await axios.get('/api/teams/stats')
@@ -68,7 +63,6 @@ const teamService = {
     }
   },
 
-  // Add member to team
   addMember: async (teamId, memberData) => {
     try {
       const response = await axios.post(`/api/teams/${teamId}/members`, memberData)
@@ -78,7 +72,6 @@ const teamService = {
     }
   },
 
-  // Remove member from team
   removeMember: async (teamId, memberData) => {
     try {
       const response = await axios.delete(`/api/teams/${teamId}/members`, { data: memberData })
@@ -88,7 +81,6 @@ const teamService = {
     }
   },
 
-  // Update member role
   updateMemberRole: async (teamId, roleData) => {
     try {
       const response = await axios.put(`/api/teams/${teamId}/members/role`, roleData)
@@ -98,7 +90,6 @@ const teamService = {
     }
   },
 
-  // Get team members for assignment dropdowns
   getTeamMembers: async (teamId) => {
     try {
       const response = await axios.get(`/api/teams/${teamId}/members`)

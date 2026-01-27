@@ -21,7 +21,6 @@ const NotificationDropdown = () => {
     addNotification 
   } = useNotifications()
 
-  // Add test notification
   const handleAddTestNotification = (type) => {
     const testNotification = createTestNotification(type)
     addNotification(testNotification)
@@ -38,7 +37,6 @@ const NotificationDropdown = () => {
     loadNotifications({ force: true })
   }
 
-  // Get notification icon based on type
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'task':
@@ -54,7 +52,6 @@ const NotificationDropdown = () => {
     }
   }
 
-  // Format time ago
   const getTimeAgo = (date) => {
     const now = new Date()
     const notificationDate = new Date(date)
@@ -71,7 +68,7 @@ const NotificationDropdown = () => {
     <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button
-          // variant="ghost"
+
           size="sm"
           className="relative rounde-[25px] h-12  mx-2 w-12 bg-white hover:bg-gray-100 hover:border  text-black cursor-pointer rounded-full"
         >

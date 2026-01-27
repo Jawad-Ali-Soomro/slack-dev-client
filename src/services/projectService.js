@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const projectService = {
-  // Get all projects
+
   getProjects: async (filters = {}) => {
     try {
       const queryParams = new URLSearchParams()
@@ -19,7 +19,6 @@ const projectService = {
     }
   },
 
-  // Get project by ID
   getProjectById: async (projectId) => {
     try {
       const response = await axios.get(`/api/projects/${projectId}`)
@@ -29,7 +28,6 @@ const projectService = {
     }
   },
 
-  // Create project
   createProject: async (projectData) => {
     try {
       const response = await axios.post('/api/projects', projectData)
@@ -39,7 +37,6 @@ const projectService = {
     }
   },
 
-  // Update project
   updateProject: async (projectId, projectData) => {
     try {
       const response = await axios.put(`/api/projects/${projectId}`, projectData)
@@ -49,7 +46,6 @@ const projectService = {
     }
   },
 
-  // Delete project
   deleteProject: async (projectId) => {
     try {
       const response = await axios.delete(`/api/projects/${projectId}`)
@@ -59,7 +55,6 @@ const projectService = {
     }
   },
 
-  // Get project statistics
   getProjectStats: async () => {
     try {
       const response = await axios.get('/api/projects/stats')
@@ -69,7 +64,6 @@ const projectService = {
     }
   },
 
-  // Add member to project
   addMember: async (projectId, memberData) => {
     try {
       const response = await axios.post(`/api/projects/${projectId}/members`, memberData)
@@ -79,7 +73,6 @@ const projectService = {
     }
   },
 
-  // Remove member from project
   removeMember: async (projectId, memberData) => {
     try {
       const response = await axios.delete(`/api/projects/${projectId}/members`, { data: memberData })
@@ -89,7 +82,6 @@ const projectService = {
     }
   },
 
-  // Update member role
   updateMemberRole: async (projectId, roleData) => {
     try {
       const response = await axios.put(`/api/projects/${projectId}/members/role`, roleData)
@@ -99,7 +91,6 @@ const projectService = {
     }
   },
 
-  // Add link to project
   addLink: async (projectId, linkData) => {
     try {
       const response = await axios.post(`/api/projects/${projectId}/links`, linkData)
@@ -109,7 +100,6 @@ const projectService = {
     }
   },
 
-  // Update project link
   updateLink: async (projectId, linkData) => {
     try {
       const response = await axios.put(`/api/projects/${projectId}/links`, linkData)
@@ -119,7 +109,6 @@ const projectService = {
     }
   },
 
-  // Remove link from project
   removeLink: async (projectId, linkData) => {
     try {
       const response = await axios.delete(`/api/projects/${projectId}/links`, { data: linkData })

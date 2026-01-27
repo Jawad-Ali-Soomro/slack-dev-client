@@ -28,7 +28,6 @@ import { useAuth } from '../contexts/AuthContext'
 import { PiUserDuotone } from 'react-icons/pi'
 import { getAvatarProps } from '../utils/avatarUtils'
 
-// Predefined departments
 const PREDEFINED_DEPARTMENTS = [
   'Computer Science',
   'BBA (Business Administration)',
@@ -62,7 +61,6 @@ const PREDEFINED_DEPARTMENTS = [
   'Music',
 ]
 
-// Predefined subjects by department
 const PREDEFINED_SUBJECTS = {
   'Computer Science': [
     'Programming Fundamentals',
@@ -602,22 +600,20 @@ const LearnPoint = () => {
     tags: '',
   })
 
-  // Load departments
   const loadDepartments = useCallback(async () => {
     try {
       const response = await noteService.getDepartments()
       const userDepartments = response.departments || []
-      // Combine predefined and user-created departments, removing duplicates
+
       const allDepartments = [...new Set([...PREDEFINED_DEPARTMENTS, ...userDepartments])]
       setDepartments(allDepartments.sort())
     } catch (error) {
       console.error('Error loading departments:', error)
-      // Fallback to predefined departments if API fails
+
       setDepartments(PREDEFINED_DEPARTMENTS.sort())
     }
   }, [])
 
-  // Load subjects by department
   const loadSubjects = useCallback(async (department) => {
     if (!department) {
       setSubjects([])
@@ -632,7 +628,6 @@ const LearnPoint = () => {
     }
   }, [])
 
-  // Load notes
   const loadNotes = useCallback(async () => {
     try {
       setLoading(true)
@@ -668,7 +663,6 @@ const LearnPoint = () => {
     }
   }, [selectedDepartment, loadSubjects])
 
-  // Load subjects for modal when department changes in create/edit modal
   useEffect(() => {
     if (showCreateModal && newNote.department) {
       loadSubjectsForModal(newNote.department)
@@ -677,26 +671,23 @@ const LearnPoint = () => {
     }
   }, [newNote.department, showCreateModal])
 
-  // Load subjects for modal - combines predefined and user-created subjects
   const loadSubjectsForModal = useCallback(async (department) => {
     if (!department) {
       setModalSubjects([])
       return
     }
     try {
-      // Get predefined subjects for the department
+
       const predefinedSubjects = PREDEFINED_SUBJECTS[department] || []
-      
-      // Get user-created subjects from API
+
       const response = await noteService.getSubjectsByDepartment(department)
       const userSubjects = response.subjects || []
-      
-      // Combine and remove duplicates
+
       const allSubjects = [...new Set([...predefinedSubjects, ...userSubjects])]
       setModalSubjects(allSubjects.sort())
     } catch (error) {
       console.error('Error loading subjects for modal:', error)
-      // Fallback to predefined subjects if API fails
+
       const predefinedSubjects = PREDEFINED_SUBJECTS[department] || []
       setModalSubjects(predefinedSubjects.sort())
     }
@@ -770,7 +761,7 @@ const LearnPoint = () => {
     })
     setPdfFile(null)
     setShowCreateModal(true)
-    // Load subjects for the note's department
+
     if (note.department) {
       await loadSubjectsForModal(note.department)
     }
@@ -799,7 +790,7 @@ const LearnPoint = () => {
   }
 
   const filteredNotes = notes.filter((note) => {
-    // Filter by tab
+
     if (activeTab === 'mine' && user) {
       const noteCreatorId = note.createdBy?._id?.toString() || note.createdBy?.id?.toString() || (typeof note.createdBy === 'string' ? note.createdBy : null)
       const currentUserId = user.id?.toString() || user._id?.toString()
@@ -807,8 +798,7 @@ const LearnPoint = () => {
         return false
       }
     }
-    
-    // Filter by search
+
     const matchesSearch =
       note.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (note.description && note.description.toLowerCase().includes(searchTerm.toLowerCase()))

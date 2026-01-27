@@ -61,7 +61,7 @@ const PremiumDashboard = () => {
     try {
       setIsStartingTrial(true)
       await startTrial(plan)
-      // Redirect to premium page
+
       navigate('/premium')
     } catch (error) {
       console.error('Failed to start trial:', error)

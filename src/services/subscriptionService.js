@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const subscriptionService = {
-  // Get user's subscription
+
   getSubscription: async () => {
     try {
       const response = await axios.get('/api/subscriptions/me')
@@ -11,7 +11,6 @@ const subscriptionService = {
     }
   },
 
-  // Get all available plans
   getPlans: async () => {
     try {
       const response = await axios.get('/api/subscriptions/plans')
@@ -21,7 +20,6 @@ const subscriptionService = {
     }
   },
 
-  // Get usage statistics
   getUsage: async () => {
     try {
       const response = await axios.get('/api/subscriptions/usage')
@@ -31,7 +29,6 @@ const subscriptionService = {
     }
   },
 
-  // Check feature access
   checkFeatureAccess: async (feature, currentCount = 0) => {
     try {
       const response = await axios.post('/api/subscriptions/check-access', {
@@ -44,7 +41,6 @@ const subscriptionService = {
     }
   },
 
-  // Start trial
   startTrial: async (plan) => {
     try {
       const response = await axios.post('/api/subscriptions/trial', { plan })
@@ -54,7 +50,6 @@ const subscriptionService = {
     }
   },
 
-  // Update usage
   updateUsage: async (feature, increment = 1) => {
     try {
       const response = await axios.post('/api/subscriptions/update-usage', {
@@ -67,7 +62,6 @@ const subscriptionService = {
     }
   },
 
-  // Create checkout session (for Stripe integration)
   createCheckoutSession: async (plan, billingCycle = 'monthly') => {
     try {
       const response = await axios.post('/api/payments/checkout', {
@@ -82,7 +76,6 @@ const subscriptionService = {
     }
   },
 
-  // Cancel subscription
   cancelSubscription: async () => {
     try {
       const response = await axios.post('/api/subscriptions/cancel')
@@ -92,7 +85,6 @@ const subscriptionService = {
     }
   },
 
-  // Reactivate subscription
   reactivateSubscription: async () => {
     try {
       const response = await axios.post('/api/subscriptions/reactivate')

@@ -32,7 +32,6 @@ export const ChatProvider = ({ children }) => {
   const typingTimeoutRef = useRef({});
   const messagesEndRef = useRef(null);
 
-  // Initialize socket connection
   useEffect(() => {
     if (user && token) {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -58,8 +57,7 @@ export const ChatProvider = ({ children }) => {
 
       newSocket.on('disconnect', (reason) => {
         setIsConnected(false);
-        
-        // Auto-reconnect if not manually disconnected
+
         if (reason !== 'io client disconnect') {
           setTimeout(() => {
             newSocket.connect();
@@ -70,8 +68,7 @@ export const ChatProvider = ({ children }) => {
       newSocket.on('connect_error', (error) => {
         setIsConnected(false);
         setError('Connection failed: ' + error.message);
-        
-        // Try to reconnect after a delay
+
         setTimeout(() => {
           if (!isConnected) {
             newSocket.connect();
@@ -89,8 +86,7 @@ export const ChatProvider = ({ children }) => {
         if (currentChat && message.chat === currentChat._id) {
           scrollToBottom();
         }
-        
-        // Show toast notification for new messages (only if not from current user)
+
         if (message.sender && message.sender._id !== user?.id && message.sender._id !== user?._id) {
           const senderName = message.sender.name || message.sender.username || 'Unknown User';
           toast.success(`${senderName} sent a message just now`, {
@@ -100,7 +96,7 @@ export const ChatProvider = ({ children }) => {
             action: {
               label: 'View Chat',
               onClick: () => {
-                // Find the chat and switch to it
+
                 const chat = chats.find(c => c._id === message.chat);
                 if (chat) {
                   setCurrentChat(chat);
@@ -138,8 +134,7 @@ export const ChatProvider = ({ children }) => {
           const filtered = prev.filter(u => u.userId !== data.userId);
           return [...filtered, { ...data, isOnline: true }];
         });
-        
-        // Show toast notification when a user comes online (only if not current user)
+
         if (data.userId !== user?.id && data.userId !== user?._id) {
           const userName = data.name || data.username || 'Unknown User';
           toast.info(`${userName} is now online`, {
@@ -157,8 +152,7 @@ export const ChatProvider = ({ children }) => {
               : u
           )
         );
-        
-        // Show toast notification when a user goes offline (only if not current user)
+
         if (data.userId !== user?.id && data.userId !== user?._id) {
           const userName = data.name || data.username || 'Unknown User';
           toast.warning(`${userName} is now offline`, {
@@ -204,8 +198,7 @@ export const ChatProvider = ({ children }) => {
     }
   }, [user, token]);
 
-  // Load initial data
-  // Load chats when user is available (from DB first)
+
   useEffect(() => {
     if (user) {
       loadChats();
@@ -213,14 +206,12 @@ export const ChatProvider = ({ children }) => {
     }
   }, [user]);
 
-  // Additional socket events when socket connects
   useEffect(() => {
     if (socket && user) {
-      // Socket is connected, we can now sync real-time updates
+
     }
   }, [socket, user]);
 
-  // Load messages when chat changes
   useEffect(() => {
     if (currentChat) {
       loadMessages();
@@ -228,7 +219,7 @@ export const ChatProvider = ({ children }) => {
         joinChat(currentChat._id);
       }
     } else {
-      // Clear messages when no chat is selected
+
       setMessages([]);
     }
   }, [currentChat, socket]);
@@ -276,8 +267,7 @@ export const ChatProvider = ({ children }) => {
   const createChat = async (participants, type = 'direct', name = null, description = null) => {
     try {
       setLoading(true);
-      
-      // For direct chats, check if a chat already exists with the same participants
+
       if (type === 'direct' && participants.length === 1) {
         const currentUserId = user?.id || user?._id;
         const existingChat = chats.find(chat => {
@@ -299,15 +289,14 @@ export const ChatProvider = ({ children }) => {
         name,
         description
       });
-      
-      // Check if chat already exists in the current chats list
+
       const existingChatInList = chats.find(chat => chat._id === response.data._id);
       
       if (!existingChatInList) {
-        // Only add to chats if it doesn't already exist
+
         setChats(prev => [response.data, ...prev]);
       } else {
-        // If chat exists, update it with the latest data
+
         setChats(prev => 
           prev.map(chat => 
             chat._id === response.data._id ? response.data : chat
@@ -338,8 +327,7 @@ export const ChatProvider = ({ children }) => {
         replyTo
       });
 
-      // Don't add to messages here - let the socket handle it to avoid duplicates
-      // The socket will receive the message and add it to the state
+
     } catch (err) {
       setError('Failed to send message');
       console.error('Error sending message:', err);
@@ -476,7 +464,7 @@ export const ChatProvider = ({ children }) => {
   };
 
   const value = {
-    // State
+
     chats,
     currentChat,
     messages,
@@ -488,7 +476,6 @@ export const ChatProvider = ({ children }) => {
     error,
     messagesEndRef,
 
-    // Actions
     createChat,
     setCurrentChat,
     sendMessage,

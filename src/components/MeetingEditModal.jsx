@@ -28,7 +28,6 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
   const [attendeeSearch, setAttendeeSearch] = useState('')
   const [loading, setLoading] = useState(false)
 
-  // Initialize form data when meeting changes
   useEffect(() => {
     if (meeting) {
       setFormData({

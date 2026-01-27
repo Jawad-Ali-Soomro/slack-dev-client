@@ -8,7 +8,6 @@ const axiosInstance = axios.create({
   },
 })
 
-// Request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('authToken')

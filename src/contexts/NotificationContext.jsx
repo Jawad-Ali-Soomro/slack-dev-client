@@ -29,7 +29,6 @@ export const NotificationProvider = ({ children }) => {
 
   const lastFetchRef = useRef(0)
 
-  // Load notifications
   const loadNotifications = useCallback(async (options = {}) => {
     const { force = false } = options
     const now = Date.now()
@@ -50,12 +49,10 @@ export const NotificationProvider = ({ children }) => {
     }
   }, [])
 
-  // Update unread count
   const updateUnreadCount = (notificationsList) => {
     const unread = notificationsList.filter(notif => !notif.isRead).length
     setUnreadCount(unread)
-    
-    // Update specific counts by type
+
     const counts = {
       tasks: 0,
       meetings: 0,
@@ -119,10 +116,9 @@ export const NotificationProvider = ({ children }) => {
     setUnreadCounts(counts)
   }
 
-  // Add new notification
   const addNotification = (notification) => {
     setNotifications(prev => {
-      // Check if notification already exists to prevent duplicates
+
       const notificationId = notification.id || notification._id
       const exists = prev.some(notif => (notif.id || notif._id) === notificationId)
       if (exists) {
@@ -133,8 +129,7 @@ export const NotificationProvider = ({ children }) => {
       updateUnreadCount(updated)
       return updated
     })
-    
-    // Show toast for new notification
+
     const notificationType = notification.type || 'info'
     const title = notification.title || 'New Notification'
     const message = notification.message || ''
@@ -146,7 +141,7 @@ export const NotificationProvider = ({ children }) => {
         action: {
           label: 'View',
           onClick: () => {
-            // Navigate to chat if needed
+
             window.location.href = '/dashboard/chat'
           }
         }
@@ -159,7 +154,6 @@ export const NotificationProvider = ({ children }) => {
     }
   }
 
-  // Mark as read
   const markAsRead = async (notificationId) => {
     try {
       await notificationService.markAsRead(notificationId)
@@ -177,7 +171,6 @@ export const NotificationProvider = ({ children }) => {
     }
   }
 
-  // Mark all as read
   const markAllAsRead = async () => {
     try {
       await notificationService.markAllAsRead()
@@ -192,10 +185,9 @@ export const NotificationProvider = ({ children }) => {
     }
   }
 
-  // Mark notifications as read by type
   const markAsReadByType = async (type) => {
     try {
-      // Get unread notifications of this type
+
       const unreadNotifications = notifications.filter(notif => {
         if (notif.isRead) return false
         
@@ -221,14 +213,12 @@ export const NotificationProvider = ({ children }) => {
 
       if (unreadNotifications.length === 0) return
 
-      // Mark each notification as read
       const promises = unreadNotifications.map(notif => 
         notificationService.markAsRead(notif.id || notif._id)
       )
       
       await Promise.all(promises)
-      
-      // Update local state
+
       setNotifications(prev => {
         const updated = prev.map(notif => {
           const notificationType = notif.type || notif.notificationType || 'general'
@@ -267,7 +257,6 @@ export const NotificationProvider = ({ children }) => {
     }
   }
 
-  // Delete notification
   const deleteNotification = async (notificationId) => {
     try {
       await notificationService.deleteNotification(notificationId)
@@ -282,7 +271,6 @@ export const NotificationProvider = ({ children }) => {
     }
   }
 
-  // Delete all notifications
   const deleteAllNotifications = async () => {
     try {
       await notificationService.deleteAllNotifications()
@@ -294,7 +282,6 @@ export const NotificationProvider = ({ children }) => {
     }
   }
 
-  // Load notifications automatically when user is authenticated
   useEffect(() => {
     if (user) {
       loadNotifications({ force: true })
@@ -312,7 +299,6 @@ export const NotificationProvider = ({ children }) => {
     }
   }, [user, loadNotifications])
 
-  // Refresh when window gains focus or tab becomes visible
   useEffect(() => {
     if (!user) return
 

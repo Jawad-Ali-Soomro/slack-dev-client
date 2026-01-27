@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const friendService = {
-  // Send friend request
+
   sendFriendRequest: async (receiverId) => {
     try {
       const response = await axios.post('/api/friends/request', { receiverId })
@@ -11,7 +11,6 @@ const friendService = {
     }
   },
 
-  // Get friend requests
   getFriendRequests: async (type = 'all') => {
     try {
       const response = await axios.get(`/api/friends/requests?type=${type}`)
@@ -21,7 +20,6 @@ const friendService = {
     }
   },
 
-  // Respond to friend request
   respondToFriendRequest: async (requestId, action) => {
     try {
       const response = await axios.post('/api/friends/respond', { requestId, action })
@@ -31,7 +29,6 @@ const friendService = {
     }
   },
 
-  // Get friends list
   getFriends: async () => {
     try {
       const response = await axios.get('/api/friends')
@@ -41,7 +38,6 @@ const friendService = {
     }
   },
 
-  // Remove friend
   removeFriend: async (friendId) => {
     try {
       const response = await axios.delete(`/api/friends/${friendId}`)
@@ -51,7 +47,6 @@ const friendService = {
     }
   },
 
-  // Get friend stats
   getFriendStats: async () => {
     try {
       const response = await axios.get('/api/friends/stats')
@@ -61,7 +56,6 @@ const friendService = {
     }
   },
 
-  // Search users for friend requests
   searchUsersForFriends: async (search = '', limit = 20) => {
     try {
       const response = await axios.get(`/api/friends/search?search=${search}&limit=${limit}`)

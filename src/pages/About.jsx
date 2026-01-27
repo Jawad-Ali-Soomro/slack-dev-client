@@ -45,7 +45,7 @@ const About = () => {
           <motion.p 
             variants={itemVariants}
             className="text-xl  max-w-3xl mx-auto "
-            // style={{ fontWeight: 800 }}
+
           >
             Yes we are passionate developers building tools for the developer community!
           </motion.p>

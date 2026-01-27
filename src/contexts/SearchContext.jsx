@@ -18,7 +18,7 @@ export const SearchProvider = ({ children }) => {
   const handleSearch = (term) => {
     setSearchTerm(term)
     setIsSearching(true)
-    // Search logic will be handled by individual components
+
   }
 
   const clearSearch = () => {

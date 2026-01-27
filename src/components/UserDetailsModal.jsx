@@ -71,10 +71,10 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
   const loadPublicProjects = async () => {
     try {
       setLoadingPublicProjects(true)
-      // Get all public projects and filter to show only those created by this user
+
       const response = await exploreService.getPublicProjects({ page: 1, limit: 100, createdBy: userId })
       if (response.projects) {
-        // Filter to only show projects created by this user
+
         const userPublicProjects = response.projects.filter(project => {
           const projectCreatorId = project.createdBy?.id || project.createdBy?._id || project.createdBy
           const currentUserId = userId?.toString() || userId
@@ -431,10 +431,9 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                       <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                     </div>
                   ) : (() => {
-                    // Filter out team projects (projects with teamId) from user.projects
+
                     const ownedProjects = (user.projects || []).filter(project => project.role === 'creator')
-                    
-                    // Combine owned projects and public projects
+
                     const allProjects = [
                       ...ownedProjects.map(project => ({
                         ...project,

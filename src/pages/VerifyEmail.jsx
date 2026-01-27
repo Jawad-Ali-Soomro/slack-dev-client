@@ -14,7 +14,7 @@ const VerifyEmail = () => {
   const navigate = useNavigate()
 
   useEffect(() => {
-    // Get email from localStorage or URL params
+
     const storedEmail = localStorage.getItem('verificationEmail')
     const urlEmail = searchParams.get('email')
     const token = searchParams.get('token')
@@ -25,10 +25,10 @@ const VerifyEmail = () => {
       setEmail(urlEmail)
       localStorage.setItem('verificationEmail', urlEmail)
     } else if (token) {
-      // If token is in URL, we can verify directly
+
       handleVerifyWithToken(token)
     } else {
-      // No email found, redirect to login
+
       toast.error('No verification email found')
       navigate('/login')
     }
@@ -60,7 +60,6 @@ const VerifyEmail = () => {
     newOtp[index] = value
     setOtp(newOtp)
 
-    // Auto-focus next input
     if (value && index < 3) {
       const nextInput = document.getElementById(`otp-${index + 1}`)
       if (nextInput) nextInput.focus()

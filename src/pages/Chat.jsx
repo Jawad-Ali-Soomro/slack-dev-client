@@ -26,7 +26,6 @@ const Chat = () => {
 
   }, []);
 
-  // Mark message notifications as read when user visits this page
   useEffect(() => {
     markAsReadByType('messages');
   }, [markAsReadByType]);
@@ -73,7 +72,7 @@ const Chat = () => {
       {/* Chat Interface */}
       <div className={`flex flex-1 min-h-0 ${isMobile ? 'm-0' : ''}`}>
         {isMobile ? (
-          // Mobile view - show either chat list or chat window based on selection
+
           <div className="flex-1 w-full m-0">
             {currentChat ? (
               <ChatWindow isMobile={isMobile} />
@@ -82,7 +81,7 @@ const Chat = () => {
             )}
           </div>
         ) : (
-          // Desktop view - show both side by side
+
           <>
             <div className="w-80 border-r">
               <ChatList />

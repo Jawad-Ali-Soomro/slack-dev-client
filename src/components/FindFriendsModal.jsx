@@ -24,7 +24,6 @@ const FindFriendsModal = ({ isOpen, onClose }) => {
   const [selectedUserId, setSelectedUserId] = useState(null)
   const [showUserDetails, setShowUserDetails] = useState(false)
 
-  // Search users
   const searchUsers = async () => {
     if (!searchTerm.trim()) {
       setSearchResults([])
@@ -40,7 +39,6 @@ const FindFriendsModal = ({ isOpen, onClose }) => {
     }
   }
 
-  // Send friend request
   const handleSendFriendRequest = async (userId) => {
     try {
       await friendService.sendFriendRequest(userId)
@@ -52,13 +50,11 @@ const FindFriendsModal = ({ isOpen, onClose }) => {
     }
   }
 
-  // Handle user avatar click
   const handleUserAvatarClick = (userId) => {
     setSelectedUserId(userId)
     setShowUserDetails(true)
   }
 
-  // Search users when search term changes
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       searchUsers()
@@ -67,7 +63,6 @@ const FindFriendsModal = ({ isOpen, onClose }) => {
     return () => clearTimeout(timeoutId)
   }, [searchTerm])
 
-  // Reset search when modal closes
   useEffect(() => {
     if (!isOpen) {
       setSearchTerm('')

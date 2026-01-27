@@ -27,7 +27,6 @@ export const CodeCollaborationProvider = ({ children }) => {
   const [isTyping, setIsTyping] = useState(false);
   const typingTimeoutRef = useRef(null);
 
-  // Initialize socket connection
   useEffect(() => {
     if (token && user) {
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
@@ -137,7 +136,7 @@ export const CodeCollaborationProvider = ({ children }) => {
           setParticipants([]);
           setCursorPositions({});
           setTypingUsers({});
-          // Reload sessions to update the list
+
           loadUserSessions();
         }
       });
@@ -150,14 +149,12 @@ export const CodeCollaborationProvider = ({ children }) => {
     }
   }, [token, user]);
 
-  // Load user sessions when user is available
   useEffect(() => {
     if (user && token) {
       loadUserSessions();
     }
   }, [user, token]);
 
-  // Load sessions
   const loadUserSessions = async () => {
     try {
       const response = await codeCollaborationService.getUserSessions();
@@ -167,7 +164,6 @@ export const CodeCollaborationProvider = ({ children }) => {
     }
   };
 
-  // Load public sessions
   const loadPublicSessions = async (language = null) => {
     try {
       const response = await codeCollaborationService.getPublicSessions(1, 20, language);
@@ -178,7 +174,6 @@ export const CodeCollaborationProvider = ({ children }) => {
     }
   };
 
-  // Create session
   const createSession = async (sessionData) => {
     try {
       const response = await codeCollaborationService.createSession(sessionData);
@@ -191,7 +186,6 @@ export const CodeCollaborationProvider = ({ children }) => {
     }
   };
 
-  // Join session
   const joinSession = async (sessionId) => {
     try {
       const response = await codeCollaborationService.joinSession(sessionId);
@@ -254,8 +248,7 @@ export const CodeCollaborationProvider = ({ children }) => {
         ...prev,
         code: code
       }));
-      
-      // Update cursor position
+
       if (cursorPosition) {
         setCursorPositions(prev => ({
           ...prev,
@@ -298,7 +291,6 @@ export const CodeCollaborationProvider = ({ children }) => {
     }
   };
 
-  // Handle typing
   const handleTyping = (isTyping) => {
     if (!currentSession || !socket) return;
     
@@ -308,13 +300,11 @@ export const CodeCollaborationProvider = ({ children }) => {
       sessionId: currentSession._id,
       isTyping: isTyping
     });
-    
-    // Clear previous timeout
+
     if (typingTimeoutRef.current) {
       clearTimeout(typingTimeoutRef.current);
     }
-    
-    // Set timeout to stop typing
+
     if (isTyping) {
       typingTimeoutRef.current = setTimeout(() => {
         setIsTyping(false);
@@ -326,7 +316,6 @@ export const CodeCollaborationProvider = ({ children }) => {
     }
   };
 
-  // End session (owner only)
   const endSession = async () => {
     if (!currentSession) return;
     
@@ -344,8 +333,7 @@ export const CodeCollaborationProvider = ({ children }) => {
       setParticipants([]);
       setCursorPositions({});
       setTypingUsers({});
-      
-      // Reload sessions
+
       await loadUserSessions();
       
       toast.success('Session ended successfully', {
@@ -361,12 +349,10 @@ export const CodeCollaborationProvider = ({ children }) => {
     }
   };
 
-  // Delete session permanently (owner only)
   const deleteSession = async (sessionId) => {
     try {
       await codeCollaborationService.deleteSession(sessionId);
-      
-      // Reload sessions to update the list
+
       await loadUserSessions();
       
       toast.success('Session deleted successfully', {
@@ -382,7 +368,6 @@ export const CodeCollaborationProvider = ({ children }) => {
     }
   };
 
-  // Generate invite code
   const generateInviteCode = async (sessionId) => {
     try {
       const result = await codeCollaborationService.generateInviteCode(sessionId);
@@ -397,14 +382,12 @@ export const CodeCollaborationProvider = ({ children }) => {
     }
   };
 
-  // Join session by invite code
   const joinByInviteCode = async (inviteCode) => {
     try {
       console.log('Attempting to join with invite code:', inviteCode);
       const result = await codeCollaborationService.joinByInviteCode(inviteCode);
       console.log('Join result:', result);
-      
-      // Reload sessions to update the list
+
       await loadUserSessions();
       
       toast.success('Joined session successfully', {
@@ -424,7 +407,6 @@ export const CodeCollaborationProvider = ({ children }) => {
     }
   };
 
-  // Get session by invite code (for preview)
   const getSessionByInviteCode = async (inviteCode) => {
     try {
       const result = await codeCollaborationService.getSessionByInviteCode(inviteCode);
@@ -435,7 +417,6 @@ export const CodeCollaborationProvider = ({ children }) => {
     }
   };
 
-  // Invite user to session
   const inviteUser = async (sessionId, invitedUserId) => {
     try {
       await codeCollaborationService.inviteUser(sessionId, invitedUserId);

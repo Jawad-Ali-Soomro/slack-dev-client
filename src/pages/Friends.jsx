@@ -37,8 +37,7 @@ const Friends = () => {
   const [friendRequests, setFriendRequests] = useState([])
   const [stats, setStats] = useState(null)
 
-  // Load friends
-  // Handle user avatar click
+
   const handleUserAvatarClick = (userId) => {
     setSelectedUserId(userId)
     setShowUserDetails(true)
@@ -57,7 +56,6 @@ const Friends = () => {
     }
   }
 
-  // Load friend requests
   const loadFriendRequests = async () => {
     try {
       const response = await friendService.getFriendRequests()
@@ -68,7 +66,6 @@ const Friends = () => {
     }
   }
 
-  // Load stats
   const loadStats = async () => {
     try {
       const response = await friendService.getFriendStats()
@@ -78,8 +75,6 @@ const Friends = () => {
     }
   }
 
-
-  // Send friend request
   const handleSendFriendRequest = async (userId) => {
     try {
       await friendService.sendFriendRequest(userId)
@@ -91,7 +86,6 @@ const Friends = () => {
     }
   }
 
-  // Respond to friend request
   const handleRespondToRequest = async (requestId, action) => {
     try {
       await friendService.respondToFriendRequest(requestId, action)
@@ -104,7 +98,6 @@ const Friends = () => {
     }
   }
 
-  // Remove friend
   const handleRemoveFriend = async (friendId) => {
     if (!window.confirm('Are you sure you want to remove this friend?')) {
       return
@@ -120,7 +113,6 @@ const Friends = () => {
     }
   }
 
-  // Load data on mount
   useEffect(() => {
     loadFriends()
     loadFriendRequests()

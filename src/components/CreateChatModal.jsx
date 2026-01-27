@@ -26,9 +26,9 @@ const CreateChatModal = ({ isOpen, onClose }) => {
 
   const getAvatarUrl = (avatar) => {
     if (!avatar) return null;
-    // If avatar is already a full URL, return as is
+
     if (avatar.startsWith("http")) return avatar;
-    // If avatar is a relative path, prefix with server URL
+
     const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
     return `${apiUrl}${avatar.startsWith("/") ? "" : "/"}${avatar}`;
   };
@@ -63,10 +63,10 @@ const CreateChatModal = ({ isOpen, onClose }) => {
 
   const handleUserSelect = (userId) => {
     if (chatType === 'direct') {
-      // For direct chats, only allow one user
+
       setSelectedUsers([userId]);
     } else {
-      // For group chats, allow multiple users
+
       setSelectedUsers((prev) =>
         prev.includes(userId)
           ? prev.filter((id) => id !== userId)

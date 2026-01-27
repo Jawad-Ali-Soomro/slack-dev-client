@@ -1,4 +1,4 @@
-// Simple test notification generator for manual testing
+
 export const createTestNotification = (type = 'task') => {
   const notifications = {
     task: {
@@ -38,10 +38,9 @@ export const createTestNotification = (type = 'task') => {
   return notifications[type] || notifications.task
 }
 
-// Add test notification to the global window object for easy testing in console
 if (typeof window !== 'undefined') {
   window.addTestNotification = (type) => {
-    // This will be used by the notification context
+
     console.log('Test notification created:', createTestNotification(type))
     return createTestNotification(type)
   }

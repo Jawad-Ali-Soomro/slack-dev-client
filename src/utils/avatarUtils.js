@@ -8,13 +8,11 @@ export const getAvatarUrl = (avatar, username = 'User') => {
   if (!avatar) {
     return `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&color=fff&size=128`
   }
-  
-  // If it's already a full URL, return as is
+
   if (avatar.startsWith('http')) {
     return avatar
   }
-  
-  // If it's a relative path, prepend the API URL
+
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000'
   return `${apiUrl}${avatar.startsWith('/') ? '' : '/'}${avatar}`
 }

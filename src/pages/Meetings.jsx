@@ -93,8 +93,7 @@ const Meetings = () => {
       .slice(0, 4)
   }, [selectedMeetingDetails, meetings])
 
-  // Load meetings from API
-  // Handle user avatar click
+
   const handleUserAvatarClick = (userId) => {
     setSelectedUserId(userId)
     setShowUserDetails(true)
@@ -127,12 +126,10 @@ const Meetings = () => {
       
       const response = await meetingService.getMeetings(filters)
       const allMeetings = response.meetings || []
-      
-      // Filter meetings based on authorization - show only meetings assigned to or assigned by current user
+
       const authorizedMeetings = allMeetings.filter(meeting => {
         if (!user || !user.id) return false
-        
-        // Show meetings where current user is assigned to or assigned by
+
         return meeting.assignedTo?.id === user.id || meeting.assignedBy?.id === user.id
       })
       
@@ -148,21 +145,18 @@ const Meetings = () => {
     }
   }, [filterStatus, filterType, pagination.page, pagination.limit, user])
 
-  // Load meetings on component mount and when filters change
   useEffect(() => {
     if (user && user.id) {
       loadMeetings()
     }
   }, [filterStatus, filterType, user])
 
-  // Mark meeting notifications as read when user visits this page
   useEffect(() => {
     if (user && user.id) {
       markAsReadByType('meetings')
     }
   }, [user, markAsReadByType])
 
-  // Handle navigation state for opening modal
   useEffect(() => {
     if (location.state?.openModal && location.state?.date) {
       const date = new Date(location.state.date)
@@ -175,13 +169,11 @@ const Meetings = () => {
     }
   }, [location.state])
 
-  // Load friends from API
   const loadUsers = async () => {
     try {
       const response = await friendService.getFriends()
       const friends = response.friends || []
-      
-      // Transform friends data to match the expected format and filter out current user
+
       const transformedUsers = friends
         .map(friendship => ({
           id: friendship.friend.id,
@@ -200,7 +192,6 @@ const Meetings = () => {
     }
   }
 
-  // Load projects from API
   const loadProjects = async () => {
     try {
       const response = await projectService.getProjects({ limit: 100 })
@@ -212,7 +203,6 @@ const Meetings = () => {
     }
   }
 
-  // Load teams from API
   const loadTeams = async () => {
     try {
       const response = await teamService.getTeams({ limit: 100 })
@@ -222,7 +212,6 @@ const Meetings = () => {
     }
   }
 
-  // Load team members
   const loadTeamMembers = async (teamId) => {
     if (!teamId) {
       setAvailableUsers(users)
@@ -237,37 +226,33 @@ const Meetings = () => {
     }
   }
 
-  // Update available users based on project selection
   const updateAvailableUsers = useCallback(() => {
     if (newMeeting.projectId && newMeeting.projectId !== "none") {
-      // Find the selected project
+
       const selectedProject = projects.find(p => p.id === newMeeting.projectId)
       if (selectedProject && selectedProject.teamId) {
-        // If project has a team, load team members
+
         loadTeamMembers(selectedProject.teamId)
       } else {
-        // If no team, show all users
+
         setAvailableUsers(users)
       }
     } else {
-      // If no project selected, show all users
+
       setAvailableUsers(users)
     }
   }, [newMeeting.projectId, projects, users])
 
-  // Load users and projects on component mount
   useEffect(() => {
     loadUsers()
     loadProjects()
     loadTeams()
   }, [])
 
-  // Initialize available users when users are loaded
   useEffect(() => {
     setAvailableUsers(users)
   }, [users])
 
-  // Update available users when project changes
   useEffect(() => {
     updateAvailableUsers()
   }, [updateAvailableUsers])
@@ -283,7 +268,7 @@ const Meetings = () => {
   const handleAssignedToChange = async (value) => {
     setNewMeeting({...newMeeting, assignedTo: value, assignedToId: ""})
     if (value.length > 0) {
-      // Filter available users based on search term
+
       const filtered = availableUsers.filter(user => 
         (user.username || user.name).toLowerCase().includes(value.toLowerCase()) ||
         user.email.toLowerCase().includes(value.toLowerCase())
@@ -340,7 +325,6 @@ const Meetings = () => {
     }
   }
 
-  // Check if meeting is overdue
   const isMeetingOverdue = (meeting) => {
     if (!meeting.endDate) return false
     if (meeting.status === 'completed' || meeting.status === 'cancelled') return false
@@ -455,8 +439,7 @@ const Meetings = () => {
       }
 
       const response = await meetingService.createMeeting(meetingData)
-      
-      // Reload meetings to get the updated list
+
       await loadMeetings()
       
       setNewMeeting({ 
@@ -520,7 +503,6 @@ const Meetings = () => {
     }
   }
 
-  // Handle attendee selection
   const handleAttendeeSearch = (value) => {
     if (value.length > 0) {
       const filtered = availableUsers.filter(user => 
@@ -553,7 +535,6 @@ const Meetings = () => {
     })
   }
 
-  // Handle tag management
   const handleAddTag = () => {
     if (newTag.trim() && !newMeeting.tags.includes(newTag.trim())) {
       setNewMeeting({
@@ -571,7 +552,6 @@ const Meetings = () => {
     })
   }
 
-  // Edit meeting functions
   const handleEditMeeting = (meeting) => {
     setEditingMeeting(meeting)
     setShowEditModal(true)
@@ -623,8 +603,7 @@ const Meetings = () => {
 
     try {
       setLoading(true)
-      
-      // Calculate duration in minutes
+
       let duration = 60 // default 60 minutes
       if (newMeeting.startDate && newMeeting.endDate) {
         const start = new Date(newMeeting.startDate)
@@ -632,11 +611,10 @@ const Meetings = () => {
         duration = Math.max(1, Math.round((end - start) / (1000 * 60)))
       }
 
-      // Format start time (optional for Jitsi, but we'll include it if available)
       let startTime
       if (newMeeting.startDate) {
         const date = new Date(newMeeting.startDate)
-        // If no time specified, default to 9 AM
+
         if (date.getHours() === 0 && date.getMinutes() === 0) {
           date.setHours(9, 0, 0, 0)
         }

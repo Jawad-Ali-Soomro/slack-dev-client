@@ -104,13 +104,11 @@ const TeamsManage = () => {
     }
   }, [pagination.page, pagination.limit, searchTerm, filterStatus])
 
-  // Load friends for member selection
   const loadUsers = useCallback(async () => {
     try {
       const response = await friendService.getFriends()
       const friends = response.friends || []
-      
-      // Transform friends data to match the expected format and filter out current user
+
       const transformedUsers = friends
         .map(friendship => ({
           id: friendship.friend.id,
@@ -138,14 +136,12 @@ const TeamsManage = () => {
     loadUsers()
   }, [loadUsers])
 
-  // Mark team notifications as read when user visits this page
   useEffect(() => {
     if (user && user.id) {
       markAsReadByType('teams')
     }
   }, [user, markAsReadByType])
 
-  // Close suggestions when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (showMemberSuggestions && !event.target.closest('.member-search-container')) {
@@ -159,7 +155,6 @@ const TeamsManage = () => {
     }
   }, [showMemberSuggestions])
 
-  // Create new team
   const handleCreateTeam = async (e) => {
     e.preventDefault()
     if (!newTeam.name.trim()) {
@@ -189,7 +184,6 @@ const TeamsManage = () => {
     }
   }
 
-  // Delete team
   const handleDeleteTeam = async (teamId) => {
     if (!confirm('Are you sure you want to delete this team?')) return
 
@@ -205,7 +199,6 @@ const TeamsManage = () => {
     }
   }
 
-  // Handle member search
   const handleMemberSearch = (value) => {
     setMemberSearch(value)
     if (value.length > 0) {
@@ -221,7 +214,6 @@ const TeamsManage = () => {
     }
   }
 
-  // Add member to team
   const handleAddMember = async (userId, role) => {
     if (!userId) {
       toast.error('Please select a user')
@@ -279,16 +271,13 @@ const TeamsManage = () => {
     }
   }
 
-  // Update member role
   const handleUpdateMemberRole = async (userId, role) => {
     try {
       setLoading(true)
       await teamService.updateMemberRole(selectedTeam.id, { userId, role })
-      
-      // Reload teams to get updated data
+
       await loadTeams()
-      
-      // Update selected team if it's the current team
+
       if (selectedTeam) {
         const response = await teamService.getTeamById(selectedTeam.id)
         setSelectedTeam(response.team)
@@ -303,7 +292,6 @@ const TeamsManage = () => {
     }
   }
 
-  // Filter teams
   const filteredTeams = teams.filter(team => {
     const matchesSearch = team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          team.description?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -312,7 +300,6 @@ const TeamsManage = () => {
     return matchesSearch && matchesStatus
   })
 
-  // Pagination handlers
   const handlePageChange = (newPage) => {
     setPagination(prev => ({ ...prev, page: newPage }))
   }
@@ -348,14 +335,12 @@ const TeamsManage = () => {
     return rangeWithDots
   }
 
-  // Reset pagination when filters change
   useEffect(() => {
     if (pagination.page !== 1) {
       setPagination(prev => ({ ...prev, page: 1 }))
     }
   }, [filterStatus, searchTerm])
 
-  // Get role icon
   const getRoleIcon = (role) => {
     switch (role) {
       case 'owner': return <Shield className="w-4 h-4 icon text-yellow-600 icon p2" />
@@ -364,7 +349,6 @@ const TeamsManage = () => {
     }
   }
 
-  // Get role color
   const getRoleColor = (role) => {
     switch (role) {
       case 'owner': return 'bg-yellow-500 text-white dark:bg-yellow-600'
@@ -373,14 +357,12 @@ const TeamsManage = () => {
     }
   }
 
-  // Get status color
   const getStatusColor = (isActive) => {
     return isActive 
       ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
       : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'
   }
 
-  // Check if current user is team owner
   const isTeamOwner = (team) => {
     return team.createdBy?.id === user?.id || team.createdBy?._id === user?.id
   }

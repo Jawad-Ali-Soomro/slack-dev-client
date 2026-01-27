@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const profileService = {
-  // Get user profile
+
   getProfile: async () => {
     try {
       const response = await axios.get('/api/user/profile')
@@ -11,7 +11,6 @@ const profileService = {
     }
   },
 
-  // Update user profile
   updateProfile: async (profileData) => {
     try {
       const response = await axios.put('/api/user/profile', profileData)
@@ -21,7 +20,6 @@ const profileService = {
     }
   },
 
-  // Upload avatar
   uploadAvatar: async (file) => {
     try {
       const formData = new FormData()
@@ -38,7 +36,6 @@ const profileService = {
     }
   },
 
-  // Delete avatar
   deleteAvatar: async () => {
     try {
       const response = await axios.delete('/api/user/avatar')
@@ -48,7 +45,6 @@ const profileService = {
     }
   },
 
-  // Change password
   changePassword: async (passwordData) => {
     try {
       const response = await axios.put('/api/user/change-password', passwordData)

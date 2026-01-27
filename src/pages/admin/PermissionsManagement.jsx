@@ -50,7 +50,6 @@ const PermissionsManagement = () => {
     canViewAllData: false
   });
 
-  // Check if user is admin or superadmin
   useEffect(() => {
     if (!isAdmin && !isSuperadmin) {
       toast.error('Access denied. Admin or Superadmin role required.');
@@ -95,7 +94,6 @@ const PermissionsManagement = () => {
     return matchesSearch && matchesRole;
   });
 
-  // derive joined date from ObjectId when createdAt missing/invalid
   const getJoinedDate = (id, createdAt) => {
     if (createdAt) {
       const d = new Date(createdAt);
@@ -328,7 +326,7 @@ const PermissionsManagement = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white dark:bg-gray-800 rounded-[30px] p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
-            //   onClick={setEditingUser(null)}
+
             >
               <div className="flex items-center justify-between mb-6" onClick={(e) => e.stopPropagation()}>
                 <h2 className="text-2xl  text-gray-900 dark:text-white">

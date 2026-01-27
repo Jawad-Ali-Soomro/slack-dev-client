@@ -52,8 +52,7 @@ const UserManagement = () => {
   const [selectedUserForVerification, setSelectedUserForVerification] = useState(null);
   const [newVerificationValue, setNewVerificationValue] = useState(true);
   const [pagination, setPagination] = useState({ page: 1, limit: 20, total: 0, pages: 0 });
-  
-  // Create user form state
+
   const [createUserForm, setCreateUserForm] = useState({
     username: '',
     email: '',
@@ -62,7 +61,6 @@ const UserManagement = () => {
   });
   const [creatingUser, setCreatingUser] = useState(false);
 
-  // Check if user is admin or superadmin
   useEffect(() => {
     if (!isAdmin && !isSuperadmin) {
       toast.error('Access denied. Admin or Superadmin role required.');
@@ -92,7 +90,6 @@ const UserManagement = () => {
     }
   }, [isAdmin, isSuperadmin]);
 
-  // Reload when filters change
   useEffect(() => {
     if (isAdmin || isSuperadmin) {
       loadUsers(1);
@@ -582,8 +579,8 @@ const UserManagement = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="user">User</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem className={'px-5'} value="user">User</SelectItem>
+                    <SelectItem className={'px-5'} value="admin">Admin</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -609,7 +606,7 @@ const UserManagement = () => {
             className="bg-white dark:bg-gray-800 rounded-[30px] p-6 max-w-md w-full"
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white line-clamp-1">
                 Update Verification - {selectedUserForVerification.username}
               </h2>
               <Button variant="ghost" size="sm" onClick={() => setShowVerificationModal(false)}>
@@ -627,8 +624,8 @@ const UserManagement = () => {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="true">Verified</SelectItem>
-                    <SelectItem value="false">Pending</SelectItem>
+                    <SelectItem className={'px-5'} value="true">Verified</SelectItem>
+                    <SelectItem className={'px-5'} value="false">Pending</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

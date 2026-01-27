@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const taskService = {
-  // Create a new task
+
   createTask: async (taskData) => {
     try {
       const response = await axios.post('/api/tasks', taskData)
@@ -11,7 +11,6 @@ const taskService = {
     }
   },
 
-  // Get all tasks with optional filters
   getTasks: async (filters = {}) => {
     try {
       const queryParams = new URLSearchParams()
@@ -29,7 +28,6 @@ const taskService = {
     }
   },
 
-  // Get task by ID
   getTaskById: async (taskId) => {
     try {
       const response = await axios.get(`/api/tasks/${taskId}`)
@@ -39,7 +37,6 @@ const taskService = {
     }
   },
 
-  // Update task
   updateTask: async (taskId, updateData) => {
     try {
       const response = await axios.put(`/api/tasks/${taskId}`, updateData)
@@ -49,7 +46,6 @@ const taskService = {
     }
   },
 
-  // Update task status (assigned user only)
   updateTaskStatus: async (taskId, status) => {
     try {
       const response = await axios.put(`/api/tasks/${taskId}/status`, { status })
@@ -59,7 +55,6 @@ const taskService = {
     }
   },
 
-  // Reassign task
   reassignTask: async (taskId, assignTo) => {
     try {
       const response = await axios.put(`/api/tasks/${taskId}/reassign`, { assignTo })
@@ -69,7 +64,6 @@ const taskService = {
     }
   },
 
-  // Delete task
   deleteTask: async (taskId) => {
     try {
       const response = await axios.delete(`/api/tasks/${taskId}`)
@@ -79,7 +73,6 @@ const taskService = {
     }
   },
 
-  // Get task statistics
   getTaskStats: async (assignTo = null) => {
     try {
       const queryParams = assignTo ? `?assignTo=${assignTo}` : ''

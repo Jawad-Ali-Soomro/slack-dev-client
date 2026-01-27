@@ -112,17 +112,15 @@ class CompilationService {
   async executeJavaScript(code, options = {}) {
     return new Promise((resolve, reject) => {
       try {
-        // Create a safe execution environment
+
         const consoleLogs = [];
         const consoleErrors = [];
         const consoleWarns = [];
-        
-        // Store original console methods
+
         const originalLog = console.log;
         const originalError = console.error;
         const originalWarn = console.warn;
-        
-        // Override console methods to capture output
+
         console.log = (...args) => {
           consoleLogs.push(args.map(arg => 
             typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
@@ -144,15 +142,12 @@ class CompilationService {
           originalWarn(...args);
         };
 
-        // Execute the code
         const result = new Function(code)();
-        
-        // Restore original console methods
+
         console.log = originalLog;
         console.error = originalError;
         console.warn = originalWarn;
 
-        // Capture the result
         let resultOutput = '';
         if (result !== undefined) {
           resultOutput = typeof result === 'object' ? 
@@ -160,7 +155,6 @@ class CompilationService {
             String(result);
         }
 
-        // Combine all outputs
         const allOutput = [
           ...consoleLogs,
           ...consoleWarns,
@@ -174,7 +168,7 @@ class CompilationService {
         });
         
       } catch (error) {
-        // Restore original console methods in case of error
+
         console.log = console.log;
         console.error = console.error;
         console.warn = console.warn;
@@ -189,11 +183,11 @@ class CompilationService {
   async executePython(code, options = {}) { 
     return new Promise(async (resolve, reject) => {
       try {
-        // Check if Pyodide is available
+
         if (typeof window.pyodide === 'undefined') {
-          // Load Pyodide if not already loaded
+
           if (typeof window.loadPyodide === 'undefined') {
-            // Load the Pyodide script
+
             const script = document.createElement('script');
             script.src = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js';
             script.onload = () => this.initializePythonExecution(code, resolve, reject);
@@ -223,8 +217,7 @@ class CompilationService {
   async initializePythonExecution(code, resolve, reject) {
     try {
       window.pyodide = await window.loadPyodide();
-      
-      // Set up console capture for Python
+
       window.pyodide.runPython(`
 import sys
 from io import StringIO
@@ -266,8 +259,7 @@ capture = PythonOutputCapture()
   async runPythonCode(code, resolve, reject) {
     try {
       const startTime = Date.now();
-      
-      // Capture Python output
+
       const result = window.pyodide.runPython(`
 with capture:
     try:
@@ -301,8 +293,7 @@ with capture:
     return new Promise(async (resolve) => {
       try {
         const startTime = Date.now();
-        
-        // Simulate Java execution with basic parsing
+
         const output = this.simulateJavaExecution(code);
         const executionTime = Date.now() - startTime;
 
@@ -331,14 +322,12 @@ with capture:
 
     for (const line of lines) {
       const trimmed = line.trim();
-      
-      // Detect main method
+
       if (trimmed.includes('public static void main')) {
         inMainMethod = true;
         continue;
       }
 
-      // Track braces to know when main method ends
       if (inMainMethod) {
         braceCount += (line.match(/\{/g) || []).length;
         braceCount -= (line.match(/\}/g) || []).length;
@@ -348,18 +337,16 @@ with capture:
           continue;
         }
 
-        // Simulate System.out.println
         if (trimmed.startsWith('System.out.println')) {
           const match = trimmed.match(/System\.out\.println\((.+)\)/);
           if (match) {
             let content = match[1];
-            // Remove quotes and handle basic string concatenation
+
             content = content.replace(/"/g, '').replace(/\s*\+\s*/g, ' ');
             output += content + '\n';
           }
         }
 
-        // Simulate System.out.print
         if (trimmed.startsWith('System.out.print')) {
           const match = trimmed.match(/System\.out\.print\((.+)\)/);
           if (match) {
@@ -381,8 +368,7 @@ with capture:
     return new Promise(async (resolve) => {
       try {
         const startTime = Date.now();
-        
-        // Simulate C++ execution with basic parsing
+
         const output = this.simulateCppExecution(code);
         const executionTime = Date.now() - startTime;
 
@@ -411,14 +397,12 @@ with capture:
 
     for (const line of lines) {
       const trimmed = line.trim();
-      
-      // Detect main function
+
       if (trimmed.includes('int main(') || trimmed.includes('void main(')) {
         inMainFunction = true;
         continue;
       }
 
-      // Track braces to know when main function ends
       if (inMainFunction) {
         braceCount += (line.match(/\{/g) || []).length;
         braceCount -= (line.match(/\}/g) || []).length;
@@ -428,12 +412,11 @@ with capture:
           continue;
         }
 
-        // Simulate cout statements
         if (trimmed.includes('cout') && trimmed.includes('<<')) {
           const match = trimmed.match(/cout\s*<<\s*(.+)/);
           if (match) {
             let content = match[1];
-            // Handle endl and basic string parsing
+
             content = content.replace(/endl/g, '\n');
             content = content.replace(/"([^"]*)"/g, '$1');
             content = content.replace(/\s*<<\s*/g, '');
@@ -441,14 +424,12 @@ with capture:
           }
         }
 
-        // Simulate printf statements
         if (trimmed.startsWith('printf(')) {
           const match = trimmed.match(/printf\("([^"]*)"(?:,\s*(.+))?\)/);
           if (match) {
             let format = match[1];
             let args = match[2] ? match[2].split(',').map(arg => arg.trim()) : [];
-            
-            // Basic format string replacement
+
             let result = format;
             args.forEach(arg => {
               result = result.replace(/%[sdif]/, arg.replace(/"/g, ''));
@@ -470,8 +451,7 @@ with capture:
     return new Promise(async (resolve) => {
       try {
         const startTime = Date.now();
-        
-        // Simulate C# execution with basic parsing
+
         const output = this.simulateCSharpExecution(code);
         const executionTime = Date.now() - startTime;
 
@@ -500,14 +480,12 @@ with capture:
 
     for (const line of lines) {
       const trimmed = line.trim();
-      
-      // Detect Main method
+
       if (trimmed.includes('static void Main(') || trimmed.includes('static int Main(')) {
         inMainMethod = true;
         continue;
       }
 
-      // Track braces to know when Main method ends
       if (inMainMethod) {
         braceCount += (line.match(/\{/g) || []).length;
         braceCount -= (line.match(/\}/g) || []).length;
@@ -517,18 +495,16 @@ with capture:
           continue;
         }
 
-        // Simulate Console.WriteLine
         if (trimmed.startsWith('Console.WriteLine')) {
           const match = trimmed.match(/Console\.WriteLine\((.+)\)/);
           if (match) {
             let content = match[1];
-            // Remove quotes and handle string concatenation
+
             content = content.replace(/"/g, '').replace(/\s*\+\s*/g, ' ');
             output += content + '\n';
           }
         }
 
-        // Simulate Console.Write
         if (trimmed.startsWith('Console.Write')) {
           const match = trimmed.match(/Console\.Write\((.+)\)/);
           if (match) {
@@ -550,8 +526,7 @@ with capture:
     return new Promise(async (resolve) => {
       try {
         const startTime = Date.now();
-        
-        // Simulate C execution with basic parsing
+
         const output = this.simulateCExecution(code);
         const executionTime = Date.now() - startTime;
 
@@ -580,14 +555,12 @@ with capture:
 
     for (const line of lines) {
       const trimmed = line.trim();
-      
-      // Detect main function
+
       if (trimmed.includes('int main(') || trimmed.includes('void main(')) {
         inMainFunction = true;
         continue;
       }
 
-      // Track braces to know when main function ends
       if (inMainFunction) {
         braceCount += (line.match(/\{/g) || []).length;
         braceCount -= (line.match(/\}/g) || []).length;
@@ -597,14 +570,12 @@ with capture:
           continue;
         }
 
-        // Simulate printf statements
         if (trimmed.startsWith('printf(')) {
           const match = trimmed.match(/printf\("([^"]*)"(?:,\s*(.+))?\)/);
           if (match) {
             let format = match[1];
             let args = match[2] ? match[2].split(',').map(arg => arg.trim()) : [];
-            
-            // Basic format string replacement
+
             let result = format;
             args.forEach(arg => {
               result = result.replace(/%[sdif]/, arg.replace(/"/g, ''));
@@ -614,7 +585,6 @@ with capture:
           }
         }
 
-        // Simulate puts statements
         if (trimmed.startsWith('puts(')) {
           const match = trimmed.match(/puts\("([^"]*)"\)/);
           if (match) {
@@ -675,8 +645,7 @@ with capture:
 
     try {
       window.pyodide = await window.loadPyodide();
-      
-      // Set up console capture for Python
+
       window.pyodide.runPython(`
 import sys
 from io import StringIO
@@ -710,7 +679,6 @@ capture = PythonOutputCapture()
   }
 }
 
-// Create singleton instance
 const compilationService = new CompilationService();
 
 export default compilationService;

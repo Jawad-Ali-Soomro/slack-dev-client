@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const notificationService = {
-  // Get all notifications for the current user
+
   getNotifications: async (filters = {}) => {
     try {
       const queryParams = new URLSearchParams()
@@ -18,7 +18,6 @@ const notificationService = {
     }
   },
 
-  // Get notification by ID
   getNotificationById: async (notificationId) => {
     try {
       const response = await axios.get(`/api/notifications/${notificationId}`)
@@ -28,7 +27,6 @@ const notificationService = {
     }
   },
 
-  // Mark notification as read
   markAsRead: async (notificationId) => {
     try {
       const response = await axios.put(`/api/notifications/${notificationId}/read`)
@@ -38,7 +36,6 @@ const notificationService = {
     }
   },
 
-  // Mark all notifications as read
   markAllAsRead: async () => {
     try {
       const response = await axios.put('/api/notifications/read-all')
@@ -48,7 +45,6 @@ const notificationService = {
     }
   },
 
-  // Delete notification
   deleteNotification: async (notificationId) => {
     try {
       const response = await axios.delete(`/api/notifications/${notificationId}`)
@@ -58,7 +54,6 @@ const notificationService = {
     }
   },
 
-  // Delete all notifications
   deleteAllNotifications: async () => {
     try {
       const response = await axios.delete('/api/notifications')
@@ -68,7 +63,6 @@ const notificationService = {
     }
   },
 
-  // Get notification statistics
   getNotificationStats: async () => {
     try {
       const response = await axios.get('/api/notifications/stats')
@@ -78,7 +72,6 @@ const notificationService = {
     }
   },
 
-  // Create notification (for testing or admin use)
   createNotification: async (notificationData) => {
     try {
       const response = await axios.post('/api/notifications', notificationData)

@@ -1,7 +1,7 @@
 import axiosInstance from '../lib/axios'
 
 export const exploreService = {
-  // Get all public projects
+
   getPublicProjects: async (filters = {}) => {
     try {
       const response = await axiosInstance.get('/api/explore/projects', { params: filters })
@@ -12,7 +12,6 @@ export const exploreService = {
     }
   },
 
-  // Get single public project
   getPublicProject: async (id) => {
     try {
       const response = await axiosInstance.get(`/api/explore/projects/${id}`)
@@ -23,7 +22,6 @@ export const exploreService = {
     }
   },
 
-  // Create public project
   createPublicProject: async (projectData) => {
     try {
       const formData = new FormData()
@@ -38,13 +36,11 @@ export const exploreService = {
           formData.append('tags', projectData.tags)
         }
       }
-      
-      // Append zip file
+
       if (projectData.zipFile) {
         formData.append('zipFile', projectData.zipFile)
       }
-      
-      // Append preview images
+
       if (projectData.previewImages && projectData.previewImages.length > 0) {
         projectData.previewImages.forEach(image => {
           formData.append('previewImages', image)
@@ -63,7 +59,6 @@ export const exploreService = {
     }
   },
 
-  // Create stripe payment intent
   createPaymentIntent: async (projectId) => {
     try {
       const response = await axiosInstance.post('/api/explore/checkout/payment-intent', { projectId })
@@ -74,7 +69,6 @@ export const exploreService = {
     }
   },
 
-  // Purchase project after successful payment
   purchaseProject: async ({ projectId, paymentIntentId }) => {
     try {
       const response = await axiosInstance.post('/api/explore/purchase', { projectId, paymentIntentId })
@@ -85,7 +79,6 @@ export const exploreService = {
     }
   },
 
-  // Get my purchases and created projects
   getMyPurchases: async (filters = {}) => {
     try {
       const response = await axiosInstance.get('/api/explore/my-purchases', { params: filters })
@@ -96,7 +89,6 @@ export const exploreService = {
     }
   },
 
-  // Delete created project
   deletePublicProject: async (projectId) => {
     try {
       const response = await axiosInstance.delete(`/api/explore/projects/${projectId}`)
@@ -107,14 +99,12 @@ export const exploreService = {
     }
   },
 
-  // Download project
   downloadProject: async (projectId) => {
     try {
       const response = await axiosInstance.get(`/api/explore/download/${projectId}`, {
         responseType: 'blob'
       })
-      
-      // Create download link
+
       const url = window.URL.createObjectURL(new Blob([response.data]))
       const link = document.createElement('a')
       link.href = url
@@ -131,7 +121,6 @@ export const exploreService = {
     }
   },
 
-  // Get categories
   getCategories: async () => {
     try {
       const response = await axiosInstance.get('/api/explore/categories')

@@ -1,7 +1,7 @@
 import axios from '../lib/axios'
 
 const challengeService = {
-  // Get all challenges with filters
+
   getChallenges: async (filters = {}) => {
     try {
       const queryParams = new URLSearchParams()
@@ -19,7 +19,6 @@ const challengeService = {
     }
   },
 
-  // Get challenge by ID
   getChallengeById: async (challengeId) => {
     try {
       const response = await axios.get(`/api/challenges/${challengeId}`)
@@ -29,7 +28,6 @@ const challengeService = {
     }
   },
 
-  // Create challenge
   createChallenge: async (challengeData) => {
     try {
       const response = await axios.post('/api/challenges', challengeData)
@@ -39,7 +37,6 @@ const challengeService = {
     }
   },
 
-  // Update challenge
   updateChallenge: async (challengeId, challengeData) => {
     try {
       const response = await axios.put(`/api/challenges/${challengeId}`, challengeData)
@@ -49,7 +46,6 @@ const challengeService = {
     }
   },
 
-  // Delete challenge
   deleteChallenge: async (challengeId) => {
     try {
       const response = await axios.delete(`/api/challenges/${challengeId}`)
@@ -59,7 +55,6 @@ const challengeService = {
     }
   },
 
-  // Submit solution
   submitSolution: async (challengeId, solution, answer) => {
     try {
       const response = await axios.post(`/api/challenges/${challengeId}/submit`, { 
@@ -72,7 +67,6 @@ const challengeService = {
     }
   },
 
-  // Get user's completed challenges
   getMyChallenges: async () => {
     try {
       const response = await axios.get('/api/challenges/my-challenges')
@@ -82,7 +76,6 @@ const challengeService = {
     }
   },
 
-  // Get categories
   getCategories: async () => {
     try {
       const response = await axios.get('/api/challenges/categories')

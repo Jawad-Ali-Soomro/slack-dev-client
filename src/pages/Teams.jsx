@@ -53,7 +53,6 @@ const Teams = () => {
     pages: 0
   })
 
-  // Load teams
   const loadTeams = useCallback(async () => {
     try {
       setLoading(true)
@@ -73,7 +72,6 @@ const Teams = () => {
     }
   }, [filterRole, searchTerm, pagination.page, pagination.limit])
 
-  // Load stats
   const loadStats = useCallback(async () => {
     try {
       const response = await teamService.getTeamStats()
@@ -90,20 +88,17 @@ const Teams = () => {
     }
   }
 
-  // Load data on mount
   useEffect(() => {
     loadTeams()
     loadStats()
   }, [loadTeams, loadStats])
 
-  // Mark team notifications as read when user visits this page
   useEffect(() => {
     if (user && user.id) {
       markAsReadByType('teams')
     }
   }, [user, markAsReadByType])
 
-  // Create team
   const handleCreateTeam = async (e) => {
     e.preventDefault()
     if (!newTeam.name.trim()) {
@@ -127,7 +122,6 @@ const Teams = () => {
     }
   }
 
-  // Delete team
   const handleDeleteTeam = async (teamId) => {
     if (!confirm('Are you sure you want to delete this team?')) return
 
@@ -142,7 +136,6 @@ const Teams = () => {
     }
   }
 
-  // Get role color
   const getRoleColor = (role) => {
     switch (role) {
       case 'owner': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
@@ -152,7 +145,6 @@ const Teams = () => {
     }
   }
 
-  // Get role icon
   const getRoleIcon = (role) => {
     switch (role) {
       case 'owner': return <Crown className="w-4 h-4 icon" />
@@ -162,7 +154,6 @@ const Teams = () => {
     }
   }
 
-  // Filter teams
   const filteredTeams = teams.filter(team => {
     const matchesSearch = team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          team.description.toLowerCase().includes(searchTerm.toLowerCase())

@@ -22,7 +22,7 @@ export const usePermissions = () => {
       }
 
       try {
-        // If user is admin, they have all permissions
+
         if (user.role === 'admin' || user.role === 'superadmin') {
           setPermissions({
             canCreateTeam: true,
@@ -33,7 +33,7 @@ export const usePermissions = () => {
             canViewAllData: true
           });
         } else {
-          // Check specific permissions for regular users
+
           const response = await permissionsService.getUserPermissions(user.id);
           if (response.success) {
             setPermissions(response.permissions);
@@ -41,7 +41,7 @@ export const usePermissions = () => {
         }
       } catch (error) {
         console.error('Error loading permissions:', error);
-        // Default to no permissions if there's an error
+
         setPermissions({
           canCreateTeam: false,
           canCreateProject: false,

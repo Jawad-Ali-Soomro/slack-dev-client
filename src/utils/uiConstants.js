@@ -1,4 +1,4 @@
-// Standardized UI constants for consistent styling across the application
+
 
 export const BUTTON_SIZES = {
   sm: 'px-3 py-2 text-sm',
@@ -34,20 +34,17 @@ export const ICON_SIZES = {
   xl: 'w-8 h-8'
 }
 
-// Remove all blue-based colors and replace with black/white theme
 export const COLOR_THEME = {
-  // Status colors - using black/white theme
+
   success: 'bg-green-500 text-white border-green-500',
   warning: 'bg-yellow-500 text-white border-yellow-500',
   error: 'bg-red-500 text-white border-red-500',
   info: 'bg-gray-500 text-white border-gray-500',
-  
-  // Priority colors
+
   high: 'bg-red-500 text-white border-red-500',
   medium: 'bg-yellow-500 text-white border-yellow-500',
   low: 'bg-green-500 text-white border-green-500',
-  
-  // Status indicators
+
   completed: 'bg-green-500 text-white border-green-500',
   in_progress: 'bg-gray-500 text-white border-gray-500', // Changed from blue
   pending: 'bg-yellow-500 text-white border-yellow-500',
@@ -57,7 +54,6 @@ export const COLOR_THEME = {
   on_hold: 'bg-yellow-500 text-white border-yellow-500'
 }
 
-// Standard button classes
 export const getButtonClasses = (variant = 'primary', size = 'md', additionalClasses = '') => {
   const baseClasses = 'inline-flex items-center justify-center rounded-[10px] font-medium transition-colors focus:outline-none focus:ring-1 focus:ring-offset-1 disabled:opacity-50 disabled:pointer-events-none'
   const variantClasses = BUTTON_VARIANTS[variant] || BUTTON_VARIANTS.primary
@@ -66,7 +62,6 @@ export const getButtonClasses = (variant = 'primary', size = 'md', additionalCla
   return `${baseClasses} ${variantClasses} ${sizeClasses} ${additionalClasses}`
 }
 
-// Standard input classes
 export const getInputClasses = (variant = 'default', size = 'md', additionalClasses = '') => {
   const baseClasses = 'w-full rounded-[10px] transition-colors focus:outline-none bg-white dark:bg-transparent text-black dark:text-white focus:ring-1 focus:ring-offset-1'
   const variantClasses = INPUT_VARIANTS[variant] || INPUT_VARIANTS.default

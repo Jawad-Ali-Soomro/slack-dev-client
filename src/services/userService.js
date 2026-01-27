@@ -24,7 +24,6 @@ export const userService = {
     return response.data;
   },
 
-  // Admin endpoints
   getAllUsers: async (page = 1, limit = 20, search = '', role = '') => {
     const params = new URLSearchParams({ page: page.toString(), limit: limit.toString() });
     if (search) params.append('search', search);

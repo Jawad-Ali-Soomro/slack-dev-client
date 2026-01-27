@@ -38,7 +38,7 @@ import teamService from '../services/teamService'
 import { useAuth } from '../contexts/AuthContext'
 import { useNotifications } from '../contexts/NotificationContext'
 import { getAvatarProps } from '../utils/avatarUtils'
-// @ts-ignore
+
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
 import UserDetailsModal from '../components/UserDetailsModal'
 import { PiUsersDuotone } from 'react-icons/pi'
@@ -48,11 +48,11 @@ import { Link } from 'react-router-dom'
 const Projects = () => {
   const { user } = useAuth()
   const { markAsReadByType } = useNotifications()
-  // @ts-ignore
+
   const { permissions, loading: permissionsLoading } = usePermissions()
   const [searchTerm, setSearchTerm] = useState('')
   const [showNewProjectPopup, setShowNewProjectPopup] = useState(false)
-  // @ts-ignore
+
   const [selectedProjects, setSelectedProjects] = useState([])
   const [filterStatus, setFilterStatus] = useState('all')
   const [filterPriority, setFilterPriority] = useState('all')
@@ -73,10 +73,9 @@ const Projects = () => {
   const [memberSearch, setMemberSearch] = useState('')
   const [memberSuggestions, setMemberSuggestions] = useState([])
   const [showMemberSuggestions, setShowMemberSuggestions] = useState(false)
-  // @ts-ignore
+
   const [memberRole, setMemberRole] = useState('member')
-  
-  // Separate state for project details modal member search
+
   const [projectMemberSearch, setProjectMemberSearch] = useState('')
   const [projectMemberSuggestions, setProjectMemberSuggestions] = useState([])
   const [showProjectMemberSuggestions, setShowProjectMemberSuggestions] = useState(false)
@@ -87,7 +86,7 @@ const Projects = () => {
   const [projects, setProjects] = useState([])
   const [users, setUsers] = useState([])
   const [teams, setTeams] = useState([])
-  // @ts-ignore
+
   const [stats, setStats] = useState(null)
   const [selectedProject, setSelectedProject] = useState(null)
   const [showProjectDetails, setShowProjectDetails] = useState(false)
@@ -136,7 +135,6 @@ const Projects = () => {
     }
   }, [filterStatus, filterPriority, searchTerm])
 
-  // @ts-ignore
   const loadUsers = useCallback(async () => {
     try {
       const response = await friendService.getFriends()
@@ -161,7 +159,6 @@ const Projects = () => {
     }
   }, [user])
 
-  // @ts-ignore
   const loadTeams = useCallback(async () => {
     try {
       const response = await teamService.getTeams({ limit: 100 })
@@ -171,7 +168,6 @@ const Projects = () => {
     }
   }, [])
 
-  // @ts-ignore
   const loadStats = useCallback(async () => {
     try {
       const response = await projectService.getProjectStats()
@@ -260,7 +256,7 @@ const Projects = () => {
   }
 
   const handleAddTag = () => {
-    // @ts-ignore
+
     if (newTag.trim() && !newProject.tags.includes(newTag.trim())) {
       setNewProject(prev => ({
         ...prev,
@@ -277,7 +273,6 @@ const Projects = () => {
     }))
   }
 
-  // @ts-ignore
   const handleCreateProject = async (e) => {
     e.preventDefault()
     if (!newProject.name.trim()) {
@@ -292,8 +287,7 @@ const Projects = () => {
         const formData = new FormData()
         formData.append('logo', newProject.logo)
         formData.append('folder', 'projects')
-        
-        // @ts-ignore
+
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
         const uploadResponse = await fetch(`${apiUrl}/api/projects/upload/projects`, {
           method: 'POST',
@@ -318,7 +312,7 @@ const Projects = () => {
       const response = await projectService.createProject(projectData)
       setProjects(prev => [response.project, ...prev])
       setShowNewProjectPopup(false)
-      // @ts-ignore
+
       setNewProject({
         name: '',
         description: '',
@@ -342,7 +336,6 @@ const Projects = () => {
     }
   }
 
-  // @ts-ignore
   const handleDeleteProject = async (projectId) => {
     if (!confirm('Are you sure you want to delete this project?')) return
 
@@ -357,7 +350,6 @@ const Projects = () => {
     }
   }
 
-  // @ts-ignore
   const handleViewProject = async (project) => {
     try {
       const response = await projectService.getProjectById(project.id)
@@ -377,7 +369,6 @@ const Projects = () => {
     return project.createdBy?.id === user?.id || project.createdBy?._id === user?.id
   }
 
-  // @ts-ignore
   const handleUpdateProgress = async () => {
     if (!selectedProject) return
 
@@ -401,8 +392,7 @@ const Projects = () => {
     }
   }
 
-  // Add member to project
-  // @ts-ignore
+
   const handleAddMemberToProject = async (userId, role = 'member') => {
     if (!selectedProject) return
 
@@ -413,7 +403,7 @@ const Projects = () => {
       
       if (selectedProject) {
         const response = await projectService.getProjectById(selectedProject.id)
-        // @ts-ignore
+
         const projectInList = projects.find(p => p.id === selectedProject.id)
         
         setSelectedProject(response.project)
@@ -432,7 +422,6 @@ const Projects = () => {
     }
   }
 
-  // @ts-ignore
   const handleRemoveMemberFromProject = async (userId) => {
     if (!confirm('Are you sure you want to remove this member?')) return
 
@@ -444,7 +433,7 @@ const Projects = () => {
       
       if (selectedProject) {
         const response = await projectService.getProjectById(selectedProject.id)
-        // @ts-ignore
+
         const projectInList = projects.find(p => p.id === selectedProject.id)
         setSelectedProject(response.project)
         setRefreshKey(prev => prev + 1)
@@ -461,7 +450,7 @@ const Projects = () => {
       setLoading(false)
     }
   }
-  // @ts-ignore
+
   const handleAddLinkToProject = async (linkData) => {
     if (!selectedProject) return
 
@@ -479,7 +468,7 @@ const Projects = () => {
       toast.error(error.message || 'Failed to add link')
     }
   }
-  // @ts-ignore
+
   const handleRemoveLinkFromProject = async (linkId) => {
     if (!selectedProject) return
 
@@ -565,7 +554,6 @@ const Projects = () => {
     setPagination(prev => ({ ...prev, page: newPage }))
   }
 
-  // @ts-ignore
   const handlePageSizeChange = (newLimit) => {
     setPagination(prev => ({ ...prev, limit: newLimit, page: 1 }))
   }
@@ -656,7 +644,7 @@ const Projects = () => {
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <
-// @ts-ignore
+
             SelectContent>
               <SelectItem className={'px-5 h-10 cursor-pointer'} value="all">All Status</SelectItem>
               <SelectItem className={'px-5 h-10 cursor-pointer'} value="planning">Planning</SelectItem>
@@ -672,7 +660,7 @@ const Projects = () => {
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <
-// @ts-ignore
+
             SelectContent>
               <SelectItem className={'px-5 h-10 cursor-pointer'} value="all">All Priority</SelectItem>
               <SelectItem className={'px-5 h-10 cursor-pointer'} value="low">Low</SelectItem>
@@ -687,7 +675,7 @@ const Projects = () => {
           <div className="flex items-center gap-4">
 
             {
-              // @ts-ignore
+
               permissions.canCreateProject &&       <Button
               onClick={() => {
                 if (!permissions.canCreateProject) {
@@ -714,7 +702,7 @@ const Projects = () => {
         {/* Projects Grid */}
         <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
-            // @ts-ignore
+
             Array.from({ length: 6 }).map((_, index) => (
               <div key={index} className="bg-white dark:bg-black rounded-[10px]  border-gray-200 dark:border-gray-700 p-6 animate-pulse">
                 <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
@@ -737,7 +725,7 @@ const Projects = () => {
               <h3 className="text-xl  text-gray-900 dark:text-white mb-2">No projects found</h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">Get started by creating your first project</p>
               <
-// @ts-ignore
+
               Button
                 onClick={() => {
                   if (!permissions.canCreateProject) {
@@ -766,7 +754,7 @@ const Projects = () => {
                     <div className="flex items-center gap-3 mb-2">
                       {project.logo && (
                         <img
-                          // @ts-ignore
+
                           src={project.logo.startsWith('http') ? project.logo : `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}${project.logo}`}
                           alt={project.name}
                           className="w-8 h-8 rounded object-cover rounded-[10px] bg-gray-100  border border-gray-200 dark:border-gray-700"
@@ -808,10 +796,10 @@ const Projects = () => {
                         </Button>
                       </DropdownMenuTrigger>
                       <
-// @ts-ignore
+
                       DropdownMenuContent align="end">
                         <
-// @ts-ignore
+
                         DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => handleViewProject(project)}>
                           <Eye className="w-4 h-4 icon mr-2 icon" />
                           View Details
@@ -819,13 +807,13 @@ const Projects = () => {
                         {isProjectOwner(project) && (
                           <>
                             <
-// @ts-ignore
+
                             DropdownMenuItem className="h-10 px-5 cursor-pointer">
                               <Edit className="w-4 h-4 icon mr-2 icon" />
                               Edit Project
                             </DropdownMenuItem>
                             <
-// @ts-ignore
+
                             DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => {
                               setSelectedProject(project)
                               setShowMembersModal(true)
@@ -835,7 +823,7 @@ const Projects = () => {
                             </DropdownMenuItem>
                            
                             <
-// @ts-ignore
+
                             DropdownMenuItem className="h-10 px-5 cursor-pointer text-red-600" 
                               onClick={() => handleDeleteProject(project.id)}
                             >
@@ -1047,7 +1035,7 @@ const Projects = () => {
                 <div className="grid grid-cols-1 gap-4">
                   <div>
                     <
-// @ts-ignore
+
                     Input
                       value={newProject.name}
                       onChange={(e) => setNewProject({...newProject, name: e.target.value})}
@@ -1058,7 +1046,7 @@ const Projects = () => {
                   </div>
                   <div>
                     <Textarea
-                      // @ts-ignore
+
                       value={newProject.description}
                       onChange={(e) => setNewProject({...newProject, description: e.target.value})}
                       placeholder="Project description *"
@@ -1073,7 +1061,7 @@ const Projects = () => {
                         <SelectValue placeholder="Select Team (Optional)" />
                       </SelectTrigger>
                       <
-// @ts-ignore
+
                       SelectContent>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="none">No Team</SelectItem>
                         {teams.map((team) => (
@@ -1141,7 +1129,7 @@ const Projects = () => {
                         <SelectValue placeholder="Status" />
                       </SelectTrigger>
                       <
-// @ts-ignore
+
                       SelectContent>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="planning">Planning</SelectItem>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="active">Active</SelectItem>
@@ -1157,7 +1145,7 @@ const Projects = () => {
                         <SelectValue placeholder="Priority" />
                       </SelectTrigger>
                       <
-// @ts-ignore
+
                       SelectContent>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="low">Low</SelectItem>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="medium">Medium</SelectItem>
@@ -1194,7 +1182,7 @@ const Projects = () => {
                 <div>
                   <div className="relative mb-3">
                     <
-// @ts-ignore
+
                     Input
                       value={memberSearch}
                       onChange={(e) => handleMemberSearch(e.target.value)}
@@ -1256,7 +1244,7 @@ const Projects = () => {
                 <div>
                   <div className="flex gap-2 mb-3">
                     <
-// @ts-ignore
+
                     Input
                       value={newLink.title}
                       onChange={(e) => setNewLink({...newLink, title: e.target.value})}
@@ -1264,7 +1252,7 @@ const Projects = () => {
                       className="flex-1 h-12 rounded-[10px] border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                     />
                     <
-// @ts-ignore
+
                     Input
                       value={newLink.url}
                       onChange={(e) => setNewLink({...newLink, url: e.target.value})}
@@ -1276,7 +1264,7 @@ const Projects = () => {
                         <SelectValue />
                       </SelectTrigger>
                       <
-// @ts-ignore
+
                       SelectContent>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="repository">Repository</SelectItem>
                         <SelectItem className={'px-5 h-10 cursor-pointer'} value="documentation">Documentation</SelectItem>
@@ -1285,7 +1273,7 @@ const Projects = () => {
                       </SelectContent>
                     </Select>
                     <
-// @ts-ignore
+
                     Button type="button" className={'h-12 w-12'} onClick={handleAddLink} variant="outline">
                       <Plus />
                     </Button>
@@ -1317,7 +1305,7 @@ const Projects = () => {
                 <div>
                   <div className="flex gap-2 mb-3">
                     <
-// @ts-ignore
+
                     Input
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
@@ -1326,7 +1314,7 @@ const Projects = () => {
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                     />
                     <
-// @ts-ignore
+
                     Button type="button" onClick={handleAddTag} variant="outline" className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white">
                       Add
                     </Button>
@@ -1359,7 +1347,7 @@ const Projects = () => {
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-4 border-t icon border-gray-200 dark:border-gray-700">
                   <
-// @ts-ignore
+
                   Button
                     type="button"
                     variant="outline"
@@ -1370,7 +1358,7 @@ const Projects = () => {
                     Cancel
                   </Button>
                   <
-// @ts-ignore
+
                   Button
                     type="submit"
                     className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[10px] border-gray-200 dark:border-gray-700 bg-black dark:bg-white text-white dark:text-black "
@@ -1404,7 +1392,7 @@ const Projects = () => {
               setShowTasks(false)
               setShowMeetings(false)
               setShowLinks(false)
-              // Clear project member search state
+
               setProjectMemberSearch('')
               setShowProjectMemberSuggestions(false)
               setProjectMemberSuggestions([])
@@ -1433,7 +1421,7 @@ const Projects = () => {
                       setShowTasks(false)
                       setShowMeetings(false)
                       setShowLinks(false)
-                      // Clear project member search state
+
                       setProjectMemberSearch('')
                       setShowProjectMemberSuggestions(false)
                       setProjectMemberSuggestions([])
@@ -1796,7 +1784,7 @@ const Projects = () => {
 
                 <div className="flex gap-3">
                   <
-// @ts-ignore
+
                   Button
                     variant="outline"
                     onClick={() => setShowProgressModal(false)}
@@ -1805,7 +1793,7 @@ const Projects = () => {
                     Cancel
                   </Button>
                   <
-// @ts-ignore
+
                   Button
                     onClick={handleUpdateProgress}
                     className="flex-1 h-12 rounded-[10px]"
@@ -1853,7 +1841,7 @@ const Projects = () => {
                     {/* <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Add Member</h3> */}
                     <div className="flex gap-2">
                       <
-// @ts-ignore
+
                       Input
                         value={projectMemberSearch}
                         onChange={(e) => handleProjectMemberSearch(e.target.value)}
@@ -1865,7 +1853,7 @@ const Projects = () => {
                           <SelectValue placeholder="Role" />
                         </SelectTrigger>
                         <
-// @ts-ignore
+
                         SelectContent>
                           <SelectItem className={'px-5 h-10 cursor-pointer'} value="member">Member</SelectItem>
                           <SelectItem className={'px-5 h-10 cursor-pointer'} value="admin">Admin</SelectItem>
@@ -1979,14 +1967,14 @@ const Projects = () => {
                     <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Add Link</h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       <
-// @ts-ignore
+
                       Input
                         value={newLink.title}
                         onChange={(e) => setNewLink({...newLink, title: e.target.value})}
                         placeholder="Link title"
                       />
                       <
-// @ts-ignore
+
                       Input
                         value={newLink.url}
                         onChange={(e) => setNewLink({...newLink, url: e.target.value})}
@@ -1999,7 +1987,7 @@ const Projects = () => {
                           <SelectValue placeholder="Type" />
                         </SelectTrigger>
                         <
-// @ts-ignore
+
                         SelectContent>
                           <SelectItem className={'px-5 h-10 cursor-pointer'} value="repository">Repository</SelectItem>
                           <SelectItem className={'px-5 h-10 cursor-pointer'} value="documentation">Documentation</SelectItem>
@@ -2008,7 +1996,7 @@ const Projects = () => {
                         </SelectContent>
                       </Select>
                       <
-// @ts-ignore
+
                       Button
                         onClick={() => {
                           if (newLink.title && newLink.url) {
