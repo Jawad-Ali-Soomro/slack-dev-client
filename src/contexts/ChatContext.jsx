@@ -112,8 +112,6 @@ export const ChatProvider = ({ children }) => {
       });
 
       newSocket.on('chat_updated', (updatedChat) => {
-        console.log('Received chat update:', updatedChat);
-        console.log('Updated chat participants:', updatedChat.participants);
         setChats(prev => 
           prev.map(chat => chat._id === updatedChat._id ? updatedChat : chat)
         );
@@ -290,7 +288,6 @@ export const ChatProvider = ({ children }) => {
         });
         
         if (existingChat) {
-          console.log('Chat already exists, switching to existing chat');
           setCurrentChat(existingChat);
           return existingChat;
         }

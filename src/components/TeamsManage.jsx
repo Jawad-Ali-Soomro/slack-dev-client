@@ -61,7 +61,6 @@ const TeamsManage = () => {
   const [selectedTeam, setSelectedTeam] = useState(null)
   const [refreshKey, setRefreshKey] = useState(0)
   const [showProjects, setShowProjects] = useState(false)
-  console.log(selectedTeam)
   const [newTeam, setNewTeam] = useState({
     name: '',
     description: '',
@@ -97,7 +96,6 @@ const TeamsManage = () => {
       
       setTeams(response.teams || [])
       setPagination(response.pagination || pagination)
-      console.log('Teams loaded:', response.teams)
     } catch (error) {
       toast.error('Failed to load teams')
       console.error('Error loading teams:', error)
@@ -232,20 +230,12 @@ const TeamsManage = () => {
 
     try {
       setLoading(true)
-      console.log('Adding member:', userId, 'to team:', selectedTeam.id)
       
       await teamService.addMember(selectedTeam.id, { userId, role })
-      
-      // Reload teams to get updated data
-      console.log('Reloading teams after adding member...')
       await loadTeams()
       
-      // Update selected team if it's the current team
       if (selectedTeam) {
-        console.log('Fetching updated team data for:', selectedTeam.id)
         const response = await teamService.getTeamById(selectedTeam.id)
-        console.log('Updated team data:', response.team)
-        console.log('Updated team members count:', response.team.members.length)
         setSelectedTeam(response.team)
         setRefreshKey(prev => prev + 1)
       }
@@ -262,40 +252,20 @@ const TeamsManage = () => {
     }
   }
 
-  // Remove member from team
   const handleRemoveMember = async (userId) => {
     if (!confirm('Are you sure you want to remove this member?')) return
 
     try {
       setLoading(true)
-      console.log('Removing member:', userId, 'from team:', selectedTeam.id)
       
       await teamService.removeMember(selectedTeam.id, { userId })
-      
-      // Reload teams to get updated data
-      console.log('Reloading teams after removing member...')
       await loadTeams()
       
-      // Update selected team if it's the current team
       if (selectedTeam) {
-        console.log('Fetching updated team data for:', selectedTeam.id)
         const response = await teamService.getTeamById(selectedTeam.id)
-        console.log('Updated team data:', response.team)
-        console.log('Updated team members count:', response.team.members.length)
-        console.log('Updated team members:', response.team.members)
-        console.log('Previous selectedTeam members count:', selectedTeam.members.length)
         setSelectedTeam(response.team)
-        
-        // Force a re-render by updating the refresh key
         setRefreshKey(prev => prev + 1)
-        
-        // Force a re-render by updating the state
-        setTimeout(() => {
-          console.log('After timeout - selectedTeam members:', selectedTeam.members.length)
-        }, 100)
       }
-      
-      // Clear member search and suggestions
       setMemberSearch('')
       setShowMemberSuggestions(false)
       setMemberSuggestions([])

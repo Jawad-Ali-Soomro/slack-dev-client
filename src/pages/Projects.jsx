@@ -1,32 +1,20 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-// @ts-ignore
 import HorizontalLoader from '../components/HorizontalLoader'
-import { usePermissions } from '../hooks/usePermissions'
 import {  
   Search, 
   Plus, 
   Edit, 
   Trash2, 
   Calendar, 
-  // @ts-ignore
-  Users, 
-  Link, 
   MoreVertical, 
-  // @ts-ignore
-  Filter, 
   ChevronDown,
-  RefreshCw,
   Eye,
   Settings,
-  // @ts-ignore
-  UserPlus,
   ExternalLink,
   Tag,
   Clock,
   CheckCircle,
-  // @ts-ignore
-  AlertCircle,
   Pause,
   X,
   TrendingUp,
@@ -35,8 +23,6 @@ import {
   Minus,
   AlertTriangle,
   Camera,
-  // @ts-ignore
-  ArrowUpRight,
   ArrowUpRightSquare,
   Folder
 } from 'lucide-react'
@@ -56,6 +42,8 @@ import { getAvatarProps } from '../utils/avatarUtils'
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
 import UserDetailsModal from '../components/UserDetailsModal'
 import { PiUsersDuotone } from 'react-icons/pi'
+import { usePermissions } from '@/hooks/usePermissions'
+import { Link } from 'react-router-dom'
 
 const Projects = () => {
   const { user } = useAuth()
@@ -120,11 +108,8 @@ const Projects = () => {
     pages: 0
   })
 
-  console.log(projects);
   
 
-  // Load projects
-  // @ts-ignore
   const loadProjects = useCallback(async () => {
     try {
       setLoading(true)
@@ -135,8 +120,6 @@ const Projects = () => {
         page: pagination.page,
         limit: pagination.limit
       })
-      console.log('Projects response:', response)
-      console.log('Projects data:', response.projects)
       setProjects(response.projects || [])
       setPagination(response.pagination || pagination)
     } catch (error) {
@@ -147,21 +130,18 @@ const Projects = () => {
     }
   }, [filterStatus, filterPriority, searchTerm, pagination.page, pagination.limit])
 
-  // Reset pagination when filters change
   useEffect(() => {
     if (pagination.page !== 1) {
       setPagination(prev => ({ ...prev, page: 1 }))
     }
   }, [filterStatus, filterPriority, searchTerm])
 
-  // Load friends for member selection
   // @ts-ignore
   const loadUsers = useCallback(async () => {
     try {
       const response = await friendService.getFriends()
       const friends = response.friends || []
       
-      // Transform friends data to match the expected format and filter out current user
       const transformedUsers = friends
         .map(friendship => ({
           id: friendship.friend.id,
@@ -171,7 +151,7 @@ const Projects = () => {
           role: "Friend",
           avatar: friendship.friend.avatar
         }))
-        .filter(friend => friend.id !== user?.id) // Exclude current user
+        .filter(friend => friend.id !== user?.id)
       
       setUsers(transformedUsers)
     } catch (error) {
@@ -181,7 +161,6 @@ const Projects = () => {
     }
   }, [user])
 
-  // Load teams
   // @ts-ignore
   const loadTeams = useCallback(async () => {
     try {
@@ -192,7 +171,6 @@ const Projects = () => {
     }
   }, [])
 
-  // Load stats
   // @ts-ignore
   const loadStats = useCallback(async () => {
     try {
@@ -203,7 +181,6 @@ const Projects = () => {
     }
   }, [])
 
-  // Load data on mount
   useEffect(() => {
     loadProjects()
     loadUsers()
@@ -211,33 +188,12 @@ const Projects = () => {
     loadStats()
   }, [loadProjects, loadUsers, loadTeams, loadStats])
 
-  // Mark project notifications as read when user visits this page
   useEffect(() => {
     if (user && user.id) {
       markAsReadByType('projects')
     }
   }, [user, markAsReadByType])
 
-  // Debug selectedProject changes
-  useEffect(() => {
-    if (selectedProject) {
-      console.log('selectedProject updated:', selectedProject)
-      console.log('selectedProject members count:', selectedProject.members?.length)
-      console.log('selectedProject members:', selectedProject.members)
-    }
-  }, [selectedProject])
-
-  // Debug projects list changes
-  useEffect(() => {
-    if (projects.length > 0) {
-      console.log('Projects list updated:', projects.length, 'projects')
-      projects.forEach(project => {
-        console.log(`Project ${project.name} (${project.id}) members:`, project.members?.length)
-      })
-    }
-  }, [projects])
-
-  // Handle member search for new project form
   const handleMemberSearch = (value) => {
     setMemberSearch(value)
     if (value.length > 0) {
@@ -253,7 +209,6 @@ const Projects = () => {
     }
   }
 
-  // Handle member search for project details modal
   const handleProjectMemberSearch = (value) => {
     setProjectMemberSearch(value)
     if (value.length > 0) {
@@ -269,7 +224,6 @@ const Projects = () => {
     }
   }
 
-  // Add member
   const handleAddMember = (user) => {
     if (!newProject.members.some(member => member.id === user.id)) {
       setNewProject(prev => ({
@@ -281,7 +235,6 @@ const Projects = () => {
     }
   }
 
-  // Remove member
   const handleRemoveMember = (userId) => {
     setNewProject(prev => ({
       ...prev,
@@ -289,7 +242,6 @@ const Projects = () => {
     }))
   }
 
-  // Add link
   const handleAddLink = () => {
     if (newLink.title && newLink.url) {
       setNewProject(prev => ({
@@ -300,7 +252,6 @@ const Projects = () => {
     }
   }
 
-  // Remove link
   const handleRemoveLink = (linkId) => {
     setNewProject(prev => ({
       ...prev,
@@ -308,7 +259,6 @@ const Projects = () => {
     }))
   }
 
-  // Add tag
   const handleAddTag = () => {
     // @ts-ignore
     if (newTag.trim() && !newProject.tags.includes(newTag.trim())) {
@@ -320,7 +270,6 @@ const Projects = () => {
     }
   }
 
-  // Remove tag
   const handleRemoveTag = (tagToRemove) => {
     setNewProject(prev => ({
       ...prev,
@@ -328,7 +277,6 @@ const Projects = () => {
     }))
   }
 
-  // Create project
   // @ts-ignore
   const handleCreateProject = async (e) => {
     e.preventDefault()
@@ -339,8 +287,6 @@ const Projects = () => {
 
     try {
       setLoading(true)
-      
-      // Handle logo upload if present
       let logoUrl = null
       if (newProject.logo) {
         const formData = new FormData()
@@ -396,7 +342,6 @@ const Projects = () => {
     }
   }
 
-  // Delete project
   // @ts-ignore
   const handleDeleteProject = async (projectId) => {
     if (!confirm('Are you sure you want to delete this project?')) return
@@ -412,41 +357,26 @@ const Projects = () => {
     }
   }
 
-  // View project details
   // @ts-ignore
   const handleViewProject = async (project) => {
     try {
-      // Fetch full project details with populated tasks and meetings
       const response = await projectService.getProjectById(project.id)
-      console.log('=== FRONTEND PROJECT DEBUG START ===')
-      console.log('Full project data:', response.project)
-      console.log('Project tasks:', response.project.tasks)
-      console.log('Project meetings:', response.project.meetings)
-      console.log('Tasks length:', response.project.tasks?.length || 0)
-      console.log('Meetings length:', response.project.meetings?.length || 0)
-      console.log('=== FRONTEND PROJECT DEBUG END ===')
       setSelectedProject(response.project)
       setShowProjectDetails(true)
     } catch (error) {
-      console.error('Error fetching project details:', error)
       toast.error('Failed to load project details')
     }
   }
 
-  // Handle user avatar click
   const handleUserAvatarClick = (userId) => {
-    console.log('Avatar clicked for user ID:', userId)
     setSelectedUserId(userId)
     setShowUserDetails(true)
-    console.log('Modal should open now')
   }
 
-  // Check if current user is project owner
   const isProjectOwner = (project) => {
     return project.createdBy?.id === user?.id || project.createdBy?._id === user?.id
   }
 
-  // Update project progress
   // @ts-ignore
   const handleUpdateProgress = async () => {
     if (!selectedProject) return
@@ -478,27 +408,13 @@ const Projects = () => {
 
     try {
       setLoading(true)
-      console.log('Adding member:', userId, 'to project:', selectedProject.id)
-      
       await projectService.addMember(selectedProject.id, { userId, role })
-      
-      // Reload projects to get updated data
-      console.log('Reloading projects after adding member...')
       await loadProjects()
       
-      // Update selected project if it's the current project
       if (selectedProject) {
-        console.log('Fetching updated project data for:', selectedProject.id)
         const response = await projectService.getProjectById(selectedProject.id)
-        console.log('Updated project data:', response.project)
-        console.log('Updated project members count:', response.project.members.length)
-        console.log('Updated project members:', response.project.members)
-        
-        // Check if the project in the projects list has the same data
         // @ts-ignore
         const projectInList = projects.find(p => p.id === selectedProject.id)
-        console.log('Project in list members count:', projectInList?.members?.length)
-        console.log('Project in list members:', projectInList?.members)
         
         setSelectedProject(response.project)
         setRefreshKey(prev => prev + 1)
@@ -516,74 +432,43 @@ const Projects = () => {
     }
   }
 
-  // Remove member from project
   // @ts-ignore
   const handleRemoveMemberFromProject = async (userId) => {
     if (!confirm('Are you sure you want to remove this member?')) return
 
     try {
       setLoading(true)
-      console.log('Removing member:', userId, 'from project:', selectedProject.id)
       
       await projectService.removeMember(selectedProject.id, { userId })
-      
-      // Reload projects to get updated data
-      console.log('Reloading projects after removing member...')
       await loadProjects()
       
-      // Update selected project if it's the current project
       if (selectedProject) {
-        console.log('Fetching updated project data for:', selectedProject.id)
         const response = await projectService.getProjectById(selectedProject.id)
-        console.log('Updated project data:', response.project)
-        console.log('Updated project members count:', response.project.members.length)
-        console.log('Updated project members:', response.project.members)
-        console.log('Previous selectedProject members count:', selectedProject.members.length)
-        
-        // Check if the project in the projects list has the same data
         // @ts-ignore
         const projectInList = projects.find(p => p.id === selectedProject.id)
-        console.log('Project in list members count:', projectInList?.members?.length)
-        console.log('Project in list members:', projectInList?.members)
-        
         setSelectedProject(response.project)
-        
-        // Force a re-render by updating the refresh key
         setRefreshKey(prev => prev + 1)
-        
-        // Force a re-render by updating the state
-        setTimeout(() => {
-          console.log('After timeout - selectedProject members:', selectedProject.members.length)
-        }, 100)
       }
       
-      // Clear project member search and suggestions
       setProjectMemberSearch('')
       setShowProjectMemberSuggestions(false)
       setProjectMemberSuggestions([])
       
       toast.success('Member removed successfully!')
     } catch (error) {
-      console.error('Error removing member:', error)
       toast.error(error.message || 'Failed to remove member')
     } finally {
       setLoading(false)
     }
   }
-
-  // Add link to project
   // @ts-ignore
   const handleAddLinkToProject = async (linkData) => {
     if (!selectedProject) return
 
     try {
       await projectService.addLink(selectedProject.id, linkData)
-      
-      // Reload project details
       const response = await projectService.getProjectById(selectedProject.id)
       setSelectedProject(response.project)
-      
-      // Update projects list
       setProjects(prev => prev.map(project => 
         project.id === selectedProject.id ? response.project : project
       ))
@@ -594,32 +479,24 @@ const Projects = () => {
       toast.error(error.message || 'Failed to add link')
     }
   }
-
-  // Remove link from project
   // @ts-ignore
   const handleRemoveLinkFromProject = async (linkId) => {
     if (!selectedProject) return
 
     try {
       await projectService.removeLink(selectedProject.id, { linkId })
-      
-      // Reload project details
       const response = await projectService.getProjectById(selectedProject.id)
       setSelectedProject(response.project)
-      
-      // Update projects list
       setProjects(prev => prev.map(project => 
         project.id === selectedProject.id ? response.project : project
       ))
       
       toast.success('Link removed successfully!')
     } catch (error) {
-      console.error('Error removing link:', error)
       toast.error(error.message || 'Failed to remove link')
     }
   }
 
-  // Get status color
   const getStatusColor = (status) => {
     switch (status) {
       case 'planning': return 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200'
@@ -633,7 +510,6 @@ const Projects = () => {
 
   document.title = "Projects - Manage Projects at ease!"
 
-  // Get priority color
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'low': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
@@ -644,7 +520,6 @@ const Projects = () => {
     }
   }
 
-  // Get priority icon
   const getPriorityIcon = (priority) => {
     switch (priority) {
       case 'low': return <ArrowDown className="w-3 h-3 icon icon" />
@@ -655,7 +530,6 @@ const Projects = () => {
     }
   }
 
-  // Format date safely
   const formatDate = (dateString) => {
     if (!dateString) return 'No date'
     try {
@@ -667,7 +541,6 @@ const Projects = () => {
     }
   }
 
-  // Get status icon
   const getStatusIcon = (status) => {
     switch (status) {
       case 'planning': return <Clock className="w-4 h-4 icon icon" />
@@ -679,7 +552,6 @@ const Projects = () => {
     }
   }
 
-  // Filter projects
   const filteredProjects = projects.filter(project => {
     const matchesSearch = project.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -689,7 +561,6 @@ const Projects = () => {
     return matchesSearch && matchesStatus && matchesPriority
   })
 
-  // Pagination handlers
   const handlePageChange = (newPage) => {
     setPagination(prev => ({ ...prev, page: newPage }))
   }
@@ -725,8 +596,6 @@ const Projects = () => {
 
     return rangeWithDots
   }
-
-  console.log(filteredProjects);
   
 
   const containerVariants = {

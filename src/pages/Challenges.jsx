@@ -264,10 +264,7 @@ const Challenges = () => {
     const loadCompletedChallenges = async () => {
       try {
         const response = await challengeService.getMyChallenges()
-        console.log('My challenges response:', response)
-        console.log('Total points:', response.totalPoints)
         const completedIds = response.challenges.map(c => c._id)
-        console.log('Completed challenge IDs:', completedIds)
         setCompletedChallenges(new Set(completedIds))
         setTotalPoints(response.totalPoints || 0)
       } catch (error) {

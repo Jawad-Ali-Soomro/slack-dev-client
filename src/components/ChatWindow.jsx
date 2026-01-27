@@ -183,8 +183,6 @@ const ChatWindow = ({ isMobile = false }) => {
 
   const handleFileUpload = (e) => {
     const files = Array.from(e.target.files);
-    // Handle file upload logic here
-    console.log('Files to upload:', files);
   };
 
   const handleEmojiClick = (emojiData) => {

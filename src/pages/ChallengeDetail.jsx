@@ -63,7 +63,6 @@ const ChallengeDetail = () => {
     try {
       setLoading(true)
       const response = await challengeService.getChallengeById(id)
-      console.log('Challenge response:', response)
       
       setChallenge(response.challenge)
       setIsCompleted(response.isCompleted || false)
@@ -97,8 +96,6 @@ const ChallengeDetail = () => {
     try {
       setCodeError('')
       setCodeOutput('')
-      
-      // Capture console.log
       const logs = []
       const originalLog = console.log
       console.log = (...args) => {
@@ -108,10 +105,8 @@ const ChallengeDetail = () => {
         originalLog(...args)
       }
 
-      // Execute code
       let result
       try {
-        // Wrap code in function to capture return value
         const wrappedCode = `
           (function() {
             ${userSolution}
@@ -124,10 +119,8 @@ const ChallengeDetail = () => {
         return
       }
 
-      // Restore console.log
       console.log = originalLog
 
-      // Capture output
       let output = logs.join('\n')
       if (result !== undefined) {
         if (output) output += '\n'
@@ -136,7 +129,6 @@ const ChallengeDetail = () => {
 
       setCodeOutput(output.trim() || 'No output')
       
-      // Always auto-fill answer with code output
       if (output.trim()) {
         setUserAnswer(output.trim())
       } else {
@@ -159,7 +151,6 @@ const ChallengeDetail = () => {
       return
     }
 
-    // Check if user is the creator (already defined at component level, but double-check here)
     if (isCreator) {
       toast.error('You cannot solve challenges that you created yourself')
       return
@@ -172,12 +163,10 @@ const ChallengeDetail = () => {
       if (response.isCorrect) {
         let message = `Solution submitted! You earned ${response.pointsEarned} points! 🎉`
         
-        // Show award notification if any were earned
         if (response.newlyEarnedAwards && response.newlyEarnedAwards.length > 0) {
           const awardsText = response.newlyEarnedAwards.map(a => `${a.icon} ${a.name}`).join(', ')
           message += `\n\n🏆 New Award Unlocked: ${awardsText}`
           
-          // Show special toast for awards
           toast.success(
             <div>
               {response.newlyEarnedAwards.map((award, idx) => (

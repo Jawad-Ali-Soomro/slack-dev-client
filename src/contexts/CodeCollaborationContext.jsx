@@ -44,16 +44,13 @@ export const CodeCollaborationProvider = ({ children }) => {
       });
 
       newSocket.on('connect', () => {
-        console.log('✅ Connected to code collaboration server');
         setIsConnected(true);
         setError(null);
       });
 
       newSocket.on('disconnect', (reason) => {
-        console.log('❌ Disconnected from code collaboration server:', reason);
+        console.log('disconnected from code collaboration server:', reason);
         setIsConnected(false);
-        
-        // Auto-reconnect after 3 seconds
         setTimeout(() => {
           if (!newSocket.connected) {
             newSocket.connect();
@@ -62,18 +59,15 @@ export const CodeCollaborationProvider = ({ children }) => {
       });
 
       newSocket.on('connect_error', (error) => {
-        console.error('❌ Code collaboration connection error:', error);
         setIsConnected(false);
         setError('Connection failed: ' + error.message);
       });
 
       newSocket.on('connected', (data) => {
-        console.log('✅ Code collaboration server connected:', data);
         setIsConnected(true);
         setError(null);
       });
 
-      // Code collaboration events
       newSocket.on('code_updated', (data) => {
         if (currentSession && data.sessionId === currentSession._id) {
           setCurrentSession(prev => ({
@@ -95,7 +89,6 @@ export const CodeCollaborationProvider = ({ children }) => {
       newSocket.on('user_joined_session', (data) => {
         if (currentSession && data.sessionId === currentSession._id) {
           setParticipants(prev => {
-            // Check if user already exists to prevent duplicates
             const exists = prev.some(p => p._id === data.user._id);
             if (!exists) {
               return [...prev, data.user];
@@ -201,21 +194,17 @@ export const CodeCollaborationProvider = ({ children }) => {
   // Join session
   const joinSession = async (sessionId) => {
     try {
-      console.log('Joining session:', sessionId);
       const response = await codeCollaborationService.joinSession(sessionId);
       const session = response.session;
       
-      console.log('Session participants from server:', session.participants);
       
       setCurrentSession(session);
-      // Map participants and remove duplicates
       const uniqueParticipants = session.participants
         .map(p => p.user)
         .filter((participant, index, self) => 
           index === self.findIndex(p => p._id === participant._id)
         );
       
-      console.log('Unique participants after filtering:', uniqueParticipants);
       setParticipants(uniqueParticipants);
       
       if (socket) {
@@ -229,7 +218,6 @@ export const CodeCollaborationProvider = ({ children }) => {
     }
   };
 
-  // Leave session
   const leaveSession = async () => {
     if (!currentSession) return;
     
@@ -258,12 +246,10 @@ export const CodeCollaborationProvider = ({ children }) => {
     }
   };
 
-  // Update code
   const updateCode = async (code, cursorPosition = null) => {
     if (!currentSession) return;
     
     try {
-      // Update local state immediately for better UX
       setCurrentSession(prev => ({
         ...prev,
         code: code
@@ -277,7 +263,6 @@ export const CodeCollaborationProvider = ({ children }) => {
         }));
       }
       
-      // Emit to other participants
       if (socket) {
         socket.emit('code_change', {
           sessionId: currentSession._id,
@@ -285,15 +270,12 @@ export const CodeCollaborationProvider = ({ children }) => {
           cursorPosition: cursorPosition
         });
       }
-      
-      // Update on server
       await codeCollaborationService.updateCode(currentSession._id, code, cursorPosition);
     } catch (error) {
       console.error('Error updating code:', error);
     }
   };
 
-  // Update cursor position
   const updateCursor = async (cursorPosition) => {
     if (!currentSession) return;
     

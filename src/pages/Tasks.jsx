@@ -87,10 +87,8 @@ const Tasks = () => {
   // Load tasks from API
   // Handle user avatar click
   const handleUserAvatarClick = (userId) => {
-    console.log('Tasks avatar clicked for user ID:', userId)
     setSelectedUserId(userId)
     setShowUserDetails(true)
-    console.log('Modal should open now')
   }
 
   const handleViewTaskDetails = (task) => {

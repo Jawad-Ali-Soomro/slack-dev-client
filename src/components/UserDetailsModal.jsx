@@ -54,7 +54,6 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
     try {
       setLoading(true)
       const response = await userService.getUserDetails(userId)
-      console.log('User details response:', response)
       setUser(response.user)
     } catch (error) {
       console.error('Failed to load user details:', error)
@@ -123,8 +122,6 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
       default: return 'bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200'
     }
   }
-
-  // console.log(user)
 
   return (
     <motion.div

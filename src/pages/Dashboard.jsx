@@ -19,6 +19,7 @@ import meetingService from "../services/meetingService";
 import projectService from "../services/projectService";
 import { toast } from "sonner";
 import StatsCard from "../components/StatsCard";
+import { Button } from "@/components/ui/button";
 const Dashboard = () => {
 
   
@@ -1010,7 +1011,7 @@ const Dashboard = () => {
 
             {/* Schedule Calendar */}
             <div className="mt-10">
-              <div className="rounded-[30px] p-6 border-gray-300 dark:border-gray-700 border bg-white dark:bg-[#111827] shadow-sm">
+              <div className="rounded-[30px] p-6 border-gray-300 dark:border-gray-700 border dark:bg-[#111827] shadow-sm">
                 {/* Calendar Header */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
@@ -1126,7 +1127,7 @@ const Dashboard = () => {
 
                 {/* Actions */}
                 <div className="mt-4 flex flex-col sm:flex-row gap-3">
-                  <button
+                  <Button
                     onClick={() => {
                       if (!permissions.canCreateTask) {
                         toast.error('You do not have permission to create tasks. Contact an admin.');
@@ -1139,8 +1140,9 @@ const Dashboard = () => {
                   >
                     <Target className="w-4 h-4" />
                     Schedule Task
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                  variant={'outline'}
                     onClick={() => {
                       if (!permissions.canCreateMeeting) {
                         toast.error('You do not have permission to create meetings. Contact an admin.');
@@ -1153,7 +1155,7 @@ const Dashboard = () => {
                   >
                     <Video className="w-4 h-4" />
                     Schedule Meeting
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>

@@ -216,24 +216,7 @@ const NotificationDropdown = () => {
               ))}
             </AnimatePresence>
           )}
-        </div>
-
-        {/* Footer */}
-        {/* {notifications.length > 0 && (
-          <div className="p-3 border-t border-gray-200 dark:border-gray-700">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full text-sm text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
-              onClick={() => {
-                // Navigate to full notifications page if needed
-                console.log('View all notifications')
-              }}
-            >
-              View all notifications
-            </Button>
-          </div>
-        )} */}
+        </div>       
       </DropdownMenuContent>
     </DropdownMenu>
   )

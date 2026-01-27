@@ -54,10 +54,8 @@ const FindFriendsModal = ({ isOpen, onClose }) => {
 
   // Handle user avatar click
   const handleUserAvatarClick = (userId) => {
-    console.log('FindFriends avatar clicked for user ID:', userId)
     setSelectedUserId(userId)
     setShowUserDetails(true)
-    console.log('Modal should open now')
   }
 
   // Search users when search term changes

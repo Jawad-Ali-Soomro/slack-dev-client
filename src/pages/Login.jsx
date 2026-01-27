@@ -34,30 +34,19 @@ const Login = () => {
   const handleSubmit = async () => {
     setError("")
     
-    console.log('=== LOGIN DEBUG START ===')
-    console.log('Form submitted with data:', formData)
-    console.log('Loading state:', loading)
-    
     try {
       const result = await login(formData)
-      console.log('Login result received:', result);
       
       if (result && result.success) {
-        console.log('Login successful, checking email verification')
         
-        // Check if email is verified
         if (result.user && result.user.emailVerified) {
-          console.log('Email verified, navigating to dashboard')
           toast.success("Login successful!", {
             description: "Welcome back to your dashboard",
           })
           navigate('/dashboard')
         } else {
-          console.log('Email not verified, redirecting to verification page')
-          // Store email for verification
           localStorage.setItem('verificationEmail', formData.email)
           
-          // Check if email was sent
           if (result.emailSent) {
             toast.info("Verification email sent!", {
               description: "Please check your email and verify to continue",
@@ -71,7 +60,6 @@ const Login = () => {
           navigate('/verify-email')
         }
       } else {
-        console.log('Login failed:', result?.error)
         setError(result?.error || 'Login failed')
         toast.error("Login failed", {
           description: result?.error || 'Please check your credentials',
@@ -85,7 +73,6 @@ const Login = () => {
       })
     }
     
-    console.log('=== LOGIN DEBUG END ===')
   }
 
   const containerVariants = {

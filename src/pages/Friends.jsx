@@ -40,10 +40,8 @@ const Friends = () => {
   // Load friends
   // Handle user avatar click
   const handleUserAvatarClick = (userId) => {
-    console.log('Friends avatar clicked for user ID:', userId)
     setSelectedUserId(userId)
     setShowUserDetails(true)
-    console.log('Modal should open now')
   }
 
   const loadFriends = async () => {
@@ -137,8 +135,6 @@ const Friends = () => {
   const pendingSentRequests = friendRequests.filter(req => 
     req.sender.id === user?.id && req.status === 'pending'
   )
-
-  console.log(activeTab)
 
   document.title = "Friends - Manage Your Friends"
   return (

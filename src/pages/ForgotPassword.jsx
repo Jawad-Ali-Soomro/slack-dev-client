@@ -25,9 +25,7 @@ const ForgotPassword = () => {
     setIsLoading(true)
     
     try {
-      console.log('Sending forgot password request for:', email)
       const result = await authService.forgotPassword(email)
-      console.log('Forgot password result:', result)
       
       if (result.message === 'password reset code sent to email') {
         toast.success('Reset code sent!', {
@@ -85,9 +83,6 @@ const ForgotPassword = () => {
     setIsLoading(true)
     
     try {
-      console.log('Verifying OTP:', otpCode, 'for email:', email)
-      // For now, just verify the OTP format and move to next step
-      // In a real implementation, you might want to verify the OTP with the backend first
       toast.success('OTP verified!', {
         description: 'Now enter your new password',
       })
@@ -149,9 +144,7 @@ const ForgotPassword = () => {
     setIsLoading(true)
     
     try {
-      console.log('Resetting password for:', email, 'with OTP:', otp.join(''))
       const result = await authService.resetPassword(email, otp.join(''), newPassword)
-      console.log('Reset password result:', result)
       
       if (result.message === 'password reset successfully') {
         toast.success('Password reset successful!', {

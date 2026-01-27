@@ -96,10 +96,8 @@ const Meetings = () => {
   // Load meetings from API
   // Handle user avatar click
   const handleUserAvatarClick = (userId) => {
-    console.log('Meetings avatar clicked for user ID:', userId)
     setSelectedUserId(userId)
     setShowUserDetails(true)
-    console.log('Modal should open now')
   }
 
   const handleViewMeetingDetails = (meeting) => {
@@ -152,7 +150,6 @@ const Meetings = () => {
 
   // Load meetings on component mount and when filters change
   useEffect(() => {
-    console.log('Meetings useEffect triggered:', { user: user?.id, filterStatus, filterType })
     if (user && user.id) {
       loadMeetings()
     }

@@ -147,9 +147,6 @@ const ChatList = () => {
                             {/* <img className='w-6 h-6 rounded-[10px]' src={getAvatarUrl(chat.lastMessage?.sender?.avatar)} alt="" /> */}
                           <p className="text-xs text-muted-foreground truncate">
                             {chat.lastMessage?.content || 'No messages yet'}
-                            {
-                              // console.log(chat.lastMessage)
-                            }
                           </p>
                           {chat.unreadCount > 0 && (
                             <Badge variant="destructive" className="h-5 w-5 p-0 text-xs flex items-center justify-center">
