@@ -214,11 +214,11 @@ const DashboardHeader = () => {
                   onClick={handleOpenProfileModal}
                   className="relative group"
                 >
-                  <div className="w-12 h-12 p-1 overflow-hidden rounded-[20px] border border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
+                  <div className="w-12 h-12 p-1 overflow-hidden rounded-round border border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
                     <img
                       {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
                       alt={user?.username || 'User'}
-                      className="w-full h-full rounded-[15px]"
+                      className="w-full h-full rounded-round"
                     />
                   </div>
                 </button>
@@ -301,7 +301,7 @@ const DashboardHeader = () => {
                   <img
                     {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
                     alt={user?.username || 'User'}
-                    className="w-full h-full object-cover rounded-full"
+                    className="w-full h-full object-cover rounded-round"
                   />
                 </div>
                 <label className="absolute -bottom-1 rounded-full bg-black dark:bg-white text-white dark:text-black -right-1 w-6 h-6 flex items-center justify-center cursor-pointer transition-colors">
@@ -359,8 +359,8 @@ const DashboardHeader = () => {
 
             {/* Profile Form */}
             {loading ? (
-              <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-sm h-8 w-8 border-b-2 border-blue-500"></div>
+              <div className="flex items-center justify-center py-8 rounded-round">
+                <div className="animate-spin rounded-round h-8 w-8 border-b-2 border-blue-500"></div>
                 <span className="ml-2 text-gray-500">Loading profile...</span>
               </div>
             ) : (

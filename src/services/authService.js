@@ -25,7 +25,6 @@ export const authService = {
   login: async (credentials) => {
     try {
       const response = await axiosInstance.post('/api/auth/login', credentials)
-      console.log('AuthService login response:', response.data)
       
       if (response.data) {
         return {

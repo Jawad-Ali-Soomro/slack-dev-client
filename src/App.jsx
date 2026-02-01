@@ -36,7 +36,7 @@ function App() {
    <div className='bg-white dark:bg-[#111827]'>
      <Router>
       <Toaster 
-        position="top-center"
+        position="bottom-right"
         richColors
         closeButton
         toastOptions={{

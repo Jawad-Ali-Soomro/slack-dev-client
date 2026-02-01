@@ -24,6 +24,7 @@ import {
 import { formatDistanceToNow } from 'date-fns';
 import EmojiPicker from 'emoji-picker-react';
 import UserDetailsModal from './UserDetailsModal';
+import { chatService } from '@/services/chatService';
 
 const ChatWindow = ({ isMobile = false }) => {
   const { 
@@ -32,7 +33,6 @@ const ChatWindow = ({ isMobile = false }) => {
     sendMessage, 
     updateMessage, 
     deleteMessage, 
-    markAsRead,
     getChatName, 
     getChatAvatar,
     isUserOnline,
@@ -62,10 +62,9 @@ const ChatWindow = ({ isMobile = false }) => {
 
   useEffect(() => {
     if (currentChat) {
-      markAsRead(currentChat._id);
+      chatService.markAsRead(currentChat._id);
     }
-  }, [currentChat, markAsRead]);
-
+  }, [currentChat, chatService.markAsRead]);
   const scrollToBottomLocal = () => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTo({
@@ -278,17 +277,7 @@ const ChatWindow = ({ isMobile = false }) => {
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="sm">
-              <Phone className="h-4 w-4 icon icon" />
-            </Button>
-            <Button variant="ghost" size="sm">
-              <Video className="h-4 w-4 icon icon" />
-            </Button>
-            <Button variant="ghost" size="sm">
-              <Info className="h-4 w-4 icon icon" />
-            </Button>
-          </div>
+          
         </div>
       </div>
 
@@ -460,7 +449,7 @@ const ChatWindow = ({ isMobile = false }) => {
             onChange={handleTyping}
             onKeyPress={handleKeyPress}
             placeholder={editingMessage ? "Edit message..." : replyTo ? "Aa" : "Aa"}
-            className="flex-1 border-gray-300"
+            className="flex-1 border-gray-300 dark:border-gray-800"
             disabled={loading}
           />
           
@@ -469,7 +458,7 @@ const ChatWindow = ({ isMobile = false }) => {
               type="button"
               variant="ghost"
               size="sm"
-              className={'w-12 border-gray-300 border'}
+              className={'w-12 border-gray-300 dark:border-gray-800 border'}
               onClick={() => setShowEmojiPicker(!showEmojiPicker)}
             >
               <Smile className="h-4 w-4 icon icon" />

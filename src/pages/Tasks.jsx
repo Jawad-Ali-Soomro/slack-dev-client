@@ -136,7 +136,6 @@ const Tasks = () => {
   }, [filterStatus, filterPriority, pagination.page, pagination.limit, user])
 
   useEffect(() => {
-    console.log('Tasks useEffect triggered:', { user: user?.id, filterStatus, filterPriority })
     if (user && user.id) {
       loadTasks()
     }
@@ -717,8 +716,8 @@ const Tasks = () => {
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </td>
-                    <td className="px-6 py-4 w-[200px] rounded-[30px]">
-                      <div className="flex items-center gap-3">
+                    <td className="px-6 py-4 w-[150px] rounded-[30px]">
+                      <div className="flex items-center gap-3 w-[150px]">
                         <img 
                           {...getAvatarProps(task.assignTo?.avatar, task.assignTo?.username)}
                           alt={task.assignTo?.username || "User"}

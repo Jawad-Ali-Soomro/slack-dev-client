@@ -15,7 +15,7 @@ export const chatService = {
   },
 
   getChatMessages: async (chatId, page = 1, limit = 50) => {
-    const response = await axiosInstance.get(`${API_BASE}/${chatId}/messages?page=${page}&limit=${limit}`);
+    const response = await axiosInstance.get(`${API_BASE}/${chatId}/messages`);
     return response.data;
   },
 
@@ -34,10 +34,10 @@ export const chatService = {
     return response.data;
   },
 
-  // markAsRead: async (chatId) => {
-  //   const response = await axiosInstance.put(`${API_BASE}/${chatId}/read`);
-  //   return response.data;
-  // },
+  markAsRead: async (chatId) => {
+    const response = await axiosInstance.put(`${API_BASE}/${chatId}/read`);
+    return response.data;
+  },
 
   getUnreadCount: async () => {
     const response = await axiosInstance.get(`${API_BASE}/unread/count`);

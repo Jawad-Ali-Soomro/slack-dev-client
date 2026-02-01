@@ -155,7 +155,8 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                     <img
                       {...getAvatarProps(user.avatar, user.username)}
                       alt={user.username}
-                      className="relative w-20 h-20 rounded-full border-4 border-gray-200 dark:border-gray-900 shadow-lg"
+                      className="relative w-20 h-20 border-4 border-gray-200 dark:border-gray-900 shadow-lg rounded-round"
+                      
                     />
                     {/* <div className={`absolute -bottom-1 -right-1 w-6 h-6 rounded-[20px] border-3 border-white dark:border-gray-900 shadow-lg ${
                       user.isActive ? 'bg-emerald-500' : 'bg-gray-400'
@@ -408,7 +409,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                                   {award.name}
                                 </div>
                                 <div className="text-xs text-gray-500 dark:text-gray-400 mt-1 text-center">
-                                  {award.pointsRequired} pts
+                                  {award.pointsRequired} Points
                                 </div>
                               </div>
                             ))}

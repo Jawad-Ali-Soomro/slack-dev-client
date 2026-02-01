@@ -403,3 +403,7 @@ html {
   background-clip: text;
   animation: textGradient 5s ease infinite;
 }
+
+.rounded-round {
+  border-radius: 50% !important;
+}
