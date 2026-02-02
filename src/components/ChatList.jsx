@@ -19,7 +19,7 @@ const ChatList = () => {
     getChatName, 
     getChatAvatar,
     isUserOnline,
-    loading 
+    chatsLoading 
   } = useChat();
 
   const getAvatarUrl = (avatar) => {
@@ -63,11 +63,28 @@ const ChatList = () => {
     }
   };
 
-
-  if (loading) {
+  // Initial loading
+  if (chatsLoading && chats.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="animate-spin rounded-[20px] h-8 w-8 border-b-2 border-primary"></div>
+      <div className="flex flex-col h-full md:border-r icon m-0 w-full">
+        <div className="p-2 md:p-4 border-b icon">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 icon text-muted-foreground" />
+            <Input
+              placeholder="Search chats..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white rounded-[10px]"
+              disabled
+            />
+          </div>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p className="text-sm text-muted-foreground">Loading chats...</p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -76,8 +93,6 @@ const ChatList = () => {
     <div className="flex flex-col h-full md:border-r icon m-0 w-full">
       {/* Header */}
       <div className="p-2 md:p-4 border-b icon">
-      
-        
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 icon text-muted-foreground" />
           <Input
@@ -91,7 +106,15 @@ const ChatList = () => {
 
       {/* Chat List */}
       <div className="flex-1 overflow-y-auto">
-        {filteredChats.length === 0 ? (
+        {chatsLoading && chats.length > 0 ? (
+          <div className="flex items-center justify-center h-20">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+            </div>
+          </div>
+        ) : filteredChats.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-muted-foreground">
             <MessageCircle className="h-12 w-12 mb-4" />
             <p className="text-sm">No chats found</p>
@@ -106,7 +129,6 @@ const ChatList = () => {
               const otherParticipant = chat.participants.find(p => p._id !== user?.id && p._id !== user?._id);
               const isOnline = otherParticipant ? isUserOnline(otherParticipant._id) : false;
 
-              
               return (
                 <Card
                   key={chat._id}
@@ -129,7 +151,7 @@ const ChatList = () => {
                           </AvatarFallback>
                         </Avatar>
                         {isOnline && (
-                          <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500  border-background rounded-[20px]"></div>
+                          <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-full"></div>
                         )}
                       </div>
                       
@@ -144,7 +166,6 @@ const ChatList = () => {
                         </div>
                         
                         <div className="flex items-center gap-2 mt-2">
-                            {/* <img className='w-6 h-6 rounded-[10px]' src={getAvatarUrl(chat.lastMessage?.sender?.avatar)} alt="" /> */}
                           <p className="text-xs text-muted-foreground truncate">
                             {chat.lastMessage?.content || 'No messages yet'}
                           </p>
@@ -154,15 +175,6 @@ const ChatList = () => {
                             </Badge>
                           )}
                         </div>
-                        
-                        {/* {chat.type === 'group' && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <Users className="h-3 w-3 icon text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground">
-                              {chat.participants.length} members
-                            </span>
-                          </div>
-                        )} */}
                       </div>
                     </div>
                   </CardContent>

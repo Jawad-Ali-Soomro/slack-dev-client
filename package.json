@@ -31,6 +31,7 @@
     "date-fns": "^4.1.0",
     "echarts": "^6.0.0",
     "echarts-for-react": "^3.0.5",
+    "edit-pdf": "^0.0.10",
     "emoji-picker-react": "^4.15.1",
     "framer-motion": "^12.23.16",
     "jspdf": "^2.5.1",

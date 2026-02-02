@@ -40,7 +40,7 @@ const ChatWindow = ({ isMobile = false }) => {
     startTyping,
     stopTyping,
     messagesEndRef,
-    loading,
+    messagesLoading,
     setCurrentChat
   } = useChat();
   
@@ -60,11 +60,6 @@ const ChatWindow = ({ isMobile = false }) => {
   const messagesContainerRef = useRef(null);
   const emojiPickerRef = useRef(null);
 
-  useEffect(() => {
-    if (currentChat) {
-      chatService.markAsRead(currentChat._id);
-    }
-  }, [currentChat, chatService.markAsRead]);
   const scrollToBottomLocal = () => {
     if (messagesContainerRef.current) {
       messagesContainerRef.current.scrollTo({
@@ -74,35 +69,20 @@ const ChatWindow = ({ isMobile = false }) => {
     }
   };
 
+  // Auto-scroll when messages change
   useEffect(() => {
-    if (messages.length > 0 && messagesContainerRef.current) {
-
+    if (messages.length > 0 && messagesContainerRef.current && !messagesLoading) {
       requestAnimationFrame(() => {
-        messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
+        const container = messagesContainerRef.current;
+        const isNearBottom = container.scrollHeight - container.scrollTop - container.clientHeight < 100;
+        if (isNearBottom) {
+          container.scrollTop = container.scrollHeight;
+        }
       });
     }
-  }, [messages.length]);
+  }, [messages.length, messagesLoading]);
 
-  useEffect(() => {
-    if (currentChat) {
-
-      const timer = setTimeout(() => {
-        if (messages.length > 0) {
-          scrollToBottomLocal();
-        }
-      }, 200);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [currentChat]);
-
-  useEffect(() => {
-    if (messages.length > 0 && messagesContainerRef.current) {
-
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight - 200;
-    }
-  }, []);
-
+  // Handle scroll events
   useEffect(() => {
     const messagesContainer = messagesContainerRef.current;
     if (!messagesContainer) return;
@@ -119,7 +99,7 @@ const ChatWindow = ({ isMobile = false }) => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!messageText.trim() || !currentChat) return;
+    if (!messageText.trim() || !currentChat || messagesLoading) return;
 
     if (editingMessage) {
       await updateMessage(editingMessage._id, messageText);
@@ -131,11 +111,7 @@ const ChatWindow = ({ isMobile = false }) => {
     
     setMessageText('');
     stopTyping(currentChat._id);
-
-    if (messagesContainerRef.current) {
-
-      messagesContainerRef.current.scrollTop = messagesContainerRef.current.scrollHeight;
-    }
+    scrollToBottomLocal();
   };
 
   const handleTyping = (e) => {
@@ -176,6 +152,7 @@ const ChatWindow = ({ isMobile = false }) => {
 
   const handleFileUpload = (e) => {
     const files = Array.from(e.target.files);
+    // Handle file upload
   };
 
   const handleEmojiClick = (emojiData) => {
@@ -198,7 +175,6 @@ const ChatWindow = ({ isMobile = false }) => {
     };
 
     if (showEmojiPicker) {
-
       setTimeout(() => {
         document.addEventListener('mousedown', handleClickOutside);
       }, 0);
@@ -225,8 +201,6 @@ const ChatWindow = ({ isMobile = false }) => {
   const typingUsers = currentChat ? getTypingUsers(currentChat._id) : [];
   const otherParticipant = currentChat?.participants.find(p => p._id !== user?.id && p._id !== user?._id);
   const isOnline = otherParticipant ? isUserOnline(otherParticipant._id) : false;
-
-
 
   if (!currentChat) {
     return (
@@ -270,230 +244,215 @@ const ChatWindow = ({ isMobile = false }) => {
                 </AvatarFallback>
               </Avatar>
               {isOnline ? <div className="w-3 rounded-full absolute bottom-0 -right-1 h-3 bg-green-500"></div> : <div className="w-3 rounded-full absolute bottom-0 -right-1 h-3 bg-red-500"></div>}
-              
             </div>
             <div className='flex items-center gap-2'>
               <h3 className="font-bold">{getChatName(currentChat)}</h3>
             </div>
           </div>
-          
-          
         </div>
       </div>
 
-      {/* Messages Container - Takes remaining space */}
+      {/* Messages Container */}
       <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
-        {/* Messages - Scrollable Area */}
+        {/* Messages */}
         <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto space-y-4 relative ${isMobile ? 'p-2' : 'p-4'}`}>
-        {loading ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="animate-spin rounded-[10px] h-8 w-8 border-b-2 rounded-full border-primary"></div>
-          </div>
-        ) : messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full text-muted-foreground">
-            <div className="text-center">
-              <Send className="h-12 w-12 mx-auto mb-4" />
-              <p>No messages yet</p>
-              <p className="text-sm">Start the conversation!</p>
+          {messagesLoading ? (
+            <div className="flex flex-col items-center justify-center h-full">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              </div>
+              <p className="text-sm text-muted-foreground">Loading messages...</p>
             </div>
-          </div>
-        ) : (
-          messages.map((message) => {
-            const isOwn = message.sender._id === user?.id || message.sender._id === user?._id;
-            const isDeleted = message.isDeleted;
-            
-            
-            return (
-              <div
-                key={message._id}
-                className={`flex ${isOwn ? 'justify-end rounded-[20px]' : 'justify-start rounded-[20px]'}`}
-              >
-                <div className={`flex gap-2 max-w-[70%] ${isOwn ? 'flex-row-reverse rounded-[20px]' : 'flex-row rounded-[20px]'}`}>
-                  {!isOwn && (
-                    <Avatar 
-                      className="h-10 w-10 mt-1 border border-gray-200 dark:border-gray-600 p-1 rounded-[20px] cursor-pointer hover:opacity-80 transition-opacity"
-                      onClick={() => handleUserAvatarClick(message.sender._id || message.sender.id)}
-                      title={message.sender.username ? `View ${message.sender.username}'s profile` : 'View profile'}
-                    >
-                      <AvatarImage src={getAvatarUrl(message.sender.avatar)} className='rounded-[20px]' />
-                      <AvatarFallback>
-                        {(message.sender.name || message.sender.username || 'U').charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                  )}
-                  
-                  <div className={`space-y-1 ${isOwn ? 'items-end rounded-[20px]' : 'items-start rounded-[20px]'}`}>
-                    <div
-                      className={`px-5 py-3 relative ${
-                        isOwn
-                          ? 'bg-primary text-primary-foreground rounded-b-[20px] rounded-tl-[20px]'
-                          : 'dark:bg-[rgba(255,255,255,.1)] bg-white mt-5 rounded-b-[20px] rounded-tr-[20px]'
-                      } ${isDeleted ? 'opacity-60' : ''}`}
-                    >
-                      
-                      <p className={`text-sm rounded-b-20px font-bold`}>{message.content}</p>
-                      
-                     <div className="flex justify-between pt-1">
-                     {message.replyTo && (
-                        <div className="text-xs opacity-70 mb-1 rounded">
-                         (replied)
-                        </div>
-                      )}
-                      {message.isEdited && (
-                        <p className="text-xs opacity-70">(edited)</p>
-                      )} 
-                     </div>
-                    </div>
+          ) : messages.length === 0 ? (
+            <div className="flex items-center justify-center h-full text-muted-foreground">
+              <div className="text-center">
+                <Send className="h-12 w-12 mx-auto mb-4" />
+                <p>No messages yet</p>
+                <p className="text-sm">Start the conversation!</p>
+              </div>
+            </div>
+          ) : (
+            messages.map((message) => {
+              const isOwn = message.sender._id === user?.id || message.sender._id === user?._id;
+              const isDeleted = message.isDeleted;
+              
+              return (
+                <div
+                  key={message._id}
+                  className={`flex ${isOwn ? 'justify-end rounded-[20px]' : 'justify-start rounded-[20px]'}`}
+                >
+                  <div className={`flex gap-2 max-w-[70%] ${isOwn ? 'flex-row-reverse rounded-[20px]' : 'flex-row rounded-[20px]'}`}>
+                    {!isOwn && (
+                      <Avatar 
+                        className="h-10 w-10 mt-1 border border-gray-200 dark:border-gray-600 p-1 rounded-[20px] cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => handleUserAvatarClick(message.sender._id || message.sender.id)}
+                        title={message.sender.username ? `View ${message.sender.username}'s profile` : 'View profile'}
+                      >
+                        <AvatarImage src={getAvatarUrl(message.sender.avatar)} className='rounded-[20px]' />
+                        <AvatarFallback>
+                          {(message.sender.name || message.sender.username || 'U').charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    )}
                     
-                    <div className={`flex items-center gap-2 text-xs text-muted-foreground ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
-                      <span className='lowercase text-[10px] font-bold'>{formatMessageTime(message.createdAt)}</span>
-                      
-                      {isOwn && !isDeleted && (
-                        <div className="flex items-center gap-1">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-6 w-6 p-0"
-                            onClick={() => handleEditMessage(message)}
-                          >
-                            <Edit className="h-3 w-3 icon icon" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-6 w-6 p-0"
-                            onClick={() => handleDeleteMessage(message._id)}
-                          >
-                            <Trash2 className="h-3 w-3 icon" />
-                          </Button>
+                    <div className={`space-y-1 ${isOwn ? 'items-end rounded-[20px]' : 'items-start rounded-[20px]'}`}>
+                      <div
+                        className={`px-5 py-3 relative ${
+                          isOwn
+                            ? 'bg-primary text-primary-foreground rounded-b-[20px] rounded-tl-[20px]'
+                            : 'dark:bg-[rgba(255,255,255,.1)] bg-white mt-5 rounded-b-[20px] rounded-tr-[20px]'
+                        } ${isDeleted ? 'opacity-60' : ''}`}
+                      >
+                        <p className={`text-sm rounded-b-20px font-bold`}>{message.content}</p>
+                        
+                        <div className="flex justify-between pt-1">
+                          {message.replyTo && (
+                            <div className="text-xs opacity-70 mb-1 rounded">
+                              (replied)
+                            </div>
+                          )}
+                          {message.isEdited && (
+                            <p className="text-xs opacity-70">(edited)</p>
+                          )}
                         </div>
-                      )}
+                      </div>
                       
-                      {!isOwn && !isDeleted && (
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-6 w-6 p-0"
-                          onClick={() => handleReplyToMessage(message)}
-                        >
-                          <Reply className="h-3 w-3 icon" />
-                        </Button>
-                      )}
+                      <div className={`flex items-center gap-2 text-xs text-muted-foreground ${isOwn ? 'flex-row-reverse' : 'flex-row'}`}>
+                        <span className='lowercase text-[10px] font-bold'>{formatMessageTime(message.createdAt)}</span>
+                        
+                        {isOwn && !isDeleted && (
+                          <div className="flex items-center gap-1">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0"
+                              onClick={() => handleEditMessage(message)}
+                            >
+                              <Edit className="h-3 w-3 icon" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-6 w-6 p-0"
+                              onClick={() => handleDeleteMessage(message._id)}
+                            >
+                              <Trash2 className="h-3 w-3 icon" />
+                            </Button>
+                          </div>
+                        )}
+                        
+                        {!isOwn && !isDeleted && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0"
+                            onClick={() => handleReplyToMessage(message)}
+                          >
+                            <Reply className="h-3 w-3 icon" />
+                          </Button>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
+              );
+            })
+          )}
+          
+          {/* Typing indicator */}
+          {typingUsers.length > 0 && (
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <div className="flex space-x-1">
+                <div className="w-2 h-2 bg-muted-foreground rounded-[10px] animate-bounce"></div>
+                <div className="w-2 h-2 bg-muted-foreground rounded-[10px] animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-muted-foreground rounded-[10px] animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
-            );
-          })
-        )}
-        
-        {/* Scroll to bottom button */}
-     
-        
-        {/* Typing indicator */}
-        {typingUsers.length > 0 && (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <div className="flex space-x-1">
-              <div className="w-2 h-2 bg-muted-foreground rounded-[10px] animate-bounce"></div>
-              <div className="w-2 h-2 bg-muted-foreground rounded-[10px] animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-              <div className="w-2 h-2 bg-muted-foreground rounded-[10px] animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              <span>
+                {typingUsers.map(u => u.userName).join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
+              </span>
             </div>
-            <span>
-              {typingUsers.map(u => u.userName).join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...
-            </span>
-          </div>
-        )}
-        
-        <div ref={messagesEndRef} />
-
-      
+          )}
+          
+          <div ref={messagesEndRef} />
         </div>
 
-        {/* Reply indicator */}
-       
-
-        {/* Reply indicator */}
-        {/* {replyTo && (
-          <div className="border-t p-2 bg-muted/50">
-            <div className="flex items-center justify-between">
-              <div className="text-sm">
-                <p className="font-medium">Replying to {replyTo.sender.name}</p>
-                <p className="text-muted-foreground truncate">{replyTo.content}</p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setReplyTo(null)}
-              >
-                ×
-              </Button>
-            </div>
-          </div>
-        )} */}
-
-      {/* Message Input - Fixed at Bottom */}
-      <div className={`flex-shrink-0 border-t icon relative ${isMobile ? 'p-2' : 'p-4'}`}>
-        <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+        {/* Scroll to bottom button */}
+        {showScrollButton && (
           <Button
-            type="button"
-            variant="ghost"
+            variant="secondary"
             size="sm"
-            onClick={() => fileInputRef.current?.click()}
+            className="absolute bottom-4 right-4 shadow-md"
+            onClick={scrollToBottomLocal}
           >
-            <Paperclip className="h-4 w-4 icon" />
+            <ArrowDown className="h-4 w-4" />
           </Button>
-          
-          <Input
-            ref={inputRef}
-            value={messageText}
-            onChange={handleTyping}
-            onKeyPress={handleKeyPress}
-            placeholder={editingMessage ? "Edit message..." : replyTo ? "Aa" : "Aa"}
-            className="flex-1 border-gray-300 dark:border-gray-800"
-            disabled={loading}
-          />
-          
-          <div className="relative emoji-picker-wrapper" ref={emojiPickerRef}>
+        )}
+
+        {/* Message Input */}
+        <div className={`flex-shrink-0 border-t icon relative ${isMobile ? 'p-2' : 'p-4'}`}>
+          <form onSubmit={handleSendMessage} className="flex items-center gap-2">
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              className={'w-12 border-gray-300 dark:border-gray-800 border'}
-              onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              onClick={() => fileInputRef.current?.click()}
             >
-              <Smile className="h-4 w-4 icon icon" />
+              <Paperclip className="h-4 w-4 icon" />
             </Button>
             
-            {showEmojiPicker && (
-              <div className="absolute bottom-full right-0 mb-2 z-50">
-                <EmojiPicker
-                  onEmojiClick={handleEmojiClick}
-                  autoFocusSearch={false}
-                  theme={theme === 'dark' ? 'dark' : 'light'}
-                  width={350}
-                  height={400}
-                />
-              </div>
-            )}
-          </div>
+            <Input
+              ref={inputRef}
+              value={messageText}
+              onChange={handleTyping}
+              onKeyPress={handleKeyPress}
+              placeholder={editingMessage ? "Edit message..." : replyTo ? "Aa" : "Aa"}
+              className="flex-1 border-gray-300 dark:border-gray-800"
+              disabled={messagesLoading}
+            />
+            
+            <div className="relative emoji-picker-wrapper" ref={emojiPickerRef}>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className={'w-12 border-gray-300 dark:border-gray-800 border'}
+                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+              >
+                <Smile className="h-4 w-4 icon" />
+              </Button>
+              
+              {showEmojiPicker && (
+                <div className="absolute bottom-full right-0 mb-2 z-50">
+                  <EmojiPicker
+                    onEmojiClick={handleEmojiClick}
+                    autoFocusSearch={false}
+                    theme={theme === 'dark' ? 'dark' : 'light'}
+                    width={350}
+                    height={400}
+                  />
+                </div>
+              )}
+            </div>
+            
+            <Button
+              type="submit"
+              size="sm"
+              disabled={!messageText.trim() || messagesLoading}
+              className={'w-12'}
+            >
+              <Send className="h-4 w-4 icon" />
+            </Button>
+          </form>
           
-          <Button
-            type="submit"
-            size="sm"
-            disabled={!messageText.trim() || loading}
-            className={'w-12'}
-          >
-            <Send className="h-4 w-4 icon icon" />
-          </Button>
-        </form>
-        
-        <input
-          ref={fileInputRef}
-          type="file"
-          multiple
-          onChange={handleFileUpload}
-          className="hidden"
-        />
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            onChange={handleFileUpload}
+            className="hidden"
+          />
         </div>
       </div>
 
