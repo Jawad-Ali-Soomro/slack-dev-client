@@ -190,7 +190,7 @@ const Signup = () => {
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
-              {loading ? <div className="loader"></div> : "Sign Up"}
+              {loading ? <div className="loader"></div> : "Register"}
             </motion.button>
           </motion.form>
 

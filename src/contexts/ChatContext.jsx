@@ -4,6 +4,7 @@ import React, {
   useState,
   useEffect,
   useRef,
+  useCallback,
 } from "react";
 import { io } from "socket.io-client";
 import { toast } from "sonner";
@@ -27,7 +28,7 @@ export const ChatProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [chats, setChats] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState(new Map()); // Use Map for better performance
   const [unreadCount, setUnreadCount] = useState(0);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [typingUsers, setTypingUsers] = useState({});
@@ -37,198 +38,258 @@ export const ChatProvider = ({ children }) => {
 
   const typingTimeoutRef = useRef({});
   const messagesEndRef = useRef(null);
+  const socketInitialized = useRef(false);
+  const messageIdsRef = useRef(new Set()); // Track message IDs to prevent duplicates
 
   useEffect(() => {
-    if (user && token) {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
+    if (!user || !token || socketInitialized.current) return;
 
-      const newSocket = io(apiUrl, {
-        auth: {
-          token: token,
-        },
-        transports: ["websocket", "polling"],
-        timeout: 20000,
-        forceNew: true,
-        autoConnect: true,
-        reconnection: true,
-        reconnectionDelay: 1000,
-        reconnectionAttempts: 5,
-        maxReconnectionAttempts: 5,
-      });
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
 
-      newSocket.on("connect", () => {
-        setIsConnected(true);
-        setError(null);
-      });
+    const newSocket = io(apiUrl, {
+      auth: {
+        token: token,
+      },
+      transports: ["websocket", "polling"],
+      timeout: 20000,
+      forceNew: true,
+      autoConnect: true,
+      reconnection: true,
+      reconnectionDelay: 1000,
+      reconnectionAttempts: 5,
+      maxReconnectionAttempts: 5,
+    });
 
-      newSocket.on("disconnect", (reason) => {
-        setIsConnected(false);
+    newSocket.on("connect", () => {
+      setIsConnected(true);
+      setError(null);
+      socketInitialized.current = true;
+    });
 
-        if (reason !== "io client disconnect") {
-          setTimeout(() => {
-            newSocket.connect();
-          }, 3000);
-        }
-      });
-
-      newSocket.on("connect_error", (error) => {
-        setIsConnected(false);
-        setError("Connection failed: " + error.message);
-
+    newSocket.on("disconnect", (reason) => {
+      setIsConnected(false);
+      if (reason !== "io client disconnect") {
         setTimeout(() => {
-          if (!isConnected) {
-            newSocket.connect();
-          }
-        }, 5000);
-      });
+          newSocket.connect();
+        }, 3000);
+      }
+    });
 
-      newSocket.on("connected", (data) => {
-        setIsConnected(true);
-        setError(null);
-      });
+    newSocket.on("connect_error", (error) => {
+      setIsConnected(false);
+      setError("Connection failed: " + error.message);
+      setTimeout(() => {
+        if (!isConnected) {
+          newSocket.connect();
+        }
+      }, 5000);
+    });
 
-      newSocket.on("new_message", (message) => {
-        setMessages((prev) => [...prev, message]);
-        if (currentChat && message.chat === currentChat._id) {
-          scrollToBottom();
+    newSocket.on("online_users", (users) => {
+      setOnlineUsers(
+        users.map((u) => ({
+          ...u,
+          isOnline: true,
+        }))
+      );
+    });
+
+    newSocket.on("new_message", handleNewMessage);
+
+    newSocket.on("chat_updated", (updatedChat) => {
+      setChats((prev) => {
+        const index = prev.findIndex((c) => c._id === updatedChat._id);
+
+        if (index === -1) {
+          return [updatedChat, ...prev];
         }
 
-        if (
-          message.sender &&
-          message.sender._id !== user?.id &&
-          message.sender._id !== user?._id
-        ) {
-          const senderName =
-            message.sender.name || message.sender.username || "Unknown User";
-          toast.success(`${senderName} sent a message`, {
-            duration: 4000,
+        const newChats = [...prev];
+        newChats.splice(index, 1);
+        return [updatedChat, ...newChats];
+      });
+    });
+
+    newSocket.on("message_updated", (message) => {
+      setMessages((prev) => {
+        const newMessages = new Map(prev);
+        if (newMessages.has(message._id)) {
+          newMessages.set(message._id, message);
+        }
+        return newMessages;
+      });
+    });
+
+    newSocket.on("message_deleted", (data) => {
+      setMessages((prev) => {
+        const newMessages = new Map(prev);
+        if (newMessages.has(data.messageId)) {
+          const msg = newMessages.get(data.messageId);
+          newMessages.set(data.messageId, {
+            ...msg,
+            isDeleted: true,
+            content: "This message was deleted",
           });
         }
+        return newMessages;
       });
+    });
 
-      newSocket.on("chat_updated", (updatedChat) => {
-        setChats((prev) =>
-          prev.map((chat) =>
-            chat._id === updatedChat._id ? updatedChat : chat,
-          ),
-        );
-      });
-
-      newSocket.on("message_updated", (message) => {
-        setMessages((prev) =>
-          prev.map((msg) => (msg._id === message._id ? message : msg)),
-        );
-      });
-
-      newSocket.on("message_deleted", (data) => {
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg._id === data.messageId
-              ? { ...msg, isDeleted: true, content: "This message was deleted" }
-              : msg,
-          ),
-        );
-      });
-
-      newSocket.on("user_online", (data) => {
-        setOnlineUsers((prev) => {
-          const filtered = prev.filter((u) => u.userId !== data.userId);
-          return [...filtered, { ...data, isOnline: true }];
-        });
-
-        if (data.userId !== user?.id && data.userId !== user?._id) {
-          const userName =
-            data.userName || data.username || data.name || "Unknown User";
-          console.log(data);
-          toast.info(`${userName} is now online`, {
-            duration: 3000,
-            position: "top-center",
-          });
-        }
-      });
-
-      newSocket.on("user_offline", (data) => {
-        setOnlineUsers((prev) =>
-          prev.map((u) =>
+    newSocket.on("user_online", (data) => {
+      setOnlineUsers((prev) => {
+        const exists = prev.find((u) => u.userId === data.userId);
+        if (exists) {
+          return prev.map((u) =>
             u.userId === data.userId
-              ? { ...u, isOnline: false, lastSeen: data.lastSeen }
-              : u,
-          ),
-        );
+              ? { ...u, isOnline: true, lastSeen: data.lastSeen }
+              : u
+          );
+        }
+        return [...prev, { ...data, isOnline: true }];
+      });
+    });
 
-        if (data.userId !== user?.id && data.userId !== user?._id) {
-          const userName = data.name || data.userName || "Unknown User";
-          toast.warning(`${userName} is now offline`, {
-            duration: 3000,
-            position: "top-center",
+    newSocket.on("user_offline", (data) => {
+      setOnlineUsers((prev) =>
+        prev.map((u) =>
+          u.userId === data.userId
+            ? { ...u, isOnline: false, lastSeen: data.lastSeen }
+            : u
+        )
+      );
+    });
+
+    newSocket.on("user_typing", (data) => {
+      setTypingUsers((prev) => ({
+        ...prev,
+        [data.chatId]: data.isTyping
+          ? [
+              ...(prev[data.chatId] || []).filter(
+                (u) => u.userId !== data.userId
+              ),
+              data,
+            ]
+          : (prev[data.chatId] || []).filter((u) => u.userId !== data.userId),
+      }));
+    });
+
+    newSocket.on("message_read", (data) => {
+      setMessages((prev) => {
+        const newMessages = new Map(prev);
+        if (newMessages.has(data.messageId)) {
+          const msg = newMessages.get(data.messageId);
+          newMessages.set(data.messageId, {
+            ...msg,
+            readBy: [
+              ...(msg.readBy || []),
+              { user: data.userId, readAt: data.readAt },
+            ],
           });
         }
+        return newMessages;
       });
+    });
 
-      newSocket.on("user_typing", (data) => {
-        setTypingUsers((prev) => ({
-          ...prev,
-          [data.chatId]: data.isTyping
-            ? [
-                ...(prev[data.chatId] || []).filter(
-                  (u) => u.userId !== data.userId,
-                ),
-                data,
-              ]
-            : (prev[data.chatId] || []).filter((u) => u.userId !== data.userId),
-        }));
-      });
+    newSocket.on("new_notification", (notification) => {
+      addNotification(notification);
+    });
 
-      newSocket.on("message_read", (data) => {
-        setMessages((prev) =>
-          prev.map((msg) =>
-            msg._id === data.messageId
-              ? {
-                  ...msg,
-                  readBy: [
-                    ...(msg.readBy || []),
-                    { user: data.userId, readAt: data.readAt },
-                  ],
-                }
-              : msg,
-          ),
-        );
-      });
+    setSocket(newSocket);
+    socketInitialized.current = true;
 
-      newSocket.on("new_notification", (notification) => {
-        addNotification(notification);
-      });
-
-      setSocket(newSocket);
-
-      return () => {
+    return () => {
+      if (newSocket) {
+        newSocket.off("new_message", handleNewMessage);
         newSocket.close();
-      };
-    }
+      }
+      socketInitialized.current = false;
+    };
   }, [user, token]);
 
+  const handleNewMessage = useCallback((message) => {
+
+    if (messageIdsRef.current.has(message._id)) return;
+    messageIdsRef.current.add(message._id);
+
+    setMessages((prev) => {
+      const newMessages = new Map(prev);
+      if (!newMessages.has(message._id)) {
+        newMessages.set(message._id, message);
+      }
+      return newMessages;
+    });
+
+    setChats((prev) => {
+      const chatIndex = prev.findIndex((chat) => chat._id === message.chat);
+      if (chatIndex === -1) return prev;
+
+      const updated = [...prev];
+      const chat = updated[chatIndex];
+
+      const currentLastMessageDate = chat.lastMessage?.createdAt 
+        ? new Date(chat.lastMessage.createdAt)
+        : new Date(0);
+      const newMessageDate = message.createdAt 
+        ? new Date(message.createdAt)
+        : new Date();
+
+      if (newMessageDate > currentLastMessageDate) {
+        updated[chatIndex] = {
+          ...chat,
+          lastMessage: message,
+          updatedAt: new Date(),
+        };
+
+        const [movedChat] = updated.splice(chatIndex, 1);
+        return [movedChat, ...updated];
+      }
+
+      return updated;
+    });
+
+    if (currentChat?._id === message.chat) {
+      setTimeout(() => scrollToBottom(), 100);
+    }
+  }, [currentChat]);
+
   useEffect(() => {
-    if (user) {
+    if (user && !loading) {
       loadChats();
       loadUnreadCount();
     }
   }, [user]);
 
   useEffect(() => {
-    if (socket && user) {
-    }
-  }, [socket, user]);
+    if (!socket || !currentChat?._id) return;
 
-  useEffect(() => {
-    if (currentChat) {
-      loadMessages();
-      if (socket) {
-        joinChat(currentChat._id);
+    socket.emit("join_chat", currentChat._id);
+
+    loadMessages();
+
+    const markAsRead = async () => {
+      try {
+        const unreadMessages = Array.from(messages.values())
+          .filter(msg => 
+            msg.chat === currentChat._id && 
+            !msg.readBy?.some(r => r.user === user?.id || r.user === user?._id)
+          );
+
+        if (unreadMessages.length > 0) {
+          await chatService.markAsRead(currentChat._id);
+        }
+      } catch (err) {
+        console.error("Error marking messages as read:", err);
       }
-    } else {
-      setMessages([]);
-    }
-  }, [currentChat, socket]);
+    };
+
+    markAsRead();
+
+    return () => {
+      if (socket && currentChat?._id) {
+        socket.emit("leave_chat", currentChat._id);
+      }
+    };
+  }, [currentChat?._id, socket]);
 
   const loadChats = async () => {
     try {
@@ -245,14 +306,25 @@ export const ChatProvider = ({ children }) => {
 
   const loadMessages = async () => {
     if (!currentChat) {
-      setMessages([]);
+      setMessages(new Map());
       return;
     }
 
     try {
       setLoading(true);
       const response = await chatService.getChatMessages(currentChat._id);
-      setMessages(response.data);
+
+      const newMessagesMap = new Map();
+      messageIdsRef.current.clear();
+      
+      response.data.forEach(message => {
+        messageIdsRef.current.add(message._id);
+        newMessagesMap.set(message._id, message);
+      });
+      
+      setMessages(newMessagesMap);
+
+      setTimeout(() => scrollToBottom(), 100);
     } catch (err) {
       setError("Failed to load messages");
       console.error("Error loading messages:", err);
@@ -274,7 +346,7 @@ export const ChatProvider = ({ children }) => {
     participants,
     type = "direct",
     name = null,
-    description = null,
+    description = null
   ) => {
     try {
       setLoading(true);
@@ -306,17 +378,11 @@ export const ChatProvider = ({ children }) => {
       });
 
       const existingChatInList = chats.find(
-        (chat) => chat._id === response.data._id,
+        (chat) => chat._id === response.data._id
       );
 
       if (!existingChatInList) {
         setChats((prev) => [response.data, ...prev]);
-      } else {
-        setChats((prev) =>
-          prev.map((chat) =>
-            chat._id === response.data._id ? response.data : chat,
-          ),
-        );
       }
 
       setCurrentChat(response.data);
@@ -334,7 +400,7 @@ export const ChatProvider = ({ children }) => {
     content,
     type = "text",
     attachments = [],
-    replyTo = null,
+    replyTo = null
   ) => {
     if (!currentChat || !content.trim()) return;
 
@@ -346,56 +412,68 @@ export const ChatProvider = ({ children }) => {
         attachments,
         replyTo,
       });
+
+      return response.data;
     } catch (err) {
       setError("Failed to send message");
       console.error("Error sending message:", err);
+      throw err;
     }
   };
 
   const updateMessage = async (messageId, content) => {
     try {
       const response = await chatService.updateMessage(messageId, { content });
-      setMessages((prev) =>
-        prev.map((msg) => (msg._id === messageId ? response.data : msg)),
-      );
+      setMessages((prev) => {
+        const newMessages = new Map(prev);
+        if (newMessages.has(messageId)) {
+          newMessages.set(messageId, response.data);
+        }
+        return newMessages;
+      });
     } catch (err) {
       setError("Failed to update message");
       console.error("Error updating message:", err);
+      throw err;
     }
   };
 
   const deleteMessage = async (messageId) => {
     try {
       await chatService.deleteMessage(messageId);
-      setMessages((prev) =>
-        prev.map((msg) =>
-          msg._id === messageId
-            ? { ...msg, isDeleted: true, content: "This message was deleted" }
-            : msg,
-        ),
-      );
+      setMessages((prev) => {
+        const newMessages = new Map(prev);
+        if (newMessages.has(messageId)) {
+          const msg = newMessages.get(messageId);
+          newMessages.set(messageId, {
+            ...msg,
+            isDeleted: true,
+            content: "This message was deleted",
+          });
+        }
+        return newMessages;
+      });
     } catch (err) {
       setError("Failed to delete message");
       console.error("Error deleting message:", err);
+      throw err;
     }
   };
 
- 
-
   const joinChat = (chatId) => {
-    if (socket) {
+    if (socket && chatId) {
       socket.emit("join_chat", chatId);
     }
   };
 
   const leaveChat = (chatId) => {
-    if (socket) {
+    if (socket && chatId) {
       socket.emit("leave_chat", chatId);
     }
   };
 
   const startTyping = (chatId) => {
-    if (socket) {
+    if (socket && chatId) {
       socket.emit("typing_start", { chatId });
 
       clearTimeout(typingTimeoutRef.current[chatId]);
@@ -406,9 +484,10 @@ export const ChatProvider = ({ children }) => {
   };
 
   const stopTyping = (chatId) => {
-    if (socket) {
+    if (socket && chatId) {
       socket.emit("typing_stop", { chatId });
       clearTimeout(typingTimeoutRef.current[chatId]);
+      delete typingTimeoutRef.current[chatId];
     }
   };
 
@@ -442,7 +521,7 @@ export const ChatProvider = ({ children }) => {
 
   const getChatAvatar = (chat) => {
     if (chat.type === "group") {
-      return null; // You can add group avatar logic here
+      return chat.avatar || null;
     }
 
     if (!chat.participants || chat.participants.length === 0) {
@@ -457,7 +536,7 @@ export const ChatProvider = ({ children }) => {
       );
     });
 
-    return otherParticipant?.avatar;
+    return otherParticipant?.avatar || null;
   };
 
   const isUserOnline = (userId) => {
@@ -469,10 +548,14 @@ export const ChatProvider = ({ children }) => {
     return typingUsers[chatId] || [];
   };
 
+  const messagesArray = Array.from(messages.values()).sort(
+    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+  );
+
   const value = {
     chats,
     currentChat,
-    messages,
+    messages: messagesArray,
     unreadCount,
     onlineUsers,
     typingUsers,

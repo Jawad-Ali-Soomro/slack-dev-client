@@ -196,11 +196,11 @@ const Sidebar = () => {
                       <Icon className="w-4 h-4 icon icon" />
                       <label className='font-semibold cursor-pointer' htmlFor={item.title}>{item.title}</label>
                       
-                      {item.badgeCount > 0 && (
+                      {/* {item.badgeCount > 0 && (
                         <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-semibold rounded-full w-4 h-4 flex items-center justify-center">
                           {item.badgeCount > 99 ? '99+' : item.badgeCount}
                         </span>
-                      )}
+                      )} */}
                     </Link>
                   )}
                 </div>
