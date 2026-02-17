@@ -153,7 +153,7 @@ const DevHub = () => {
                     {resource.readTime}
                   </span>
                   <button className="text-xs  text-white  w-[40px] h-10 bg-black rounded-[10px] flex items-center justify-center dark:bg-white dark:text-black">
-                    <ArrowRight className="w-4 h-4 icon" />
+                    <ArrowRight className="w-4 h-4 icon icon" />
                   </button>
                 </div>
               </motion.div>

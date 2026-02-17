@@ -41,7 +41,7 @@ import { getAvatarProps } from '../utils/avatarUtils'
 
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
 import UserDetailsModal from '../components/UserDetailsModal'
-import { PiUsersDuotone } from 'react-icons/pi'
+import { PiFolderDuotone, PiUsersDuotone } from 'react-icons/pi'
 import { usePermissions } from '@/hooks/usePermissions'
 import { Link } from 'react-router-dom'
 
@@ -532,12 +532,12 @@ const Projects = () => {
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case 'planning': return <Clock className="w-4 h-4 icon icon" />
-      case 'active': return <CheckCircle className="w-4 h-4 icon icon" />
-      case 'on_hold': return <Pause className="w-4 h-4 icon icon" />
-      case 'completed': return <CheckCircle className="w-4 h-4 icon icon" />
-      case 'cancelled': return <X className="w-4 h-4 icon icon" />
-      default: return <Clock className="w-4 h-4 icon icon" />
+      case 'planning': return <Clock className="w-4 h-4 icon icon icon" />
+      case 'active': return <CheckCircle className="w-4 h-4 icon icon icon" />
+      case 'on_hold': return <Pause className="w-4 h-4 icon icon icon" />
+      case 'completed': return <CheckCircle className="w-4 h-4 icon icon icon" />
+      case 'cancelled': return <X className="w-4 h-4 icon icon icon" />
+      default: return <Clock className="w-4 h-4 icon icon icon" />
     }
   }
 
@@ -633,14 +633,14 @@ const Projects = () => {
                 placeholder="Search projects..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={getInputClasses('default', 'md', 'pl-10 w-full md:w-[500px] w-full h-13 bg-white dark:bg-[#111827] text-black dark:text-white')}
+                className={getInputClasses('default', 'md', 'pl-10 w-full md:w-[500px] w-full h-13 bg-white dark:bg-[black] text-black dark:text-white')}
               />
             </div>
           </div>
           
         <div className="flex gap-4 w-full">
         <Select value={filterStatus} onValueChange={setFilterStatus}>
-            <SelectTrigger className="md:w-[180px] w-1/2 px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[#111827] h-13">
+            <SelectTrigger className="md:w-[180px] w-1/2 px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[black] h-13">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <
@@ -656,7 +656,7 @@ const Projects = () => {
           </Select>
           
           <Select value={filterPriority} onValueChange={setFilterPriority}>
-            <SelectTrigger className="md:w-[180px] w-1/2 bg-white px-5 text-gray-600 dark:text-white cursor-pointer dark:bg-[#111827] h-13">
+            <SelectTrigger className="md:w-[180px] w-1/2 bg-white px-5 text-gray-600 dark:text-white cursor-pointer dark:bg-[black] h-13">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <
@@ -686,6 +686,7 @@ const Projects = () => {
               }}
               className={'md:w-[200px] w-full rounded-[10px] rounded-[10px] h-12 font-bold'}
             >
+              <PiFolderDuotone />
               New Project
             </Button>
             }
@@ -737,7 +738,7 @@ const Projects = () => {
                 disabled={!permissions.canCreateProject}
                 className={'md:w-[200px] w-full'}
               >
-                <Plus className="w-4 h-4 icon mr-2 icon" />
+                <Plus className="w-4 h-4 icon icon mr-2 icon" />
                 Create Project
               </Button>
             </div>
@@ -775,7 +776,7 @@ const Projects = () => {
                       onClick={() => handleViewProject(project)}
                       className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 w-12"
                     >
-                      <Eye className="w-4 h-4 icon icon" />
+                      <Eye className="w-4 h-4 icon icon icon" />
                     </Button>
                     <Button
                       variant="ghost"
@@ -787,12 +788,12 @@ const Projects = () => {
                       }}
                       className="p-2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 w-12"
                     >
-                      <TrendingUp className="w-4 h-4 icon icon" />
+                      <TrendingUp className="w-4 h-4 icon icon icon" />
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant="ghost" size="sm" className="p-2 w-12">
-                          <MoreVertical className="w-4 h-4 icon icon" />
+                          <MoreVertical className="w-4 h-4 icon icon icon" />
                         </Button>
                       </DropdownMenuTrigger>
                       <
@@ -801,7 +802,7 @@ const Projects = () => {
                         <
 
                         DropdownMenuItem className="h-10 px-5 cursor-pointer" onClick={() => handleViewProject(project)}>
-                          <Eye className="w-4 h-4 icon mr-2 icon" />
+                          <Eye className="w-4 h-4 icon icon mr-2 icon" />
                           View Details
                         </DropdownMenuItem>
                         {isProjectOwner(project) && (
@@ -809,7 +810,7 @@ const Projects = () => {
                             <
 
                             DropdownMenuItem className="h-10 px-5 cursor-pointer">
-                              <Edit className="w-4 h-4 icon mr-2 icon" />
+                              <Edit className="w-4 h-4 icon icon mr-2 icon" />
                               Edit Project
                             </DropdownMenuItem>
                             <
@@ -818,7 +819,7 @@ const Projects = () => {
                               setSelectedProject(project)
                               setShowMembersModal(true)
                             }}>
-                              <Settings className="w-4 h-4 icon mr-2 icon" />
+                              <Settings className="w-4 h-4 icon icon mr-2 icon" />
                               Edit Members
                             </DropdownMenuItem>
                            
@@ -827,7 +828,7 @@ const Projects = () => {
                             DropdownMenuItem className="h-10 px-5 cursor-pointer text-red-600" 
                               onClick={() => handleDeleteProject(project.id)}
                             >
-                              <Trash2 className="w-4 h-4 icon mr-2" />
+                              <Trash2 className="w-4 h-4 icon icon mr-2" />
                               Delete
                             </DropdownMenuItem>
                           </>
@@ -866,7 +867,7 @@ const Projects = () => {
                 {/* {project.teamId && (
                   <div className="mb-4">
                     <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm">
-                      <Users className="w-4 h-4 icon icon" />
+                      <Users className="w-4 h-4 icon icon icon" />
                       <span>Team: {project.teamId.name}</span>
                     </div>
                   </div>
@@ -878,11 +879,11 @@ const Projects = () => {
                     
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <CheckCircle className="w-4 h-4 icon icon" />
+                    <CheckCircle className="w-4 h-4 icon icon icon" />
                     <span>{project?.tasks.length || 0} tasks</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <Calendar className="w-4 h-4 icon icon" />
+                    <Calendar className="w-4 h-4 icon icon icon" />
                     <span>{project?.meetings.length || 0} meetings</span>
                   </div>
                 </div> */}
@@ -964,7 +965,7 @@ const Projects = () => {
                 disabled={pagination.page === 1 || loading}
                 className="flex items-center gap-1 h-8 px-3  w-[120px] h-[50px]"
               >
-                <ArrowUp className="w-4 h-4 icon rotate-[-90deg]" />
+                <ArrowUp className="w-4 h-4 icon icon rotate-[-90deg]" />
                 Previous
               </Button>
 
@@ -1002,7 +1003,7 @@ const Projects = () => {
                 className="flex items-center gap-1 h-8 w-[120px] h-[50px]"
               >
                 Next
-                <ArrowDown className="w-4 h-4 icon rotate-[-90deg]" />
+                <ArrowDown className="w-4 h-4 icon icon rotate-[-90deg]" />
               </Button>
             </div>
           )}
@@ -1113,7 +1114,7 @@ const Projects = () => {
                         htmlFor="logo-upload"
                         className="cursor-pointer border inline-flex items-center justify-center px-10 py-5 w-full border border-gray-300 dark:border-gray-600 rounded-[30px] shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-700"
                       >
-                        <Camera className="w-4 h-4 icon mr-2 icon" />
+                        <Camera className="w-4 h-4 icon icon mr-2 icon" />
                         {newProject.logo ? 'Change Logo' : 'Upload Logo'}
                       </label>
                     
@@ -1224,7 +1225,7 @@ const Projects = () => {
                           <img
                             {...getAvatarProps(member.avatar, member.username)}
                             alt={member.username}
-                            className="w-4 h-4 icon rounded-[10px]"
+                            className="w-4 h-4 icon icon rounded-[10px]"
                           />
                           {member.username}
                           <button
@@ -1284,7 +1285,7 @@ const Projects = () => {
                       {newProject.links.map((link) => (
                         <div key={link.id} className="flex items-center justify-between p-2 bg-gray-100 dark:bg-black rounded">
                           <div className="flex items-center gap-2">
-                            <ExternalLink className="w-4 h-4 icon text-gray-500" />
+                            <ExternalLink className="w-4 h-4 icon icon text-gray-500" />
                             <span className="text-sm font-medium">{link.title}</span>
                             <span className="text-xs text-gray-500">({link.type})</span>
                           </div>
@@ -1293,7 +1294,7 @@ const Projects = () => {
                             onClick={() => handleRemoveLink(link.id)}
                             className="text-red-500 hover:text-red-700"
                           >
-                            <X className="w-4 h-4 icon" />
+                            <X className="w-4 h-4 icon icon" />
                           </button>
                         </div>
                       ))}
@@ -1557,7 +1558,7 @@ const Projects = () => {
                                   className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-[10px]"
                                 >
                                   <div className="flex items-center gap-2">
-                                    <Link className="w-4 h-4 icon text-gray-500" />
+                                    <Link className="w-4 h-4 icon icon text-gray-500" />
                                     <div>
                                       <p className="text-sm font-medium text-gray-900 dark:text-white">
                                         {link.title}
@@ -1573,7 +1574,7 @@ const Projects = () => {
                                     rel="noopener noreferrer"
                                     className="text-gray-500 hover:text-gray-600 text-sm w-[50px] h-[50px] border flex items-center justify-center rounded-[10px]"
                                   >
-                                    <ArrowUpRightSquare className="w-4 h-4 icon" />
+                                    <ArrowUpRightSquare className="w-4 h-4 icon icon" />
                                   </a>
                                 </motion.div>
                               ))
@@ -1919,7 +1920,7 @@ const Projects = () => {
                           onClick={() => handleRemoveMemberFromProject(member.user?._id)}
                           className="text-red-500 hover:text-red-700 w-12 border"
                         >
-                          <Trash2 className="w-4 h-4 icon" />
+                          <Trash2 className="w-4 h-4 icon icon" />
                         </Button>
                         }
                         </div>
@@ -2018,7 +2019,7 @@ const Projects = () => {
                       {selectedProject.links?.map((link, index) => (
                         <div key={index} className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[10px]">
                           <div className="flex items-center gap-3">
-                            <Link className="w-4 h-4 icon text-gray-500" />
+                            <Link className="w-4 h-4 icon icon text-gray-500" />
                             <div>
                               <p className="text-sm font-medium text-gray-900 dark:text-white">
                                 {link.title}
@@ -2043,7 +2044,7 @@ const Projects = () => {
                               onClick={() => handleRemoveLinkFromProject(link._id)}
                               className="text-red-500 hover:text-red-700"
                             >
-                              <Trash2 className="w-4 h-4 icon" />
+                              <Trash2 className="w-4 h-4 icon icon" />
                             </Button>
                           </div>
                         </div>

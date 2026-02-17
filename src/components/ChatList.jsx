@@ -74,7 +74,7 @@ const ChatList = () => {
               placeholder="Search chats..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white rounded-[10px]"
+              className="pl-10 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white rounded-[10px]"
               disabled
             />
           </div>
@@ -99,7 +99,7 @@ const ChatList = () => {
             placeholder="Search chats..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white rounded-[10px]"
+            className="pl-10 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white rounded-[10px]"
           />
         </div>
       </div>

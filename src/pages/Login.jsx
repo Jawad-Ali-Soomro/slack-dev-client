@@ -116,6 +116,7 @@ const Login = () => {
           className="p-5 md:p-8 shadow-2xl md:rounded-[10px] md:dark:border-gray-700"
         >
 
+
 <motion.div variants={itemVariants} className="mb-6">
             
           </motion.div>
@@ -127,14 +128,14 @@ const Login = () => {
             <motion.h1 
               variants={itemVariants}
               className="text-2xl  text-gray-900 dark:text-white mb-2 font-black"
-              style={{ fontWeight: 800 }}
+              style={{fontWeight: 700}}
             >
               Welcome Back
             </motion.h1>
             <motion.p 
               variants={itemVariants}
-              className="text-gray-600 dark:text-gray-300 text-sm font-black"
-              style={{ fontWeight: 800 }}
+              className="text-gray-600 dark:text-gray-300 text-sm font-bold"
+              style={{fontWeight: 600}}
             >
               Sign in to your account
             </motion.p>
@@ -214,7 +215,7 @@ const Login = () => {
             <motion.button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-black text-white rounded-[10px] font-bold  hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
+              className="w-full py-3 bg-black text-white uppercase rounded-[10px] font-bold  hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
@@ -231,17 +232,18 @@ const Login = () => {
           </motion.div>
 
           {/* Sign Up Link */}
-          <motion.div variants={itemVariants} className="text-end mt-6">
+          <motion.div variants={itemVariants} className="text-end mt-6 uppercase">
             <p className="text-gray-600 dark:text-gray-300">
               {/* don't have an account{" "} */}
-              <Link to="/signup" className="px-15 dark:bg-white dark:text-black ml-3 py-4 font-bold rounded-[20px] text-white bg-black  text-sm capitalize ">
+              <Link to="/signup" className="px-15 dark:bg-white dark:text-black ml-3 py-4 font-bold rounded-[20px] text-white bg-black  text-sm uppercase ">
                 Register
               </Link>
             </p>
           </motion.div>
         </motion.div>
-
-        {/* Back to Home */}
+         <motion.div className="max-w-[80%] text-center ml-[10%]">
+        <p className="text-gray-400 ">By Clicking On <span className="text-black dark:text-white">Login</span> You Agree To Our <span className="text-black dark:text-white">Terms & Conditions!</span></p>
+      </motion.div>
         
       </motion.div>
     </div>

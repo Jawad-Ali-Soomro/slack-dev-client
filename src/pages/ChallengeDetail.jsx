@@ -229,7 +229,7 @@ const ChallengeDetail = () => {
               onClick={() => navigate('/dashboard/challenges')}
               className="rounded-full p-2 border-2 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
-              <ArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4 icon" />
             </Button>
             <div className="flex-1" />
           </div>
@@ -260,7 +260,7 @@ const ChallengeDetail = () => {
                     </Badge>
                   )}
                   <div className="flex items-center gap-1.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1.5 rounded-full shadow-md">
-                    <Star className="w-4 h-4 fill-current" />
+                    <Star className="w-4 h-4 icon fill-current" />
                     <span className="text-sm font-bold">{challenge.points} points</span>
                   </div>
                 </div>
@@ -382,7 +382,7 @@ const ChallengeDetail = () => {
                           {/* Answer Display Section (Auto-filled from code execution) */}
                           <div className="p-4 border-t-2 border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gray-50 dark:bg-gray-900/50">
                             <label className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2 block flex items-center gap-2">
-                              <Target className="w-4 h-4" />
+                              <Target className="w-4 h-4 icon" />
                               Your Answer (Auto-filled from code output):
                             </label>
                             {/* <textarea
@@ -444,7 +444,7 @@ const ChallengeDetail = () => {
                       {codeError ? (
                         <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-xl p-4">
                           <div className="flex items-center gap-2 mb-2">
-                            <X className="w-4 h-4 text-red-600 dark:text-red-400" />
+                            <X className="w-4 h-4 icon text-red-600 dark:text-red-400" />
                             <span className="text-xs font-semibold text-red-600 dark:text-red-400">Error</span>
                           </div>
                           <pre className="text-xs text-red-700 dark:text-red-300 font-mono whitespace-pre-wrap break-words">
@@ -454,7 +454,7 @@ const ChallengeDetail = () => {
                       ) : codeOutput ? (
                         <div className="bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-xl p-4">
                           <div className="flex items-center gap-2 mb-2">
-                            <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
+                            <CheckCircle className="w-4 h-4 icon text-green-600 dark:text-green-400" />
                             <span className="text-xs font-semibold text-green-600 dark:text-green-400">Success</span>
                           </div>
                           <pre className="text-sm text-gray-800 dark:text-gray-200 font-mono whitespace-pre-wrap break-words leading-relaxed">

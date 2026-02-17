@@ -39,7 +39,7 @@ const SkeletonLoader = ({ type = 'card', count = 1, className = '' }) => {
           <thead className="bg-gray-100 dark:bg-black border-b-2 border-gray-200 dark:border-gray-700 sticky top-0 z-10">
             <tr>
               <th className="px-6 py-4 text-left">
-                <div className="w-4 h-4 icon bg-gray-200 dark:bg-gray-700 rounded"></div>
+                <div className="w-4 h-4 icon icon bg-gray-200 dark:bg-gray-700 rounded"></div>
               </th>
               <th className="px-6 py-4 text-left">
                 <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
@@ -71,7 +71,7 @@ const SkeletonLoader = ({ type = 'card', count = 1, className = '' }) => {
             {Array.from({ length: count }).map((_, index) => (
               <tr key={index} className="hover:bg-gray-50 dark:hover:bg-black">
                 <td className="px-6 py-4">
-                  <div className="w-4 h-4 icon bg-gray-200 dark:bg-gray-700 rounded"></div>
+                  <div className="w-4 h-4 icon icon bg-gray-200 dark:bg-gray-700 rounded"></div>
                 </td>
                 <td className="px-6 py-4">
                   <div className="space-y-2">
@@ -102,7 +102,7 @@ const SkeletonLoader = ({ type = 'card', count = 1, className = '' }) => {
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2">
-                    <div className="w-4 h-4 icon bg-gray-200 dark:bg-gray-700 rounded"></div>
+                    <div className="w-4 h-4 icon icon bg-gray-200 dark:bg-gray-700 rounded"></div>
                     <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
                   </div>
                 </td>

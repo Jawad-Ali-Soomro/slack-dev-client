@@ -186,7 +186,7 @@ const Signup = () => {
             <motion.button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-black text-white rounded-[10px] font-bold  hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
+              className="w-full py-3 bg-black text-white uppercase rounded-[10px] font-bold  hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
@@ -207,13 +207,15 @@ const Signup = () => {
           <motion.div variants={itemVariants} className="text-end mt-6">
             <p className="text-gray-600 dark:text-gray-300">
               {/* already have an account{" "} */}
-              <Link to="/login" className="px-15 dark:bg-white dark:text-black ml-3 py-4 font-bold rounded-[20px] text-white bg-black  text-sm capitalize ">
+              <Link to="/login" className="px-15 dark:bg-white dark:text-black ml-3 py-4 font-bold rounded-[20px] text-white bg-black  text-sm uppercase ">
                 Sign in
               </Link>
             </p>
           </motion.div>
         </motion.div>
-
+      <motion.div className="max-w-[80%] text-center ml-[10%]">
+        <p className="text-gray-400 ">By Clicking On <span className="text-black dark:text-white">Signup</span> You Agree To Our <span className="text-black dark:text-white">Terms & Conditions!</span></p>
+      </motion.div>
 
       </motion.div>
     </div>

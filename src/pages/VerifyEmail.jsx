@@ -149,7 +149,7 @@ const VerifyEmail = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gray-100">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="floating-orb w-96 h-96 top-10 left-10 opacity-20"></div>
@@ -158,7 +158,7 @@ const VerifyEmail = () => {
       </div>
 
       <motion.div
-        className="w-full max-w-md relative z-10"
+        className="w-full max-w-md relative z-10 bg-white"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -174,7 +174,7 @@ const VerifyEmail = () => {
               to="/login" 
               className="flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors text-sm"
             >
-              <ArrowLeft className="w-4 h-4 icon" />
+              <ArrowLeft className="w-4 h-4 icon icon" />
             </Link>
           </motion.div>
 
@@ -220,7 +220,7 @@ const VerifyEmail = () => {
                   value={digit}
                   onChange={(e) => handleOtpChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-20 h-20 text-center text-xl  border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline-none focus:border-blue-500 dark:bg-[#111827] dark:text-white"
+                  className="w-20 h-20 text-center text-xl  border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline-none focus:border-blue-500 dark:bg-[black] dark:text-white"
                 />
               ))}
             </div>
@@ -248,7 +248,7 @@ const VerifyEmail = () => {
               >
                 {resendLoading ? (
                   <span className="flex items-center gap-2">
-                    <RefreshCw className="w-4 h-4 icon animate-spin" />
+                    <RefreshCw className="w-4 h-4 icon icon animate-spin" />
                     Sending...
                   </span>
                 ) : (

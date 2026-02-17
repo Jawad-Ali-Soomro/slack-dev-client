@@ -186,7 +186,7 @@ const ForgotPassword = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gray-100">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="floating-orb w-96 h-96 top-10 left-10 opacity-20"></div>
@@ -195,7 +195,7 @@ const ForgotPassword = () => {
       </div>
 
       <motion.div
-        className="w-full max-w-md relative z-10"
+        className="w-full max-w-md relative z-10 bg-white"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -211,7 +211,7 @@ const ForgotPassword = () => {
               to="/login" 
               className="flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors text-sm"
             >
-              <ArrowLeft className="w-4 h-4 icon" />
+              <ArrowLeft className="w-4 h-4 icon icon" />
               
             </Link>
           </motion.div>

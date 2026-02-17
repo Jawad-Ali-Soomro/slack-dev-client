@@ -390,7 +390,7 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
                 className="flex-1"
                 disabled={loading}
               >
-                <Calendar className="w-4 h-4 icon mr-2" />
+                <Calendar className="w-4 h-4 icon icon mr-2" />
                 Reschedule Only
               </Button>
               <Button
@@ -398,7 +398,7 @@ const MeetingEditModal = ({ meeting, isOpen, onClose, onMeetingUpdated, users = 
                 className="flex-1"
                 disabled={loading}
               >
-                <Save className="w-4 h-4 icon mr-2" />
+                <Save className="w-4 h-4 icon icon mr-2" />
                 {loading ? 'Saving...' : 'Save Changes'}
               </Button>
             </div>

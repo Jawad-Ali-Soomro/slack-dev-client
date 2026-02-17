@@ -226,7 +226,7 @@ const Friends = () => {
 
           {/* Friends Tab */}
           <TabsContent  value="friends" className="mt-6">
-            <Card className={'bg-transparent dark:bg-[#111827]'}>
+            <Card className={'bg-transparent dark:bg-[black]'}>
               <CardHeader>
                 <CardTitle className={'font-bold'}>Your Friends</CardTitle>
                 <CardDescription>
@@ -247,7 +247,7 @@ const Friends = () => {
                         key={friendship.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center space-x-4 p-4 border rounded-[20px] hover:bg-gray-50 dark:bg-[rgba(255,255,255,.1)] bg-gray-100 dark:bg-[#111827]"
+                        className="flex items-center space-x-4 p-4 border rounded-[20px] hover:bg-gray-50 dark:bg-[rgba(255,255,255,.1)] bg-gray-100 dark:bg-[black]"
                       >
                         <Avatar 
                           className="cursor-pointer hover:scale-110 transition-transform"
@@ -285,7 +285,7 @@ const Friends = () => {
 
           {/* Received Requests Tab */}
           <TabsContent value="received" className="mt-6">
-            <Card className={'bg-transparent dark:bg-[#111827]'}>
+            <Card className={'bg-transparent dark:bg-[black]'}>
               <CardHeader>
                 <CardTitle className={'font-bold'}>Received Requests</CardTitle>
                 <CardDescription>
@@ -350,7 +350,7 @@ const Friends = () => {
 
           {/* Sent Requests Tab */}
           <TabsContent value="sent" className="mt-6">
-            <Card className={'bg-transparent dark:bg-[#111827] '}>
+            <Card className={'bg-transparent dark:bg-[black] '}>
               <CardHeader>
                 <CardTitle className={'font-bold'}>Sent Requests</CardTitle>
                 <CardDescription>

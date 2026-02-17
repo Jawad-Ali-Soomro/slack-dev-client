@@ -40,15 +40,15 @@ const NotificationDropdown = () => {
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'task':
-        return <CheckCircle className="w-4 h-4 icon text-blue-500" />
+        return <CheckCircle className="w-4 h-4 icon icon text-blue-500" />
       case 'meeting':
-        return <Clock className="w-4 h-4 icon text-green-500" />
+        return <Clock className="w-4 h-4 icon icon text-green-500" />
       case 'system':
-        return <Info className="w-4 h-4 icon text-purple-500" />
+        return <Info className="w-4 h-4 icon icon text-purple-500" />
       case 'alert':
-        return <AlertCircle className="w-4 h-4 icon text-red-500" />
+        return <AlertCircle className="w-4 h-4 icon icon text-red-500" />
       default:
-        return <Bell className="w-4 h-4 icon" />
+        return <Bell className="w-4 h-4 icon icon" />
     }
   }
 

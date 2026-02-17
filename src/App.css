@@ -1,8 +1,9 @@
 * {
     /* font-family: "Amarna", sans-serif !important; */
     /* font-family: "Syne", sans-serif; */
-    font-family: "Advent Pro";
-    font-weight:  900;
+    font-family: "Titillium Web" !important;
+    font-weight:  600;
+    border-radius: 15px !important;
 }
 
 
@@ -402,8 +403,4 @@ html {
   -webkit-text-fill-color: transparent;
   background-clip: text;
   animation: textGradient 5s ease infinite;
-}
-
-.rounded-round {
-  border-radius: 50% !important;
 }

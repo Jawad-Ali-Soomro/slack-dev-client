@@ -882,7 +882,7 @@ const LearnPoint = () => {
                     placeholder="Search notes..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    className="md:w-[500px] w-full pl-10 pr-4 py-3 border border-gray-200 h-13 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white"
+                    className="md:w-[500px] w-full pl-10 pr-4 py-3 border border-gray-200 h-13 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                   />
                 </div>
                 <Select
@@ -891,10 +891,10 @@ const LearnPoint = () => {
                     handleDepartmentChange(value === "all" ? "" : value)
                   }
                 >
-                  <SelectTrigger className="md:w-[200px] w-full px-5 h-13 bg-white cursor-pointer dark:bg-[#111827] dark:text-white">
+                  <SelectTrigger className="md:w-[200px] w-full px-5 h-13 bg-white cursor-pointer dark:bg-[black] dark:text-white">
                     <SelectValue placeholder="Select Department" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[#111827] border-gray-200 dark:border-gray-700">
+                  <SelectContent className="bg-white dark:bg-[black] border-gray-200 dark:border-gray-700">
                     <SelectItem
                       className="cursor-pointer h-10 px-5"
                       value="all"
@@ -921,10 +921,10 @@ const LearnPoint = () => {
                     setSelectedSubject(value === "all" ? "" : value)
                   }
                 >
-                  <SelectTrigger className="md:w-[200px] w-full px-5 h-13 bg-white cursor-pointer dark:bg-[#111827] dark:text-white">
+                  <SelectTrigger className="md:w-[200px] w-full px-5 h-13 bg-white cursor-pointer dark:bg-[black] dark:text-white">
                     <SelectValue placeholder="Select Subject" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[#111827] border-gray-200 dark:border-gray-700">
+                  <SelectContent className="bg-white dark:bg-[black] border-gray-200 dark:border-gray-700">
                     <SelectItem
                       className="cursor-pointer h-10 px-5"
                       value="all"
@@ -959,7 +959,7 @@ const LearnPoint = () => {
               }}
               className="md:w-[200px] w-full rounded-[10px] h-12 font-bold"
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4 icon mr-2" />
               Create Note
             </Button>
           </div>
@@ -993,7 +993,11 @@ const LearnPoint = () => {
               {filteredNotes.map((note) => (
                 <motion.div
                   key={note._id || note.id}
-                  className="bg-white  dark:bg-[rgba(255,255,255,.1)] border-gray-200 dark:border-gray-700 rounded-[20px] p-6 hover:shadow-lg transition-shadow"
+                  className="bg-white dark:bg-[rgba(255,255,255,.1)] 
+             border-gray-200 dark:border-gray-700 
+             rounded-[20px] p-6 
+             hover:shadow-lg transition-shadow
+             flex flex-col h-full"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.2 }}
@@ -1058,7 +1062,8 @@ const LearnPoint = () => {
                       ))}
                     </div>
                   )}
-                  <div className="flex items-center justify-between mt-4">
+                  <div className="mt-auto flex justify-between gap-2">
+
                     <div className="flex gap-2">
                       {note.fileUrl && (
                         <Button
@@ -1066,7 +1071,7 @@ const LearnPoint = () => {
                           onClick={() => handleViewPdf(note.fileUrl)}
                           className="text-blue-600 hover:text-blue-800 bg-blue-100 dark:bg-white dark:text-black dark:hover:bg-white w-[150px] dark:hover:text-black"
                         >
-                          <Download className="w-4 h-4 mr-1" />
+                          <Download className="w-4 h-4 icon mr-1" />
                           Download
                         </Button>
                       )}
@@ -1084,10 +1089,12 @@ const LearnPoint = () => {
                             <Button
                               variant="ghost"
                               className={"w-[50px]"}
+
+                              
                               size="sm"
                               onClick={() => handleEditNote(note)}
                             >
-                              <Edit className="w-4 h-4" />
+                              <Edit className="w-4 h-4 icon icon" />
                             </Button>
                             <Button
                               variant="ghost"
@@ -1097,7 +1104,7 @@ const LearnPoint = () => {
                                 handleDeleteNote(note._id || note.id)
                               }
                             >
-                              <Trash2 className="w-4 h-4 text-red-600" />
+                              <Trash2 className="w-4 h-4 icon text-red-600" />
                             </Button>
                           </>
                         )}
@@ -1122,7 +1129,7 @@ const LearnPoint = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-[#111827] rounded-[20px] shadow-2xl border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-[black] rounded-[20px] shadow-2xl border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="space-y-4">
@@ -1133,7 +1140,7 @@ const LearnPoint = () => {
                     onChange={(e) =>
                       setNewNote({ ...newNote, title: e.target.value })
                     }
-                    className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white"
+                    className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                     placeholder="Note Title *"
                   />
                 </div>
@@ -1144,7 +1151,7 @@ const LearnPoint = () => {
                     onChange={(e) =>
                       setNewNote({ ...newNote, description: e.target.value })
                     }
-                    className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white"
+                    className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                     placeholder="Description (optional)"
                     rows="3"
                   />
@@ -1159,10 +1166,10 @@ const LearnPoint = () => {
                           setNewNote({ ...newNote, department: value })
                         }
                       >
-                        <SelectTrigger className="flex-1 border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white">
+                        <SelectTrigger className="flex-1 border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white">
                           <SelectValue placeholder="Department *" />
                         </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-[#111827] border-gray-200 dark:border-gray-700 max-h-[300px]">
+                        <SelectContent className="bg-white dark:bg-[black] border-gray-200 dark:border-gray-700 max-h-[300px]">
                           {departments.map((dept) => (
                             <SelectItem
                               key={dept}
@@ -1191,10 +1198,10 @@ const LearnPoint = () => {
                           setNewNote({ ...newNote, subject: value })
                         }
                       >
-                        <SelectTrigger className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white">
+                        <SelectTrigger className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white">
                           <SelectValue placeholder="Select Subject *" />
                         </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-[#111827] border-gray-200 dark:border-gray-700 max-h-[300px]">
+                        <SelectContent className="bg-white dark:bg-[black] border-gray-200 dark:border-gray-700 max-h-[300px]">
                           {modalSubjects.length > 0 ? (
                             modalSubjects.map((subject) => (
                               <SelectItem
@@ -1219,7 +1226,7 @@ const LearnPoint = () => {
                         onChange={(e) =>
                           setNewNote({ ...newNote, subject: e.target.value })
                         }
-                        className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white"
+                        className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                         placeholder="Subject * (Select department first)"
                         disabled
                       />
@@ -1239,7 +1246,7 @@ const LearnPoint = () => {
                     onChange={(e) =>
                       setNewNote({ ...newNote, tags: e.target.value })
                     }
-                    className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white"
+                    className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                     placeholder="Tags (comma separated)"
                   />
                 </div>
@@ -1250,21 +1257,14 @@ const LearnPoint = () => {
                       type="file"
                       accept=".pdf"
                       onChange={handleFileChange}
-                      className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white"
+                      className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                     />
                     {pdfFile && (
                       <span className="text-sm text-gray-600 dark:text-gray-400">
                         {pdfFile.name}
                       </span>
                     )}
-                    <div className="flex-1 w-full">
-                      <Button
-                      onClick={() => navigate('/learn-point/notes')}
-                        className={"w-full bg-green-600 hover:bg-green-700"}
-                      >
-                        Create Using Office
-                      </Button>
-                    </div>
+                   
                   </div>
                   {editingNote?.fileUrl && !pdfFile && (
                     <div className="flex p-3 border-2 border-dashed rounded-[20px] mt-5 flex items-center justify-between">
@@ -1275,7 +1275,7 @@ const LearnPoint = () => {
                         className="flex p-2 border rounded-full cursor-pointer"
                         onClick={() => handleViewPdf(editingNote.fileUrl)}
                       >
-                        <Eye className="w-4 h-4 icon" />
+                        <Eye className="w-4 h-4 icon icon" />
                       </div>
                     </div>
                   )}

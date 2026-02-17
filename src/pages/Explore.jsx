@@ -341,7 +341,7 @@ const Explore = () => {
             onClick={() => setShowUploadModal(true)}
             className="bg-black dark:bg-white text-white font-bold dark:text-black md:w-[200px] w-full"
           >
-            <Plus className="w-4 h-4 mr-2" />
+            <Plus className="w-4 h-4 icon mr-2" />
             Upload Project
           </Button>
         </div>
@@ -357,14 +357,14 @@ const Explore = () => {
                   placeholder="Search projects..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="md:w-[500px] w-full pl-10 pr-4 py-3 border border-gray-200 h-13 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white"
+                  className="md:w-[500px] w-full pl-10 pr-4 py-3 border border-gray-200 h-13 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                 />
               </div>
               <Select value={category} onValueChange={setCategory}>
-                <SelectTrigger className="md:w-[180px] w-full px-5 h-13 bg-white cursor-pointer dark:bg-[#111827] dark:text-white">
+                <SelectTrigger className="md:w-[180px] w-full px-5 h-13 bg-white cursor-pointer dark:bg-[black] dark:text-white">
                   <SelectValue placeholder="Category" />
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-[#111827] border-gray-200 dark:border-gray-700">
+                <SelectContent className="bg-white dark:bg-[black] border-gray-200 dark:border-gray-700">
                   <SelectItem className="cursor-pointer h-10 px-5" value="all">All Categories</SelectItem>
                   {categories.map((cat) => (
                     <SelectItem key={cat} className="cursor-pointer h-10 px-5" value={cat}>{cat}</SelectItem>
@@ -372,10 +372,10 @@ const Explore = () => {
                 </SelectContent>
               </Select>
               <Select value={sortBy} onValueChange={setSortBy}>
-                <SelectTrigger className="md:w-[180px] w-full px-5 h-13 bg-white cursor-pointer dark:bg-[#111827] dark:text-white">
+                <SelectTrigger className="md:w-[180px] w-full px-5 h-13 bg-white cursor-pointer dark:bg-[black] dark:text-white">
                   <SelectValue placeholder="Sort By" />
                 </SelectTrigger>
-                <SelectContent className="bg-white dark:bg-[#111827] border-gray-200 dark:border-gray-700">
+                <SelectContent className="bg-white dark:bg-[black] border-gray-200 dark:border-gray-700">
                   <SelectItem className="cursor-pointer h-10 px-5" value="createdAt">Newest</SelectItem>
                   <SelectItem className="cursor-pointer h-10 px-5" value="price">Price</SelectItem>
                   <SelectItem className="cursor-pointer h-10 px-5" value="purchaseCount">Popular</SelectItem>
@@ -516,7 +516,7 @@ const Explore = () => {
                 )}
               </div>
             </div>
-            <div className="flex">
+            <div className="flex text-justify max-w-[70%]">
                 {
                     selectedProject.description
                 }
@@ -642,7 +642,7 @@ const Explore = () => {
                 </p>
               </div>
               <Button variant="ghost" size="sm" onClick={handleCloseCheckout}>
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4 icon" />
               </Button>
             </div>
             <Elements stripe={stripePromise} options={{ clientSecret: checkoutClientSecret }}>
@@ -834,12 +834,12 @@ const Explore = () => {
                 >
                   {uploading ? (
                     <>
-                      <Upload className="w-4 h-4 mr-2 animate-spin" />
+                      <Upload className="w-4 h-4 icon mr-2 animate-spin" />
                       Uploading...
                     </>
                   ) : (
                     <>
-                      <Upload className="w-4 h-4 mr-2" />
+                      <Upload className="w-4 h-4 icon mr-2" />
                       Upload Project
                     </>
                   )}

@@ -34,7 +34,7 @@ import Notes from "./pages/Notes";
 
 function App() {
   return (
-    <div className="bg-white dark:bg-[#111827]">
+    <div className="bg-white dark:bg-[black]">
       <Router>
         <Toaster
           position="top-center"
@@ -51,6 +51,7 @@ function App() {
             className: "toast-custom",
           }}
         />
+        
         <AuthProvider>
           <NotificationProvider>
             <ChatProvider>
@@ -105,14 +106,14 @@ function App() {
                           </ProtectedRoute>
                         }
                       />
-                      <Route
+                      {/* <Route
                         path="/learn-point/notes"
                         element={
                           <ProtectedRoute requireAuth={true}>
                             <Notes />
                           </ProtectedRoute>
                         }
-                      />
+                      /> */}
                       <Route
                         path="/dashboard/my-bought-projects"
                         element={

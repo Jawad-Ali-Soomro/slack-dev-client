@@ -168,11 +168,11 @@ const PermissionsManagement = () => {
   const getRoleBadgeColor = (role) => {
     switch (role) {
       case 'admin':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 px-5 py-2';
       case 'superadmin':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 px-5 py-2';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200 px-5 py-2';
     }
   };
 
@@ -220,7 +220,7 @@ const PermissionsManagement = () => {
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-3 bg-white dark:bg-[#111827] text-black dark:text-white border border-gray-200 dark:border-gray-700 w-full md:w-[500px] rounded-[10px]"
+                className="pl-10 pr-4 py-3 bg-white dark:bg-[black] text-black dark:text-white border border-gray-200 dark:border-gray-700 w-full md:w-[500px] rounded-[10px]"
               />
             </div>
             <div className="flex items-center w-full sm:w-auto">
@@ -229,7 +229,7 @@ const PermissionsManagement = () => {
                 onValueChange={setRoleFilter}
                 disabled={!canFilterByRole}
               >
-                <SelectTrigger className="md:w-44 w-full sm:w-44 h-12 px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[#111827] rounded-[10px] disabled:opacity-60 disabled:cursor-not-allowed">
+                <SelectTrigger className="md:w-44 w-full sm:w-44 h-12 px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[black] rounded-[10px] disabled:opacity-60 disabled:cursor-not-allowed">
                   <SelectValue placeholder="Filter by role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -262,7 +262,7 @@ const PermissionsManagement = () => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredUsers.map((userItem) => (
-                  <tr key={userItem.id} className="bg-white dark:bg-[#111827] hover:bg-gray-50 dark:hover:bg-black">
+                  <tr key={userItem.id} className="bg-white dark:bg-[black] hover:bg-gray-50 dark:hover:bg-black">
                     <td className="px-5 py-2">
                       <div className="flex items-center gap-3">
                         <img
@@ -285,12 +285,12 @@ const PermissionsManagement = () => {
                       <div className="flex flex-wrap gap-2">
                         {userItem.permissions ? (
                           <>
-                            {userItem.permissions.canCreateTeam && (<Badge variant="outline" className="text-xs">Teams</Badge>)}
-                            {userItem.permissions.canCreateProject && (<Badge variant="outline" className="text-xs">Projects</Badge>)}
-                            {userItem.permissions.canCreateTask && (<Badge variant="outline" className="text-xs">Tasks</Badge>)}
-                            {userItem.permissions.canCreateMeeting && (<Badge variant="outline" className="text-xs">Meetings</Badge>)}
-                            {userItem.permissions.canManageUsers && (<Badge variant="outline" className="text-xs">Users</Badge>)}
-                            {userItem.permissions.canViewAllData && (<Badge variant="outline" className="text-xs">All Data</Badge>)}
+                            {userItem.permissions.canCreateTeam && (<Badge className="text-xs px-5 py-2 bg-blue-500 text-white">Teams</Badge>)}
+                            {userItem.permissions.canCreateProject && (<Badge className="text-xs px-5 py-2 bg-orange-500 text-white">Projects</Badge>)}
+                            {userItem.permissions.canCreateTask && (<Badge className="text-xs px-5 py-2 bg-green-500 text-white">Tasks</Badge>)}
+                            {userItem.permissions.canCreateMeeting && (<Badge className="text-xs px-5 py-2 bg-violet-500 text-white">Meetings</Badge>)}
+                            {userItem.permissions.canManageUsers && (<Badge className="text-xs px-5 py-2 bg-indigo-500 text-white">Users</Badge>)}
+                            {userItem.permissions.canViewAllData && (<Badge className="text-xs px-5 py-2 bg-yellow-500 text-white">View Data</Badge>)}
                           </>
                         ) : (
                           <span className="text-sm text-gray-500 dark:text-gray-400 truncate">No permissions</span>
@@ -302,12 +302,14 @@ const PermissionsManagement = () => {
                     </td>
                     <td className="px-5 py-2 flex items-center justify-end pr-5">
                       <div className="flex items-center gap-2">
-                        <Button variant="outline" size="sm" className={'w-12'} onClick={() => handleEditPermissions(userItem)}>
-                <Edit className="w-4 h-4 icon icon" />
+                        <Button size="sm" className={'w-45 flex gap-5 bg-blue-600 text-white hover:text-blue-600'} onClick={() => handleEditPermissions(userItem)}>
+                <Edit className="w-4 h-4 icon icon icon" />
+                Edit Permissions
                         </Button>
                         {userItem.permissions && (
-                          <Button variant="outline" size="sm" onClick={() => handleDeletePermissions(userItem.id)} className="text-red-600 w-12 hover:text-red-700">
-                            <X className="w-4 h-4 icon" />
+                          <Button cla size="sm" onClick={() => handleDeletePermissions(userItem.id)} className="bg-red-600 text-white w-45 flex gap-5 hover:text-red-700">
+                            <X className="w-4 h-4 icon icon" />
+                            Revoke Permissions
                           </Button>
                         )}
                       </div>
@@ -337,7 +339,7 @@ const PermissionsManagement = () => {
                   size="sm"
                   onClick={() => setEditingUser(null)}
                 >
-                  <X className="w-4 h-4 icon" />
+                  <X className="w-4 h-4 icon icon" />
                 </Button>
               </div>
 
@@ -434,7 +436,7 @@ const PermissionsManagement = () => {
                   onClick={handleSavePermissions}
                   className="bg-black dark:bg-white"
                 >
-                  <Check className="w-4 h-4 icon mr-2" />
+                  <Check className="w-4 h-4 icon icon mr-2" />
                   Save Permissions
                 </Button>
               </div>

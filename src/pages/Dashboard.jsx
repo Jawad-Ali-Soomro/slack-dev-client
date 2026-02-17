@@ -841,7 +841,7 @@ const Dashboard = () => {
                       className="flex items-center p-3 bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
                     >
                       <div
-                        className="w-4 h-4  rounded-[30px] mr-3 shadow-sm"
+                        className="w-4 h-4 mr-3 rounded-full shadow-sm"
                         style={{ backgroundColor: item.color }}
                       ></div>
                       <div>
@@ -988,7 +988,7 @@ const Dashboard = () => {
 
             {/* Schedule Calendar */}
             <div className="mt-10">
-              <div className="rounded-[30px] p-6 border-gray-300 dark:border-gray-700 border dark:bg-[#111827] shadow-sm">
+              <div className="rounded-[30px] p-6 border-gray-300 dark:border-gray-700 border dark:bg-[black] shadow-sm">
                 {/* Calendar Header */}
                 <div className="flex items-center justify-between mb-6">
                   <div className="flex items-center gap-3">
@@ -1110,7 +1110,12 @@ const Dashboard = () => {
                         toast.error('You do not have permission to create tasks. Contact an admin.');
                         return;
                       }
-                      navigate('/dashboard/tasks', { state: { date: selectedDate.toISOString(), openModal: true } });
+                      navigate('/dashboard/tasks', { state: { date: selectedDate.toLocaleDateString('en-CA',  {
+  timeZone: 'Asia/Karachi',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit'
+}), openModal: true } });
                     }}
                     disabled={!permissions.canCreateTask}
                     className="flex-1 h-12 font-semibold rounded-xl text-sm bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
@@ -1125,7 +1130,12 @@ const Dashboard = () => {
                         toast.error('You do not have permission to create meetings. Contact an admin.');
                         return;
                       }
-                      navigate('/dashboard/meetings', { state: { date: selectedDate.toISOString(), openModal: true } });
+                      navigate('/dashboard/meetings', { state: { date: selectedDate.toLocaleDateString('en-CA',  {
+  timeZone: 'Asia/Karachi',
+  year: 'numeric',
+  month: '2-digit',
+  day: '2-digit'
+}), openModal: true } });
                     }}
                     disabled={!permissions.canCreateMeeting}
                     className="flex-1 h-12 rounded-xl text-sm border-2 border-blue-500 dark:border-blue-400 font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"

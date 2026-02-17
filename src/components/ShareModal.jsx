@@ -82,7 +82,7 @@ const ShareModal = ({ isOpen, onClose, postId, postTitle, postDescription }) => 
                     className="flex-1 h-12 rounded-[10px]"
                   />
                   <Button onClick={handleCopyLink} className="h-12 rounded-[10px] w-12">
-                    <Link className="w-4 h-4 icon " />
+                    <Link className="w-4 h-4 icon icon " />
                     {/* Copy */}
                   </Button>
                 </div>

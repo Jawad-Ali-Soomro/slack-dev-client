@@ -13,8 +13,8 @@ import NotificationDropdown from './NotificationDropdown'
 import { useSidebar } from '../contexts/SidebarContext'
 import { RiMenu3Fill } from "react-icons/ri";
 import { ThemeToggle } from './ThemeToggle'
-import { PiUserDuotone } from 'react-icons/pi'
-import { Link } from 'react-router-dom'
+import { PiKeyDuotone, PiUserDuotone, PiUsersDuotone } from 'react-icons/pi'
+import { Link, useNavigate } from 'react-router-dom'
 
 const DashboardHeader = () => {
   const { user, logout } = useAuth()
@@ -46,6 +46,8 @@ const DashboardHeader = () => {
       setAvatarPreview(user.avatar || '')
     }
   }, [user])
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const fetchHeaderAwards = async () => {
@@ -168,7 +170,7 @@ const DashboardHeader = () => {
   return (
     <>
       {/* Dashboard Header */}
-      <header className="bg-[#eee] dark:bg-[#111827] z-5 icon  border-gray-300 dark:border-gray-700 px-6 py-4 border-b fixed w-full">
+      <header className="bg-[#eee] dark:bg-[black] z-5 icon  border-gray-300 dark:border-gray-700 px-6 py-4 border-b fixed w-full">
         <div className={`flex items-center justify-between `}>
 
           <div className="flex justify-center items-center gap-4">
@@ -203,7 +205,7 @@ const DashboardHeader = () => {
             {/* User Info */}
             <div className="flex items-center gap-3 ">
               <div className="text-right hidden md:block">
-                <div className="text-sm font-medium text-gray-900 dark:text-white">
+                <div className="text-sm font-bold text-gray-900 dark:text-white">
                   {user?.username || 'User'}
                 </div>
               </div>
@@ -224,24 +226,7 @@ const DashboardHeader = () => {
                 </button>
                 
                 {/* Small Awards/Stars at Bottom of Avatar */}
-                {headerAwards.length > 0 && (
-                  <div className="flex items-center gap-0.5">
-                    {headerAwards.slice(0, 4).map((award, idx) => (
-                      <div
-                        key={idx}
-                        className="text-[10px] leading-none"
-                        title={`${award.name}: ${award.description}`}
-                      >
-                        {award.icon}
-                      </div>
-                    ))}
-                    {headerAwards.length > 4 && (
-                      <div className="text-[8px] text-gray-500 dark:text-gray-400 font-medium">
-                        +{headerAwards.length - 4}
-                      </div>
-                    )}
-                  </div>
-                )}
+              
               </div>
             </div>
 
@@ -342,9 +327,15 @@ const DashboardHeader = () => {
               
               {/* User Stats */}
               <div className="flex gap-4 mt-4 text-center flex-wrap justify-center">
-                <div className="px-5 py-2 bg-gray-100 dark:bg-black rounded-sm">
-                  <div className="text-sm font-medium text-green-600 dark:text-green-400">
+                <div className="p-2 pl-5 rounded-full bg-gray-100 dark:bg-black">
+                  <div className="text-sm font-medium flex gap-2 justify-center items-center text-green-600 dark:text-green-400">
                     {user?.emailVerified ? 'Verified' : 'Pending'}
+                    {
+                      user?.role === 'superadmin' && <Button onClick={() => navigate('/dashboard/admin/permissions') + setShowProfileModal(false)} className={'w-10 h-10 ml-4'}><PiKeyDuotone /></Button>
+                    }
+                    {
+                      user?.role === 'superadmin' && <Button  onClick={() => navigate('/dashboard/admin/users') + setShowProfileModal(false)} className={'w-10 h-10'}><PiUsersDuotone /></Button>
+                    }
                   </div>
                 </div>
                 {totalPoints > 0 && (
@@ -430,7 +421,7 @@ const DashboardHeader = () => {
                   className="flex-1"
                   disabled={loading}
                 >
-                  <PiUserDuotone className="w-4 h-4 icon mr-2" />
+                  <PiUserDuotone className="w-4 h-4 icon icon mr-2" />
                   Edit Profile
                 </Button>
               ) : (

@@ -147,10 +147,10 @@ const Teams = () => {
 
   const getRoleIcon = (role) => {
     switch (role) {
-      case 'owner': return <Crown className="w-4 h-4 icon" />
-      case 'admin': return <Shield className="w-4 h-4 icon" />
-      case 'member': return <User className="w-4 h-4 icon" />
-      default: return <User className="w-4 h-4 icon" />
+      case 'owner': return <Crown className="w-4 h-4 icon icon" />
+      case 'admin': return <Shield className="w-4 h-4 icon icon" />
+      case 'member': return <User className="w-4 h-4 icon icon" />
+      default: return <User className="w-4 h-4 icon icon" />
     }
   }
 
@@ -278,7 +278,7 @@ const Teams = () => {
                 onClick={() => setShowNewTeamPopup(true)}
                 className={'w-[200px]'}
               >
-                <Plus className="w-4 h-4 icon mr-2 icon" />
+                <Plus className="w-4 h-4 icon icon mr-2 icon" />
                 Create Team
               </Button>
             </div>
@@ -302,22 +302,22 @@ const Teams = () => {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm" className="p-2">
-                        <MoreVertical className="w-4 h-4 icon icon" />
+                        <MoreVertical className="w-4 h-4 icon icon icon" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem className="h-10 px-5 cursor-pointer">
-                        <Settings className="w-4 h-4 icon mr-2 icon" />
+                        <Settings className="w-4 h-4 icon icon mr-2 icon" />
                         Manage Team
                       </DropdownMenuItem>
                       <DropdownMenuItem className="h-10 px-5 cursor-pointer">
-                        <UserPlus className="w-4 h-4 icon mr-2 icon" />
+                        <UserPlus className="w-4 h-4 icon icon mr-2 icon" />
                         Add Members
                       </DropdownMenuItem>
                       <DropdownMenuItem className="h-10 px-5 cursor-pointer text-red-600" 
                         onClick={() => handleDeleteTeam(team.id)}
                       >
-                        <Trash2 className="w-4 h-4 icon mr-2" />
+                        <Trash2 className="w-4 h-4 icon icon mr-2" />
                         Delete
                       </DropdownMenuItem>
                     </DropdownMenuContent>
@@ -327,7 +327,7 @@ const Teams = () => {
                 {/* Team Stats */}
                 <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <Users className="w-4 h-4 icon icon" />
+                    <Users className="w-4 h-4 icon icon icon" />
                     <span>{team.members?.length || 0} members</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
@@ -423,7 +423,7 @@ const Teams = () => {
                     id="isPublic"
                     checked={newTeam.isPublic}
                     onChange={(e) => setNewTeam({...newTeam, isPublic: e.target.checked})}
-                    className="w-4 h-4 icon text-gray-600 bg-gray-100 border-gray-300 rounded focus:ring-gray-500 dark:focus:ring-gray-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    className="w-4 h-4 icon icon text-gray-600 bg-gray-100 border-gray-300 rounded focus:ring-gray-500 dark:focus:ring-gray-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
                   <label htmlFor="isPublic" className="text-sm text-gray-700 dark:text-gray-300">
                     Make this team public

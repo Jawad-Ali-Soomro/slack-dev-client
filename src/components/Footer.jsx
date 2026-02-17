@@ -87,15 +87,15 @@ const Footer = () => {
             <h4 className="text-lg ">Contact</h4>
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
-                <Mail className="w-4 h-4 icon text-gray-400" />
+                <Mail className="w-4 h-4 icon icon text-gray-400" />
                 <span className="text-gray-300 text-sm">hello@corestack.dev</span>
               </div>
               <div className="flex items-center space-x-3">
-                <Phone className="w-4 h-4 icon text-gray-400" />
+                <Phone className="w-4 h-4 icon icon text-gray-400" />
                 <span className="text-gray-300 text-sm">+1 (555) 123-4567</span>
               </div>
               <div className="flex items-center space-x-3">
-                <MapPin className="w-4 h-4 icon text-gray-400" />
+                <MapPin className="w-4 h-4 icon icon text-gray-400" />
                 <span className="text-gray-300 text-sm">San Francisco, CA</span>
               </div>
             </div>

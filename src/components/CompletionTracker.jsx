@@ -78,9 +78,9 @@ const CompletionTracker = ({
 
   const getCompletionIcon = () => {
     if (isCompleted) {
-      return <CheckCircle className="w-4 h-4 icon text-green-500" />
+      return <CheckCircle className="w-4 h-4 icon icon text-green-500" />
     }
-    return <Clock className="w-4 h-4 icon text-gray-400" />
+    return <Clock className="w-4 h-4 icon icon text-gray-400" />
   }
 
   const getCompletionBadge = () => {
@@ -118,7 +118,7 @@ const CompletionTracker = ({
           disabled
           className="flex items-center gap-2 text-green-600 border-green-200 bg-green-50 dark:bg-green-900 dark:border-green-700"
         >
-          <CheckCircle className="w-4 h-4 icon" />
+          <CheckCircle className="w-4 h-4 icon icon" />
           Completed
         </Button>
       )
@@ -132,9 +132,9 @@ const CompletionTracker = ({
         className="flex items-center gap-2"
       >
         {isLoading ? (
-          <div className="w-4 h-4 icon  border-white border-t-transparent rounded-[10px] animate-spin" />
+          <div className="w-4 h-4 icon icon  border-white border-t-transparent rounded-[10px] animate-spin" />
         ) : (
-          <CheckCircle className="w-4 h-4 icon" />
+          <CheckCircle className="w-4 h-4 icon icon" />
         )}
         Mark Complete
       </Button>

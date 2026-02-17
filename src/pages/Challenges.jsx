@@ -348,7 +348,7 @@ const Challenges = () => {
               <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
                 <SelectValue placeholder="All Difficulties" />
               </SelectTrigger>
-              <SelectContent className="bg-white dark:bg-[#111827]">
+              <SelectContent className="bg-white dark:bg-[black]">
                 <SelectItem className={'h-10 cursor-pointer px-5'} value="all">All Difficulties</SelectItem>
                 <SelectItem className={'h-10 cursor-pointer px-5'} value="beginner">Beginner</SelectItem>
                 <SelectItem className={'h-10 cursor-pointer px-5'} value="intermediate">Intermediate</SelectItem>
@@ -359,7 +359,7 @@ const Challenges = () => {
               <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
-              <SelectContent className="bg-white dark:bg-[#111827]">
+              <SelectContent className="bg-white dark:bg-[black]">
                 <SelectItem className={'h-10 cursor-pointer px-5'} value="all">All Categories</SelectItem>
                 {categories.map((cat) => (
                   <SelectItem key={cat} className={'h-10 cursor-pointer px-5'} value={cat}>
@@ -380,7 +380,7 @@ const Challenges = () => {
               className="bg-black dark:bg-white text-white dark:text-black hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed relative group"
               title={totalPoints < 50 ? `Requires 50+ points (You have ${totalPoints})` : 'Create Challenge'}
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4 icon mr-2" />
               Create Challenge
               {totalPoints < 50 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
@@ -416,7 +416,7 @@ const Challenges = () => {
                   )}
                 </div>
                 <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
-                  <Star className="w-4 h-4" />
+                  <Star className="w-4 h-4 icon" />
                   <span className="text-sm font-semibold">{challenge.points}</span>
                 </div>
               </div>
@@ -441,7 +441,7 @@ const Challenges = () => {
                       }}
                       className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
                     >
-                      <Edit className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+                      <Edit className="w-4 h-4 icon text-gray-700 dark:text-gray-300" />
                     </button>
                     <button
                       onClick={(e) => {
@@ -450,7 +450,7 @@ const Challenges = () => {
                       }}
                       className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
                     >
-                      <Trash2 className="w-4 h-4 text-gray-700 dark:text-gray-300" />
+                      <Trash2 className="w-4 h-4 icon text-gray-700 dark:text-gray-300" />
                     </button>
                   </div>
                 )}
@@ -520,7 +520,7 @@ const Challenges = () => {
                   <SelectTrigger className="w-full px-5 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
                     <SelectValue placeholder="Difficulty *" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[#111827]">
+                  <SelectContent className="bg-white dark:bg-[black]">
                     <SelectItem className={'h-10 cursor-pointer px-5'} value="beginner">Beginner</SelectItem>
                     <SelectItem className={'h-10 cursor-pointer px-5'} value="intermediate">Intermediate</SelectItem>
                     <SelectItem className={'h-10 cursor-pointer px-5'} value="advanced">Advanced</SelectItem>
@@ -533,7 +533,7 @@ const Challenges = () => {
                   <SelectTrigger className="w-full px-5 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
                     <SelectValue placeholder="Category *" />
                   </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[#111827]">
+                  <SelectContent className="bg-white dark:bg-[black]">
                     {categories.map((cat) => (
                       <SelectItem key={cat} className={'h-10 cursor-pointer px-5'} value={cat}>
                         {cat}

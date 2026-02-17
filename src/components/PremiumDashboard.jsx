@@ -160,8 +160,8 @@ const PremiumDashboard = () => {
                           {feature.replace(/([A-Z])/g, ' $1').trim()}
                         </span>
                       </div>
-                      {isAtLimit && <XCircle className="w-4 h-4 icon text-red-500" />}
-                      {isNearLimit && !isAtLimit && <AlertTriangle className="w-4 h-4 icon text-yellow-500" />}
+                      {isAtLimit && <XCircle className="w-4 h-4 icon icon text-red-500" />}
+                      {isNearLimit && !isAtLimit && <AlertTriangle className="w-4 h-4 icon icon text-yellow-500" />}
                     </div>
                     
                     <div className="space-y-2">
@@ -311,7 +311,7 @@ const PremiumDashboard = () => {
                       <div className="space-y-2">
                         {Object.entries(plan.features).slice(0, 5).map(([key, value]) => (
                           <div key={key} className="flex items-center gap-2 text-sm">
-                            <CheckCircle className="w-4 h-4 icon text-green-500" />
+                            <CheckCircle className="w-4 h-4 icon icon text-green-500" />
                             <span className="capitalize">
                               {key.replace(/([A-Z])/g, ' $1').trim()}: 
                               {typeof value === 'boolean' ? (value ? ' Yes' : ' No') :

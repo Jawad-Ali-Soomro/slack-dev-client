@@ -286,7 +286,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                 className="flex-1"
                 disabled={loading}
               >
-                <Save className="w-4 h-4 icon mr-2" />
+                <Save className="w-4 h-4 icon icon mr-2" />
                 {loading ? 'Saving...' : 'Save Changes'}
               </Button>
             </div>

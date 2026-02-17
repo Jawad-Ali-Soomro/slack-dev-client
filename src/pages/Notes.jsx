@@ -219,7 +219,7 @@ const Notes = () => {
                       onClick={handleExport}
                       className="w-full mt-4 bg-blue-600 hover:bg-blue-700"
                     >
-                      <Save className="w-4 h-4 mr-2" />
+                      <Save className="w-4 h-4 icon mr-2" />
                       Export Edited PDF
                     </Button>
                   )}
@@ -237,7 +237,7 @@ const Notes = () => {
                         setNewNote({ ...newNote, title: e.target.value })
                       }
                       placeholder="Note Title *"
-                      className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white"
+                      className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                       required
                     />
                   </div>
@@ -251,7 +251,7 @@ const Notes = () => {
                       }
                       placeholder="Description (optional)"
                       rows="3"
-                      className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white"
+                      className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                     />
                   </div>
 
@@ -261,10 +261,10 @@ const Notes = () => {
                       value={newNote.department}
                       onValueChange={handleDepartmentChange}
                     >
-                      <SelectTrigger className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white">
+                      <SelectTrigger className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white">
                         <SelectValue placeholder="Department *" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-[#111827] border-gray-200 dark:border-gray-700 max-h-[300px]">
+                      <SelectContent className="bg-white dark:bg-[black] border-gray-200 dark:border-gray-700 max-h-[300px]">
                         {PREDEFINED_DEPARTMENTS.map((dept) => (
                           <SelectItem
                             key={dept}
@@ -294,7 +294,7 @@ const Notes = () => {
                           }))
                         }
                         placeholder="Enter department name"
-                        className="w-full mt-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white"
+                        className="w-full mt-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                       />
                     )}
                     
@@ -315,7 +315,7 @@ const Notes = () => {
                       value={newNote.subject}
                       onChange={handleInputChange}
                       placeholder="Subject *"
-                      className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white"
+                      className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                       required
                     />
                   </div>
@@ -328,7 +328,7 @@ const Notes = () => {
                       value={newNote.tags}
                       onChange={handleInputChange}
                       placeholder="Tags (comma separated)"
-                      className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] text-black dark:text-white"
+                      className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                     />
                     
                   </div>
@@ -342,7 +342,7 @@ const Notes = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="col-span-2 bg-white rounded-[20px]"
+            className="col-span-2 bg-white dark:bg-black rounded-[20px]"
           >
             <div className="rounded-[20px] shadow-xl h-full min-h-[600px] overflow-hidden">
               {/* PDF Editor */}
@@ -358,7 +358,7 @@ const Notes = () => {
               disabled={isLoading || !savedFile}
               className="bg-green-600 hover:bg-green-700 w-[200px]"
             >
-              <Save className="w-4 h-4 mr-2" />
+              <Save className="w-4 h-4 icon mr-2" />
               {isLoading ? "Saving..." : "Create Note"}
             </Button>
                   </div>
@@ -372,7 +372,7 @@ const Notes = () => {
                     onSave={handleSave}
                     shouldExport={shouldExport}
                     onExportComplete={handleExportComplete}
-                    className="h-full"
+                    className="h-full bg-white dark:bg-black"
                     config={{
                       enableAnnotations: true,
                       enableDrawing: true,
@@ -405,7 +405,7 @@ const Notes = () => {
                           onClick={handleExport}
                           className="bg-blue-600 hover:bg-blue-700"
                         >
-                          <Save className="w-4 h-4 mr-2" />
+                          <Save className="w-4 h-4 icon mr-2" />
                           Export Edited PDF
                         </Button>
                       )}

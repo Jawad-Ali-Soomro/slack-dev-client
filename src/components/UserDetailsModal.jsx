@@ -190,7 +190,7 @@ const UserDetailsModal = ({ userId, isOpen, onClose }) => {
                         : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 cursor-pointer'
                     }`}
                   >
-                    <tab.icon className="w-4 h-4 icon icon" />
+                    <tab.icon className="w-4 h-4 icon icon icon" />
                     {/* {tab.label} */}
                   </button>
                 ))}

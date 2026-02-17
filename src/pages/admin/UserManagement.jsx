@@ -229,18 +229,18 @@ const UserManagement = () => {
   const getRoleBadgeColor = (role) => {
     switch (role) {
       case 'admin':
-        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200';
+        return 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200 px-5 py-2';
       case 'superadmin':
-        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200';
+        return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200 px-5 py-2';
       default:
-        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200';
+        return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200 px-5 py-2';
     }
   };
 
   const getVerificationBadgeColor = (verified) => {
     return verified
-      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-      : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200';
+      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200  px-5 py-2'
+      : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200  px-5 py-2';
   };
 
   const getPermissionCount = (permissions) => {
@@ -291,7 +291,7 @@ const UserManagement = () => {
               onClick={() => setShowCreateUser(true)}
               className="bg-black dark:bg-white text-white font-bold dark:text-black w-[200px]"
             >
-              <Plus className="w-4 h-4 mr-2" />
+              <Plus className="w-4 h-4 icon mr-2" />
               New User
             </Button>
           )}
@@ -316,7 +316,7 @@ const UserManagement = () => {
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-full md:w-[500px] bg-white dark:bg-[#111827] text-black dark:text-white border border-gray-200 dark:border-gray-700 rounded-[10px]"
+                className="pl-10 w-full md:w-[500px] bg-white dark:bg-[black] text-black dark:text-white border border-gray-200 dark:border-gray-700 rounded-[10px]"
               />
             </div>
             <div className="flex gap-3 w-full">
@@ -325,7 +325,7 @@ const UserManagement = () => {
               onValueChange={setRoleFilter} 
               disabled={!isSuperadmin}
             >
-              <SelectTrigger className="md:w-[180px] w-1/2 px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[#111827] h-13">
+              <SelectTrigger className="md:w-[180px] w-1/2 px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[black] h-13">
                 <SelectValue placeholder="Filter by role" />
               </SelectTrigger>
               <SelectContent>
@@ -336,7 +336,7 @@ const UserManagement = () => {
               </SelectContent>
             </Select>
             <Select value={permissionsFilter} onValueChange={setPermissionsFilter}>
-              <SelectTrigger className="md:w-[180px] w-1/2 bg-white px-5 text-gray-600 dark:text-white cursor-pointer dark:bg-[#111827] h-13">
+              <SelectTrigger className="md:w-[180px] w-1/2 bg-white px-5 text-gray-600 dark:text-white cursor-pointer dark:bg-[black] h-13">
                 <SelectValue placeholder="Filter by permissions" />
               </SelectTrigger>
               <SelectContent>
@@ -376,7 +376,7 @@ const UserManagement = () => {
                   </tr>
                 ) : (
                   filteredUsers.map((userItem) => (
-                    <tr key={userItem.id || userItem._id} className="bg-white dark:bg-[#111827] hover:bg-gray-50 dark:hover:bg-black">
+                    <tr key={userItem.id || userItem._id} className="bg-white dark:bg-[black] hover:bg-gray-50 dark:hover:bg-black">
                       <td className="px-5 py-2">
                         <div className="flex items-center gap-3">
                           <img
@@ -401,9 +401,9 @@ const UserManagement = () => {
                       </Badge>
                     </td>
                       <td className="px-5 py-2">
-                        <div className="flex items-center gap-2">
-                          <Shield className="w-4 h-4 icon text-gray-400" />
-                          <span className="text-sm text-gray-600 dark:text-gray-400 truncate">{getPermissionCount(userItem.permissions)} Permissions</span>
+                        <div className="flex items-center gap-2 ">
+                          <Shield className="w-4 h-4 icon icon text-gray-400" />
+                          <span className="text-sm text-gray-600 dark:text-gray-400 truncate ">{getPermissionCount(userItem.permissions)} Permissions</span>
                         </div>
                       </td>
                       <td className="px-5 py-2">
@@ -415,42 +415,42 @@ const UserManagement = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              className="w-10 h-10 bg-transparent border-none hover:bg-gray-100 dark:hover:bg-gray-800 rounded-[20px]"
+                              className="w-10 h-10 bg-transparent border-none hover:bg-gray-200 dark:hover:bg-gray-800"
                             >
-                              <MoreVertical className="w-4 h-4 icon" />
+                              <MoreVertical className="w-4 h-4 icon icon" />
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end" className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-[20px]">
                             <DropdownMenuItem
-                              className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer h-10 px-4"
+                              className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 h-12 cursor-pointer px-4"
                               onClick={() => handleViewDetails(userItem.id || userItem._id)}
                             >
-                              <Eye className="w-4 h-4 mr-2 icon" />
+                              <Eye className="w-4 h-4 icon mr-2 icon" />
                               View Details
                             </DropdownMenuItem>
                             {canAssignRoles && (
                               <DropdownMenuItem
-                                className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer h-10 px-4"
+                                className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 h-12 cursor-pointer px-4"
                                 onClick={() => handleEditRole(userItem)}
                               >
-                                <Edit className="w-4 h-4 mr-2 icon" />
+                                <Edit className="w-4 h-4 icon mr-2 icon" />
                                 Change Role
                               </DropdownMenuItem>
                             )}
                             {canUpdateVerification && (
                               <DropdownMenuItem
-                                className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer h-10 px-4"
+                                className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 h-12 cursor-pointer px-4"
                                 onClick={() => handleEditVerification(userItem)}
                               >
-                                <Mail className="w-4 h-4 mr-2 icon" />
+                                <Mail className="w-4 h-4 icon mr-2 icon" />
                                 Update Email Verification
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuItem
-                              className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer h-10 px-4"
+                              className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 h-12 cursor-pointer px-4"
                               onClick={() => window.location.href = `/dashboard/admin/permissions?userId=${userItem.id || userItem._id}`}
                             >
-                              <Shield className="w-4 h-4 mr-2 icon" />
+                              <Shield className="w-4 h-4 icon mr-2 icon" />
                               Edit Permissions
                             </DropdownMenuItem>
                             {isSuperadmin && userItem.role !== 'superadmin' && (
@@ -458,7 +458,7 @@ const UserManagement = () => {
                                 className="text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 cursor-pointer h-10 px-4"
                                 onClick={() => handleDeleteUser(userItem.id || userItem._id)}
                               >
-                                <Trash2 className="w-4 h-4 mr-2 icon" />
+                                <Trash2 className="w-4 h-4 icon mr-2 icon" />
                                 Delete User
                               </DropdownMenuItem>
                             )}
@@ -508,7 +508,7 @@ const UserManagement = () => {
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Create New User</h2>
               <Button variant="ghost" size="sm" onClick={() => setShowCreateUser(false)}>
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4 icon" />
               </Button>
             </div>
             <form onSubmit={handleCreateUser} className="space-y-4">
@@ -568,7 +568,7 @@ const UserManagement = () => {
                 Change Role - {selectedUserForRole.username}
               </h2>
               <Button variant="ghost" size="sm" onClick={() => setShowRoleModal(false)}>
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4 icon" />
               </Button>
             </div>
             <div className="space-y-4">
@@ -610,7 +610,7 @@ const UserManagement = () => {
                 Update Verification - {selectedUserForVerification.username}
               </h2>
               <Button variant="ghost" size="sm" onClick={() => setShowVerificationModal(false)}>
-                <X className="w-4 h-4" />
+                <X className="w-4 h-4 icon" />
               </Button>
             </div>
             <div className="space-y-4">

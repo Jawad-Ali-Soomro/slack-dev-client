@@ -41,7 +41,7 @@ import { getAvatarProps } from '../utils/avatarUtils'
 import { useAuth } from '../contexts/AuthContext'
 import { useNotifications } from '../contexts/NotificationContext'
 import { BsTools } from 'react-icons/bs'
-import { PiUserDuotone, PiUsersDuotone } from 'react-icons/pi'
+import { PiUserDuotone, PiUserPlusDuotone, PiUsersDuotone } from 'react-icons/pi'
 
 const TeamsManage = () => {
 
@@ -343,8 +343,8 @@ const TeamsManage = () => {
 
   const getRoleIcon = (role) => {
     switch (role) {
-      case 'owner': return <Shield className="w-4 h-4 icon text-yellow-600 icon p2" />
-      case 'admin': return <Shield className="w-4 h-4 icon text-blue-500 icon" />
+      case 'owner': return <Shield className="w-4 h-4 icon icon text-yellow-600 icon p2" />
+      case 'admin': return <Shield className="w-4 h-4 icon icon text-blue-500 icon" />
       default: return null
     }
   }
@@ -408,12 +408,12 @@ const TeamsManage = () => {
                 placeholder="Search teams..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-3 w-full md:w-[500px] h-13 bg-white dark:bg-[#111827] text-black dark:text-white border border-gray-200 dark:border-gray-700"
+                className="pl-10 pr-4 py-3 w-full md:w-[500px] h-13 bg-white dark:bg-[black] text-black dark:text-white border border-gray-200 dark:border-gray-700"
               />
             </div>
             <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
               <Select value={filterStatus} onValueChange={setFilterStatus}>
-                <SelectTrigger className="md:w-[180px] w-full sm:w-[180px] px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[#111827] h-13">
+                <SelectTrigger className="md:w-[180px] w-full sm:w-[180px] px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[black] h-13">
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
@@ -438,6 +438,8 @@ const TeamsManage = () => {
             }}
             className={'md:w-[200px] w-full rounded-[10px] h-12 font-bold'}
           >
+            <PiUserPlusDuotone
+             />
             New Team
           </Button>
           }
@@ -473,7 +475,7 @@ const TeamsManage = () => {
               disabled={!permissions.canCreateTeam}
               className={'md:w-[200px] w-full'}
             >
-              <Plus className="w-4 h-4 icon mr-2 icon" />
+              <Plus className="w-4 h-4 icon icon mr-2 icon" />
               Create Team
             </Button>
           )}
@@ -511,12 +513,12 @@ const TeamsManage = () => {
                     }}
                     className="p-2 text-gray-400 w-12 hover:text-gray-600 dark:hover:text-gray-300"
                   >
-                    <Eye className="w-4 h-4 icon icon" />
+                    <Eye className="w-4 h-4 icon icon icon" />
                   </Button>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm" className="p-2 w-12">
-                        <MoreVertical className="w-4 h-4 icon icon" />
+                        <MoreVertical className="w-4 h-4 icon icon icon" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -524,7 +526,7 @@ const TeamsManage = () => {
                         setSelectedTeam(team)
                         setShowTeamDetails(true)
                       }}>
-                        <Eye className="w-4 h-4 icon mr-2 icon" />
+                        <Eye className="w-4 h-4 icon icon mr-2 icon" />
                         View Details
                       </DropdownMenuItem>
                       {isTeamOwner(team) && (
@@ -533,13 +535,13 @@ const TeamsManage = () => {
                         setSelectedTeam(team)
                         setShowMembersModal(true)
                       }}>
-                            <Settings className="w-4 h-4 icon mr-2 icon" />
+                            <Settings className="w-4 h-4 icon icon mr-2 icon" />
                             Edit Members
                       </DropdownMenuItem>
                       <DropdownMenuItem className={'h-10 px-5 cursor-pointer'} 
                         onClick={() => handleDeleteTeam(team.id)}
                       >
-                        <Trash2 className="w-4 h-4 icon mr-2" />
+                        <Trash2 className="w-4 h-4 icon icon mr-2" />
                         Delete
                       </DropdownMenuItem>
                         </>
@@ -563,7 +565,7 @@ const TeamsManage = () => {
                 
                 </div>
                 <div className="flex items-center justify-end gap-2 text-gray-600 dark:text-gray-400">
-                  <Activity className="w-4 h-4 icon icon" />
+                  <Activity className="w-4 h-4 icon icon icon" />
                   <span>Created {new Date(team.createdAt).toLocaleDateString()}</span>
                 </div>
               </div> */}
@@ -593,7 +595,7 @@ const TeamsManage = () => {
               {/* Team Footer */}
               <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
                 <div className="flex items-center gap-2">
-                    <FolderOpen className="w-4 h-4 icon" />
+                    <FolderOpen className="w-4 h-4 icon icon" />
                     {team.projects?.length || 0} Projects
                 </div>
               </div>
@@ -625,7 +627,7 @@ const TeamsManage = () => {
                 disabled={pagination.page === 1 || loading}
                 className="flex items-center gap-1 h-8 px-3 w-[120px] h-[50px]"
               >
-                <ArrowUp className="w-4 h-4 icon rotate-[-90deg]" />
+                <ArrowUp className="w-4 h-4 icon icon rotate-[-90deg]" />
                 Previous
               </Button>
 
@@ -663,7 +665,7 @@ const TeamsManage = () => {
                 className="flex items-center gap-1 h-8 px-3 w-[120px] h-[50px]"
               >
                 Next
-                <ArrowDown className="w-4 h-4 icon rotate-[-90deg]" />
+                <ArrowDown className="w-4 h-4 icon icon rotate-[-90deg]" />
               </Button>
             </div>
           )}
@@ -1092,7 +1094,7 @@ const TeamsManage = () => {
                             onClick={() => handleRemoveMember(member.user._id)}
                             className="text-red-600 w-12 hover:text-red-700"
                           >
-                            <Trash className="w-4 h-4 icon icon" />
+                            <Trash className="w-4 h-4 icon icon icon" />
                           </Button>
                         )
                        }
