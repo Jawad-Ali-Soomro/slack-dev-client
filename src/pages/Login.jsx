@@ -13,6 +13,8 @@ const Login = () => {
     password: ""
   })
   const [error, setError] = useState("")
+
+  document.title = "Welcome Back! Please Login"
   
   const { login, loading, isAuthenticated } = useAuth()
   const navigate = useNavigate()

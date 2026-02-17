@@ -57,6 +57,9 @@ const PermissionsManagement = () => {
     }
   }, [isAdmin, isSuperadmin]);
 
+
+  document.title = "Permission Management"
+
   const loadUsers = async () => {
     try {
       setLoading(true);

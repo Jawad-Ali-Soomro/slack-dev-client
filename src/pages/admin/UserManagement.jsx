@@ -61,6 +61,8 @@ const UserManagement = () => {
   });
   const [creatingUser, setCreatingUser] = useState(false);
 
+  document.title = "Manage Users"
+
   useEffect(() => {
     if (!isAdmin && !isSuperadmin) {
       toast.error('Access denied. Admin or Superadmin role required.');

@@ -19,6 +19,7 @@ const Signup = () => {
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
 
+  document.title = "Hello There! Please Register"
   const handleInputChange = (e) => {
     setFormData({
       ...formData,

@@ -12,6 +12,7 @@ const Indexing = () => {
   const el = React.useRef(null);
   const elLast = React.useRef(null);
 
+  document.title = "Slack Developers - Where Development Meets Creativity!"
   React.useEffect(() => {
     const typed = new Typed(el.current, {
       strings: ['Professional', 'Developer', 'Leader'],
