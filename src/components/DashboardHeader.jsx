@@ -180,11 +180,7 @@ const DashboardHeader = () => {
         >
           <RiMenu3Fill />
             </div>
-            <img 
-              src="/logo.png" 
-              className={`w-[50px] transition-all duration-300 ease-in-out ${isOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}
-              alt="" 
-            />
+           
       </div>
           <div className="flex items-center gap-2">
 
@@ -216,7 +212,7 @@ const DashboardHeader = () => {
                   onClick={handleOpenProfileModal}
                   className="relative group"
                 >
-                  <div className="w-12 h-12 p-1 overflow-hidden rounded-round border border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
+                  <div className="w-12 h-12 p-1 overflow-hidden border rounded-[20px] border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
                     <img
                       {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
                       alt={user?.username || 'User'}

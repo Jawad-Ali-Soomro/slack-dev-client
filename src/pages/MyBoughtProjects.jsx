@@ -227,7 +227,7 @@ const MyBoughtProjects = () => {
                 <motion.div
                   key={item._id || item.id || projectId}
                   variants={itemVariants}
-                  className="group relative bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[20px] overflow-hidden border dark:border-none shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+                  className="group relative bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[30px] overflow-hidden border dark:border-none shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer"
                   onClick={() => handleViewProject(item)}
                 >
                   {/* Preview Image */}

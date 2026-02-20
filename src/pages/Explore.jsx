@@ -367,7 +367,7 @@ const Explore = () => {
                 <SelectContent className="bg-white dark:bg-[black] border-gray-200 dark:border-gray-700">
                   <SelectItem className="cursor-pointer h-10 px-5" value="all">All Categories</SelectItem>
                   {categories.map((cat) => (
-                    <SelectItem key={cat} className="cursor-pointer h-10 px-5" value={cat}>{cat}</SelectItem>
+                    <SelectItem key={cat} className="cursor-pointer h-10 px-5 capitalize" value={cat}>{cat}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
@@ -399,7 +399,7 @@ const Explore = () => {
         ) : (
           <motion.div
             variants={containerVariants}
-            className={'grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[78vh] pb-[5vh] overflow-scroll'}
+            className={'grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[78vh] overflow-scroll'}
           >
             {projects.map((project) => {
               const isCreator = isProjectCreatedByUser(project)
@@ -407,7 +407,7 @@ const Explore = () => {
               <motion.div
                 key={project._id || project.id}
                 variants={itemVariants}
-                className="group relative bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[20px] overflow-hidden border dark:border-none shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+                className="group relative bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[30px] overflow-hidden border dark:border-none shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer"
                 onClick={() => handleViewProject(project)}
               >
                 {/* Preview Image */}
@@ -718,11 +718,11 @@ const Explore = () => {
                       <SelectValue placeholder="Select category" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="web">Web Development</SelectItem>
-                      <SelectItem value="mobile">Mobile App</SelectItem>
-                      <SelectItem value="design">Design</SelectItem>
-                      <SelectItem value="game">Game</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
+                      <SelectItem className={'px-5'} value="web">Web Development</SelectItem>
+                      <SelectItem className={'px-5'} value="mobile">Mobile App</SelectItem>
+                      <SelectItem className={'px-5'} value="design">UI/UX Design</SelectItem>
+                      <SelectItem className={'px-5'} value="game">Game Development</SelectItem>
+                      <SelectItem className={'px-5'} value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -740,7 +740,7 @@ const Explore = () => {
               <div>
               
                 <div className="flex items-center gap-2">
-                  <label className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <label className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-[30px] cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <div className="flex flex-col items-center justify-center">
                       <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
                       <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -761,7 +761,7 @@ const Explore = () => {
                 {uploadForm.previewImages.length > 0 && (
                   <div className="mt-2 flex flex-wrap gap-2">
                     {uploadForm.previewImages.map((file, idx) => (
-                      <Badge key={idx} variant="outline" className="flex items-center gap-1">
+                      <Badge key={idx} variant="default" className="flex px-5 py-2 bg-violet-500 items-center gap-1">
                         {file.name}
                         <X 
                           className="w-3 h-3 cursor-pointer" 
@@ -779,7 +779,7 @@ const Explore = () => {
               <div>
               
                 <div className="flex items-center gap-2">
-                  <label className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <label className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-[30px] cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                     <div className="flex flex-col items-center justify-center">
                       <FileArchive className="w-8 h-8 text-gray-400 mb-2" />
                       <span className="text-sm text-gray-500 dark:text-gray-400">
@@ -797,7 +797,7 @@ const Explore = () => {
                 </div>
                 {uploadForm.zipFile && (
                   <div className="mt-2">
-                    <Badge variant="outline" className="flex items-center gap-1 w-fit">
+                    <Badge variant="default" className="flex px-5 py-2 bg-violet-500 items-center gap-1">
                       {uploadForm.zipFile.name}
                       <X 
                         className="w-3 h-3 cursor-pointer" 
