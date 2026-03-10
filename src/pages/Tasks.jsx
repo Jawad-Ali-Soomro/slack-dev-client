@@ -595,8 +595,8 @@ const Tasks = () => {
       >
         {/* Header */}
         <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
-          <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
-            <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+          <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
+            <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
               <CheckCircle size={15} />
             </div>
             <h1 className="text-2xl font-bold">Tasks Assigned</h1>
@@ -627,7 +627,7 @@ const Tasks = () => {
                       value={filterStatus}
                       onValueChange={setFilterStatus}
                     >
-                      <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
+                      <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 h-13 cursor-pointer dark:text-white bg-white dark:bg-black">
                         <SelectValue placeholder="All Status" />
                       </SelectTrigger>
                       <SelectContent className="bg-white dark:bg-[black] ">
@@ -705,7 +705,7 @@ const Tasks = () => {
               {selectedTasks.length > 0 && (
                 <motion.button
                   onClick={handleBulkDelete}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-[30px] md:w-[200px] w-[400px] hover:bg-red-700 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-[15px] md:w-[200px] w-[400px] hover:bg-red-700 transition-colors"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
@@ -725,7 +725,7 @@ const Tasks = () => {
                     setShowNewTaskPopup(true);
                   }}
                   className={
-                    "md:w-[200px] w-full rounded-[10px] h-12 font-bold"
+                    "md:w-[200px] w-full rounded-[15px] h-12 font-bold"
                   }
                 >
                   <PiPlus />
@@ -741,9 +741,9 @@ const Tasks = () => {
         {/* Tasks Table */}
         <motion.div
           variants={itemVariants}
-          className="bg-white dark:bg-transparent rounded-[20px] shadow-xl overflow-hidden"
+          className="bg-white dark:bg-transparent rounded-[15px] shadow-xl overflow-hidden"
         >
-          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 rounded-[20px]">
+          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 rounded-[15px]">
             <table className="w-full">
               <thead className="bg-white dark:bg-white dark:text-black text-black border-b dark:border-gray-700 sticky top-0 z-10">
                 <tr>
@@ -809,7 +809,7 @@ const Tasks = () => {
                               {task.title}
                             </div>
                             {/* {user && user.id && (
-                            <span className={`text-xs px-2 py-1 rounded-[30px] uppercase  truncate ${
+                            <span className={`text-xs px-2 py-1 rounded-[15px] uppercase  truncate ${
                               task.assignTo?.id === user.id 
                                 ? 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200' 
                                 : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
@@ -825,7 +825,7 @@ const Tasks = () => {
                       </td>
                       <td className="px-6 py-4">
                         <span
-                          className={`inline-flex items-center justify-center uppercase px-2.5 py-0.5 rounded-[30px] text-[9px]   ${getPriorityColor(task.priority)}`}
+                          className={`inline-flex items-center justify-center uppercase px-2.5 py-0.5 rounded-[15px] text-[9px]   ${getPriorityColor(task.priority)}`}
                         >
                           {task.priority}
                         </span>
@@ -834,7 +834,7 @@ const Tasks = () => {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button
-                              className={`inline-flex items-center gap-1 rounded-[30px] text-[9px] uppercase cursor-pointer hover:opacity-80 transition-opacity px-4 py-2 min-w-[100px]
+                              className={`inline-flex items-center gap-1 rounded-[15px] text-[9px] uppercase cursor-pointer hover:opacity-80 transition-opacity px-4 py-2 min-w-[100px]
     ${isTaskOverdue(task) ? "bg-red-600 text-white border border-red-600" : getStatusColor(task.status)}`}
                             >
                               {isTaskOverdue(task) ? (
@@ -848,13 +848,13 @@ const Tasks = () => {
                           {!isTaskOverdue(task) && (
                             <DropdownMenuContent
                               align="start"
-                              className="bg-white dark:bg-transparent border-gray-200 dark:border-gray-700"
+                              className="border-gray-200 dark:border-gray-700"
                             >
                               <DropdownMenuItem
                                 onClick={() =>
                                   handleStatusChange(task.id, "pending")
                                 }
-                                className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
+                                className="px-5 h-10 cursor-pointer"
                               >
                                 <AlertCircle className="w-4 h-4 icon mr-2 icon" />
                                 Pending
@@ -863,7 +863,7 @@ const Tasks = () => {
                                 onClick={() =>
                                   handleStatusChange(task.id, "in_progress")
                                 }
-                                className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
+                                className="px-5 h-10 cursor-pointer"
                               >
                                 <Clock className="w-4 h-4 icon mr-2 icon" />
                                 In Progress
@@ -872,7 +872,7 @@ const Tasks = () => {
                                 onClick={() =>
                                   handleStatusChange(task.id, "completed")
                                 }
-                                className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
+                                className="px-5 h-10 cursor-pointer"
                               >
                                 <CheckCircle className="w-4 h-4 icon mr-2 icon" />
                                 Completed
@@ -881,7 +881,7 @@ const Tasks = () => {
                                 onClick={() =>
                                   handleStatusChange(task.id, "cancelled")
                                 }
-                                className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
+                                className="px-5 h-10 cursor-pointer"
                               >
                                 <AlertCircle className="w-4 h-4 icon mr-2 icon" />
                                 Cancelled
@@ -890,7 +890,7 @@ const Tasks = () => {
                           )}
                         </DropdownMenu>
                       </td>
-                      <td className="px-6 py-4 w-[150px] rounded-[30px]">
+                      <td className="px-6 py-4 w-[150px] rounded-[15px]">
                         <div className="flex items-center gap-3 w-[150px]">
                           <img
                             {...getAvatarProps(
@@ -898,7 +898,7 @@ const Tasks = () => {
                               task.assignTo?.username,
                             )}
                             alt={task.assignTo?.username || "User"}
-                            className="w-8 h-8 rounded-[30px] object-cover border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                            className="w-8 h-8 rounded-[15px] object-cover border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                             onClick={() =>
                               task.assignTo?.id &&
                               handleUserAvatarClick(task.assignTo.id)
@@ -916,7 +916,7 @@ const Tasks = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 w-[200px] rounded-[30px]">
+                      <td className="px-6 py-4 w-[200px] rounded-[15px]">
                         <div className="flex items-center gap-3">
                           <img
                             {...getAvatarProps(
@@ -924,7 +924,7 @@ const Tasks = () => {
                               task.assignedBy?.username,
                             )}
                             alt={task.assignedBy?.username || "User"}
-                            className="w-8 h-8 rounded-[30px] object-cover border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                            className="w-8 h-8 rounded-[15px] object-cover border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                             onClick={() =>
                               task.assignedBy?.id &&
                               handleUserAvatarClick(task.assignedBy.id)
@@ -942,7 +942,7 @@ const Tasks = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 w-[200px] rounded-[30px]">
+                      <td className="px-6 py-4 w-[200px] rounded-[15px]">
                         {task.project ? (
                           <div className="flex items-center gap-2">
                             {/* {task.project.logo && (
@@ -1127,7 +1127,7 @@ const Tasks = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className=" bg-white dark:bg-[black] rounded-[20px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+              className=" bg-white dark:bg-gray-900 rounded-[15px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="space-y-4">
@@ -1242,7 +1242,7 @@ const Tasks = () => {
                     />
                     {showAssignedToSuggestions &&
                       assignedToSuggestions.length > 0 && (
-                        <div className="absolute z-10 w-full mt-1 bg-white dark:bg-transparent border-gray-200 dark:border-gray-700 rounded-[30px] shadow-lg max-h-48 overflow-y-auto">
+                        <div className="absolute z-10 w-full mt-1 bg-white dark:bg-transparent border-gray-200 dark:border-gray-700 rounded-[15px] shadow-lg max-h-48 overflow-y-auto">
                           {assignedToSuggestions.map((user) => (
                             <div
                               key={user.id}
@@ -1256,7 +1256,7 @@ const Tasks = () => {
                                     user.username || user.name,
                                   )}
                                   alt={user.username || user.name}
-                                  className="w-8 h-8 rounded-[30px] object-cover border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
+                                  className="w-8 h-8 rounded-[15px] object-cover border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
                                   onClick={(e) => {
                                     e.stopPropagation();
                                     handleUserAvatarClick(user.id);
@@ -1357,7 +1357,7 @@ const Tasks = () => {
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge
                         className={cn(
-                          "inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs f  ont-medium backdrop-blur-sm border",
+                          "inline-flex items-center gap-2 rounded-[15px] px-3 py-1 text-xs f  ont-medium backdrop-blur-sm border",
                           getStatusBadgeStyles(selectedTaskDetails.status),
                         )}
                       >
@@ -1368,7 +1368,7 @@ const Tasks = () => {
                       </Badge>
                       <Badge
                         className={cn(
-                          "inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm border",
+                          "inline-flex items-center gap-2 rounded-[15px] px-3 py-1 text-xs font-medium backdrop-blur-sm border",
                           getPriorityBadgeStyles(selectedTaskDetails.priority),
                         )}
                       >
@@ -1378,7 +1378,7 @@ const Tasks = () => {
                         </span>
                       </Badge>
                       {selectedTaskDetails.project && (
-                        <Badge className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium backdrop-blur-sm border border-gray-200 dark:border-gray-700 bg-white/10 text-black dark:text-white ">
+                        <Badge className="inline-flex items-center gap-2 rounded-[15px] px-3 py-1 text-xs font-medium backdrop-blur-sm border border-gray-200 dark:border-gray-700 bg-white/10 text-black dark:text-white ">
                           <FolderOpen className="w-3 h-3 icon" />
                           {selectedTaskDetails.project.name}
                         </Badge>
@@ -1439,7 +1439,7 @@ const Tasks = () => {
                           selectedTaskDetails.assignTo?.username ||
                           "User Avatar"
                         }
-                        className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-700"
+                        className="w-12 h-12 rounded-[15px] border border-gray-200 dark:border-gray-700"
                       />
                       <div className="truncate">
                         <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">
@@ -1466,7 +1466,7 @@ const Tasks = () => {
                           selectedTaskDetails.assignedBy?.username ||
                           "Assigned By"
                         }
-                        className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-700"
+                        className="w-12 h-12 rounded-[15px] border border-gray-200 dark:border-gray-700"
                       />
                       <div>
                         <p className="text-[10px] font-bold  uppercase tracking-wide text-gray-500 dark:text-gray-400">
@@ -1518,7 +1518,7 @@ const Tasks = () => {
                                 <div className="flex items-center gap-2">
                                   <Badge
                                     className={cn(
-                                      "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-medium border backdrop-blur-sm",
+                                      "inline-flex items-center gap-1 rounded-[15px] px-2.5 py-1 text-[10px] font-medium border backdrop-blur-sm",
                                       isTaskOverdue(relatedTask)
                                         ? "bg-red-500/15 text-red-600 border border-red-400/40" // Overdue styles
                                         : getStatusBadgeStyles(

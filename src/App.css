@@ -1,9 +1,9 @@
 * {
     /* font-family: "Amarna", sans-serif !important; */
     /* font-family: "Syne", sans-serif; */
-    font-family: "Titillium Web" !important;
-    font-weight:  600;
-    /* border-radius: 20px !important; */
+    font-family: "PT Sans" !important;
+    font-weight:  700;
+    border-radius: 25px !important;
 }
 
 
@@ -12,39 +12,9 @@
     font-family: "Syne", sans-serif;
 }
 
-
-Button, img  {
-  border-radius: 25px;
-}
-
-Input {
-  border-radius: 20px;
-}
-
-Textarea {
-  border-radius: 20px;
-}
-
-Select {
-  border-radius: 20px;
-}
-
-Badge {
-  border-radius: 20px;
-}
-
-span {
-  border-radius: 20px;
-}
-
-
-
-
-
-
-button {
-    cursor: pointer !important;
-}
+/* h1,h2,h3,h4,h5,h6,span,p {
+  border-radius: 0 !important;
+} */
 
 /* Sonner Toast Custom Styles */
 .toast-custom {

@@ -75,7 +75,7 @@ const Indexing = () => {
         >
               <motion.span 
                 variants={itemVariants}
-                className="p-3 text-[9px]  bg-white dark:bg-gray-700 text-black dark:text-white rounded-full uppercase px-5 "
+                className="p-3 text-[9px]  bg-white dark:bg-gray-700 text-black dark:text-white rounded-[15px] uppercase px-5 "
               >
                 From Developer to Developers
               </motion.span>
@@ -102,7 +102,7 @@ const Indexing = () => {
               className="flex gap-4 mt-10"
             >
                 <motion.button 
-                  className="w-full md:w-[280px]  py-4 bg-black text-white z-50 font-bold rounded-full text-sm cursor-pointer hover:bg-gray-900 transition-colors shadow-lg dark:bg-white dark:text-black dark:hover:bg-gray-200"
+                  className="w-[200px] md:w-[280px]  py-4 bg-black text-white z-50 font-bold rounded-[15px] text-sm cursor-pointer hover:bg-gray-900 transition-colors shadow-lg dark:bg-white dark:text-black dark:hover:bg-gray-200"
                   whileTap={{ scale: 0.95 }}
                   transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   onClick={() => navigate("/login")}
@@ -120,21 +120,21 @@ const Indexing = () => {
                   className="flex items-center gap-2  hidden md:flex"
                   whileHover={{ scale: 1.05 }}
                 >
-                    <span className="w-2 h-2 bg-green-500 rounded-[10px]"></span>
+                    <span className="w-2 h-2 bg-green-500 rounded-[15px]"></span>
                     Free Forever
                 </motion.div>
                 <motion.div 
                   className="flex items-center gap-2 "
                   whileHover={{ scale: 1.05 }}
                 >
-                    <span className="w-2 h-2 bg-blue-500 rounded-[10px]"></span>
+                    <span className="w-2 h-2 bg-blue-500 rounded-[15px]"></span>
                     No Credit Card Required
                 </motion.div>
                 <motion.div 
                   className="flex items-center gap-2 "
                   whileHover={{ scale: 1.05 }}
                 >
-                    <span className="w-2 h-2 bg-purple-500 rounded-[10px]"></span>
+                    <span className="w-2 h-2 bg-purple-500 rounded-[15px]"></span>
                     Setup in Minutes
                 </motion.div>
             </motion.div>
@@ -217,22 +217,22 @@ const Indexing = () => {
             ].map((feature, index) => (
               <motion.div
                 key={index}
-                className="p-6 md:p-8 bg-white dark:bg-[rgba(255,255,255,0.1)] rounded-[20px] shadow-lg overflow-hidden transition-transform"
+                className="p-6 md:p-8 bg-white dark:bg-[rgba(255,255,255,0.1)] rounded-[15px] shadow-lg overflow-hidden transition-transform"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1, duration: 0.6 }}
                 whileHover={{ y: -6 }}
                 viewport={{ once: true }}
               >
-                <div className="w-full h-48 mb-6 rounded-[20px] overflow-hidden">
+                <div className="w-full h-48 mb-6 rounded-[15px] overflow-hidden">
                   <img 
                     src={feature.image} 
                     alt={feature.title}
                     className="w-full h-full hover:scale-105 transition-transform duration-300"
                   />
                 </div>
-                <div className="w-[80px] h-[80px] bg-[rgba(0,0,0,0.1)] rounded-full flex items-center justify-center mb-4 dark:bg-[rgba(255,255,255,0.1)]">
-                  <div className="w-12 h-12 text-black dark:text-white flex items-center justify-center rounded-full">
+                <div className="w-[80px] h-[80px] bg-[rgba(0,0,0,0.1)] rounded-[15px] flex items-center justify-center mb-4 dark:bg-[rgba(255,255,255,0.1)]">
+                  <div className="w-12 h-12 text-black dark:text-white flex items-center justify-center rounded-[15px]">
                     {feature.icon}
                   </div>
                 </div>
@@ -242,7 +242,7 @@ const Indexing = () => {
                 <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed">
                   {feature.description}
                 </p>
-                <button className="text-xs text-white w-12 h-12 bg-black border-black dark:border-white mt-4 ml-auto flex items-center justify-center dark:bg-white dark:text-black rounded-[30px]"><ArrowRight /></button>
+                <button className="text-xs text-white w-12 h-12 bg-black border-black dark:border-white mt-4 ml-auto flex items-center justify-center dark:bg-white dark:text-black rounded-[15px]"><ArrowRight /></button>
               </motion.div>
             ))}
           </div>
@@ -333,7 +333,7 @@ const Indexing = () => {
             ].map((testimonial, index) => (
               <motion.div
                 key={index}
-                className="p-8 bg-white dark:bg-[rgba(255,255,255,0.1)] rounded-[20px] relative overflow-hidden"
+                className="p-8 bg-white dark:bg-[rgba(255,255,255,0.1)] rounded-[15px] relative overflow-hidden"
                 initial={{ opacity: 0, y: 30 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.2, duration: 0.6 }}
@@ -348,7 +348,7 @@ const Indexing = () => {
                   <img 
                     src={testimonial.avatar} 
                     alt={testimonial.author}
-                    className="w-12 h-12 rounded-[10px] mr-4 object-cover"
+                    className="w-12 h-12 rounded-[15px] mr-4 object-cover"
                   />
                   <div>
                     <div className=" text-gray-900 dark:text-white text-sm ">
@@ -467,7 +467,7 @@ const Indexing = () => {
               Let's get connected with thousands of developers who trust our platform
             </motion.p>
             <motion.button 
-              className="w-[400px]  py-4 bg-black text-white rounded-full text-lg  transition-colors shadow-lg dark:bg-white dark:text-black font-bold cursor-pointer"
+              className="w-[400px]  py-4 bg-black text-white rounded-[15px] text-lg  transition-colors shadow-lg dark:bg-white dark:text-black font-bold cursor-pointer"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.6, duration: 0.6 }}

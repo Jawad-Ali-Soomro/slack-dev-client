@@ -198,7 +198,7 @@ const Teams = () => {
           <div className="flex items-center gap-4">
             <Button
               onClick={() => setShowNewTeamPopup(true)}
-              className={'w-[200px] rounded-[10px] h-12'}
+              className={'w-[200px] rounded-[15px] h-12'}
             >
               <Plus className={ICON_SIZES.sm} />
               New Team
@@ -287,7 +287,7 @@ const Teams = () => {
               <motion.div
                 key={team.id}
                 variants={itemVariants}
-                className="bg-white dark:bg-black rounded-[10px]  border-gray-200 dark:border-gray-700 p-6 transition-shadow duration-300 hover:shadow-lg"
+                className="bg-white dark:bg-black rounded-[15px]  border-gray-200 dark:border-gray-700 p-6 transition-shadow duration-300 hover:shadow-lg"
               >
                 {/* Team Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -301,16 +301,16 @@ const Teams = () => {
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="p-2">
+                      <Button variant="ghost" size="sm" className="p-2 rounded-[15px]">
                         <MoreVertical className="w-4 h-4 icon icon icon" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem className="h-10 px-5 cursor-pointer">
+                    <DropdownMenuContent className={"rounded-[15px]"} align="end">
+                      <DropdownMenuItem className="h-10 px-5 cursor-pointer rounded-[15px]">
                         <Settings className="w-4 h-4 icon icon mr-2 icon" />
                         Manage Team
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="h-10 px-5 cursor-pointer">
+                      <DropdownMenuItem className="h-10 px-5 cursor-pointer rounded-[15px]">
                         <UserPlus className="w-4 h-4 icon icon mr-2 icon" />
                         Add Members
                       </DropdownMenuItem>
@@ -331,7 +331,7 @@ const Teams = () => {
                     <span>{team.members?.length || 0} members</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <span className={`px-2 py-1 rounded-[10px] text-xs font-medium ${getRoleColor(team.role)}`}>
+                    <span className={`px-2 py-1 rounded-[15px] text-xs font-medium ${getRoleColor(team.role)}`}>
                       {getRoleIcon(team.role)}
                       {team.role}
                     </span>
@@ -344,7 +344,7 @@ const Teams = () => {
                     {team.members?.slice(0, 3).map((member, index) => (
                       <div
                         key={index}
-                        className="w-8 h-8 rounded-[10px]  border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                        className="w-8 h-8 rounded-[15px]  border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
                         title={member.user?.username}
                         onClick={() => handleUserAvatarClick(member.user?._id || member.user?.id)}
                       >
@@ -356,7 +356,7 @@ const Teams = () => {
                       </div>
                     ))}
                     {team.members?.length > 3 && (
-                      <div className="w-8 h-8 rounded-[10px]  border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
+                      <div className="w-8 h-8 rounded-[15px]  border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
                         +{team.members.length - 3}
                       </div>
                     )}
@@ -383,7 +383,7 @@ const Teams = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+              className="bg-white dark:bg-black rounded-[15px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
@@ -402,7 +402,7 @@ const Teams = () => {
                     value={newTeam.name}
                     onChange={(e) => setNewTeam({...newTeam, name: e.target.value})}
                     placeholder="Team name *"
-                    className="w-full h-12 rounded-[10px]"
+                    className="w-full h-12 rounded-[15px]"
                     required
                   />
                 </div>
@@ -412,7 +412,7 @@ const Teams = () => {
                     value={newTeam.description}
                     onChange={(e) => setNewTeam({...newTeam, description: e.target.value})}
                     placeholder="Team description"
-                    className="w-full h-12 rounded-[10px]"
+                    className="w-full h-12 rounded-[15px]"
                     rows="3"
                   />
                 </div>
@@ -435,14 +435,14 @@ const Teams = () => {
                     type="button"
                     variant="outline"
                     onClick={() => setShowNewTeamPopup(false)}
-                    className="flex-1 h-12 rounded-[10px]"
+                    className="flex-1 h-12 rounded-[15px]"
                     disabled={loading}
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[10px]"
+                    className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[15px]"
                     disabled={loading}
                   >
                     {loading ? (

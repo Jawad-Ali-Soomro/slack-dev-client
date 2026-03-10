@@ -130,12 +130,12 @@ const Friends = () => {
 
   document.title = "Friends - Manage Your Friends"
   return (
-    <div className="min-h-screen pt-10">
+    <div className="pt-10">
       <div className="mx-auto">
         {/* Header */}
         <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
-        <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
-        <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+        <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
+        <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
                   <PiUserDuotone  size={15} />
                   </div>
                   <h1 className="text-2xl font-bold">Your Friends</h1>
@@ -145,7 +145,7 @@ const Friends = () => {
         {/* Stats Cards */}
         {stats && (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className={'bg-white rounded-[20px] border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
+            <Card className={'bg-white rounded-[15px] border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Friends</CardTitle>
                 <Users className="h-4 w-4 icon text-muted-foreground" />
@@ -154,7 +154,7 @@ const Friends = () => {
                 <div className="text-2xl font-bold">{stats.totalFriends}</div>
               </CardContent>
             </Card>
-            <Card className={'bg-white rounded-[20px] border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
+            <Card className={'bg-white rounded-[15px] border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Pending Received</CardTitle>
                 <Clock className="h-4 w-4 icon text-muted-foreground" />
@@ -163,7 +163,7 @@ const Friends = () => {
                 <div className="text-2xl font-bold">{stats.pendingReceivedRequests}</div>
               </CardContent>
             </Card>
-            <Card className={'bg-white rounded-[20px] border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
+            <Card className={'bg-white rounded-[15px] border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Pending Sent</CardTitle>
                 <Send className="h-4 w-4 icon text-muted-foreground" />
@@ -191,7 +191,7 @@ const Friends = () => {
         <TabsList className="flex flex-col sm:flex-row w-full md:w-auto h-auto gap-3 bg-transparent p-0">
   <TabsTrigger
     value="friends"
-    className={`min-h-[56px] cursor-pointer flex-1 w-full rounded-[12px] border px-6 py-3 text-sm font-semibold tracking-wide transition-all duration-200 ${
+    className={`min-h-[56px] cursor-pointer flex-1 w-full rounded-[15px] border px-6 py-3 text-sm font-semibold tracking-wide transition-all duration-200 ${
       activeTab === 'friends'
         ? 'bg-white text-black border-gray-200 shadow-md'
         : 'bg-transparent text-gray-400 dark:text-gray-300 border-gray-200/30 dark:border-gray-700 hover:border-gray-400/60'
@@ -202,7 +202,7 @@ const Friends = () => {
 
   <TabsTrigger
     value="received"
-    className={`min-h-[56px] cursor-pointer flex-1 w-full rounded-[12px] border px-6 py-3 text-sm font-semibold tracking-wide transition-all duration-200 ${
+    className={`min-h-[56px] cursor-pointer flex-1 w-full rounded-[15px] border px-6 py-3 text-sm font-semibold tracking-wide transition-all duration-200 ${
       activeTab === 'received'
         ? 'bg-white text-black border-gray-200 shadow-md'
         : 'bg-transparent text-gray-400 dark:text-gray-300 border-gray-200/30 dark:border-gray-700 hover:border-gray-400/60'
@@ -213,7 +213,7 @@ const Friends = () => {
 
   <TabsTrigger
     value="sent"
-    className={`min-h-[56px] cursor-pointer flex-1 w-full rounded-[12px] border px-6 py-3 text-sm font-semibold tracking-wide transition-all duration-200 ${
+    className={`min-h-[56px] cursor-pointer flex-1 w-full rounded-[15px] border px-6 py-3 text-sm font-semibold tracking-wide transition-all duration-200 ${
       activeTab === 'sent'
         ? 'bg-white text-black border-gray-200 shadow-md'
         : 'bg-transparent text-gray-400 dark:text-gray-300 border-gray-200/30 dark:border-gray-700 hover:border-gray-400/60'
@@ -247,7 +247,7 @@ const Friends = () => {
                         key={friendship.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center space-x-4 p-4 border rounded-[20px] hover:bg-gray-50 dark:bg-[rgba(255,255,255,.1)] bg-gray-100 dark:bg-[black]"
+                        className="flex items-center space-x-4 p-4 border rounded-[15px] hover:bg-gray-50 dark:bg-[rgba(255,255,255,.1)] bg-white dark:bg-[black]"
                       >
                         <Avatar 
                           className="cursor-pointer hover:scale-110 transition-transform"
@@ -304,7 +304,7 @@ const Friends = () => {
                         key={request.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center justify-between p-4 border rounded-[10px]"
+                        className="flex items-center justify-between p-4 border rounded-[15px]"
                       >
                         <div className="flex items-center space-x-4">
                           <Avatar 
@@ -369,7 +369,7 @@ const Friends = () => {
                         key={request.id}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center justify-between p-4 border rounded-[10px]"
+                        className="flex items-center justify-between p-4 border rounded-[15px]"
                       >
                         <div className="flex items-center space-x-4">
                           <Avatar 

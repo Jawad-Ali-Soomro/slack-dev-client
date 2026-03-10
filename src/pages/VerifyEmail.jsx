@@ -149,7 +149,7 @@ const VerifyEmail = () => {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-gray-100">
+    <div className="min-h-screen flex items-center justify-center p-6 bg-gray-100 dark:bg-black">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="floating-orb w-96 h-96 top-10 left-10 opacity-20"></div>
@@ -158,7 +158,7 @@ const VerifyEmail = () => {
       </div>
 
       <motion.div
-        className="w-full max-w-md relative z-10 bg-white"
+        className="w-full max-w-md relative z-10 bg-white dark:bg-[rgba(255,255,255,.1)]"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -166,7 +166,7 @@ const VerifyEmail = () => {
         {/* Verification Card */}
         <motion.div
           variants={itemVariants}
-          className="p-5 md:p-8 md:shadow-2xl md:border-gray-300 md:rounded-[20px] md:dark:border-gray-700 md:border"
+          className="p-5 md:p-8 md:shadow-2xl md:border-gray-300 md:rounded-[15px] md:dark:border-gray-700 md:border"
         >
           {/* Back Button */}
           <motion.div variants={itemVariants} className="mb-6">
@@ -181,8 +181,8 @@ const VerifyEmail = () => {
           {/* Header */}
           <div className="text-center mb-8">
             <motion.div variants={itemVariants} className="mb-4">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-white rounded-[10px] flex items-center justify-center mx-auto">
-                <Mail className="w-8 h-8 text-black" />
+              <div className="w-16 h-16 bg-gray-100 dark:bg-white rounded-[15px] flex items-center justify-center mx-auto">
+                <Mail className="w-8 h-8 text-black icon" />
               </div>
             </motion.div>
             <motion.h1 
@@ -220,7 +220,7 @@ const VerifyEmail = () => {
                   value={digit}
                   onChange={(e) => handleOtpChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-20 h-20 text-center text-xl  border border-gray-200 dark:border-gray-700 rounded-[10px] focus:outline-none focus:border-blue-500 dark:bg-[black] dark:text-white"
+                  className="w-20 h-20 text-center text-xl  border border-gray-200 dark:border-gray-700 rounded-[15px] focus:outline-none focus:border-blue-500 dark:bg-[rgba(255,255,255,.05)] dark:text-white"
                 />
               ))}
             </div>
@@ -229,7 +229,7 @@ const VerifyEmail = () => {
             <motion.button
               onClick={handleVerify}
               disabled={loading || otp.join('').length !== 4}
-                className="w-full py-3 bg-black dark:bg-white font-bold text-white dark:text-black rounded-[10px]  transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full py-3 bg-black dark:bg-white font-bold text-white dark:text-black rounded-[15px]  transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >

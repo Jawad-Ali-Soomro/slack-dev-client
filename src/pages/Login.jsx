@@ -16,7 +16,7 @@ const Login = () => {
 
   document.title = "Welcome Back! Please Login"
   
-  const { login, loading, isAuthenticated } = useAuth()
+  const { login, loading, isAuthenticated, user } = useAuth()
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -42,9 +42,7 @@ const Login = () => {
       if (result && result.success) {
         
         if (result.user && result.user.emailVerified) {
-          toast.success("Login successful!", {
-            description: "Welcome back to your dashboard",
-          })
+          toast.success(`Welcome Back ${result?.user?.username}!`)
           navigate('/dashboard')
         } else {
           localStorage.setItem('verificationEmail', formData.email)
@@ -115,7 +113,7 @@ const Login = () => {
         {/* Login Card */}
         <motion.div
           variants={itemVariants}
-          className="p-5 md:p-8 shadow-2xl md:rounded-[10px] md:dark:border-gray-700"
+          className="p-5 md:p-8 shadow-2xl md:rounded-[15px] md:dark:border-gray-700"
         >
 
 
@@ -147,11 +145,11 @@ const Login = () => {
 
           {/* Social Login */}
           {/* <motion.div variants={itemVariants} className="space-y-3 mb-6">
-            <button className="w-full flex items-center justify-center gap-3 py-3 px-4  border-gray-200 dark:border-gray-700 rounded-[10px] hover:bg-gray-50 dark:hover:bg-black transition-colors">
+            <button className="w-full flex items-center justify-center gap-3 py-3 px-4  border-gray-200 dark:border-gray-700 rounded-[15px] hover:bg-gray-50 dark:hover:bg-black transition-colors">
               <Chrome className="w-5 h-5 icon" />
               <span className="">Continue with Google</span>
             </button>
-            <button className="w-full flex items-center justify-center gap-3 py-3 px-4  border-gray-200 dark:border-gray-700 rounded-[10px] hover:bg-gray-50 dark:hover:bg-black transition-colors">
+            <button className="w-full flex items-center justify-center gap-3 py-3 px-4  border-gray-200 dark:border-gray-700 rounded-[15px] hover:bg-gray-50 dark:hover:bg-black transition-colors">
               <Github className="w-5 h-5 icon" />
               <span className="">Continue with GitHub</span>
             </button>
@@ -190,7 +188,7 @@ const Login = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  className="w-full pl-10 h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white"
+                  className="w-full pl-10 h-12 border-gray-200 dark:border-gray-700 rounded-[15px]  bg-white dark:bg-transparent text-black dark:text-white"
                   placeholder="Enter your password"
                   required
                 />
@@ -217,7 +215,7 @@ const Login = () => {
             <motion.button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-black text-white uppercase rounded-[10px] font-bold  hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
+              className="w-full py-3 bg-black text-white uppercase rounded-[15px] font-bold  hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed dark:bg-white dark:text-black dark:hover:bg-gray-200"
               whileHover={{ scale: loading ? 1 : 1.02 }}
               whileTap={{ scale: loading ? 1 : 0.98 }}
             >
@@ -237,7 +235,7 @@ const Login = () => {
           <motion.div variants={itemVariants} className="text-end mt-6 uppercase">
             <p className="text-gray-600 dark:text-gray-300">
               {/* don't have an account{" "} */}
-              <Link to="/signup" className="px-15 dark:bg-white dark:text-black ml-3 py-4 font-bold rounded-[20px] text-white bg-black  text-sm uppercase ">
+              <Link to="/signup" className="px-15 dark:bg-white dark:text-black ml-3 py-4 font-bold rounded-[15px] text-white bg-black  text-sm uppercase ">
                 Register
               </Link>
             </p>

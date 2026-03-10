@@ -837,8 +837,8 @@ const LearnPoint = () => {
       >
         {/* Header */}
         <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
-          <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
-            <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+          <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
+            <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
               <Book size={15} />
             </div>
             <h1 className="text-2xl font-bold">Learn Point</h1>
@@ -850,7 +850,7 @@ const LearnPoint = () => {
           <div className="flex gap-2 mb-6">
             <button
               onClick={() => setActiveTab("public")}
-              className={`px-6 py-3 font-semibold text-sm uppercase transition-colors border-2 ${
+              className={`px-6 py-3 font-semibold text-sm uppercase transition-colors border-2 rounded-[15px] ${
                 activeTab === "public"
                   ? "bg-white text-black"
                   : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
@@ -861,7 +861,7 @@ const LearnPoint = () => {
             {user && (
               <button
                 onClick={() => setActiveTab("mine")}
-                className={`px-6 py-3 font-semibold text-sm uppercase transition-colors border-2 ${
+                className={`px-6 py-3 font-semibold text-sm uppercase transition-colors border-2 rounded-[15px] ${
                   activeTab === "mine"
                     ? "bg-white text-black"
                     : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
@@ -957,7 +957,7 @@ const LearnPoint = () => {
                 setPdfFile(null);
                 setShowCreateModal(true);
               }}
-              className="md:w-[200px] w-full rounded-[10px] h-12 font-bold"
+              className="md:w-[200px] w-full rounded-[15px] h-12 font-bold"
             >
               <Plus className="w-4 h-4 icon mr-2" />
               Create Note
@@ -967,7 +967,7 @@ const LearnPoint = () => {
 
         {/* Notes Grid */}
         <motion.div
-          className="rounded-[10px] shadow-xl overflow-hidden"
+          className="rounded-[15px] shadow-xl overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
@@ -995,7 +995,7 @@ const LearnPoint = () => {
                   key={note._id || note.id}
                   className="bg-white dark:bg-[rgba(255,255,255,.1)] 
              border-gray-200 dark:border-gray-700 
-             rounded-[20px] p-6 
+             rounded-[15px] p-6 
              hover:shadow-lg transition-shadow
              flex flex-col h-full"
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -1011,14 +1011,14 @@ const LearnPoint = () => {
                       {/* Username with Avatar */}
                       {note.createdBy && (
                         <div className="flex items-center gap-2 mb-3">
-                          <div className="w-10 h-10 rounded-full overflow-hidden border border-gray-200 dark:border-gray-700">
+                          <div className="w-10 h-10 rounded-[15px] overflow-hidden border border-gray-200 dark:border-gray-700">
                             <img
                               {...getAvatarProps(
                                 note.createdBy?.avatar,
                                 note.createdBy?.username || "User",
                               )}
                               alt={note.createdBy?.username || "User"}
-                              className="w-full h-full object-cover p-1"
+                              className="w-full h-full object-cover rounded-[15px] p-1"
                             />
                           </div>
                           <div className="flex flex-col">
@@ -1055,7 +1055,7 @@ const LearnPoint = () => {
                       {note.tags.map((tag, idx) => (
                         <span
                           key={idx}
-                          className="text-xs px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-full text-gray-600 dark:text-gray-400"
+                          className="text-xs px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-[15px] text-gray-600 dark:text-gray-400"
                         >
                           #{tag}
                         </span>
@@ -1129,7 +1129,7 @@ const LearnPoint = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-[black] rounded-[20px] shadow-2xl border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-[black] rounded-[15px] shadow-2xl border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="space-y-4">
@@ -1267,12 +1267,12 @@ const LearnPoint = () => {
                    
                   </div>
                   {editingNote?.fileUrl && !pdfFile && (
-                    <div className="flex p-3 border-2 border-dashed rounded-[20px] mt-5 flex items-center justify-between">
+                    <div className="flex p-3 border-2 border-dashed rounded-[15px] mt-5 flex items-center justify-between">
                       <p className="text-xs text-gray-500">
                         {editingNote.fileName || "PDF file"}
                       </p>
                       <div
-                        className="flex p-2 border rounded-full cursor-pointer"
+                        className="flex p-2 border rounded-[15px] cursor-pointer"
                         onClick={() => handleViewPdf(editingNote.fileUrl)}
                       >
                         <Eye className="w-4 h-4 icon icon" />

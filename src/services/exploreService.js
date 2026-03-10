@@ -59,6 +59,33 @@ export const exploreService = {
     }
   },
 
+  approveProject: async (projectId) => {
+  try {
+    const response = await axiosInstance.patch(
+      `/api/explore/projects/${projectId}/approve`
+    )
+    return response.data
+  } catch (error) {
+    console.error('Approve project error:', error)
+    throw new Error(
+      error.response?.data?.message || 'Failed to approve project'
+    )
+  }
+},
+rejectProject: async (projectId) => {
+  try {
+    const response = await axiosInstance.patch(
+      `/api/explore/projects/${projectId}/reject`
+    )
+    return response.data
+  } catch (error) {
+    console.error('Reject project error:', error)
+    throw new Error(
+      error.response?.data?.message || 'Failed to reject project'
+    )
+  }
+},
+
   createPaymentIntent: async (projectId) => {
     try {
       const response = await axiosInstance.post('/api/explore/checkout/payment-intent', { projectId })

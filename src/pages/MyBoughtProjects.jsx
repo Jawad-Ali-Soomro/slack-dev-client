@@ -8,6 +8,8 @@ import { Badge } from '../components/ui/badge'
 import { exploreService } from '../services/exploreService'
 import { useAuth } from '../contexts/AuthContext'
 import { getAvatarProps } from '../utils/avatarUtils'
+import HorizontalLoader from '@/components/HorizontalLoader'
+import { BiCalendar, BiCategory, BiStore } from 'react-icons/bi'
 
 const MyBoughtProjects = () => {
   document.title = "My Projects"
@@ -134,7 +136,7 @@ const MyBoughtProjects = () => {
               alt={`${selectedProject?.title || 'Project'} preview ${idx + 1}`}
               className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
             />
-            <span className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-full">#{idx + 1}</span>
+            <span className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-[15px]">#{idx + 1}</span>
           </div>
         ))}
       </div>
@@ -148,16 +150,6 @@ const MyBoughtProjects = () => {
            project.description?.toLowerCase().includes(searchTerm.toLowerCase())
   })
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  }
-
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
@@ -170,14 +162,12 @@ const MyBoughtProjects = () => {
     <div className="overflow-hidden pt-10">
       <motion.div
         className="mx-auto"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
+        
       >
         {/* Header */}
         <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
-          <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
-            <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+          <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
+            <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
               <Package size={15} />
             </div>
             <h1 className="text-2xl font-bold">My Projects</h1>
@@ -201,7 +191,7 @@ const MyBoughtProjects = () => {
         {/* Projects Grid */}
         {loading ? (
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <HorizontalLoader showProgress />
           </div>
         ) : filteredProjects.length === 0 ? (
           <div className="text-center py-12">
@@ -213,11 +203,14 @@ const MyBoughtProjects = () => {
             </Button>
           </div>
         ) : (
-          <motion.div
-            variants={containerVariants}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[78vh] pb-5vh overflow-scroll"
-          >
-            {filteredProjects.map((item) => {
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  transition={{ duration: 0.4, ease: "easeOut" }}
+  
+  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[78vh] overflow-scroll pb-20"
+>
+            {filteredProjects.map((item, index) => {
               const project = item.project || item
               const isCreated = item.type === 'created'
               const projectId = project._id || project.id
@@ -225,9 +218,12 @@ const MyBoughtProjects = () => {
 
               return (
                 <motion.div
-                  key={item._id || item.id || projectId}
-                  variants={itemVariants}
-                  className="group relative bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[30px] overflow-hidden border dark:border-none shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+                key={project._id || project.id}
+    variants={itemVariants}
+    initial="hidden"
+    animate="visible"
+    transition={{ delay: index * 0.08 }}
+                  className="group relative bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] overflow-hidden border dark:border-none shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer"
                   onClick={() => handleViewProject(item)}
                 >
                   {/* Preview Image */}
@@ -320,7 +316,7 @@ const MyBoughtProjects = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-gray-900 rounded-[32px] p-6 md:p-8 max-w-5xl w-full flex flex-col shadow-2xl overflow-hidden"
+            className="bg-white dark:bg-gray-900 rounded-[15px] p-6 md:p-8 max-w-7xl w-full flex flex-col shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -331,13 +327,13 @@ const MyBoughtProjects = () => {
                  
                 </div>
                 <div className="flex items-center gap-2 flex-wrap justify-center">
-                  <Badge className="bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200 px-3 py-1 rounded-full text-xs font-semibold capitalize">
+                  <Badge className="bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200 px-3 py-1 rounded-[15px] text-xs font-semibold capitalize">
                     {selectedProject.category || 'General'}
                   </Badge>
                   {selectedProject.type === 'created' ? (
-                    <Badge className="bg-blue-500 text-white px-3 py-1 rounded-full text-xs font-semibold">Your project</Badge>
+                    <Badge className="bg-blue-500 text-white px-3 py-1 rounded-[15px] text-xs font-semibold">Your project</Badge>
                   ) : (
-                    <Badge className="bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">Purchased</Badge>
+                    <Badge className="bg-green-500 text-white px-3 py-1 rounded-[15px] text-xs font-semibold">Purchased</Badge>
                   )}
                 </div>
               </div>
@@ -361,28 +357,36 @@ const MyBoughtProjects = () => {
 
                 {/* Sidebar */}
                 <div className="space-y-5 h-full overflow-auto pr-1">
-                  <div className="rounded-3xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900/60 shadow-sm p-6">
-                    {/* <p className="text-sm text-gray-500 dark:text-gray-400">Price</p> */}
-                    <div className="flex items-baseline gap-2 mt-2">
-                      <span className="text-4xl font-bold text-gray-900 dark:text-white">${selectedProject.price}</span>
-                    </div>
-                    <div className="mt-4 space-y-3 text-sm text-gray-600 dark:text-gray-300">
-                      <div className="flex items-center justify-between">
-                        <span>Category</span>
-                        <span className="font-semibold text-gray-900 dark:text-white capitalize">{selectedProject.category || 'General'}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>Purchases</span>
-                        <span className="font-semibold text-gray-900 dark:text-white">{selectedProject.purchaseCount || 0}</span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span>{selectedProject.type === 'created' ? 'Created' : 'Purchased'}</span>
-                        <span className="font-semibold text-gray-900 dark:text-white">
-                          {new Date(selectedProject.createdAt || Date.now()).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
+                   <div className="rounded-3xl border border-gray-100 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] dark:border-gray-800 shadow-sm p-3 px-5">
+                                    {/* <p className="text-sm text-gray-500 dark:text-gray-400">Price</p> */}
+                                    <div className="flex items-baseline gap-2 mt-2">
+                                      <span className="text-5xl font-black text-gray-900 dark:text-white">
+                                        ${selectedProject.price}
+                                      </span>
+                                    </div>
+                                    <div className="mt-4 space-y-3 text-sm text-gray-600 dark:text-black">
+                                      <div className="flex items-center justify-between p-2 pr-5 bg-white">
+                                        <div className="flex p-3 bg-black text-white text-lg"><BiCategory /></div>
+                                        <span className="font-semibold text-gray-900 dark:text-black capitalize">
+                                          {selectedProject.category || "General"}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center justify-between p-2 pr-5 bg-white">
+                                        <div className="flex p-3 bg-black text-white text-lg"><BiStore /></div>
+                                        <span className="font-semibold text-gray-900 dark:text-black">
+                                          {selectedProject.purchaseCount || 0}
+                                        </span>
+                                      </div>
+                                      <div className="flex items-center justify-between p-2 pr-5 bg-white">
+                                        <div className="flex p-3 bg-black text-white text-lg"><BiCalendar /></div>
+                                        <span className="font-semibold text-gray-900 dark:text-black">
+                                          {new Date(
+                                            selectedProject.createdAt || Date.now(),
+                                          ).toLocaleDateString()}
+                                        </span>
+                                      </div>
+                                    </div>
+                                  </div>
 
                   <div className="rounded-3xl border border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900/60 shadow-sm p-6">
                     {/* <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4">Creator</h4> */}
@@ -391,10 +395,10 @@ const MyBoughtProjects = () => {
                         <img
                           {...getAvatarProps(selectedProject.createdBy.avatar, selectedProject.createdBy.username)}
                           alt={selectedProject.createdBy.username}
-                          className="w-12 h-12 rounded-full border border-gray-200 dark:border-gray-700"
+                          className="w-12 h-12 rounded-[15px] border border-gray-200 dark:border-gray-700"
                         />
                       ) : (
-                        <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-lg font-semibold text-gray-500">
+                        <div className="w-12 h-12 rounded-[15px] bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-lg font-semibold text-gray-500">
                           {selectedProject.createdBy?.username?.[0]?.toUpperCase() || '?'}
                         </div>
                       )}
@@ -410,7 +414,7 @@ const MyBoughtProjects = () => {
                         selectedProject.tags && selectedProject.tags.length > 0 && (
                             <div className="flex flex-wrap gap-2">
                                 {selectedProject.tags.map((tag, idx) => (
-                                    <Badge key={idx} className="rounded-full px-3 py-1 text-xs">
+                                    <Badge key={idx} className="rounded-[15px] px-3 py-1 text-xs">
                                         {tag}
                                     </Badge>
                                 ))}

@@ -25,6 +25,8 @@ import { formatDistanceToNow } from 'date-fns';
 import EmojiPicker from 'emoji-picker-react';
 import UserDetailsModal from './UserDetailsModal';
 import { chatService } from '@/services/chatService';
+import HorizontalLoader from './HorizontalLoader';
+import SkeletonLoader from './SkeletonLoader';
 
 const ChatWindow = ({ isMobile = false }) => {
   const { 
@@ -41,7 +43,8 @@ const ChatWindow = ({ isMobile = false }) => {
     stopTyping,
     messagesEndRef,
     messagesLoading,
-    setCurrentChat
+    setCurrentChat,
+    loading
   } = useChat();
   
   const { user } = useAuth();
@@ -206,7 +209,7 @@ const ChatWindow = ({ isMobile = false }) => {
     return (
       <div className="flex items-center justify-center h-full bg-muted/20">
         <div className="text-center">
-          <div className="h-16 w-16 mx-auto mb-4 rounded-[10px] bg-muted flex items-center justify-center">
+          <div className="h-16 w-16 mx-auto mb-4 rounded-[15px] bg-muted flex items-center justify-center">
             <Send className="h-8 w-8 text-muted-foreground" />
           </div>
           <h3 className="text-lg font-medium mb-2">Select a chat</h3>
@@ -216,9 +219,12 @@ const ChatWindow = ({ isMobile = false }) => {
     );
   }
 
+
   return (
     <div className={`flex flex-col h-full ${isMobile ? 'm-0 w-full' : ''}`}>
       {/* Header */}
+
+      
       <div className={`flex-shrink-0 border-b icon ${isMobile ? 'p-2' : 'p-4'}`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -243,7 +249,7 @@ const ChatWindow = ({ isMobile = false }) => {
                   {getChatName(currentChat).charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              {isOnline ? <div className="w-3 rounded-full absolute bottom-0 -right-1 h-3 bg-green-500"></div> : <div className="w-3 rounded-full absolute bottom-0 -right-1 h-3 bg-red-500"></div>}
+              {isOnline ? <div className="w-3 rounded-[15px] absolute bottom-0 -right-1 h-3 bg-green-500"></div> : <div className="w-3 rounded-[15px] absolute bottom-0 -right-1 h-3 bg-red-500"></div>}
             </div>
             <div className='flex items-center gap-2'>
               <h3 className="font-bold">{getChatName(currentChat)}</h3>
@@ -253,15 +259,21 @@ const ChatWindow = ({ isMobile = false }) => {
       </div>
 
       {/* Messages Container */}
-      <div className="flex-1 flex flex-col min-h-0 overflow-hidden">
+      <div className="flex-1 flex relative flex-col min-h-0 overflow-hidden">
         {/* Messages */}
+
+         {loading && (
+      <div className="absolute inset-0 z-50 flex items-center justify-center">
+        <div className="loader w-50 h-50"></div>
+      </div>
+    )}
         <div ref={messagesContainerRef} className={`flex-1 overflow-y-auto space-y-4 relative ${isMobile ? 'p-2' : 'p-4'}`}>
           {messagesLoading ? (
             <div className="flex flex-col items-center justify-center h-full">
               <div className="flex items-center gap-2 mb-4">
-                <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-                <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-2 h-2 bg-primary rounded-[15px] animate-bounce"></div>
+                <div className="w-2 h-2 bg-primary rounded-[15px] animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-primary rounded-[15px] animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
               <p className="text-sm text-muted-foreground">Loading messages...</p>
             </div>
@@ -281,23 +293,23 @@ const ChatWindow = ({ isMobile = false }) => {
               return (
                 <div
                   key={message._id}
-                  className={`flex ${isOwn ? 'justify-end rounded-[20px]' : 'justify-start rounded-[20px]'}`}
+                  className={`flex ${isOwn ? 'justify-end rounded-[15px]' : 'justify-start rounded-[15px]'}`}
                 >
-                  <div className={`flex gap-2 max-w-[70%] ${isOwn ? 'flex-row-reverse rounded-[20px]' : 'flex-row rounded-[20px]'}`}>
+                  <div className={`flex gap-2 max-w-[70%] ${isOwn ? 'flex-row-reverse rounded-[15px]' : 'flex-row rounded-[15px]'}`}>
                     {!isOwn && (
                       <Avatar 
-                        className="h-10 w-10 mt-1 border border-gray-200 dark:border-gray-600 p-1 rounded-[20px] cursor-pointer hover:opacity-80 transition-opacity"
+                        className="h-10 w-10 mt-1 border border-gray-200 dark:border-gray-600 p-1 rounded-[15px] cursor-pointer hover:opacity-80 transition-opacity"
                         onClick={() => handleUserAvatarClick(message.sender._id || message.sender.id)}
                         title={message.sender.username ? `View ${message.sender.username}'s profile` : 'View profile'}
                       >
-                        <AvatarImage src={getAvatarUrl(message.sender.avatar)} className='rounded-[20px]' />
+                        <AvatarImage src={getAvatarUrl(message.sender.avatar)} className='rounded-[15px]' />
                         <AvatarFallback>
                           {(message.sender.name || message.sender.username || 'U').charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                     )}
                     
-                    <div className={`space-y-1 ${isOwn ? 'items-end rounded-[20px]' : 'items-start rounded-[20px]'}`}>
+                    <div className={`space-y-1 ${isOwn ? 'items-end rounded-[15px]' : 'items-start rounded-[15px]'}`}>
                       <div
                         className={`px-5 py-3 relative ${
                           isOwn
@@ -365,9 +377,9 @@ const ChatWindow = ({ isMobile = false }) => {
           {typingUsers.length > 0 && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-muted-foreground rounded-[10px] animate-bounce"></div>
-                <div className="w-2 h-2 bg-muted-foreground rounded-[10px] animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                <div className="w-2 h-2 bg-muted-foreground rounded-[10px] animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="w-2 h-2 bg-muted-foreground rounded-[15px] animate-bounce"></div>
+                <div className="w-2 h-2 bg-muted-foreground rounded-[15px] animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                <div className="w-2 h-2 bg-muted-foreground rounded-[15px] animate-bounce" style={{ animationDelay: '0.2s' }}></div>
               </div>
               <span>
                 {typingUsers.map(u => u.userName).join(', ')} {typingUsers.length === 1 ? 'is' : 'are'} typing...

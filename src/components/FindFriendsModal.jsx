@@ -83,7 +83,7 @@ const FindFriendsModal = ({ isOpen, onClose }) => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="bg-white dark:bg-black rounded-[20px]  shadow-xl w-full max-w-xl max-h-[80vh] overflow-hidden"
+          className="bg-white dark:bg-gray-800 rounded-[15px]  shadow-xl w-full max-w-xl max-h-[80vh] overflow-hidden"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Header */}
@@ -92,13 +92,13 @@ const FindFriendsModal = ({ isOpen, onClose }) => {
           {/* Content */}
           <div className="p-6 overflow-y-auto max-h-[60vh]">
             {/* Search Input */}
-            <div className="mb-6">  
+            <div className="mb-6 border rounded-[15px]">  
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4 icon" />
                 <Input
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className={getInputClasses('default', 'md', 'pl-10')}
+                  className={'border pl-10 border-gray-1000'}
                 />
               </div>
             </div>
@@ -115,7 +115,7 @@ const FindFriendsModal = ({ isOpen, onClose }) => {
                     key={user.id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="flex items-center justify-between p-4 border rounded-[10px] hover:bg-gray-50 dark:hover:bg-gray-800"
+                    className="flex items-center justify-between p-4 border rounded-[15px] hover:bg-gray-50 dark:hover:bg-gray-800"
                   >
                     <div className="flex items-center space-x-4">
                       <Avatar 

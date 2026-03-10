@@ -70,11 +70,11 @@ const NotificationDropdown = () => {
         <Button
 
           size="sm"
-          className="relative rounde-[25px] h-12  mx-2 w-12 bg-white hover:bg-gray-100 hover:border  text-black cursor-pointer rounded-full"
+          className="relative rounde-[25px] h-12  mx-2 w-12 bg-white hover:bg-gray-100 hover:border  text-black cursor-pointer rounded-[15px]"
         >
           <Bell className="w-5 h-5 icon" />
           {unreadCount > 0 && (
-            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-[10px] text-[10px] text-white flex items-center justify-center">
+            <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 rounded-[15px] text-[10px] text-white flex items-center justify-center">
               {unreadCount > 9 ? '9+' : unreadCount}
             </span>
           )}
@@ -83,7 +83,7 @@ const NotificationDropdown = () => {
       
       <DropdownMenuContent 
         align="end" 
-        className="w-80 bg-white dark:bg-black  border-gray-200 dark:border-gray-700 rounded-[20px] p-0"
+        className="w-80 bg-white dark:bg-black  border-gray-200 dark:border-gray-700 rounded-[15px] p-0"
       >
         {/* Header */}
         <div className="p-4 border-b border-gray-200 dark:border-gray-700 icon">
@@ -121,7 +121,7 @@ const NotificationDropdown = () => {
         <div className="max-h-96 overflow-y-auto">
           {loading ? (
             <div className="p-4 text-center">
-              <div className="animate-spin rounded-[10px] h-6 w-6 border-b-2 border-gray-900 dark:border-white mx-auto"></div>
+              <div className="animate-spin rounded-[15px] h-6 w-6 border-b-2 border-gray-900 dark:border-white mx-auto"></div>
               <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">Loading notifications...</p>
             </div>
           ) : notifications.length === 0 ? (

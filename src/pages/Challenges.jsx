@@ -286,15 +286,15 @@ const Challenges = () => {
       <div className="mx-auto">
         {/* Header */}
         <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
-          <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
-            <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+          <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
+            <div className="flex p-3 bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px]">
               <Trophy size={15} />
             </div>
             <h1 className="text-2xl font-bold">Challenges</h1>
           </div>
             <div className="ml-auto flex items-center gap-4">
-             <div className="flex items-center gap-2 p-2 border-2 pr-10 rounded-[50px] border-gray-300 dark:border-gray-700">
-               <div className="flex items-center justify-center bg-white dark:bg-gray-800 w-[40px] h-[40px] rounded-full">
+             <div className="flex items-center gap-2 p-2 border-2 pr-10 rounded-[15px] border-gray-300 dark:border-gray-700">
+               <div className="flex items-center justify-center bg-white dark:bg-[rgba(255,255,255,.1)] w-[40px] h-[40px] rounded-[15px]">
                  <Award className="w-5 h-5 text-yellow-500" />
                </div>
                <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -313,20 +313,20 @@ const Challenges = () => {
           <div className="flex gap-2 mb-6">
             <button
               onClick={() => setActiveTab('all')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-4 py-2 rounded-[15px] font-medium transition-colors ${
                 activeTab === 'all'
                   ? 'bg-black dark:bg-white text-white dark:text-black'
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700'
+                  : 'bg-white dark:bg-[rgba(255,255,255,.1)] text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700'
               }`}
             >
               All Challenges
             </button>
             <button
               onClick={() => setActiveTab('completed')}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-4 py-2 rounded-[15px] font-medium transition-colors ${
                 activeTab === 'completed'
                   ? 'bg-black dark:bg-white text-white dark:text-black'
-                  : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700'
+                  : 'bg-white dark:bg-[rgba(255,255,255,.1)] text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700'
               }`}
             >
               My Completed
@@ -383,7 +383,7 @@ const Challenges = () => {
               <Plus className="w-4 h-4 icon mr-2" />
               Create Challenge
               {totalPoints < 50 && (
-                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-[15px]">
                   50+
                 </span>
               )}
@@ -399,7 +399,7 @@ const Challenges = () => {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               whileHover={{ scale: 1.02 }}
-              className="bg-white dark:bg-gray-800 rounded-[30px] p-6 border-gray-300 dark:border-gray-700 hover:shadow-lg transition-all cursor-pointer"
+              className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] p-6 border-gray-300 dark:border-gray-700 hover:shadow-lg transition-all cursor-pointer"
               onClick={() => handleViewChallenge(challenge._id)}
             >
               <div className="flex items-start justify-between mb-4">
@@ -439,7 +439,7 @@ const Challenges = () => {
                         e.stopPropagation()
                         handleEditChallenge(challenge)
                       }}
-                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-[15px]"
                     >
                       <Edit className="w-4 h-4 icon text-gray-700 dark:text-gray-300" />
                     </button>
@@ -448,7 +448,7 @@ const Challenges = () => {
                         e.stopPropagation()
                         handleDeleteChallenge(challenge._id)
                       }}
-                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                      className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-[15px]"
                     >
                       <Trash2 className="w-4 h-4 icon text-gray-700 dark:text-gray-300" />
                     </button>
@@ -478,7 +478,7 @@ const Challenges = () => {
           <motion.div
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
-            className="bg-white dark:bg-gray-800 rounded-[30px] p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-300 dark:border-gray-700"
+            className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-300 dark:border-gray-700"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
@@ -494,7 +494,7 @@ const Challenges = () => {
               </div>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-[15px]"
               >
                 <X className="w-5 h-5" />
               </button>

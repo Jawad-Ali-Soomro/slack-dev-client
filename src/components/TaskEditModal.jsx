@@ -112,7 +112,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        className="bg-white dark:bg-black rounded-[15px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6">
@@ -166,10 +166,10 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                     <SelectValue placeholder="Select priority" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="low">Low</SelectItem>
-                    <SelectItem value="medium">Medium</SelectItem>
-                    <SelectItem value="high">High</SelectItem>
-                    <SelectItem value="urgent">Urgent</SelectItem>
+                    <SelectItem className={"px-5"} value="low">Low</SelectItem>
+                    <SelectItem className={"px-5"} value="medium">Medium</SelectItem>
+                    <SelectItem className={"px-5"} value="high">High</SelectItem>
+                    <SelectItem className={"px-5"} value="urgent">Urgent</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -180,10 +180,10 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                    <SelectItem className={"px-5"} value="pending">Pending</SelectItem>
+                    <SelectItem className={"px-5"} value="in_progress">In Progress</SelectItem>
+                    <SelectItem className={"px-5"} value="completed">Completed</SelectItem>
+                    <SelectItem className={"px-5"} value="cancelled">Cancelled</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -199,7 +199,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                         <img
                           {...getAvatarProps(assignedUser.avatar, assignedUser.username)}
                           alt={assignedUser.username}
-                          className="w-5 h-5 rounded-[10px]"
+                          className="w-5 h-5 rounded-[15px]"
                         />
                         <span>{assignedUser.username}</span>
                       </div>
@@ -216,7 +216,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                         <img
                           {...getAvatarProps(user.avatar, user.username)}
                           alt={user.username}
-                          className="w-5 h-5 rounded-[10px]"
+                          className="w-5 h-5 rounded-[15px]"
                         />
                         <span>{user.username}</span>
                       </div>
@@ -255,7 +255,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                 {formData.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-black text-blue-800 dark:text-blue-200 rounded-[10px] text-sm"
+                    className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-black text-blue-800 dark:text-blue-200 rounded-[15px] text-sm"
                   >
                     {tag}
                     <button

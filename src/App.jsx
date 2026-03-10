@@ -31,6 +31,7 @@ import LearnPoint from "./pages/LearnPoint";
 import Challenges from "./pages/Challenges";
 import ChallengeDetail from "./pages/ChallengeDetail";
 import Notes from "./pages/Notes";
+import KeyboardShortcuts from "./components/Keyboard";
 
 function App() {
   return (

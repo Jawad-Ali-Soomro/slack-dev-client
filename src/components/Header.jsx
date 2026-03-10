@@ -21,13 +21,13 @@ const Header = () => {
   }
   
   return (
-    <header className="w-[90%] mx-auto h-20  rounded-[10px] flex items-center justify-between px-5 fixed top-10 left-1/2 -translate-x-1/2 z-100">
+    <header className="w-[90%] mx-auto h-20  rounded-[15px] flex items-center justify-between px-5 fixed top-10 left-1/2 -translate-x-1/2 z-100">
 
       <div className="flex items-center gap-8 uppercase">
         {/* Menu button for authenticated users - only on mobile */}
      
         
-        <div className="p-3 bg-white dark:bg-white rounded-full">
+        <div className="p-3 bg-white dark:bg-white rounded-[15px]">
           <img src="/logo.png" alt="logo" className="w-8 h-8 cursor-pointer" onClick={() => navigate("/")} />
         </div>
      
@@ -43,10 +43,8 @@ const Header = () => {
           {/* Login Button - Responsive sizing */}
           <button 
             onClick={() => navigate("/login")}
-            className="  w-[200px]  flex items-center justify-between px-5 h-[50px] rounded-[25px] md:py-4 cursor-pointer bg-black text-white uppercase hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
-            style={{
-              borderRadius: '25px'
-            }}
+            className="  w-[200px] rounded-[15px]  flex items-center justify-between px-5 h-[50px] md:py-4 cursor-pointer bg-black text-white uppercase hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
+
           >
             Login
             <RiLoginCircleLine className="w-5 h-5 icon icon" />

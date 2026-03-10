@@ -60,13 +60,15 @@ export const AuthProvider = ({ children }) => {
           setUser(result.user)
           setIsAuthenticated(true)
         }
-
+        
         return { 
           success: true, 
           user: result.user, 
           emailSent: result.emailSent,
           message: result.message 
         }
+
+
       } else {
         return { success: false, error: result.message || 'Login failed' }
       }
