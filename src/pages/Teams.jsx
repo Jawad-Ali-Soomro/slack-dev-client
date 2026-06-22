@@ -25,7 +25,7 @@ import { useAuth } from '../contexts/AuthContext'
 import { useNotifications } from '../contexts/NotificationContext'
 import { getAvatarProps } from '../utils/avatarUtils'
 import StatsCard from '../components/StatsCard'
-import SkeletonLoader from '../components/SkeletonLoader'
+import { Skeleton } from '@/components/ui/skeleton'
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
 import UserDetailsModal from '../components/UserDetailsModal'
 
@@ -42,6 +42,7 @@ const Teams = () => {
     isPublic: false
   })
   const [loading, setLoading] = useState(false)
+  const [statsLoading, setStatsLoading] = useState(true)
   const [teams, setTeams] = useState([])
   const [stats, setStats] = useState(null)
   const [selectedUserId, setSelectedUserId] = useState(null)
@@ -74,10 +75,13 @@ const Teams = () => {
 
   const loadStats = useCallback(async () => {
     try {
+      setStatsLoading(true)
       const response = await teamService.getTeamStats()
       setStats(response.stats)
     } catch (error) {
       console.error('Failed to load stats:', error)
+    } finally {
+      setStatsLoading(false)
     }
   }, [])
 
@@ -198,7 +202,7 @@ const Teams = () => {
           <div className="flex items-center gap-4">
             <Button
               onClick={() => setShowNewTeamPopup(true)}
-              className={'w-[200px] rounded-[10px] h-12'}
+              className={'w-[200px] rounded-[15px] h-12'}
             >
               <Plus className={ICON_SIZES.sm} />
               New Team
@@ -206,9 +210,19 @@ const Teams = () => {
           </div>
         </motion.div>
 
-        {/* Stats Cards */}
-        {loading ? (
-          <SkeletonLoader type="grid" count={4} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8" />
+        {/* Stats Cards - skeleton until stats loaded */}
+        {statsLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="bg-white dark:bg-black rounded-[15px] border border-gray-200 dark:border-gray-700 p-6">
+                <div className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <Skeleton className="h-4 w-[100px] rounded-md" />
+                  <Skeleton className="h-4 w-4 rounded-md" />
+                </div>
+                <Skeleton className="h-8 w-14 rounded-md" />
+              </div>
+            ))}
+          </div>
         ) : stats ? (
           <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             <StatsCard
@@ -266,10 +280,34 @@ const Teams = () => {
           </Select>
         </motion.div>
 
-        {/* Teams Grid */}
+        {/* Teams Grid - skeleton until loading finished */}
         <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
-            <SkeletonLoader type="grid" count={6} />
+            <>
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="bg-white dark:bg-black rounded-[15px] border border-gray-200 dark:border-gray-700 p-6">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1 space-y-2">
+                      <Skeleton className="h-5 w-[140px] rounded-md" />
+                      <Skeleton className="h-4 w-full max-w-[200px] rounded-md" />
+                    </div>
+                    <Skeleton className="h-9 w-9 rounded-[15px]" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <Skeleton className="h-4 w-[80px] rounded-md" />
+                    <Skeleton className="h-6 w-[70px] rounded-[15px]" />
+                  </div>
+                  <div className="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex -space-x-2">
+                      <Skeleton className="h-8 w-8 rounded-[15px]" />
+                      <Skeleton className="h-8 w-8 rounded-[15px]" />
+                      <Skeleton className="h-8 w-8 rounded-[15px]" />
+                    </div>
+                    <Skeleton className="h-4 w-20 rounded-md" />
+                  </div>
+                </div>
+              ))}
+            </>
           ) : filteredTeams.length === 0 ? (
             <div className="col-span-full text-center py-12">
               <h3 className="text-xl  text-gray-900 dark:text-white mb-2">No teams found</h3>
@@ -287,7 +325,7 @@ const Teams = () => {
               <motion.div
                 key={team.id}
                 variants={itemVariants}
-                className="bg-white dark:bg-black rounded-[10px]  border-gray-200 dark:border-gray-700 p-6 transition-shadow duration-300 hover:shadow-lg"
+                className="bg-white dark:bg-black rounded-[15px]  border-gray-200 dark:border-gray-700 p-6 transition-shadow duration-300 hover:shadow-lg"
               >
                 {/* Team Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -301,16 +339,16 @@ const Teams = () => {
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="p-2">
+                      <Button variant="ghost" size="sm" className="p-2 rounded-[15px]">
                         <MoreVertical className="w-4 h-4 icon icon icon" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem className="h-10 px-5 cursor-pointer">
+                    <DropdownMenuContent className={"rounded-[15px]"} align="end">
+                      <DropdownMenuItem className="h-10 px-5 cursor-pointer rounded-[15px]">
                         <Settings className="w-4 h-4 icon icon mr-2 icon" />
                         Manage Team
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="h-10 px-5 cursor-pointer">
+                      <DropdownMenuItem className="h-10 px-5 cursor-pointer rounded-[15px]">
                         <UserPlus className="w-4 h-4 icon icon mr-2 icon" />
                         Add Members
                       </DropdownMenuItem>
@@ -331,7 +369,7 @@ const Teams = () => {
                     <span>{team.members?.length || 0} members</span>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <span className={`px-2 py-1 rounded-[10px] text-xs font-medium ${getRoleColor(team.role)}`}>
+                    <span className={`px-2 py-1 rounded-[15px] text-xs font-medium ${getRoleColor(team.role)}`}>
                       {getRoleIcon(team.role)}
                       {team.role}
                     </span>
@@ -344,7 +382,7 @@ const Teams = () => {
                     {team.members?.slice(0, 3).map((member, index) => (
                       <div
                         key={index}
-                        className="w-8 h-8 rounded-[10px]  border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                        className="w-8 h-8 rounded-[15px]  border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
                         title={member.user?.username}
                         onClick={() => handleUserAvatarClick(member.user?._id || member.user?.id)}
                       >
@@ -356,7 +394,7 @@ const Teams = () => {
                       </div>
                     ))}
                     {team.members?.length > 3 && (
-                      <div className="w-8 h-8 rounded-[10px]  border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
+                      <div className="w-8 h-8 rounded-[15px]  border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
                         +{team.members.length - 3}
                       </div>
                     )}
@@ -383,7 +421,7 @@ const Teams = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+              className="bg-white dark:bg-black rounded-[15px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
@@ -402,7 +440,7 @@ const Teams = () => {
                     value={newTeam.name}
                     onChange={(e) => setNewTeam({...newTeam, name: e.target.value})}
                     placeholder="Team name *"
-                    className="w-full h-12 rounded-[10px]"
+                    className="w-full h-12 rounded-[15px]"
                     required
                   />
                 </div>
@@ -412,7 +450,7 @@ const Teams = () => {
                     value={newTeam.description}
                     onChange={(e) => setNewTeam({...newTeam, description: e.target.value})}
                     placeholder="Team description"
-                    className="w-full h-12 rounded-[10px]"
+                    className="w-full h-12 rounded-[15px]"
                     rows="3"
                   />
                 </div>
@@ -435,14 +473,14 @@ const Teams = () => {
                     type="button"
                     variant="outline"
                     onClick={() => setShowNewTeamPopup(false)}
-                    className="flex-1 h-12 rounded-[10px]"
+                    className="flex-1 h-12 rounded-[15px]"
                     disabled={loading}
                   >
                     Cancel
                   </Button>
                   <Button
                     type="submit"
-                    className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[10px]"
+                    className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[15px]"
                     disabled={loading}
                   >
                     {loading ? (

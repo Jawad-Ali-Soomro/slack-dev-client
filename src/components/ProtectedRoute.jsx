@@ -1,16 +1,13 @@
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
-import { motion } from "framer-motion";
 import HorizontalLoader from "./HorizontalLoader";
 import Sidebar from "./Sidebar";
 import DashboardHeader from "./DashboardHeader";
 import { useSidebar } from "../contexts/SidebarContext";
-import { ChevronLeft, ChevronRight, SidebarOpen } from "lucide-react";
-import { useState } from "react";
 
 const ProtectedRoute = ({ children, requireAuth = true }) => {
   const { isAuthenticated, loading } = useAuth();
-  const { isOpen, toggleSidebar, isMobile } = useSidebar();
+  const { isOpen } = useSidebar();
   const location = useLocation();
 
   if (loading) {
@@ -42,7 +39,11 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
        </div>
 
 
-        <div className={`${isOpen ? "md:pl-65" : "md:pl-20"} transition-all  flex-1 pr-2 md:pt-20 pt-25 pl-2 overflow-hidden`} >
+        <div
+          className={`transition-all duration-300 flex-1 pr-5 md:pr-5 md:pt-20 pt-25 pl-5 overflow-hidden ${
+            isOpen ? "md:pl-[260px]" : "md:pl-[92px]"
+          }`}
+        >
           {children}
         </div>
       </div>

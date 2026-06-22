@@ -74,14 +74,14 @@ const ChatList = () => {
               placeholder="Search chats..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white rounded-[10px]"
+              className="pl-10 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white rounded-[15px]"
               disabled
             />
           </div>
         </div>
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <div className="animate-spin rounded-[15px] h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
             <p className="text-sm text-muted-foreground">Loading chats...</p>
           </div>
         </div>
@@ -99,7 +99,7 @@ const ChatList = () => {
             placeholder="Search chats..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white rounded-[10px]"
+            className="pl-10 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white rounded-[15px]"
           />
         </div>
       </div>
@@ -109,9 +109,9 @@ const ChatList = () => {
         {chatsLoading && chats.length > 0 ? (
           <div className="flex items-center justify-center h-20">
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              <div className="w-2 h-2 bg-primary rounded-[15px] animate-bounce"></div>
+              <div className="w-2 h-2 bg-primary rounded-[15px] animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+              <div className="w-2 h-2 bg-primary rounded-[15px] animate-bounce" style={{ animationDelay: '0.2s' }}></div>
             </div>
           </div>
         ) : filteredChats.length === 0 ? (
@@ -126,13 +126,19 @@ const ChatList = () => {
               const isActive = currentChat?._id === chat._id;
               const chatName = getChatName(chat);
               const chatAvatar = getChatAvatar(chat);
-              const otherParticipant = chat.participants.find(p => p._id !== user?.id && p._id !== user?._id);
-              const isOnline = otherParticipant ? isUserOnline(otherParticipant._id) : false;
+              const currentUserId = String(user?.id || user?._id || "");
+              const otherParticipant = chat.participants.find((p) => {
+                const participantId = String(p._id || p.id || "");
+                return participantId && participantId !== currentUserId;
+              });
+              const isOnline = otherParticipant
+                ? isUserOnline(otherParticipant._id || otherParticipant.id)
+                : false;
 
               return (
                 <Card
                   key={chat._id}
-                  className={`cursor-pointer border dark:bg-transparent bg-transparent rounded-[20px] ${
+                  className={`cursor-pointer border dark:bg-transparent bg-transparent rounded-[15px] ${
                     isActive ? 'bg-white border bg-white dark:bg-[rgba(255,255,255,.1)]' : ''
                   }`}
                   onClick={() => setCurrentChat(chat)}
@@ -151,7 +157,7 @@ const ChatList = () => {
                           </AvatarFallback>
                         </Avatar>
                         {isOnline && (
-                          <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-full"></div>
+                          <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-[15px]"></div>
                         )}
                       </div>
                       

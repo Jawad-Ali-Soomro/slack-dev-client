@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import CodeMirror from '@uiw/react-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
+import { EditorView } from '@codemirror/view'
 import {
   ArrowLeft,
   CheckCircle,
@@ -50,6 +50,22 @@ const ChallengeDetail = () => {
   const [isCompleted, setIsCompleted] = useState(false)
   const [userSolutionData, setUserSolutionData] = useState(null)
   const [activeTab, setActiveTab] = useState('instructions') // 'instructions'
+  const [isDark, setIsDark] = useState(() =>
+    document.documentElement.classList.contains('dark'),
+  )
+
+  const codeExtensions = useMemo(
+    () => [javascript({ jsx: true }), EditorView.lineWrapping],
+    [],
+  )
+
+  useEffect(() => {
+    const root = document.documentElement
+    const syncTheme = () => setIsDark(root.classList.contains('dark'))
+    const observer = new MutationObserver(syncTheme)
+    observer.observe(root, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     document.title = challenge ? `${challenge.title} - Challenge` : 'Challenge Detail'
@@ -227,14 +243,14 @@ const ChallengeDetail = () => {
             <Button
               variant="outline"
               onClick={() => navigate('/dashboard/challenges')}
-              className="rounded-full p-2 border-2 hover:bg-gray-100 dark:hover:bg-gray-700"
+              className="rounded-[15px] p-2 border-2 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <ArrowLeft className="w-4 h-4 icon" />
             </Button>
             <div className="flex-1" />
           </div>
           
-          <div className="bg-white dark:bg-gray-800 rounded-[30px] p-6 border-2 border-gray-200 dark:border-gray-700 shadow-lg">
+          <div className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] p-6 border-2 border-gray-200 dark:border-gray-700 shadow-lg">
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-3 mb-3">
@@ -246,20 +262,20 @@ const ChallengeDetail = () => {
                   </h1>
                 </div>
                 <div className="flex items-center gap-3 flex-wrap mb-3">
-                  <Badge className={`${DIFFICULTY_COLORS[challenge.difficulty]} font-semibold px-3 py-1.5 rounded-full shadow-sm`}>
+                  <Badge className={`${DIFFICULTY_COLORS[challenge.difficulty]} font-semibold px-3 py-1.5 rounded-[15px] shadow-sm`}>
                     {DIFFICULTY_ICONS[challenge.difficulty]} {challenge.difficulty.charAt(0).toUpperCase() + challenge.difficulty.slice(1)}
                   </Badge>
-                  <Badge variant="outline" className="border-2 border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-full font-medium">
+                  <Badge variant="outline" className="border-2 border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-[15px] font-medium">
                     <Code className="w-3 h-3 mr-1.5" />
                     {challenge.category}
                   </Badge>
                   {isCompleted && (
-                    <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold px-3 py-1.5 rounded-full shadow-md">
+                    <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold px-3 py-1.5 rounded-[15px] shadow-md">
                       <CheckCircle className="w-3 h-3 mr-1" />
                       Completed
                     </Badge>
                   )}
-                  <div className="flex items-center gap-1.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1.5 rounded-full shadow-md">
+                  <div className="flex items-center gap-1.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1.5 rounded-[15px] shadow-md">
                     <Star className="w-4 h-4 icon fill-current" />
                     <span className="text-sm font-bold">{challenge.points} points</span>
                   </div>
@@ -276,8 +292,8 @@ const ChallengeDetail = () => {
           {/* Left Column - Instructions */}
           <div className="lg:col-span-1 flex flex-col min-h-0 min-w-0">
             {/* Instructions Panel */}
-            <div className="bg-white dark:bg-gray-800 rounded-[30px] border-2 border-gray-200 dark:border-gray-700 shadow-lg flex flex-col min-h-0">
-              <div className="p-5 border-b-2 border-gray-200 rounded-t-[20px] dark:border-gray-700 flex-shrink-0 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
+            <div className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] border border-gray-200 dark:border-gray-700 shadow-lg flex flex-col min-h-0">
+              <div className="p-5 border-b-2 border-gray-200 rounded-t-[15px] dark:border-gray-700 flex-shrink-0 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-gray-900 dark:to-gray-800">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl shadow-md">
                     <FileText className="w-5 h-5 text-white" />
@@ -286,9 +302,9 @@ const ChallengeDetail = () => {
                 </div>
               </div>
 
-              <div className="flex-1 overflow-y-auto p-5">
+              <div className="flex-1 overflow-y-auto">
                 <div className="prose dark:prose-invert max-w-none">
-                  <div className="whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300 font-sans bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-5 rounded-[20px] border border-gray-200 dark:border-gray-700 leading-relaxed">
+                  <div className="whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300 font-sans p-5 rounded-[15px] leading-relaxed">
                     {challenge.instructions}
                   </div>
                 </div>
@@ -298,7 +314,7 @@ const ChallengeDetail = () => {
 
           {/* Right Column - Code Editor */}
           <div className="lg:col-span-2 flex flex-col min-h-0 h-[550px] relative">
-            <div className="bg-white dark:bg-gray-800 rounded-[30px] border-2 border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden flex flex-col flex-1 min-h-0">
+            <div className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] border-2 border-gray-200 dark:border-gray-700 shadow-lg overflow-hidden flex flex-col flex-1 min-h-0">
               <div className="p-4 border-b-2 border-gray-200 dark:border-gray-700 flex items-center justify-between flex-shrink-0 bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl shadow-md">
@@ -310,17 +326,17 @@ const ChallengeDetail = () => {
                   {isCompleted && userSolutionData && (
                     <div className="flex items-center gap-2 ml-4">
                       {userSolutionData.isCorrect ? (
-                        <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold px-3 py-1.5 rounded-full shadow-md">
+                        <Badge className="bg-gradient-to-r from-green-500 to-emerald-600 text-white font-semibold px-3 py-1.5 rounded-[15px] shadow-md">
                           <CheckCircle className="w-3 h-3 mr-1" />
                           Correct
                         </Badge>
                       ) : (
-                        <Badge className="bg-gradient-to-r from-red-500 to-pink-600 text-white font-semibold px-3 py-1.5 rounded-full shadow-md">
+                        <Badge className="bg-gradient-to-r from-red-500 to-pink-600 text-white font-semibold px-3 py-1.5 rounded-[15px] shadow-md">
                           <X className="w-3 h-3 mr-1" />
                           Wrong
                         </Badge>
                       )}
-                      <Badge variant="outline" className="border-2 border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-full font-medium">
+                      <Badge variant="outline" className="border-2 border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-[15px] font-medium">
                         <Award className="w-3 h-3 mr-1.5" />
                         Points: {userSolutionData.pointsEarned || 0}
                       </Badge>
@@ -344,8 +360,8 @@ const ChallengeDetail = () => {
                         <CodeMirror
                           value={userSolution}
                           height="100%"
-                          extensions={[javascript({ jsx: true })]}
-                          theme={document.documentElement.classList.contains('dark') ? oneDark : undefined}
+                          extensions={codeExtensions}
+                          {...(isDark ? { theme: oneDark } : {})}
                           onChange={(value) => setUserSolution(value)}
                           basicSetup={{
                             lineNumbers: true,
@@ -357,9 +373,8 @@ const ChallengeDetail = () => {
                             closeBrackets: true,
                             autocompletion: true,
                             highlightSelectionMatches: false,
-                            lineWrapping: true,
                           }}
-                          className="text-sm"
+                          className="text-sm h-full"
                         />
                       </div>
                     )}
@@ -389,7 +404,7 @@ const ChallengeDetail = () => {
                               value={userAnswer}
                               onChange={(e) => setUserAnswer(e.target.value)}
                               placeholder="Run your code first, then enter the output/answer here..."
-                              className="w-full p-3 border-2 border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white font-mono text-sm focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
+                              className="w-full p-3 border-2 border-gray-300 dark:border-gray-700 rounded-xl bg-white dark:bg-[rgba(255,255,255,.1)] text-gray-900 dark:text-white font-mono text-sm focus:border-blue-500 dark:focus:border-blue-400 transition-colors"
                               rows={3}
                             /> */}
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
@@ -427,7 +442,7 @@ const ChallengeDetail = () => {
                 {!isCompleted && (
                   <div className="w-96 border-l-2 border-gray-200 dark:border-gray-700 flex flex-col flex-shrink-0 bg-gray-50 dark:bg-gray-900/30">
                     {/* Fixed Run Button */}
-                    <div className="p-4 border-b-2 border-gray-200 dark:border-gray-700 flex-shrink-0 bg-white dark:bg-gray-800">
+                    <div className="p-4 border-b-2 border-gray-200 dark:border-gray-700 flex-shrink-0 bg-white dark:bg-[rgba(255,255,255,.1)]">
                       <Button
                         onClick={handleRunCode}
                         disabled={!userSolution.trim()}
@@ -462,7 +477,7 @@ const ChallengeDetail = () => {
                           </pre>
                         </div>
                       ) : (
-                        <div className="bg-gray-100 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-6 text-center">
+                        <div className="bg-gray-100 dark:bg-[rgba(255,255,255,.1)] border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl p-6 text-center">
                           <Play className="w-8 h-8 text-gray-400 dark:text-gray-500 mx-auto mb-3" />
                           <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
                             No output yet

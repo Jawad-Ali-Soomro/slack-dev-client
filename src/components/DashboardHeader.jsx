@@ -15,9 +15,40 @@ import { RiMenu3Fill } from "react-icons/ri";
 import { ThemeToggle } from './ThemeToggle'
 import { PiKeyDuotone, PiUserDuotone, PiUsersDuotone } from 'react-icons/pi'
 import { Link, useNavigate } from 'react-router-dom'
+import Connections from './Connections'
+import { Skeleton } from './ui/skeleton'
+import { isUserGithubConnected, getGithubDismissKey } from '@/utils/githubConnection'
 
 const DashboardHeader = () => {
-  const { user, logout } = useAuth()
+  const { user, logout, loading: authLoading, isAuthenticated } = useAuth()
+  const [showConnectionModal, setShowConnectionModal] = useState(false)
+
+  useEffect(() => {
+    if (authLoading || !isAuthenticated || !user) {
+      setShowConnectionModal(false)
+      return
+    }
+
+    if (isUserGithubConnected(user)) {
+      setShowConnectionModal(false)
+      return
+    }
+
+    const userId = user.id ?? user._id
+    const dismissed =
+      userId && sessionStorage.getItem(getGithubDismissKey(String(userId)))
+
+    setShowConnectionModal(!dismissed)
+  }, [user, authLoading, isAuthenticated])
+
+  const handleCloseConnections = () => {
+    const userId = user?.id ?? user?._id
+    if (userId) {
+      sessionStorage.setItem(getGithubDismissKey(String(userId)), '1')
+    }
+    setShowConnectionModal(false)
+  }
+
   const [showProfileModal, setShowProfileModal] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [profileData, setProfileData] = useState({
@@ -180,24 +211,20 @@ const DashboardHeader = () => {
         >
           <RiMenu3Fill />
             </div>
-            <img 
-              src="/logo.png" 
-              className={`w-[50px] transition-all duration-300 ease-in-out ${isOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}
-              alt="" 
-            />
+           
       </div>
           <div className="flex items-center gap-2">
 
           
         <div className="flex gap-2">
-         <Link to="/learn-point" className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[20px]">
+         <Link to="/learn-point" className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[15px]">
          <Book className='w-4 h-4 icon' />
          </Link>
-         <Link to="/dashboard/challenges" className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[20px]">
+         <Link to="/dashboard/challenges" className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[15px]">
          <Trophy className='w-4 h-4 icon' />
          </Link>
         
-         <ThemeToggle className="flex w-12 h-12  hidden md:flex items-center justify-center border-none  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] dark:hover:text-white hover:text-black cursor-pointer rounded-[20px]" />
+         <ThemeToggle className="flex w-12 h-12  hidden md:flex items-center justify-center border-none  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] dark:hover:text-white hover:text-black cursor-pointer rounded-[15px]" />
          
         </div>
             <NotificationDropdown />
@@ -216,11 +243,11 @@ const DashboardHeader = () => {
                   onClick={handleOpenProfileModal}
                   className="relative group"
                 >
-                  <div className="w-12 h-12 p-1 overflow-hidden rounded-round border border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
+                  <div className="w-12 h-12 p-1 cursor-pointer overflow-hidden border rounded-xl border-gray-200 dark:border-gray-900 group-hover:border-black dark:group-hover:border-gray-600 transition-colors">
                     <img
                       {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
                       alt={user?.username || 'User'}
-                      className="w-full h-full rounded-round"
+                      className="w-full h-full rounded-xl"
                     />
                   </div>
                 </button>
@@ -249,7 +276,7 @@ const DashboardHeader = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-[20px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+            className="bg-white dark:bg-black rounded-[15px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
@@ -282,14 +309,14 @@ const DashboardHeader = () => {
             {/* Avatar Section */}
             <div className="flex flex-col items-center mb-6">
               <div className="relative group mb-2">
-                <div className="w-20 h-20 rounded-full p-2 overflow-hidden border-1 border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
+                <div className="w-20 h-20 rounded-[15px] p-2 overflow-hidden border-1 border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
                   <img
                     {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
                     alt={user?.username || 'User'}
-                    className="w-full h-full object-cover rounded-round"
+                    className="w-full h-full object-cover rounded-[15px]"
                   />
                 </div>
-                <label className="absolute -bottom-1 rounded-full bg-black dark:bg-white text-white dark:text-black -right-1 w-6 h-6 flex items-center justify-center cursor-pointer transition-colors">
+                <label className="absolute -bottom-1 rounded-[15px] bg-black dark:bg-white text-white dark:text-black -right-1 w-6 h-6 flex items-center justify-center cursor-pointer transition-colors">
                   <Camera className="w-3 h-3 icon" />
                   <input
                     type="file"
@@ -327,7 +354,7 @@ const DashboardHeader = () => {
               
               {/* User Stats */}
               <div className="flex gap-4 mt-4 text-center flex-wrap justify-center">
-                <div className="p-2 pl-5 rounded-full bg-gray-100 dark:bg-black">
+                <div className="p-2 pl-5 rounded-[15px] bg-gray-100 dark:bg-black">
                   <div className="text-sm font-medium flex gap-2 justify-center items-center text-green-600 dark:text-green-400">
                     {user?.emailVerified ? 'Verified' : 'Pending'}
                     {
@@ -350,9 +377,12 @@ const DashboardHeader = () => {
 
             {/* Profile Form */}
             {loading ? (
-              <div className="flex items-center justify-center py-8 rounded-round">
-                <div className="animate-spin rounded-round h-8 w-8 border-b-2 border-blue-500"></div>
-                <span className="ml-2 text-gray-500">Loading profile...</span>
+              <div className="flex items-center justify-center flex-col gap-4 py-8 rounded-[15px]">
+                <Skeleton className={'w-10 bg-gray-200 h-10 w-full'} />
+                <Skeleton className={'w-10 bg-gray-200 h-20 w-full'} />
+                <Skeleton className={'w-10 bg-gray-200 h-10 w-full'} />
+                <Skeleton className={'w-10 bg-gray-200 h-10 w-full'} />
+                <Skeleton className={'w-10 bg-gray-200 h-10 w-full'} />
               </div>
             ) : (
               <div className="space-y-4">
@@ -458,6 +488,16 @@ const DashboardHeader = () => {
           </motion.div>
         </motion.div>
       )}
+
+
+       {
+        showConnectionModal && (
+          <Connections
+            isOpen={showConnectionModal}
+            onClose={handleCloseConnections}
+          />
+        )
+      }
     </>
   )
 }

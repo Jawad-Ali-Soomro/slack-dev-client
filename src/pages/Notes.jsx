@@ -210,7 +210,7 @@ const Notes = () => {
             animate={{ opacity: 1, y: 0 }}
             className="lg:col-span-1"
           >
-            <div className="rounded-[20px] shadow-xl p-6 sticky top-6">
+            <div className="rounded-[15px] shadow-xl p-6 sticky top-6">
               <div className="space-y-6">
                 {/* File Info Section */}
                 <div>
@@ -342,9 +342,9 @@ const Notes = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="col-span-2 bg-white dark:bg-black rounded-[20px]"
+            className="col-span-2 bg-white dark:bg-black rounded-[15px]"
           >
-            <div className="rounded-[20px] shadow-xl h-full min-h-[600px] overflow-hidden">
+            <div className="rounded-[15px] shadow-xl h-full min-h-[600px] overflow-hidden">
               {/* PDF Editor */}
               <div className="h-full flex flex-col">
                 {/* Editor Header */}

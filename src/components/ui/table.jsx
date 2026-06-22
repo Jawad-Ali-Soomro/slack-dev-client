@@ -12,7 +12,7 @@ function Table({ className, ...props }) {
     >
       <table
         data-slot="table"
-        className={cn("w-full caption-bottom rounded-[50px] text-sm", className)}
+        className={cn("w-full caption-bottom rounded-[15px] text-sm", className)}
         {...props}
       />
     </div>
@@ -23,7 +23,7 @@ function TableHeader({ className, ...props }) {
   return (
     <thead
       data-slot="table-header"
-      className={cn("[&_tr]:border-b border-gray-200 dark:border-gray-700 sticky top-0 z-20 bg-white dark:bg-black", className)}
+      className={cn("[&_tr]:border-b border-gray-200 dark:border-gray-700 sticky top-0 z-20 bg-[#eee] dark:bg-black", className)}
       {...props}
     />
   )
@@ -33,7 +33,7 @@ function TableBody({ className, ...props }) {
   return (
     <tbody
       data-slot="table-body"
-      className={cn("[&_tr:last-child]:border-0", className)}
+      className={cn("[&_tr:last-child]:border-0 bg-white", className)}
       {...props}
     />
   )
@@ -70,7 +70,7 @@ function TableHead({ className, ...props }) {
     <th
       data-slot="table-head"
       className={cn(
-        "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "text-foreground h-10 px-2 text-left align-middle bg-white font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
         className
       )}
       {...props}

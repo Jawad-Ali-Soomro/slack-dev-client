@@ -282,8 +282,8 @@ const UserManagement = () => {
       <div className="mx-auto">
         {/* Header */}
         <div className="flex py-6 gap-3 items-center justify-between fixed z-10 md:-top-3 -top-30 z-10">
-          <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
-            <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
+          <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
+            <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
               <PiUsersDuotone size={15} />
             </div>
             <h1 className="text-2xl font-bold">User Management</h1>
@@ -318,7 +318,7 @@ const UserManagement = () => {
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-full md:w-[500px] bg-white dark:bg-[black] text-black dark:text-white border border-gray-200 dark:border-gray-700 rounded-[10px]"
+                className="pl-10 w-full md:w-[500px] bg-white dark:bg-[black] text-black dark:text-white border border-gray-200 dark:border-gray-700 rounded-[15px]"
               />
             </div>
             <div className="flex gap-3 w-full">
@@ -357,14 +357,13 @@ const UserManagement = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="overflow-x-auto max-h-[700px] overflow-y-auto rounded-[20px] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-            <table className="w-full rounded-[10px] overflow-hidden">
-              <thead className="bg-white text-black rounded-[10px] dark:border-gray-700 sticky top-0 z-10">
+          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+            <table className="w-full rounded-[15px] overflow-hidden">
+              <thead className="bg-white text-black rounded-[15px] dark:border-gray-700 sticky top-0 z-10">
                 <tr className="rounded-t-r-[10px]">
-                  <th className="px-5 py-4 rounded-[10px] text-left text-xs text-black dark:text-black uppercase tracking-wider">User</th>
+                  <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider">User</th>
                   <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider">Role</th>
                   <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider truncate">Email Verification</th>
-                  <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider">Permissions</th>
                   <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider">Joined</th>
                   <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider"></th>
                 </tr>
@@ -384,7 +383,7 @@ const UserManagement = () => {
                           <img
                             {...getAvatarProps(userItem.avatar, userItem.username)}
                             alt={userItem.username}
-                            className="w-8 h-8 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                            className="w-8 h-8 rounded-[15px] object-cover cursor-pointer hover:opacity-80 transition-opacity"
                             onClick={() => handleUserAvatarClick(userItem.id || userItem._id)}
                             title={userItem.username ? `View ${userItem.username}'s profile` : 'View profile'}
                           />
@@ -403,12 +402,6 @@ const UserManagement = () => {
                       </Badge>
                     </td>
                       <td className="px-5 py-2">
-                        <div className="flex items-center gap-2 ">
-                          <Shield className="w-4 h-4 icon icon text-gray-400" />
-                          <span className="text-sm text-gray-600 dark:text-gray-400 truncate ">{getPermissionCount(userItem.permissions)} Permissions</span>
-                        </div>
-                      </td>
-                      <td className="px-5 py-2">
                         <div className="text-sm text-gray-600 dark:text-gray-400">{getJoinedDate(userItem.id || userItem._id, userItem.createdAt)}</div>
                       </td>
                       <td className="px-5 py-2 flex items-center justify-end">
@@ -422,9 +415,9 @@ const UserManagement = () => {
                               <MoreVertical className="w-4 h-4 icon icon" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-[20px]">
+                          <DropdownMenuContent align="end" className="bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 rounded-[15px]">
                             <DropdownMenuItem
-                              className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 h-12 cursor-pointer px-4"
+                              className="text-black dark:text-white rounded-[15px] hover:bg-gray-100 dark:hover:bg-gray-700 h-12 cursor-pointer px-4"
                               onClick={() => handleViewDetails(userItem.id || userItem._id)}
                             >
                               <Eye className="w-4 h-4 icon mr-2 icon" />
@@ -432,7 +425,7 @@ const UserManagement = () => {
                             </DropdownMenuItem>
                             {canAssignRoles && (
                               <DropdownMenuItem
-                                className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 h-12 cursor-pointer px-4"
+                                className="text-black dark:text-white rounded-[15px] hover:bg-gray-100 dark:hover:bg-gray-700 h-12 cursor-pointer px-4"
                                 onClick={() => handleEditRole(userItem)}
                               >
                                 <Edit className="w-4 h-4 icon mr-2 icon" />
@@ -441,7 +434,7 @@ const UserManagement = () => {
                             )}
                             {canUpdateVerification && (
                               <DropdownMenuItem
-                                className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 h-12 cursor-pointer px-4"
+                                className="text-black dark:text-white rounded-[15px] hover:bg-gray-100 dark:hover:bg-gray-700 h-12 cursor-pointer px-4"
                                 onClick={() => handleEditVerification(userItem)}
                               >
                                 <Mail className="w-4 h-4 icon mr-2 icon" />
@@ -449,7 +442,7 @@ const UserManagement = () => {
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuItem
-                              className="text-black dark:text-white rounded-[20px] hover:bg-gray-100 dark:hover:bg-gray-700 h-12 cursor-pointer px-4"
+                              className="text-black dark:text-white rounded-[15px] hover:bg-gray-100 dark:hover:bg-gray-700 h-12 cursor-pointer px-4"
                               onClick={() => window.location.href = `/dashboard/admin/permissions?userId=${userItem.id || userItem._id}`}
                             >
                               <Shield className="w-4 h-4 icon mr-2 icon" />
@@ -505,7 +498,7 @@ const UserManagement = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-gray-800 rounded-[30px] p-6 max-w-md w-full"
+            className="bg-white dark:bg-gray-800 rounded-[15px] p-6 max-w-md w-full"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Create New User</h2>
@@ -563,7 +556,7 @@ const UserManagement = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-gray-800 rounded-[30px] p-6 max-w-md w-full"
+            className="bg-white dark:bg-gray-800 rounded-[15px] p-6 max-w-md w-full"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -605,7 +598,7 @@ const UserManagement = () => {
           <motion.div
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-gray-800 rounded-[30px] p-6 max-w-md w-full"
+            className="bg-white dark:bg-gray-800 rounded-[15px] p-6 max-w-md w-full"
           >
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900 dark:text-white line-clamp-1">

@@ -84,10 +84,10 @@ const DevHub = () => {
           ].map((category, index) => (
             <motion.div
               key={index}
-              className="glass-card p-8 rounded-[10px] text-center"
+              className="glass-card p-8 rounded-[15px] text-center"
               whileHover={{ y: -5 }}
             >
-              <div className="w-[80px] h-[80px] bg-black rounded-[10px] flex items-center justify-center mb-6 mx-auto dark:bg-white">
+              <div className="w-[80px] h-[80px] bg-black rounded-[15px] flex items-center justify-center mb-6 mx-auto dark:bg-white">
                 <div className="w-12 h-12 text-white flex items-center justify-center">
                   {category.icon}
                 </div>
@@ -136,7 +136,7 @@ const DevHub = () => {
             ].map((resource, index) => (
               <motion.div
                 key={index}
-                className="glass-card p-8 rounded-[10px]"
+                className="glass-card p-8 rounded-[15px]"
                 whileHover={{ y: -5 }}
               >
                 <div className="text-sm  text-black  mb-2 dark:text-white">
@@ -152,7 +152,7 @@ const DevHub = () => {
                   <span className="text-xs  text-gray-500 dark:text-gray-400 ">
                     {resource.readTime}
                   </span>
-                  <button className="text-xs  text-white  w-[40px] h-10 bg-black rounded-[10px] flex items-center justify-center dark:bg-white dark:text-black">
+                  <button className="text-xs  text-white  w-[40px] h-10 bg-black rounded-[15px] flex items-center justify-center dark:bg-white dark:text-black">
                     <ArrowRight className="w-4 h-4 icon icon" />
                   </button>
                 </div>
@@ -178,7 +178,7 @@ const DevHub = () => {
             ].map((stat, index) => (
               <motion.div
                 key={index}
-                className="glass-card p-8 rounded-[10px]"
+                className="glass-card p-8 rounded-[15px]"
                 whileHover={{ y: -5 }}
               >
                 <div className="text-4xl  text-black mb-2 dark:text-white">
@@ -204,7 +204,7 @@ const DevHub = () => {
             Start learning, sharing, and building with thousands of developers worldwide
           </p>
           <motion.button 
-            className="px-12 py-4 bg-black text-white rounded-[10px]  text-lg  hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
+            className="px-12 py-4 bg-black text-white rounded-[15px]  text-lg  hover:bg-black transition-colors dark:bg-white dark:text-black dark:hover:bg-gray-200"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >

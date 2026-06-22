@@ -58,7 +58,7 @@ const ShareModal = ({ isOpen, onClose, postId, postTitle, postDescription }) => 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-[10px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+            className="bg-white dark:bg-black rounded-[15px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
@@ -79,9 +79,9 @@ const ShareModal = ({ isOpen, onClose, postId, postTitle, postDescription }) => 
                     type="text"
                     value={postUrl}
                     readOnly
-                    className="flex-1 h-12 rounded-[10px]"
+                    className="flex-1 h-12 rounded-[15px]"
                   />
-                  <Button onClick={handleCopyLink} className="h-12 rounded-[10px] w-12">
+                  <Button onClick={handleCopyLink} className="h-12 rounded-[15px] w-12">
                     <Link className="w-4 h-4 icon icon " />
                     {/* Copy */}
                   </Button>
@@ -91,19 +91,19 @@ const ShareModal = ({ isOpen, onClose, postId, postTitle, postDescription }) => 
               <div>
               
                 <div className="grid grid-cols-2 gap-3">
-                  <Button variant="outline" onClick={shareOnTwitter} className="h-12 rounded-[10px] flex items-center justify-center gap-2">
+                  <Button variant="outline" onClick={shareOnTwitter} className="h-12 rounded-[15px] flex items-center justify-center gap-2">
                     <Twitter className="w-5 h-5 icon text-blue-400" />
                     Twitter
                   </Button>
-                  <Button variant="outline" onClick={shareOnFacebook} className="h-12 rounded-[10px] flex items-center justify-center gap-2">
+                  <Button variant="outline" onClick={shareOnFacebook} className="h-12 rounded-[15px] flex items-center justify-center gap-2">
                     <Facebook className="w-5 h-5 icon text-blue-600" />
                     Facebook
                   </Button>
-                  <Button variant="outline" onClick={shareOnWhatsapp} className="h-12 rounded-[10px] flex items-center justify-center gap-2">
+                  <Button variant="outline" onClick={shareOnWhatsapp} className="h-12 rounded-[15px] flex items-center justify-center gap-2">
                     <BsWhatsapp className="w-5 h-5 icon text-green-500" />
                     WhatsApp
                   </Button>
-                  <Button variant="outline" onClick={shareViaEmail} className="h-12 rounded-[10px] flex items-center justify-center gap-2">
+                  <Button variant="outline" onClick={shareViaEmail} className="h-12 rounded-[15px] flex items-center justify-center gap-2">
                     <Mail className="w-5 h-5 icon text-gray-500" />
                     Email
                   </Button>

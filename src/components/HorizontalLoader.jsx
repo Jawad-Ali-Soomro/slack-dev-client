@@ -15,12 +15,12 @@ const HorizontalLoader = ({
         className="w-full max-w-md"
       >
         {/* Progress Bar Container */}
-        <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mb-4">
+        <div className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-[15px] overflow-hidden mb-4">
           <motion.div
             initial={{ width: 0 }}
             animate={{ width: `${progress}%` }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="h-full bg-gradient-to-r from-gray-500 to-gray-600 rounded-full"
+            className="h-full bg-gradient-to-r from-gray-500 to-gray-600 rounded-[15px]"
           />
         </div>
         

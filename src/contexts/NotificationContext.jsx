@@ -131,12 +131,13 @@ export const NotificationProvider = ({ children }) => {
     })
 
     const notificationType = notification.type || 'info'
-    const title = notification.title || 'New Notification'
     const message = notification.message || ''
-    
+    const title = notification.title || message || 'New Notification'
+    const description = notification.title ? message : ''
+
     if (notificationType === 'message') {
       toast.info(`💬 ${title}`, {
-        description: message,
+        description,
         duration: 5000,
         action: {
           label: 'View',
@@ -148,7 +149,7 @@ export const NotificationProvider = ({ children }) => {
       })
     } else {
       toast.info(title, {
-        description: message,
+        description,
         duration: 5000,
       })
     }

@@ -15,7 +15,8 @@ import {
   Mail,
   Calendar,
   Settings,
-  Check
+  Check,
+  Edit2Icon
 } from 'lucide-react';
 import { Button } from '../../components/ui/button';
 import { Input } from '../../components/ui/input';
@@ -195,8 +196,8 @@ const PermissionsManagement = () => {
       <div className="mx-auto">
         {/* Header - no cards */}
         <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
-        <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
-        <div className="flex p-3 bg-white  dark:bg-gray-800 rounded-full">
+        <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
+        <div className="flex p-3 bg-white  dark:bg-gray-800 rounded-[15px]">
                   <Shield  size={15} />
                   </div>
                   <h1 className="text-2xl font-bold">Permissions Management</h1>
@@ -223,7 +224,7 @@ const PermissionsManagement = () => {
                 placeholder="Search users..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 pr-4 py-3 bg-white dark:bg-[black] text-black dark:text-white border border-gray-200 dark:border-gray-700 w-full md:w-[500px] rounded-[10px]"
+                className="pl-10 pr-4 py-3 bg-white dark:bg-[black] text-black dark:text-white border border-gray-200 dark:border-gray-700 w-full md:w-[500px] rounded-[15px]"
               />
             </div>
             <div className="flex items-center w-full sm:w-auto">
@@ -232,7 +233,7 @@ const PermissionsManagement = () => {
                 onValueChange={setRoleFilter}
                 disabled={!canFilterByRole}
               >
-                <SelectTrigger className="md:w-44 w-full sm:w-44 h-12 px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[black] rounded-[10px] disabled:opacity-60 disabled:cursor-not-allowed">
+                <SelectTrigger className="md:w-44 w-full sm:w-44 h-12 px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[black] rounded-[15px] disabled:opacity-60 disabled:cursor-not-allowed">
                   <SelectValue placeholder="Filter by role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -252,8 +253,8 @@ const PermissionsManagement = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="overflow-x-auto max-h-[600px] overflow-y-auto rounded-[20px] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-            <table className="w-full rounded-[10px] overflow-hidden">
+          <div className="overflow-x-auto max-h-[600px] overflow-y-auto rounded-[15px] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+            <table className="w-full rounded-[15px] overflow-hidden">
               <thead className="bg-white text-black dark:border-gray-700 sticky top-0 z-10">
                 <tr>
                   <th className="px-5 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">User</th>
@@ -271,7 +272,7 @@ const PermissionsManagement = () => {
                         <img
                           {...getAvatarProps(userItem.avatar, userItem.username)}
                           alt={userItem.username}
-                          className="w-8 h-8 rounded-full object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                          className="w-8 h-8 rounded-[15px] object-cover cursor-pointer hover:opacity-80 transition-opacity"
                           onClick={() => handleUserAvatarClick(userItem.id || userItem._id)}
                           title={userItem.username ? `View ${userItem.username}'s profile` : 'View profile'}
                         />
@@ -305,14 +306,12 @@ const PermissionsManagement = () => {
                     </td>
                     <td className="px-5 py-2 flex items-center justify-end pr-5">
                       <div className="flex items-center gap-2">
-                        <Button size="sm" className={'w-45 flex gap-5 bg-blue-600 text-white hover:text-blue-600'} onClick={() => handleEditPermissions(userItem)}>
-                <Edit className="w-4 h-4 icon icon icon" />
-                Edit Permissions
+                        <Button variant={'default'} size="sm" className={'w-12 justify-center  bg-blue-600 hover:bg-blue-600 text-white'} onClick={() => handleEditPermissions(userItem)}>
+                <Edit2Icon className="w-4 h-4 icon " />
                         </Button>
                         {userItem.permissions && (
-                          <Button cla size="sm" onClick={() => handleDeletePermissions(userItem.id)} className="bg-red-600 text-white w-45 flex gap-5 hover:text-red-700">
-                            <X className="w-4 h-4 icon icon" />
-                            Revoke Permissions
+                          <Button size="sm" onClick={() => handleDeletePermissions(userItem.id)} className="bg-red-600 hover:bg-red-600 text-white w-12 justify-center ">
+                            <X className="w-4 h-4  icon" />
                           </Button>
                         )}
                       </div>
@@ -330,7 +329,7 @@ const PermissionsManagement = () => {
             <motion.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white dark:bg-gray-800 rounded-[30px] p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+              className="bg-white dark:bg-gray-800 rounded-[15px] p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
 
             >
               <div className="flex items-center justify-between mb-6" onClick={(e) => e.stopPropagation()}>

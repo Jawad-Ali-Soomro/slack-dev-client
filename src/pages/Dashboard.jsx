@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import HorizontalLoader from "../components/HorizontalLoader";
+import DashboardSkeleton, { GithubReposSkeleton } from "../components/dashboard/DashboardSkeleton";
 import { usePermissions } from "../hooks/usePermissions";
 import ReactECharts from "echarts-for-react";
 import {
@@ -11,6 +11,20 @@ import {
   Video,
   LayoutDashboard,
   Calendar as CalendarIcon,
+  Github,
+  Key,
+  LockKeyhole,
+  LockKeyholeOpen,
+  MoreHorizontal,
+  ChevronRight,
+  FolderGit2,
+  ExternalLink,
+  Clock,
+  CircleDot,
+  AlertCircle,
+  CalendarDays,
+  XCircle,
+  PlusCircle,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import UserDetailsModal from "../components/UserDetailsModal";
@@ -20,9 +34,13 @@ import projectService from "../services/projectService";
 import { toast } from "sonner";
 import StatsCard from "../components/StatsCard";
 import { Button } from "@/components/ui/button";
+import useGithubRepos, { connectGithub } from "@/hooks/useGithubRepos";
+import { RiDashboard2Line } from "react-icons/ri";
+import { BiKey, BiLogoInternetExplorer } from "react-icons/bi";
+import { GoBrowser } from "react-icons/go";
+import CreateTaskModal from "../components/CreateTaskModal";
+import LanguageIcon from "@/components/Languages";
 const Dashboard = () => {
-
-  
   document.title = "Dashboard";
   const { user } = useAuth();
   const { permissions } = usePermissions();
@@ -50,6 +68,13 @@ const Dashboard = () => {
     completedProjects: 0,
     averageProgress: 0,
   });
+
+  const {
+    githubData,
+    repos: githubReposRaw,
+    loading: githubLoading,
+    isGithubConnected,
+  } = useGithubRepos();
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [meetings, setMeetings] = useState([]);
@@ -59,11 +84,32 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [calendarMonth, setCalendarMonth] = useState(new Date());
+  const [showAllRepos, setShowAllRepos] = useState(false);
+  const [taskRepoModal, setTaskRepoModal] = useState(null);
 
-  const startOfMonth = (date) => new Date(date.getFullYear(), date.getMonth(), 1);
-  const endOfMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0);
-  const addMonths = (date, months) => new Date(date.getFullYear(), date.getMonth() + months, 1);
-  const isSameDay = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+  const handleCreateTaskFromRepo = (repo) => {
+    if (!permissions.canCreateTask) {
+      toast.error(
+        "You do not have permission to create tasks. Contact an admin.",
+      );
+      return;
+    }
+    setTaskRepoModal({
+      repoId: String(repo.id),
+      repoName: repo.name,
+    });
+  };
+
+  const startOfMonth = (date) =>
+    new Date(date.getFullYear(), date.getMonth(), 1);
+  const endOfMonth = (date) =>
+    new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  const addMonths = (date, months) =>
+    new Date(date.getFullYear(), date.getMonth() + months, 1);
+  const isSameDay = (a, b) =>
+    a.getFullYear() === b.getFullYear() &&
+    a.getMonth() === b.getMonth() &&
+    a.getDate() === b.getDate();
   const getMonthDaysGrid = (monthDate) => {
     const start = startOfMonth(monthDate);
     const end = endOfMonth(monthDate);
@@ -79,28 +125,31 @@ const Dashboard = () => {
     return days;
   };
 
-  const getEventsForDate = useCallback((date) => {
-    if (!date) return { tasks: [], meetings: [], total: 0 };
-    
-    const dateStr = date.toDateString();
-    const dayTasks = tasks.filter((task) => {
-      if (!task.dueDate) return false;
-      const taskDate = new Date(task.dueDate);
-      return taskDate.toDateString() === dateStr;
-    });
-    
-    const dayMeetings = meetings.filter((meeting) => {
-      if (!meeting.startDate) return false;
-      const meetingDate = new Date(meeting.startDate);
-      return meetingDate.toDateString() === dateStr;
-    });
-    
-    return {
-      tasks: dayTasks,
-      meetings: dayMeetings,
-      total: dayTasks.length + dayMeetings.length
-    };
-  }, [tasks, meetings]);
+  const getEventsForDate = useCallback(
+    (date) => {
+      if (!date) return { tasks: [], meetings: [], total: 0 };
+
+      const dateStr = date.toDateString();
+      const dayTasks = tasks.filter((task) => {
+        if (!task.dueDate) return false;
+        const taskDate = new Date(task.dueDate);
+        return taskDate.toDateString() === dateStr;
+      });
+
+      const dayMeetings = meetings.filter((meeting) => {
+        if (!meeting.startDate) return false;
+        const meetingDate = new Date(meeting.startDate);
+        return meetingDate.toDateString() === dateStr;
+      });
+
+      return {
+        tasks: dayTasks,
+        meetings: dayMeetings,
+        total: dayTasks.length + dayMeetings.length,
+      };
+    },
+    [tasks, meetings],
+  );
 
   const loadDashboardData = useCallback(async () => {
     try {
@@ -154,27 +203,27 @@ const Dashboard = () => {
 
       const totalTasks = userTasks.length;
       const completedTasks = userTasks.filter(
-        (task) => task.status === "completed"
+        (task) => task.status === "completed",
       ).length;
       const pendingTasks = userTasks.filter(
-        (task) => task.status === "pending"
+        (task) => task.status === "pending",
       ).length;
       const inProgressTasks = userTasks.filter(
-        (task) => task.status === "in_progress"
+        (task) => task.status === "in_progress",
       ).length;
       const overdueTasks = userTasks.filter(
         (task) =>
           task.dueDate &&
           new Date(task.dueDate) < now &&
-          task.status !== "completed"
+          task.status !== "completed",
       ).length;
 
       const tasksThisWeek = userTasks.filter(
-        (task) => new Date(task.createdAt) >= oneWeekAgo
+        (task) => new Date(task.createdAt) >= oneWeekAgo,
       ).length;
 
       const tasksThisMonth = userTasks.filter(
-        (task) => new Date(task.createdAt) >= oneMonthAgo
+        (task) => new Date(task.createdAt) >= oneMonthAgo,
       ).length;
 
       const completionRate =
@@ -182,24 +231,24 @@ const Dashboard = () => {
 
       const totalMeetings = userMeetings.length;
       const scheduledMeetings = userMeetings.filter(
-        (meeting) => meeting.status === "scheduled"
+        (meeting) => meeting.status === "scheduled",
       ).length;
       const completedMeetings = userMeetings.filter(
-        (meeting) => meeting.status === "completed"
+        (meeting) => meeting.status === "completed",
       ).length;
       const cancelledMeetings = userMeetings.filter(
-        (meeting) => meeting.status === "cancelled"
+        (meeting) => meeting.status === "cancelled",
       ).length;
       const pendingMeetings = userMeetings.filter(
-        (meeting) => meeting.status === "pending"
+        (meeting) => meeting.status === "pending",
       ).length;
 
       const meetingsThisWeek = userMeetings.filter(
-        (meeting) => new Date(meeting.createdAt) >= oneWeekAgo
+        (meeting) => new Date(meeting.createdAt) >= oneWeekAgo,
       ).length;
 
       const meetingsThisMonth = userMeetings.filter(
-        (meeting) => new Date(meeting.createdAt) >= oneMonthAgo
+        (meeting) => new Date(meeting.createdAt) >= oneMonthAgo,
       ).length;
 
       const meetingCompletionRate =
@@ -248,12 +297,24 @@ const Dashboard = () => {
     }
   }, [user, loadDashboardData]);
 
-  const statusData = useMemo(() => [
-    { name: "Deployed", value: stats.completedTasks, color: "#10B981" },
-    { name: "In Development", value: stats.inProgressTasks, color: "#3B82F6" },
-    { name: "Backlog", value: stats.pendingTasks, color: "#F59E0B" },
-    { name: "Blocked", value: stats.overdueTasks, color: "#EF4444" },
-  ], [stats.completedTasks, stats.inProgressTasks, stats.pendingTasks, stats.overdueTasks]);
+  const statusData = useMemo(
+    () => [
+      { name: "Deployed", value: stats.completedTasks, color: "#10B981" },
+      {
+        name: "In Development",
+        value: stats.inProgressTasks,
+        color: "#3B82F6",
+      },
+      { name: "Backlog", value: stats.pendingTasks, color: "#F59E0B" },
+      { name: "Blocked", value: stats.overdueTasks, color: "#EF4444" },
+    ],
+    [
+      stats.completedTasks,
+      stats.inProgressTasks,
+      stats.pendingTasks,
+      stats.overdueTasks,
+    ],
+  );
 
   const nightingaleOption = useMemo(() => {
     const chartData = statusData.map((item) => ({
@@ -265,7 +326,7 @@ const Dashboard = () => {
       selected: item.name === "Deployed", // Highlight "Deployed"
     }));
 
-    const filteredData = chartData.filter(item => item.value > 0);
+    const filteredData = chartData.filter((item) => item.value > 0);
 
     return {
       tooltip: {
@@ -351,152 +412,199 @@ const Dashboard = () => {
 
   const weeklyData = getWeeklyData();
 
-  const meetingStatusData = useMemo(() => [
-    { name: "Scheduled", value: stats.scheduledMeetings, color: "#3B82F6" },
-    { name: "Concluded", value: stats.completedMeetings, color: "#10B981" },
-    { name: "Draft", value: stats.pendingMeetings, color: "#F59E0B" },
-    { name: "Cancelled", value: stats.cancelledMeetings, color: "#EF4444" },
-  ], [stats.scheduledMeetings, stats.completedMeetings, stats.pendingMeetings, stats.cancelledMeetings]);
+  const weeklyMeetingsList = useMemo(() => {
+    const now = new Date();
+    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    oneWeekAgo.setHours(0, 0, 0, 0);
 
-  const meetingStatusOption = useMemo(() => {
-    const chartData = meetingStatusData.map((item) => ({
-      value: item.value || 0,
-      name: item.name,
-      itemStyle: {
-        color: item.color,
+    return meetings.filter((meeting) => {
+      const dateValue = meeting.startDate || meeting.createdAt;
+      if (!dateValue) return false;
+      const date = new Date(dateValue);
+      return date >= oneWeekAgo && date <= now;
+    });
+  }, [meetings]);
+
+  const meetingStatusData = useMemo(
+    () => [
+      {
+        name: "Scheduled",
+        value: weeklyMeetingsList.filter((m) => m.status === "scheduled").length,
+        color: "#3B82F6",
       },
-      selected: item.name === "Scheduled", // Highlight "Scheduled"
-    }));
-
-    const filteredData = chartData.filter(item => item.value > 0);
-
-    return {
-      tooltip: {
-        trigger: "item",
-        formatter: "{b}: {c} ({d}%)",
-        backgroundColor: "rgba(0, 0, 0, 0.8)",
-        borderColor: "transparent",
-        textStyle: {
-          color: "#fff",
-        },
-        borderRadius: 15,
-        padding: [10, 15],
+      {
+        name: "Concluded",
+        value: weeklyMeetingsList.filter((m) => m.status === "completed").length,
+        color: "#10B981",
       },
-      legend: {
-        show: false,
+      {
+        name: "Draft",
+        value: weeklyMeetingsList.filter((m) => m.status === "pending").length,
+        color: "#F59E0B",
       },
-      series: [
-        {
-          name: "Meeting Status",
-          type: "pie",
-          radius: ["40%", "70%"],
-          center: ["50%", "50%"],
-          avoidLabelOverlap: false,
-          selectedMode: "single",
-          selectedOffset: 8,
-          itemStyle: {
-            borderRadius: 8,
-            borderColor: "#fff",
-            borderWidth: 2,
-          },
-          label: {
-            show: true,
-            formatter: "{b}\n{d}%",
-            fontSize: 12,
-            fontWeight: "bold",
-          },
-          emphasis: {
-            itemStyle: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: "rgba(0, 0, 0, 0.5)",
-            },
-            scale: true,
-            scaleSize: 5,
-          },
-          data: filteredData.length > 0 ? filteredData : chartData,
-        },
-      ],
-    };
-  }, [meetingStatusData]);
+      {
+        name: "Cancelled",
+        value: weeklyMeetingsList.filter((m) => m.status === "cancelled").length,
+        color: "#EF4444",
+      },
+    ],
+    [weeklyMeetingsList],
+  );
 
-  const projectStatusData = useMemo(() => [
-    { name: "Active", value: stats.activeProjects, color: "#10B981" },
-    {
-      name: "Planning",
-      value: projects.filter((project) => project.status === "planning").length,
-      color: "#3B82F6",
+  function createPattern() {
+    const canvas = document.createElement("canvas");
+    canvas.width = 10;
+    canvas.height = 10;
+
+    const ctx = canvas.getContext("2d");
+
+    ctx.strokeStyle = "#BDBDBD";
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.moveTo(0, 10);
+    ctx.lineTo(10, 0);
+    ctx.stroke();
+
+    return canvas;
+  }
+ const meetingStatusOption = useMemo(() => {
+  const dayLabels = [];
+  const weeklyMeetings = [];
+
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    date.setHours(0, 0, 0, 0);
+
+    dayLabels.push(
+      date.toLocaleDateString("en-US", { weekday: "short" }).slice(0, 1),
+    );
+
+    const count = weeklyMeetingsList.filter((meeting) => {
+      const meetingDate = new Date(meeting.startDate || meeting.createdAt);
+      return meetingDate.toDateString() === date.toDateString();
+    }).length;
+
+    weeklyMeetings.push(count);
+  }
+
+  const maxValue = Math.max(...weeklyMeetings, 1);
+
+  return {
+    grid: {
+      left: "3%",
+      right: "3%",
+      bottom: "8%",
+      top: "8%",
+      containLabel: true,
     },
-    { name: "Completed", value: stats.completedProjects, color: "#6B7280" },
-    {
-      name: "On Hold",
-      value: projects.filter((project) => project.status === "on_hold").length,
-      color: "#F59E0B",
+
+    tooltip: {
+      trigger: "item",
+      formatter: "{c} meetings",
     },
-  ], [stats.activeProjects, stats.completedProjects, projects]);
 
-  const projectStatusOption = useMemo(() => {
-    const chartData = projectStatusData.map((item) => ({
-      value: item.value || 0,
-      name: item.name,
-      itemStyle: {
-        color: item.color,
+    xAxis: {
+      type: "category",
+      data: dayLabels,
+      axisTick: { show: false },
+      axisLine: { show: false },
+      axisLabel: {
+        color: "#777",
+        fontSize: 12,
       },
-      selected: item.name === "Active", // Highlight "Active"
-    }));
+    },
 
-    const filteredData = chartData.filter(item => item.value > 0);
-
-    return {
-      tooltip: {
-        trigger: "item",
-        formatter: "{b}: {c} ({d}%)",
-        backgroundColor: "rgba(0, 0, 0, 0.8)",
-        borderColor: "transparent",
-        textStyle: {
-          color: "#fff",
+    yAxis: {
+      type: "value",
+      minInterval: 1,
+      lineStyle: {
+        axisLine: {
+           color: "#9CA3AF",
+        }
+      }, splitLine: {
+          lineStyle: {
+            color: "#9CA3AF",
+            opacity: 0.3,
+            type: "dashed",
+          },
         },
-        borderRadius: 15,
-        padding: [10, 15],
-      },
-      legend: {
-        show: false,
-      },
-      series: [
-        {
-          name: "Project Status",
-          type: "pie",
-          radius: ["30%", "60%"],
-          center: ["50%", "50%"],
-          avoidLabelOverlap: false,
-          selectedMode: "single",
-          selectedOffset: 8,
+    },
+
+    series: [
+      {
+        type: "bar",
+        barWidth: "60%",
+        barMaxWidth: 80,
+
+        data: weeklyMeetings.map((value) => ({
+          value,
           itemStyle: {
-            borderRadius: 6,
-            borderColor: "#fff",
-            borderWidth: 2,
+            color: value === maxValue ? "#ff914b" : "#e8772e",
+            borderRadius: 40,
           },
-          label: {
-            show: true,
-            formatter: "{b}\n{d}%",
-            fontSize: 11,
-            fontWeight: "bold",
-          },
-          emphasis: {
-            itemStyle: {
-              shadowBlur: 10,
-              shadowOffsetX: 0,
-              shadowColor: "rgba(0, 0, 0, 0.5)",
-            },
-            scale: true,
-            scaleSize: 5,
-          },
-          data: filteredData.length > 0 ? filteredData : chartData,
-        },
-      ],
-    };
-  }, [projectStatusData]);
+        })),
+      },
+    ],
+  };
+}, [weeklyMeetingsList]);
+  const projectStatusData = useMemo(
+    () => [
+      { name: "Active", value: stats.activeProjects, color: "#10B981" },
+      {
+        name: "Planning",
+        value: projects.filter((project) => project.status === "planning")
+          .length,
+        color: "#3B82F6",
+      },
+      { name: "Completed", value: stats.completedProjects, color: "#6B7280" },
+      {
+        name: "On Hold",
+        value: projects.filter((project) => project.status === "on_hold")
+          .length,
+        color: "#F59E0B",
+      },
+    ],
+    [stats.activeProjects, stats.completedProjects, projects],
+  );
 
+  const recentTasks = useMemo(() => {
+    if (!tasks?.length) return [];
+    const sorted = [...tasks].sort((a, b) => {
+      const dateA = a.dueDate ? new Date(a.dueDate) : new Date(a.createdAt || 0);
+      const dateB = b.dueDate ? new Date(b.dueDate) : new Date(b.createdAt || 0);
+      return dateA - dateB;
+    });
+    return sorted.slice(0, 5);
+  }, [tasks]);
+
+  const recentMeetings = useMemo(() => {
+    if (!meetings?.length) return [];
+    const sorted = [...meetings].sort((a, b) => {
+      const dateA = a.startDate ? new Date(a.startDate) : new Date(a.createdAt || 0);
+      const dateB = b.startDate ? new Date(b.startDate) : new Date(b.createdAt || 0);
+      return dateA - dateB;
+    });
+    return sorted.slice(0, 5);
+  }, [meetings]);
+
+  const githubRepos = useMemo(() => {
+    return githubReposRaw ?? [];
+  }, [githubReposRaw]);
+
+  const displayedRepos = showAllRepos ? githubRepos : githubRepos.slice(0, 5);
+  const hasMoreRepos = githubRepos.length > 5;
+
+  const completionRate = useMemo(() => {
+    if (!projects?.length) return 0;
+  
+    const completed = projects.filter(p => p.status === "completed").length;
+  
+    return Math.round((completed / projects.length) * 100);
+  }, [projects]);
+
+  
   const weeklyActivityOption = useMemo(() => {
     return {
       tooltip: {
@@ -537,6 +645,7 @@ const Dashboard = () => {
       },
       yAxis: {
         type: "value",
+        minInterval: 1,
         axisLine: {
           lineStyle: {
             color: "#9CA3AF",
@@ -561,10 +670,10 @@ const Dashboard = () => {
           smooth: true,
           lineStyle: {
             width: 3,
-            color: "#3B82F6",
+            color: "#ff914b",
           },
           itemStyle: {
-            color: "#3B82F6",
+            color: "#ff914b",
           },
           symbol: "circle",
           symbolSize: 6,
@@ -591,10 +700,10 @@ const Dashboard = () => {
           smooth: true,
           lineStyle: {
             width: 3,
-            color: "#8B5CF6",
+            color: "#e8772e",
           },
           itemStyle: {
-            color: "#8B5CF6",
+            color: "#e8772e",
           },
           symbol: "circle",
           symbolSize: 6,
@@ -604,396 +713,310 @@ const Dashboard = () => {
   }, [weeklyData]);
 
   if (loading) {
-    return (
-      <HorizontalLoader 
-        message="Loading your dashboard..."
-        subMessage="Preparing your workspace"
-        progress={75}
-        className="min-h-screen"
-      />
-    );
+    return <DashboardSkeleton />;
   }
 
+  const quickPills = [
+    { label: "System Status", value: "All Systems Active", variant: "theme" },
+    { label: "Tasks This Week", value: `${stats.tasksThisWeek} new`, variant: "green" },
+    { label: "Completion Rate", value: `${stats.completionRate}%`, variant: "orange" },
+    { label: "Active Projects", value: `${stats.activeProjects} running`, variant: "neutral" },
+  ];
+
   return (
-    <div className="min-h-screen ambient-light pt-10">
+    <div className="dashboard-page min-h-screen pt-6 md:pt-10">
       <div className="mx-auto">
-        <div className="mb-16">
-          <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30">
-            <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[50px]">
-              <div className="flex p-3 bg-white dark:bg-gray-800 rounded-full">
-                <LayoutDashboard size={15} />
+        <div className="mb-8">
+          <div className="dashboard-page-header">
+            <div className="dashboard-welcome">
+              <div className="dashboard-welcome__icon">
+                <RiDashboard2Line size={22} />
               </div>
-              <h1 className="text-2xl font-bold">Dashboard</h1>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white">
+                  Dashboard
+                </h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mt-0.5">
+                  Welcome back, {user?.username || "Developer"}
+                </p>
+              </div>
             </div>
           </div>
 
-            {/* Quick stats bar */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="grid grid-cols-1 md:grid-cols-4 gap-4"
-            >
-              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-purple-200 dark:border-gray-700">
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3  bg-purple-500 rounded-full animate-pulse"></div>
-                  <div>
-                    <p className="text-xs font-medium text-purple-600 dark:text-purple-400  tracking-wide">
-                      System Status
-                    </p>
-                    <p className="text-sm  text-purple-800 dark:text-purple-200">
-                      All Systems Active
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-green-200 dark:border-gray-700">
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3  bg-green-500 rounded-full animate-pulse"></div>
-                  <div>
-                    <p className="text-xs font-medium text-green-600 dark:text-green-400  tracking-wide">
-                      Last Updated
-                    </p>
-                    <p className="text-sm  text-green-800 dark:text-green-200">
-                      Updated Just now
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-orange-200 dark:border-gray-700">
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3  bg-orange-500 rounded-full animate-pulse"></div>
-                  <div>
-                    <p className="text-xs font-medium text-orange-600 dark:text-orange-400  tracking-wide">
-                      Performance
-                    </p>
-                    <p className="text-sm  text-orange-800 dark:text-orange-200">
-                      Excellent Performance
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[30px] p-4 border border-blue-200 dark:border-gray-700">
-                <div className="flex items-center space-x-3">
-                  <div className="w-3 h-3  bg-blue-500 rounded-full animate-pulse"></div>
-                  <div>
-                    <p className="text-xs font-medium text-blue-600 dark:text-blue-400  tracking-wide">
-                      Sync Status
-                    </p>
-                    <p className="text-sm  text-blue-800 dark:text-blue-200">
-                      Real Time Synchronization
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div className="card-glow">
-              <StatsCard
-                title="Active Tasks"
-                value={stats.totalTasks}
-                icon={Target}
-                color="neutral"
-                subtitle="Currently in progress"
-                delay={0.1}
-              />
-            </div>
-            <div className="card-glow">
-              <StatsCard
-                title="Completed"
-                value={stats.completedTasks}
-                icon={CheckCircle}
-                color="neutral"
-                trend="up"
-                trendValue={stats.completionRate}
-                subtitle="Successfully delivered"
-                delay={0.2}
-              />
-            </div>
-            <div className="card-glow">
-              <StatsCard
-                title="Team Meetings"
-                value={stats.totalMeetings}
-                icon={Video}
-                color="neutral"
-                subtitle="Collaboration sessions"
-                delay={0.3}
-              />
-            </div>
-            <div className="card-glow">
-              <StatsCard
-                title="Active Projects"
-                value={stats.activeProjects}
-                icon={Activity}
-                color="neutral"
-                subtitle="Currently running"
-                delay={0.4}
-              />
-            </div>
-          </div>
-
-
-          {/* Analytics Dashboard */}
+          {/* Quick stats bar */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.6 }}
-            className="mb-12 overflow-hidden ambient-section"
+            transition={{ delay: 0.1 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-3"
           >
-           
-
-            {/* Weekly Activity Chart */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.3 }}
-              className="mt-10"
-            >
-              <div className="rounded-[30px] hidden md:block">
-                <div className="flex items-center justify-end py-10 mb-6">
-                
-                  <div className="flex items-center space-x-4">
-                    <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3  bg-blue-500 dark:bg-blue-400 rounded-full"></div>
-                      <span className="text-sm text-blue-600 dark:text-blue-400">Tasks</span>
+            {quickPills.map((pill) => (
+              <div
+                key={pill.label}
+                className={`dashboard-pill ${pill.variant === "theme" ? "dashboard-pill--theme" : ""}`}
+              >
+                <div
+                  className="dashboard-pill__dot"
+                  style={{
+                    background:
+                      pill.variant === "green"
+                        ? "#10b981"
+                        : pill.variant === "orange"
+                          ? "var(--theme-accent)"
+                          : pill.variant === "theme"
+                            ? "var(--theme-accent)"
+                            : "#6b7280",
+                  }}
+                />
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    {pill.label}
+                  </p>
+                  <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                    {pill.value}
+                  </p>
+                </div>
               </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-3 h-3  bg-green-500 dark:bg-green-400 rounded-full"></div>
-                      <span className="text-sm text-green-600 dark:text-green-400">Meetings</span>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                        <div className="w-3 h-3  bg-purple-500 dark:bg-purple-400 rounded-full"></div>
-                      <span className="text-sm text-purple-600 dark:text-purple-400">Projects</span>
-                    </div>
+            ))}
+          </motion.div>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="card-glow">
+            <StatsCard
+              title="Active Tasks"
+              value={stats.totalTasks}
+              icon={Target}
+              color="orange"
+              subtitle="Currently in progress"
+              delay={0.1}
+            />
+          </div>
+          <div className="card-glow">
+            <StatsCard
+              title="Completed"
+              value={stats.completedTasks}
+              icon={CheckCircle}
+              color="neutral"
+              trend="up"
+              trendValue={stats.completionRate}
+              subtitle="Successfully delivered"
+              delay={0.2}
+            />
+          </div>
+          <div className="card-glow">
+            <StatsCard
+              title="Team Meetings"
+              value={stats.totalMeetings}
+              icon={Video}
+              color="neutral"
+              subtitle="Collaboration sessions"
+              delay={0.3}
+            />
+          </div>
+          <div className="card-glow">
+            <StatsCard
+              title="Active Projects"
+              value={stats.activeProjects}
+              icon={Activity}
+              color="neutral"
+              subtitle="Currently running"
+              delay={0.4}
+            />
+          </div>
+        </div>
+        <div className="flex flex-col md:flex-row gap-5">
+          <div className="flex flex-col w-[100%] lg:w-[60%]">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.9, duration: 0.6 }}
+              className="mb-8 overflow-hidden"
+            >
+              {/* Weekly Activity Chart */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="dashboard-card p-6 hidden md:block"
+              >
+                <div className="dashboard-section-title mb-6">
+                  <div className="dashboard-section-icon">
+                    <Activity className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-black text-gray-900 dark:text-white">Weekly Activity</h4>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Tasks, meetings & projects over 7 days</p>
                   </div>
                 </div>
                 <div style={{ width: "100%", height: "400px" }}>
-                  <ReactECharts
-                    option={weeklyActivityOption}
-                    style={{ height: "100%", width: "100%" }}
-                    opts={{ renderer: "svg" }}
-                    notMerge={true}
-                    lazyUpdate={true}
-                  />
+                    <ReactECharts
+                      option={weeklyActivityOption}
+                      style={{ height: "100%", width: "100%" }}
+                      opts={{ renderer: "svg" }}
+                      notMerge={true}
+                      lazyUpdate={true}
+                    />
                 </div>
-              </div>
+              </motion.div>
+
+              {/* Status Distribution Charts */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 }}
+                className="grid grid-cols-1 gap-5 mt-5"
+              >
+                {/* Task Status Distribution */}
+                <div className="dashboard-card p-6">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center space-x-3">
+                      <div className="dashboard-section-icon">
+                        <Target className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="text-xl  text-gray-900 dark:text-white font-bold">
+                          Task Status
+                        </h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 font-bold">
+                          Current Task distribution
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl  text-gray-900 dark:text-white">
+                        {stats.totalTasks}
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        Total Tasks
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ width: "100%", height: "300px" }}>
+                    {statusData.some((item) => item.value > 0) ? (
+                      <ReactECharts
+                        option={nightingaleOption}
+                        style={{ height: "100%", width: "100%" }}
+                        opts={{ renderer: "svg" }}
+                        notMerge={true}
+                        lazyUpdate={true}
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
+                        <p>No task data available</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-6">
+                    {statusData.map((item, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1.5 + index * 0.1 }}
+                        className="flex items-center p-3 px-6 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[15px]"
+                      >
+                        <div
+                          className="w-4 h-4 mr-3 rounded-[15px] shadow-sm"
+                          style={{ backgroundColor: item.color }}
+                        ></div>
+                        <div>
+                          <div className="text-sm  text-gray-900 dark:text-white">
+                            {item.value}
+                          </div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400 font-bold">
+                            {item.name}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Meeting Status Distribution */}
+                <div className="dashboard-card p-6">
+                  <div className="flex items-center justify-between mb-8">
+                    <div className="flex items-center space-x-3">
+                      <div className="dashboard-section-icon">
+                        <Video className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="text-xl  text-gray-900 dark:text-white font-bold">
+                          Meeting Status
+                        </h4>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 font-bold">
+                          This week&apos;s meeting distribution
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className="text-2xl  text-gray-900 dark:text-white">
+                        {weeklyMeetingsList.length}
+                      </div>
+                      <div className="text-sm text-gray-500 dark:text-gray-400">
+                        This Week
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ width: "100%", height: "300px" }}>
+                    {meetingStatusData.some((item) => item.value > 0) ? (
+                      <ReactECharts
+                        option={meetingStatusOption}
+                        style={{ height: "100%", width: "100%" }}
+                        opts={{ renderer: "svg" }}
+                        notMerge={true}
+                        lazyUpdate={true}
+                      />
+                    ) : (
+                      <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
+                        <p>No meeting data available</p>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-6">
+                    {meetingStatusData.map((item, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: 1.6 + index * 0.1 }}
+                        className="flex items-center p-3 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] rounded-[15px]"
+                      >
+                        <div
+                          className="w-4 h-4  rounded-[15px] mr-3 shadow-sm"
+                          style={{ backgroundColor: item.color }}
+                        ></div>
+                        <div>
+                          <div className="text-sm  text-gray-900 dark:text-white">
+                            {item.value}
+                          </div>
+                          <div className="text-xs text-gray-600 dark:text-gray-400 font-bold">
+                            {item.name}
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
             </motion.div>
 
-            {/* Status Distribution Charts */}
+            {/* Project Distribution Charts + Calendar */}
+          
+
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.4 }}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-8 pt-8 border-t border-gray-200/50 dark:border-gray-700/50"
+              transition={{ delay: 1.7, duration: 0.6 }}
+              className="mb-20 grid grid-cols-1 items-stretch gap-8"
             >
-              {/* Task Status Distribution */}
-              <div className="backdrop-blur-sm rounded-[30px] p-6 border-gray-300 dark:border-gray-700 border">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[30px]">
-                      <Target className="w-5 h-5  text-white dark:text-gray-800" />
-                    </div>
-                    <div>
-                      <h4 className="text-xl  text-gray-900 dark:text-white font-bold">
-                        Task Status
-                      </h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 font-bold">
-                        Current Task distribution
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl  text-gray-900 dark:text-white">
-                      {stats.totalTasks}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      Total Tasks
-                    </div>
-                  </div>
-                </div>
-                <div style={{ width: "100%", height: "300px" }}>
-                  {statusData.some(item => item.value > 0) ? (
-                    <ReactECharts
-                      option={nightingaleOption}
-                      style={{ height: "100%", width: "100%" }}
-                      opts={{ renderer: "svg" }}
-                      notMerge={true}
-                      lazyUpdate={true}
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
-                      <p>No task data available</p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-6">
-                  {statusData.map((item, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 1.5 + index * 0.1 }}
-                      className="flex items-center p-3 bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
-                    >
-                      <div
-                        className="w-4 h-4 mr-3 rounded-full shadow-sm"
-                        style={{ backgroundColor: item.color }}
-                      ></div>
-                      <div>
-                        <div className="text-sm  text-gray-900 dark:text-white">
-                          {item.value}
-                        </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400 font-bold">
-                          {item.name}
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-
-              {/* Meeting Status Distribution */}
-              <div className="rounded-[30px] p-6 border-gray-300 dark:border-gray-700 border">
-                <div className="flex items-center justify-between mb-8">
-                  <div className="flex items-center space-x-3">
-                    <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[30px]">
-                      <Video className="w-5 h-5  text-white dark:text-gray-800" />
-                    </div>
-                    <div>
-                      <h4 className="text-xl  text-gray-900 dark:text-white font-bold">
-                        Meeting Status
-                      </h4>
-                      <p className="text-sm text-gray-600 dark:text-gray-400 font-bold">
-                        Current Meeting distribution
-                      </p>
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-2xl  text-gray-900 dark:text-white">
-                      {stats.totalMeetings}
-                    </div>
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      Total Meetings
-                    </div>
-                  </div>
-                </div>
-                <div style={{ width: "100%", height: "300px" }}>
-                  {meetingStatusData.some(item => item.value > 0) ? (
-                    <ReactECharts
-                      option={meetingStatusOption}
-                      style={{ height: "100%", width: "100%" }}
-                      opts={{ renderer: "svg" }}
-                      notMerge={true}
-                      lazyUpdate={true}
-                    />
-                  ) : (
-                    <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
-                      <p>No meeting data available</p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-6">
-                  {meetingStatusData.map((item, index) => (
-                    <motion.div
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 1.6 + index * 0.1 }}
-                      className="flex items-center p-3 bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
-                    >
-                      <div
-                        className="w-4 h-4  rounded-[30px] mr-3 shadow-sm"
-                        style={{ backgroundColor: item.color }}
-                      ></div>
-                      <div>
-                        <div className="text-sm  text-gray-900 dark:text-white">
-                          {item.value}
-                        </div>
-                        <div className="text-xs text-gray-600 dark:text-gray-400 font-bold">
-                          {item.name}
-                        </div>
-                      </div>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Project Distribution Charts + Calendar */}
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.7, duration: 0.6 }}
-            className="mb-20 grid grid-cols-1 lg:grid-cols-2 gap-8"
-          >
-            {/* Project Status Distribution */}
-            <div className="mt-10">
-              <div className="p-6 border-gray-300 dark:border-gray-700 border rounded-[30px]">
-              <div className="flex items-center justify-between mb-6">
-                <h4 className="text-lg  text-gray-800 dark:text-gray-200 font-bold">
-                  Project Status Distribution
-                </h4>
-                <div className="text-sm text-gray-500 dark:text-gray-400 font-bold">
-                  {stats.totalProjects} Total Projects
-                </div>
-              </div>
-              <div style={{ width: "100%", height: "300px" }}>
-                {projectStatusData.some(item => item.value > 0) ? (
-                  <ReactECharts
-                    option={projectStatusOption}
-                    style={{ height: "100%", width: "100%" }}
-                    opts={{ renderer: "svg" }}
-                    notMerge={true}
-                    lazyUpdate={true}
-                  />
-                ) : (
-                  <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500">
-                    <p>No project data available</p>
-                  </div>
-                )}
-              </div>
-              <div className="grid md:grid-cols-2 grid-cols-1 gap-3 mt-6">
-                {projectStatusData.map((item, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 1.5 + index * 0.1 }}
-                    className="flex items-center p-3 bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[30px]"
-                  >
-                    <div
-                      className="w-4 h-4  rounded-[30px] mr-3 shadow-sm"
-                      style={{ backgroundColor: item.color }}
-                    ></div>
-                    <div>
-                      <div className="text-sm  text-gray-900 dark:text-white">
-                        {item.value}
-                  </div>
-                      <div className="text-xs text-gray-600 dark:text-gray-400 font-bold">
-                        {item.name}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
-            </div>
-            </div>
-
-            {/* Schedule Calendar */}
-            <div className="mt-10">
-              <div className="rounded-[30px] p-6 border-gray-300 dark:border-gray-700 border dark:bg-[black] shadow-sm">
+              <div className="dashboard-card p-6">
                 {/* Calendar Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-full">
-                      <CalendarIcon className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+                  <div className="dashboard-section-title">
+                    <div className="dashboard-section-icon">
+                      <CalendarIcon className="w-5 h-5" />
                     </div>
                     <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">
                       Calendar
@@ -1006,29 +1029,56 @@ const Dashboard = () => {
                         setSelectedDate(today);
                         setCalendarMonth(today);
                       }}
-                      className="px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      className="px-3 py-1.5 text-xs font-medium rounded-[15px] border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                     >
                       Today
                     </button>
                     <button
-                      onClick={() => setCalendarMonth(addMonths(calendarMonth, -1))}
-                      className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      onClick={() =>
+                        setCalendarMonth(addMonths(calendarMonth, -1))
+                      }
+                      className="p-2 rounded-[15px] border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                       aria-label="Previous month"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 19l-7-7 7-7"
+                        />
                       </svg>
                     </button>
                     <div className="text-sm font-semibold text-gray-800 dark:text-gray-200 min-w-[140px] text-center">
-                      {calendarMonth.toLocaleString('default', { month: 'long' })} {calendarMonth.getFullYear()}
+                      {calendarMonth.toLocaleString("default", {
+                        month: "long",
+                      })}{" "}
+                      {calendarMonth.getFullYear()}
                     </div>
                     <button
-                      onClick={() => setCalendarMonth(addMonths(calendarMonth, 1))}
-                      className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                      onClick={() =>
+                        setCalendarMonth(addMonths(calendarMonth, 1))
+                      }
+                      className="p-2 rounded-[15px] border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                       aria-label="Next month"
                     >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 5l7 7-7 7"
+                        />
                       </svg>
                     </button>
                   </div>
@@ -1036,50 +1086,63 @@ const Dashboard = () => {
 
                 {/* Calendar grid */}
                 <div className="grid grid-cols-7 gap-2 mb-4">
-                  {['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map((d) => (
-                    <div key={d} className="text-xs font-semibold text-gray-500 dark:text-gray-400 text-center py-2">
-                      {d}
-                    </div>
-                  ))}
+                  {["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].map(
+                    (d) => (
+                      <div
+                        key={d}
+                        className="text-xs font-semibold text-gray-500 dark:text-gray-400 text-center py-2"
+                      >
+                        {d}
+                      </div>
+                    ),
+                  )}
                   {getMonthDaysGrid(calendarMonth).map((d, idx) => {
                     const isToday = d && isSameDay(d, new Date());
                     const isSelected = d && isSameDay(d, selectedDate);
-                    const events = d ? getEventsForDate(d) : { tasks: [], meetings: [], total: 0 };
+                    const events = d
+                      ? getEventsForDate(d)
+                      : { tasks: [], meetings: [], total: 0 };
                     const hasEvents = events.total > 0;
-                    
+
                     return (
                       <button
                         key={idx}
                         onClick={() => d && setSelectedDate(d)}
                         className={[
-                          "relative h-14 rounded-xl border flex flex-col items-center justify-center text-sm transition-all duration-200 group",
-                          d ? "border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-md cursor-pointer" : "border-transparent cursor-default",
-                          isToday ? "ring-2 ring-blue-500 dark:ring-blue-400 ring-offset-1" : "",
-                          isSelected 
-                            ? "bg-blue-50 dark:bg-blue-900/30 border-blue-400 dark:border-blue-500 text-blue-700 dark:text-blue-300 font-bold" 
+                          "relative h-12 rounded-xl border flex flex-col items-center justify-center text-sm transition-all duration-200 group",
+                          d
+                            ? "border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-md cursor-pointer"
+                            : "border-transparent cursor-default",
+                          isToday
+                            ? "ring-2 ring-[#ff914b] dark:ring-[#ffb07a] ring-offset-1"
+                            : "",
+                          isSelected
+                            ? "bg-theme-subtle text-black border-[#ff914b] font-bold"
                             : "text-gray-800 dark:text-gray-200",
-                          hasEvents && !isSelected ? "bg-gray-50 dark:bg-gray-800/50" : ""
-                        ].join(' ')}
+                          hasEvents && !isSelected
+                            ? "bg-gray-50 dark:bg-gray-800/50"
+                            : "",
+                        ].join(" ")}
                         disabled={!d}
-                        aria-label={d ? d.toDateString() : 'empty'}
+                        aria-label={d ? d.toDateString() : "empty"}
                       >
                         {d && (
                           <>
-                            <span className={isSelected ? "text-blue-700 dark:text-blue-300" : ""}>
+                            <span className={isSelected ? "f" : ""}>
                               {d.getDate()}
                             </span>
                             {hasEvents && (
                               <div className="flex items-center gap-0.5 mt-0.5">
                                 {events.tasks.length > 0 && (
-                                  <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                                  <div className="w-1.5 h-1.5 rounded-[15px] bg-green-500"></div>
                                 )}
                                 {events.meetings.length > 0 && (
-                                  <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                                  <div className="w-1.5 h-1.5 rounded-full bg-theme"></div>
                                 )}
                               </div>
                             )}
                             {events.total > 2 && (
-                              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">
+                              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-theme text-white text-[10px] font-bold flex items-center justify-center">
                                 {events.total}
                               </span>
                             )}
@@ -1093,63 +1156,325 @@ const Dashboard = () => {
                 {/* Legend */}
                 <div className="flex items-center justify-end gap-4  border-gray-200 dark:border-gray-700">
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                    <span className="text-xs text-gray-600 dark:text-gray-400">Tasks</span>
+                    <div className="w-3 h-3 rounded-[15px] bg-green-500"></div>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">
+                      Tasks
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                    <span className="text-xs text-gray-600 dark:text-gray-400">Meetings</span>
+                    <div className="w-3 h-3 rounded-full bg-theme"></div>
+                    <span className="text-xs text-gray-600 dark:text-gray-400">
+                      Meetings
+                    </span>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="mt-4 flex flex-col sm:flex-row gap-3">
+                <div className="mt-4 flex flex-row gap-3">
                   <Button
+                    variant={"default"}
                     onClick={() => {
                       if (!permissions.canCreateTask) {
-                        toast.error('You do not have permission to create tasks. Contact an admin.');
+                        toast.error(
+                          "You do not have permission to create tasks. Contact an admin.",
+                        );
                         return;
                       }
-                      navigate('/dashboard/tasks', { state: { date: selectedDate.toLocaleDateString('en-CA',  {
-  timeZone: 'Asia/Karachi',
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit'
-}), openModal: true } });
+                      navigate("/dashboard/tasks", {
+                        state: {
+                          date: selectedDate.toLocaleDateString("en-CA", {
+                            timeZone: "Asia/Karachi",
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                          }),
+                          openModal: true,
+                        },
+                      });
                     }}
                     disabled={!permissions.canCreateTask}
-                    className="flex-1 h-12 font-semibold rounded-xl text-sm bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="flex-1 h-14 sm:h-12 font-semibold rounded-xl text-sm bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     <Target className="w-4 h-4" />
                     Schedule Task
                   </Button>
                   <Button
-                  variant={'outline'}
+                    variant={"outline"}
                     onClick={() => {
                       if (!permissions.canCreateMeeting) {
-                        toast.error('You do not have permission to create meetings. Contact an admin.');
+                        toast.error(
+                          "You do not have permission to create meetings. Contact an admin.",
+                        );
                         return;
                       }
-                      navigate('/dashboard/meetings', { state: { date: selectedDate.toLocaleDateString('en-CA',  {
-  timeZone: 'Asia/Karachi',
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit'
-}), openModal: true } });
+                      navigate("/dashboard/meetings", {
+                        state: {
+                          date: selectedDate.toLocaleDateString("en-CA", {
+                            timeZone: "Asia/Karachi",
+                            year: "numeric",
+                            month: "2-digit",
+                            day: "2-digit",
+                          }),
+                          openModal: true,
+                        },
+                      });
                     }}
                     disabled={!permissions.canCreateMeeting}
-                    className="flex-1 h-12 rounded-xl text-sm border-2 border-blue-500 dark:border-blue-400 font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="flex-1 h-14 sm:h-12 rounded-xl text-sm border font-semibold border-[#ff914b] dark:border-[#ffb07a] text-theme dark:text-theme-light hover:bg-theme-subtle transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     <Video className="w-4 h-4" />
                     Schedule Meeting
                   </Button>
                 </div>
               </div>
-            </div>
+            </motion.div>
+          </div>
+          <motion.div className="h-auto flex flex-col gap-5 w-full lg:w-[40%] pb-20">
+            {/* GitHub */}
+            {githubLoading ? (
+              <GithubReposSkeleton />
+            ) : (
+            <motion.div
+              className="dashboard-card p-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 }}
+            >
+              <div className="flex gap-2 items-center justify-between border-b icon border-gray-100 dark:border-[rgba(255,255,255,.1)] pb-4 mb-4">
+                <div className="flex items-center gap-3 min-w-0 icon">
+                  <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gray-100 dark:bg-white/10 overflow-hidden border border-gray-200/50 dark:border-white/10">
+                    {githubData?.profile?.avatar_url ? (
+                      <img
+                        className="w-full h-full object-cover rounded-[10px]"
+                        src={githubData.profile.avatar_url}
+                        alt={githubData?.profile?.login || "GitHub avatar"}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Github className="w-5 h-5 text-gray-400" />
+                      </div>
+                    )}
+                  </div>
+                  <div className="min-w-0">
+                    <h2 className="text-lg font-bold text-gray-900 dark:text-white truncate icon">
+                      {githubData?.profile?.login || "GitHub"}
+                    </h2>
+                  </div>
+                </div>
+              </div>
+              {isGithubConnected && githubRepos.length > 0 ? (
+                <>
+                  <ul className="space-y-2">
+                    {displayedRepos.map((repo) => (
+                      <li key={repo.id ?? repo.full_name ?? repo.name}>
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => navigate(`/dashboard/repos/${repo.id}`)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              navigate(`/dashboard/repos/${repo.id}`);
+                            }
+                          }}
+                          className="flex items-center gap-3 py-2.5 w-full px-3 relative rounded-lg border border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors group cursor-pointer"
+                        >
+                          <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gray-200/80 dark:bg-white/10 flex items-center justify-center">
+                            <FolderGit2 className="w-4 h-4 icon text-gray-600 dark:text-gray-400" />
+                          </div>
+                          <div className="flex gap-2 justify-center items-center min-w-0">
+                            <p className="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-theme">{repo.name}</p>
+                            <p className="text-[10px] uppercase text-gray-500 dark:text-gray-400 truncate flex justify-start gap-2 items-center icon"><span className="px-3 py-1.5 bg-theme text-white rounded-full">{repo.private ? "Private" : "Public"} </span>{<LanguageIcon language={repo.language} />}</p>
+                          </div>
+                          <button
+                            type="button"
+                            className="w-4 h-4 text-gray-400 flex-shrink-0 opacity-0 group-hover:opacity-100 hover:text-theme transition-all absolute right-3"
+                            title={`Create task for ${repo.name}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCreateTaskFromRepo(repo);
+                            }}
+                          >
+                            <PlusCircle className="w-4 h-4" />
+                          </button>
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                  {hasMoreRepos && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="w-full mt-4 rounded-lg border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
+                      onClick={() => setShowAllRepos((prev) => !prev)}
+                    >
+                      {showAllRepos ? "Show less" : `Show more (${githubRepos.length - 5} more)`}
+                    </Button>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-6 px-4">
+                  <Github className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    {isGithubConnected
+                      ? "No repositories to show."
+                      : "Connect your GitHub account to see your repositories."}
+                  </p>
+                  {!isGithubConnected && (
+                    <Button
+                      type="button"
+                      onClick={connectGithub}
+                      className="rounded-xl bg-black text-white dark:bg-white dark:text-black"
+                    >
+                      Connect GitHub
+                    </Button>
+                  )}
+                </div>
+              )}
+            </motion.div>
+            )}
+
+            {/* Recent Tasks */}
+            <motion.div
+              className="dashboard-card p-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5 }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="dashboard-section-icon !w-8 !h-8 !rounded-lg">
+                    <Target className="w-4 h-4" />
+                  </div>
+                  <h3 className="text-base font-bold text-gray-900 dark:text-white">Recent Tasks</h3>
+                </div>
+                <button type="button" className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-white/10 dark:hover:text-gray-300 transition-colors" aria-label="More options">
+                  <MoreHorizontal className="w-5 h-5" />
+                </button>
+              </div>
+              {recentTasks.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-8 text-gray-400 dark:text-gray-500">
+                  <Target className="w-10 h-10 mb-2 opacity-50" />
+                  <p className="text-sm">No tasks yet</p>
+                </div>
+              ) : (
+                <ul className="space-y-2">
+                  {recentTasks.map((task) => {
+                    const isOverdue = task.dueDate && new Date(task.dueDate) < new Date() && task.status !== "completed";
+                    const status = (task.status || "").toLowerCase();
+                    const StatusIcon = status === "completed" ? CheckCircle : status === "in_progress" ? CircleDot : isOverdue ? AlertCircle : Clock;
+                    const statusColor = status === "completed" ? "text-emerald-500" : status === "in_progress" ? "text-blue-500" : isOverdue ? "text-red-500" : "text-amber-500";
+                    return (
+                      <li
+                        key={task.id || task._id}
+                        className="flex items-center gap-3 py-2.5 px-3 rounded-lg border border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 hover:bg-gray-100/80 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                        onClick={() => navigate("/dashboard/tasks")}
+                      >
+                        <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${status === "completed" ? "bg-emerald-500/10" : status === "in_progress" ? "bg-blue-500/10" : isOverdue ? "bg-red-500/10" : "bg-amber-500/10"}`}>
+                          <StatusIcon className={`w-4 h-4 ${statusColor}`} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{task.title || task.name || "Untitled task"}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            {task.dueDate && (
+                              <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                                <CalendarIcon className="w-3.5 h-3.5 icon" />
+                                {new Date(task.dueDate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full mt-4 rounded-lg border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
+                onClick={() => navigate("/dashboard/tasks")}
+              >
+                Show details
+              </Button>
+            </motion.div>
+
+            {/* Recent Meetings */}
+            <motion.div
+              className="dashboard-card p-6"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.55 }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="dashboard-section-icon !w-8 !h-8 !rounded-lg">
+                    <Video className="w-4 h-4" />
+                  </div>
+                  <h3 className="text-base font-bold text-gray-900 dark:text-white">Recent Meetings</h3>
+                </div>
+                <button type="button" className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-white/10 dark:hover:text-gray-300 transition-colors" aria-label="More options">
+                  <MoreHorizontal className="w-5 h-5" />
+                </button>
+              </div>
+              {recentMeetings.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-8 text-gray-400 dark:text-gray-500">
+                  <Video className="w-10 h-10 mb-2 opacity-50 icon" />
+                  <p className="text-sm">No meetings yet</p>
+                </div>
+              ) : (
+                <ul className="space-y-2">
+                  {recentMeetings.map((meeting) => {
+                    const status = (meeting.status || "").toLowerCase();
+                    const StatusIcon = status === "completed" ? CheckCircle : status === "scheduled" ? CalendarDays : status === "cancelled" ? XCircle : Clock;
+                    const statusColor = status === "completed" ? "text-emerald-500" : status === "scheduled" ? "text-blue-500" : status === "cancelled" ? "text-red-500" : "text-amber-500";
+                    const statusBg = status === "completed" ? "bg-emerald-500/10" : status === "scheduled" ? "bg-blue-500/10" : status === "cancelled" ? "bg-red-500/10" : "bg-amber-500/10";
+                    return (
+                      <li
+                        key={meeting.id || meeting._id}
+                        className="flex items-center gap-3 py-2.5 px-3 rounded-lg border border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 hover:bg-gray-100/80 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                        onClick={() => navigate("/dashboard/meetings")}
+                      >
+                        <div className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${statusBg}`}>
+                          <StatusIcon className={`w-4 h-4 ${statusColor} icon`} />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-gray-900 dark:text-white truncate">{meeting.title || meeting.name || "Untitled meeting"}</p>
+                          <div className="flex items-center gap-2 mt-0.5">
+                            {meeting.startDate && (
+                              <span className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400">
+                                <CalendarIcon className="w-3.5 h-3.5 icon" />
+                                {new Date(meeting.startDate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full mt-4 rounded-lg border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
+                onClick={() => navigate("/dashboard/meetings")}
+              >
+                Show details
+              </Button>
+            </motion.div>
           </motion.div>
         </div>
+      </div>
 
       {/* User Details Modal */}
+      <CreateTaskModal
+        open={!!taskRepoModal}
+        onOpenChange={(open) => !open && setTaskRepoModal(null)}
+        repository={taskRepoModal}
+        onCreated={loadDashboardData}
+      />
       <UserDetailsModal
         userId={selectedUserId}
         isOpen={showUserDetails}
@@ -1163,4 +1488,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-
