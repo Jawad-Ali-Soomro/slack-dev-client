@@ -16,14 +16,38 @@ import { ThemeToggle } from './ThemeToggle'
 import { PiKeyDuotone, PiUserDuotone, PiUsersDuotone } from 'react-icons/pi'
 import { Link, useNavigate } from 'react-router-dom'
 import Connections from './Connections'
+import { Skeleton } from './ui/skeleton'
+import { isUserGithubConnected, getGithubDismissKey } from '@/utils/githubConnection'
 
 const DashboardHeader = () => {
-  const { user, logout } = useAuth()
+  const { user, logout, loading: authLoading, isAuthenticated } = useAuth()
   const [showConnectionModal, setShowConnectionModal] = useState(false)
 
   useEffect(() => {
-     !user?.socialLinks?.github?.id && setShowConnectionModal(true)
-  }, [user])
+    if (authLoading || !isAuthenticated || !user) {
+      setShowConnectionModal(false)
+      return
+    }
+
+    if (isUserGithubConnected(user)) {
+      setShowConnectionModal(false)
+      return
+    }
+
+    const userId = user.id ?? user._id
+    const dismissed =
+      userId && sessionStorage.getItem(getGithubDismissKey(String(userId)))
+
+    setShowConnectionModal(!dismissed)
+  }, [user, authLoading, isAuthenticated])
+
+  const handleCloseConnections = () => {
+    const userId = user?.id ?? user?._id
+    if (userId) {
+      sessionStorage.setItem(getGithubDismissKey(String(userId)), '1')
+    }
+    setShowConnectionModal(false)
+  }
 
   const [showProfileModal, setShowProfileModal] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
@@ -219,11 +243,11 @@ const DashboardHeader = () => {
                   onClick={handleOpenProfileModal}
                   className="relative group"
                 >
-                  <div className="w-12 h-12 p-1 overflow-hidden border rounded-[15px] border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
+                  <div className="w-12 h-12 p-1 cursor-pointer overflow-hidden border rounded-xl border-gray-200 dark:border-gray-900 group-hover:border-black dark:group-hover:border-gray-600 transition-colors">
                     <img
                       {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
                       alt={user?.username || 'User'}
-                      className="w-full h-full rounded-[15px]"
+                      className="w-full h-full rounded-xl"
                     />
                   </div>
                 </button>
@@ -353,8 +377,12 @@ const DashboardHeader = () => {
 
             {/* Profile Form */}
             {loading ? (
-              <div className="flex items-center justify-center py-8 rounded-[15px]">
-                <span className="ml-2 text-gray-500">Loading profile...</span>
+              <div className="flex items-center justify-center flex-col gap-4 py-8 rounded-[15px]">
+                <Skeleton className={'w-10 bg-gray-200 h-10 w-full'} />
+                <Skeleton className={'w-10 bg-gray-200 h-20 w-full'} />
+                <Skeleton className={'w-10 bg-gray-200 h-10 w-full'} />
+                <Skeleton className={'w-10 bg-gray-200 h-10 w-full'} />
+                <Skeleton className={'w-10 bg-gray-200 h-10 w-full'} />
               </div>
             ) : (
               <div className="space-y-4">
@@ -463,7 +491,12 @@ const DashboardHeader = () => {
 
 
        {
-        showConnectionModal && <Connections isOpen={showConnectionModal} onClose={() => setShowConnectionModal(false)} />
+        showConnectionModal && (
+          <Connections
+            isOpen={showConnectionModal}
+            onClose={handleCloseConnections}
+          />
+        )
       }
     </>
   )

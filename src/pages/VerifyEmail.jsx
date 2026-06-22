@@ -1,36 +1,37 @@
 import { useState, useEffect } from "react"
-import { motion } from "framer-motion"
-import { Mail, ArrowLeft, RefreshCw } from "lucide-react"
-import { Link, useNavigate, useSearchParams } from "react-router-dom"
+import { Mail, RefreshCw } from "lucide-react"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import { toast } from "sonner"
 import { authService } from "../services/authService"
+import {
+  AuthLayout,
+  AuthButton,
+  AuthOtpInput,
+} from "../components/auth/AuthLayout"
 
 const VerifyEmail = () => {
-  const [otp, setOtp] = useState(['', '', '', ''])
-  const [email, setEmail] = useState('')
+  const [otp, setOtp] = useState(["", "", "", ""])
+  const [email, setEmail] = useState("")
   const [loading, setLoading] = useState(false)
   const [resendLoading, setResendLoading] = useState(false)
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
 
   useEffect(() => {
+    const storedEmail = localStorage.getItem("verificationEmail")
+    const urlEmail = searchParams.get("email")
+    const token = searchParams.get("token")
 
-    const storedEmail = localStorage.getItem('verificationEmail')
-    const urlEmail = searchParams.get('email')
-    const token = searchParams.get('token')
-    
     if (storedEmail) {
       setEmail(storedEmail)
     } else if (urlEmail) {
       setEmail(urlEmail)
-      localStorage.setItem('verificationEmail', urlEmail)
+      localStorage.setItem("verificationEmail", urlEmail)
     } else if (token) {
-
       handleVerifyWithToken(token)
     } else {
-
-      toast.error('No verification email found')
-      navigate('/login')
+      toast.error("No verification email found")
+      navigate("/login")
     }
   }, [searchParams, navigate])
 
@@ -39,25 +40,25 @@ const VerifyEmail = () => {
       setLoading(true)
       const result = await authService.verifyEmail(email, token)
       if (result.success) {
-        toast.success('Email verified successfully!')
-        localStorage.removeItem('verificationEmail')
-        navigate('/dashboard')
+        toast.success("Email verified successfully!")
+        localStorage.removeItem("verificationEmail")
+        navigate("/dashboard")
       } else {
-        toast.error(result.message || 'Verification failed')
+        toast.error(result.message || "Verification failed")
       }
     } catch (error) {
-      console.error('Token verification error:', error)
-      toast.error('Verification failed')
+      console.error("Token verification error:", error)
+      toast.error("Verification failed")
     } finally {
       setLoading(false)
     }
   }
 
   const handleOtpChange = (index, value) => {
-    if (value.length > 1) return // Prevent multiple characters
-    
+    if (value.length > 1) return
+
     const newOtp = [...otp]
-    newOtp[index] = value
+    newOtp[index] = value.replace(/\D/g, "")
     setOtp(newOtp)
 
     if (value && index < 3) {
@@ -67,7 +68,7 @@ const VerifyEmail = () => {
   }
 
   const handleKeyDown = (index, e) => {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+    if (e.key === "Backspace" && !otp[index] && index > 0) {
       const prevInput = document.getElementById(`otp-${index - 1}`)
       if (prevInput) prevInput.focus()
     }
@@ -75,33 +76,30 @@ const VerifyEmail = () => {
 
   const handleVerify = async () => {
     if (!email) {
-      toast.error('No email found for verification')
+      toast.error("No email found for verification")
       return
     }
 
-    const otpCode = otp.join('')
+    const otpCode = otp.join("")
     if (otpCode.length !== 4) {
-      toast.error('Please enter the complete 4-digit code')
+      toast.error("Please enter the complete 4-digit code")
       return
     }
 
     try {
       setLoading(true)
-      console.log('Verifying email:', email, 'with OTP:', otpCode)
-      
       const result = await authService.verifyEmail(email, otpCode)
-      console.log('Verification result:', result)
-      
+
       if (result.success) {
-        toast.success('Email verified successfully!')
-        localStorage.removeItem('verificationEmail')
-        navigate('/dashboard')
+        toast.success("Email verified successfully!")
+        localStorage.removeItem("verificationEmail")
+        navigate("/dashboard")
       } else {
-        toast.error(result.message || 'Invalid verification code')
+        toast.error(result.message || "Invalid verification code")
       }
     } catch (error) {
-      console.error('Verification error:', error)
-      toast.error(error.message || 'Verification failed')
+      console.error("Verification error:", error)
+      toast.error(error.message || "Verification failed")
     } finally {
       setLoading(false)
     }
@@ -109,7 +107,7 @@ const VerifyEmail = () => {
 
   const handleResendOtp = async () => {
     if (!email) {
-      toast.error('No email found for resending OTP')
+      toast.error("No email found for resending OTP")
       return
     }
 
@@ -117,156 +115,87 @@ const VerifyEmail = () => {
       setResendLoading(true)
       const result = await authService.resendOtp(email)
       if (result.success) {
-        toast.success('Verification code sent to your email')
+        toast.success("Verification code sent to your email")
       } else {
-        toast.error(result.message || 'Failed to resend code')
+        toast.error(result.message || "Failed to resend code")
       }
     } catch (error) {
-      console.error('Resend error:', error)
-      toast.error('Failed to resend verification code')
+      console.error("Resend error:", error)
+      toast.error("Failed to resend verification code")
     } finally {
       setResendLoading(false)
     }
   }
 
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        delayChildren: 0.3,
-        staggerChildren: 0.1
-      }
-    }
-  }
-
-  const itemVariants = {
-    hidden: { y: 20, opacity: 0 },
-    visible: {
-      y: 0,
-      opacity: 1
-    }
-  }
-
   return (
-    <div className="min-h-screen flex items-center justify-center p-6 bg-gray-100 dark:bg-black">
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="floating-orb w-96 h-96 top-10 left-10 opacity-20"></div>
-        <div className="floating-orb w-64 h-64 top-1/3 right-20 opacity-15" style={{animationDelay: '2s'}}></div>
-        <div className="floating-orb w-80 h-80 bottom-20 left-1/4 opacity-20" style={{animationDelay: '4s'}}></div>
+    <AuthLayout
+      title="Verify Your Email"
+      subtitle={
+        <>
+          We sent a 4-digit code to{" "}
+          <span className="text-theme-muted font-bold">
+            {email}
+          </span>
+        </>
+      }
+      backTo="/login"
+      backLabel="Back"
+      badge="Verification"
+      showBrand={true}
+    >
+      <div className="flex justify-center mb-2">
+        <div className="w-14 h-14 rounded-2xl bg-theme-subtle border border-theme-subtle flex items-center justify-center">
+          <Mail className="w-7 h-7 text-theme" />
+        </div>
       </div>
 
-      <motion.div
-        className="w-full max-w-md relative z-10 bg-white dark:bg-[rgba(255,255,255,.1)]"
-        variants={containerVariants}
-        initial="hidden"
-        animate="visible"
-      >
-        {/* Verification Card */}
-        <motion.div
-          variants={itemVariants}
-          className="p-5 md:p-8 md:shadow-2xl md:border-gray-300 md:rounded-[15px] md:dark:border-gray-700 md:border"
+      <div className="space-y-6">
+        <div className="flex justify-center gap-3">
+          {otp.map((digit, index) => (
+            <AuthOtpInput
+              key={index}
+              id={`otp-${index}`}
+              value={digit}
+              onChange={(e) => handleOtpChange(index, e.target.value)}
+              onKeyDown={(e) => handleKeyDown(index, e)}
+            />
+          ))}
+        </div>
+
+        <AuthButton
+          onClick={handleVerify}
+          loading={loading}
+          disabled={otp.join("").length !== 4}
         >
-          {/* Back Button */}
-          <motion.div variants={itemVariants} className="mb-6">
-            <Link 
-              to="/login" 
-              className="flex items-center gap-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors text-sm"
-            >
-              <ArrowLeft className="w-4 h-4 icon icon" />
-            </Link>
-          </motion.div>
+          Verify Email
+        </AuthButton>
 
-          {/* Header */}
-          <div className="text-center mb-8">
-            <motion.div variants={itemVariants} className="mb-4">
-              <div className="w-16 h-16 bg-gray-100 dark:bg-white rounded-[15px] flex items-center justify-center mx-auto">
-                <Mail className="w-8 h-8 text-black icon" />
-              </div>
-            </motion.div>
-            <motion.h1 
-              variants={itemVariants}
-              className="text-3xl  text-gray-900 dark:text-white mb-2"
-              style={{ fontWeight: 800 }}
-            >
-              Verify Your Email
-            </motion.h1>
-            <motion.p 
-              variants={itemVariants}
-              className="text-gray-600 dark:text-gray-300"
-              style={{ fontWeight: 600 }}
-            >
-              We've sent a 4-digit code to
-            </motion.p>
-            <motion.p 
-              variants={itemVariants}
-              className="text-orange-500 dark:text-orange-400 "
-              style={{ fontWeight: 800 }}
-            >
-              {email}
-            </motion.p>
-          </div>
+        <div className="text-center space-y-2">
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            Didn't receive the code?
+          </p>
+          <button
+            type="button"
+            onClick={handleResendOtp}
+            disabled={resendLoading}
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-theme-muted hover:underline disabled:opacity-50"
+          >
+            {resendLoading ? (
+              <>
+                <RefreshCw size={14} className="animate-spin" />
+                Sending...
+              </>
+            ) : (
+              "Resend Code"
+            )}
+          </button>
+        </div>
 
-          {/* OTP Input */}
-          <motion.div variants={itemVariants} className="space-y-6">
-            <div className="flex justify-center gap-3">
-              {otp.map((digit, index) => (
-                <input
-                  key={index}
-                  id={`otp-${index}`}
-                  type="text"
-                  maxLength="1"
-                  value={digit}
-                  onChange={(e) => handleOtpChange(index, e.target.value)}
-                  onKeyDown={(e) => handleKeyDown(index, e)}
-                  className="w-20 h-20 text-center text-xl  border border-gray-200 dark:border-gray-700 rounded-[15px] focus:outline-none focus:border-blue-500 dark:bg-[rgba(255,255,255,.05)] dark:text-white"
-                />
-              ))}
-            </div>
-
-            {/* Verify Button */}
-            <motion.button
-              onClick={handleVerify}
-              disabled={loading || otp.join('').length !== 4}
-                className="w-full py-3 bg-black dark:bg-white font-bold text-white dark:text-black rounded-[15px]  transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              whileHover={{ scale: loading ? 1 : 1.02 }}
-              whileTap={{ scale: loading ? 1 : 0.98 }}
-            >
-              {loading ? "Verifying..." : "Verify Email"}
-            </motion.button>
-
-            {/* Resend Code */}
-            <div className="text-center">
-              <p className="text-gray-600 dark:text-gray-300 text-sm mb-2">
-                Didn't receive the code?
-              </p>
-              <button
-                onClick={handleResendOtp}
-                disabled={resendLoading}
-                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300  text-sm disabled:opacity-50"
-              >
-                {resendLoading ? (
-                  <span className="flex items-center gap-2">
-                    <RefreshCw className="w-4 h-4 icon icon animate-spin" />
-                    Sending...
-                  </span>
-                ) : (
-                  "Resend Code"
-                )}
-              </button>
-            </div>
-          </motion.div>
-
-          {/* Help Text */}
-          <motion.div variants={itemVariants} className="mt-8 text-center">
-            <p className="text-gray-500 dark:text-gray-400 text-sm">
-              Check your spam folder if you don't see the email
-            </p>
-          </motion.div>
-        </motion.div>
-      </motion.div>
-    </div>
+        <p className="text-center text-xs text-gray-400">
+          Check your spam folder if you don't see the email
+        </p>
+      </div>
+    </AuthLayout>
   )
 }
 

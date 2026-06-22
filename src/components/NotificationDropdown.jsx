@@ -1,14 +1,18 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Bell, X, Check, Trash2, MoreVertical, Clock, AlertCircle, CheckCircle, Info, RefreshCw } from 'lucide-react'
+import { Bell, X, Check, Trash2, MoreVertical, Clock, AlertCircle, CheckCircle, Info, RefreshCw, Users, FolderKanban, Loader2 } from 'lucide-react'
 import { Button } from './ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu'
 import { toast } from 'sonner'
 import { useNotifications } from '../contexts/NotificationContext'
-import { createTestNotification } from '../utils/testNotifications'
+import invitationService from '../services/invitationService'
+import { PiBellDuotone, PiCheckCircleDuotone, PiClockDuotone, PiFolderDuotone, PiInfoDuotone, PiUsersDuotone } from 'react-icons/pi'
+
+const INVITE_TYPES = ['project_invite', 'team_invite', 'PROJECT_INVITE', 'TEAM_INVITE']
 
 const NotificationDropdown = () => {
   const [isOpen, setIsOpen] = useState(false)
+  const [respondingId, setRespondingId] = useState(null)
   const { 
     notifications, 
     unreadCount, 
@@ -17,13 +21,26 @@ const NotificationDropdown = () => {
     markAsRead, 
     markAllAsRead, 
     deleteNotification, 
-    deleteAllNotifications,
-    addNotification 
   } = useNotifications()
 
-  const handleAddTestNotification = (type) => {
-    const testNotification = createTestNotification(type)
-    addNotification(testNotification)
+  const handleRespondToInvite = async (notification, action) => {
+    const invitation = notification.invitationId
+    const invitationId = invitation?._id || invitation?.id || invitation
+    if (!invitationId) {
+      toast.error('Invitation is no longer available')
+      return
+    }
+    try {
+      setRespondingId(notification.id || notification._id)
+      await invitationService.respondToInvitation(invitationId, action)
+      toast.success(`Invitation ${action === 'accept' ? 'accepted' : 'declined'}!`)
+      await markAsRead(notification.id || notification._id)
+      await loadNotifications({ force: true })
+    } catch (error) {
+      toast.error(error.message || `Failed to ${action} invitation`)
+    } finally {
+      setRespondingId(null)
+    }
   }
 
   const handleOpenChange = (open) => {
@@ -40,15 +57,65 @@ const NotificationDropdown = () => {
   const getNotificationIcon = (type) => {
     switch (type) {
       case 'task':
-        return <CheckCircle className="w-4 h-4 icon icon text-blue-500" />
+        return <PiCheckCircleDuotone className="w-4 h-4 icon icon text-blue-500" />
       case 'meeting':
-        return <Clock className="w-4 h-4 icon icon text-green-500" />
+        return <PiClockDuotone className="w-4 h-4 icon icon text-green-500" />
       case 'system':
-        return <Info className="w-4 h-4 icon icon text-purple-500" />
+        return <PiInfoDuotone className="w-4 h-4 icon icon text-purple-500" />
       case 'alert':
         return <AlertCircle className="w-4 h-4 icon icon text-red-500" />
+      case 'project_invite':
+      case 'PROJECT_INVITE':
+      case 'project_invite_accepted':
+      case 'project_invite_rejected':
+        return <PiFolderDuotone className="w-4 h-4 icon icon text-theme" />
+      case 'team_invite':
+      case 'TEAM_INVITE':
+      case 'team_invite_accepted':
+      case 'team_invite_rejected':
+        return <PiUsersDuotone className="w-4 h-4 icon icon text-theme" />
       default:
-        return <Bell className="w-4 h-4 icon icon" />
+        return <PiBellDuotone className="w-4 h-4 icon icon" />
+    }
+  }
+
+  const getNotificationTitle = (notification) => {
+    if (notification.title) return notification.title
+    const targetName = notification.invitationId?.targetName
+    switch (notification.type) {
+      case 'project_invite':
+      case 'PROJECT_INVITE':
+        return 'Project invitation'
+      case 'team_invite':
+      case 'TEAM_INVITE':
+        return 'Team invitation'
+      case 'project_invite_accepted':
+      case 'team_invite_accepted':
+        return targetName ? `Invitation accepted · ${targetName}` : 'Invitation accepted'
+      case 'project_invite_rejected':
+      case 'team_invite_rejected':
+        return targetName ? `Invitation declined · ${targetName}` : 'Invitation declined'
+      case 'task_assigned':
+      case 'task_reassigned':
+        return 'Task assigned'
+      case 'task_updated':
+      case 'task_status_updated':
+        return 'Task updated'
+      case 'task_unassigned':
+        return 'Task unassigned'
+      case 'meeting_assigned':
+      case 'meeting_reassigned':
+        return 'Meeting assigned'
+      case 'meeting_updated':
+      case 'meeting_status_updated':
+      case 'meeting_rescheduled':
+        return 'Meeting updated'
+      case 'user_followed':
+        return 'New follower'
+      case 'user_unfollowed':
+        return 'Unfollowed'
+      default:
+        return 'Notification'
     }
   }
 
@@ -154,7 +221,7 @@ const NotificationDropdown = () => {
                               ? 'text-gray-900 dark:text-white' 
                               : 'text-gray-700 dark:text-gray-300'
                           }`}>
-                            {notification.title}
+                            {getNotificationTitle(notification)}
                           </p>
                           <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
                             {notification.message}
@@ -162,6 +229,69 @@ const NotificationDropdown = () => {
                           <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                             {getTimeAgo(notification.createdAt)}
                           </p>
+
+                          {INVITE_TYPES.includes(notification.type) &&
+                            (() => {
+                              const invitation = notification.invitationId
+                              const status = invitation?.status
+                              const isResponding =
+                                respondingId === (notification.id || notification._id)
+
+                              if (!invitation) return null
+
+                              if (status && status !== 'pending') {
+                                return (
+                                  <span
+                                    className={`inline-flex items-center gap-1 mt-2 text-xs font-semibold ${
+                                      status === 'accepted'
+                                        ? 'text-green-600'
+                                        : 'text-red-500'
+                                    }`}
+                                  >
+                                    {status === 'accepted' ? (
+                                      <CheckCircle className="w-3 h-3" />
+                                    ) : (
+                                      <X className="w-3 h-3" />
+                                    )}
+                                    {status === 'accepted' ? 'Accepted' : 'Declined'}
+                                  </span>
+                                )
+                              }
+
+                              return (
+                                <div className="flex items-center gap-2 mt-2">
+                                  <Button
+                                    size="sm"
+                                    disabled={isResponding}
+                                    onClick={() =>
+                                      handleRespondToInvite(notification, 'accept')
+                                    }
+                                    className="h-7 px-3 rounded-[10px] bg-theme hover:bg-theme text-white text-xs"
+                                  >
+                                    {isResponding ? (
+                                      <Loader2 className="w-3 h-3 animate-spin" />
+                                    ) : (
+                                      <>
+                                        <Check className="w-3 h-3 mr-1" />
+                                        Accept
+                                      </>
+                                    )}
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    disabled={isResponding}
+                                    onClick={() =>
+                                      handleRespondToInvite(notification, 'reject')
+                                    }
+                                    className="h-7 px-3 rounded-[10px] text-xs"
+                                  >
+                                    <X className="w-3 h-3 mr-1" />
+                                    Decline
+                                  </Button>
+                                </div>
+                              )
+                            })()}
                         </div>
                         
                         <div className="flex items-center gap-1 ml-2">

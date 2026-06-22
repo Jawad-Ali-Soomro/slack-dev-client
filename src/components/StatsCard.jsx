@@ -42,7 +42,7 @@ const StatsCard = ({
     light: 'bg-red-50 dark:bg-red-900/20',
   },
   orange: {
-    bg: 'bg-gradient-to-br from-orange-300 to-orange-400',
+    bg: 'bg-gradient-to-br from-[#ff914b] to-[#e8772e]',
     text: 'text-white',
     light: 'bg-orange-50 dark:bg-orange-900/20',
   },

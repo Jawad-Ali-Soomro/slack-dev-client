@@ -25,6 +25,7 @@ export const useChat = () => {
 export const ChatProvider = ({ children }) => {
   const { user, token } = useAuth();
   const { addNotification } = useNotifications();
+  const [messagesLoading, setMessagesLoading] = useState(false);
   const [socket, setSocket] = useState(null);
   const [chats, setChats] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
@@ -39,7 +40,83 @@ export const ChatProvider = ({ children }) => {
   const typingTimeoutRef = useRef({});
   const messagesEndRef = useRef(null);
   const socketInitialized = useRef(false);
-  const messageIdsRef = useRef(new Set()); // Track message IDs to prevent duplicates
+  const messageIdsRef = useRef(new Set());
+  const currentChatRef = useRef(currentChat);
+  const chatsRef = useRef(chats);
+  const socketRef = useRef(null);
+
+  currentChatRef.current = currentChat;
+  chatsRef.current = chats;
+
+  const normalizeId = (id) => (id == null ? "" : String(id));
+
+  const scrollToBottom = useCallback(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, []);
+
+  const addMessage = useCallback(
+    (message) => {
+      const messageId = normalizeId(message._id);
+      if (!messageId || messageIdsRef.current.has(messageId)) return;
+      messageIdsRef.current.add(messageId);
+
+      setMessages((prev) => {
+        const next = new Map(prev);
+        if (!next.has(messageId)) {
+          next.set(messageId, message);
+        }
+        return next;
+      });
+
+      const chatId = normalizeId(message.chat);
+      setChats((prev) => {
+        const chatIndex = prev.findIndex(
+          (chat) => normalizeId(chat._id) === chatId
+        );
+        if (chatIndex === -1) return prev;
+
+        const updated = [...prev];
+        const chat = updated[chatIndex];
+
+        const currentLastMessageDate = chat.lastMessage?.createdAt
+          ? new Date(chat.lastMessage.createdAt)
+          : new Date(0);
+        const newMessageDate = message.createdAt
+          ? new Date(message.createdAt)
+          : new Date();
+
+        if (newMessageDate > currentLastMessageDate) {
+          updated[chatIndex] = {
+            ...chat,
+            lastMessage: message,
+            updatedAt: new Date(),
+          };
+
+          const [movedChat] = updated.splice(chatIndex, 1);
+          return [movedChat, ...updated];
+        }
+
+        return updated;
+      });
+
+      if (normalizeId(currentChatRef.current?._id) === chatId) {
+        setTimeout(() => scrollToBottom(), 100);
+      }
+    },
+    [scrollToBottom]
+  );
+
+  const joinAllChats = useCallback((activeSocket) => {
+    if (!activeSocket) return;
+    chatsRef.current.forEach((chat) => {
+      if (chat?._id) {
+        activeSocket.emit("join_chat", chat._id);
+      }
+    });
+    if (currentChatRef.current?._id) {
+      activeSocket.emit("join_chat", currentChatRef.current._id);
+    }
+  }, []);
 
   useEffect(() => {
     if (!user || !token || socketInitialized.current) return;
@@ -64,6 +141,7 @@ export const ChatProvider = ({ children }) => {
       setIsConnected(true);
       setError(null);
       socketInitialized.current = true;
+      joinAllChats(newSocket);
     });
 
     newSocket.on("disconnect", (reason) => {
@@ -89,16 +167,19 @@ export const ChatProvider = ({ children }) => {
       setOnlineUsers(
         users.map((u) => ({
           ...u,
+          userId: normalizeId(u.userId),
           isOnline: true,
         }))
       );
     });
 
-    newSocket.on("new_message", handleNewMessage);
+    newSocket.on("new_message", addMessage);
 
     newSocket.on("chat_updated", (updatedChat) => {
       setChats((prev) => {
-        const index = prev.findIndex((c) => c._id === updatedChat._id);
+        const index = prev.findIndex(
+          (c) => normalizeId(c._id) === normalizeId(updatedChat._id)
+        );
 
         if (index === -1) {
           return [updatedChat, ...prev];
@@ -136,27 +217,33 @@ export const ChatProvider = ({ children }) => {
     });
 
     newSocket.on("user_online", (data) => {
+      const userId = normalizeId(data.userId);
       setOnlineUsers((prev) => {
-        const exists = prev.find((u) => u.userId === data.userId);
+        const exists = prev.find((u) => normalizeId(u.userId) === userId);
         if (exists) {
           return prev.map((u) =>
-            u.userId === data.userId
-              ? { ...u, isOnline: true, lastSeen: data.lastSeen }
+            normalizeId(u.userId) === userId
+              ? { ...u, ...data, userId, isOnline: true, lastSeen: data.lastSeen }
               : u
           );
         }
-        return [...prev, { ...data, isOnline: true }];
+        return [...prev, { ...data, userId, isOnline: true }];
       });
     });
 
     newSocket.on("user_offline", (data) => {
-      setOnlineUsers((prev) =>
-        prev.map((u) =>
-          u.userId === data.userId
+      const userId = normalizeId(data.userId);
+      setOnlineUsers((prev) => {
+        const exists = prev.find((u) => normalizeId(u.userId) === userId);
+        if (!exists) {
+          return [...prev, { ...data, userId, isOnline: false }];
+        }
+        return prev.map((u) =>
+          normalizeId(u.userId) === userId
             ? { ...u, isOnline: false, lastSeen: data.lastSeen }
             : u
-        )
-      );
+        );
+      });
     });
 
     newSocket.on("user_typing", (data) => {
@@ -194,63 +281,24 @@ export const ChatProvider = ({ children }) => {
       addNotification(notification);
     });
 
+    socketRef.current = newSocket;
     setSocket(newSocket);
     socketInitialized.current = true;
 
     return () => {
       if (newSocket) {
-        newSocket.off("new_message", handleNewMessage);
+        newSocket.off("new_message", addMessage);
         newSocket.close();
       }
+      socketRef.current = null;
       socketInitialized.current = false;
     };
-  }, [user, token]);
+  }, [user, token, addMessage, joinAllChats]);
 
-  const handleNewMessage = useCallback((message) => {
-
-    if (messageIdsRef.current.has(message._id)) return;
-    messageIdsRef.current.add(message._id);
-
-    setMessages((prev) => {
-      const newMessages = new Map(prev);
-      if (!newMessages.has(message._id)) {
-        newMessages.set(message._id, message);
-      }
-      return newMessages;
-    });
-
-    setChats((prev) => {
-      const chatIndex = prev.findIndex((chat) => chat._id === message.chat);
-      if (chatIndex === -1) return prev;
-
-      const updated = [...prev];
-      const chat = updated[chatIndex];
-
-      const currentLastMessageDate = chat.lastMessage?.createdAt 
-        ? new Date(chat.lastMessage.createdAt)
-        : new Date(0);
-      const newMessageDate = message.createdAt 
-        ? new Date(message.createdAt)
-        : new Date();
-
-      if (newMessageDate > currentLastMessageDate) {
-        updated[chatIndex] = {
-          ...chat,
-          lastMessage: message,
-          updatedAt: new Date(),
-        };
-
-        const [movedChat] = updated.splice(chatIndex, 1);
-        return [movedChat, ...updated];
-      }
-
-      return updated;
-    });
-
-    if (currentChat?._id === message.chat) {
-      setTimeout(() => scrollToBottom(), 100);
-    }
-  }, [currentChat]);
+  useEffect(() => {
+    if (!socket || !isConnected || chats.length === 0) return;
+    joinAllChats(socket);
+  }, [socket, isConnected, chats, joinAllChats]);
 
   useEffect(() => {
     if (user && !loading) {
@@ -263,32 +311,18 @@ export const ChatProvider = ({ children }) => {
     if (!socket || !currentChat?._id) return;
 
     socket.emit("join_chat", currentChat._id);
-
-    loadMessages();
+    loadMessages(currentChat._id);
 
     const markAsRead = async () => {
       try {
-        const unreadMessages = Array.from(messages.values())
-          .filter(msg => 
-            msg.chat === currentChat._id && 
-            !msg.readBy?.some(r => r.user === user?.id || r.user === user?._id)
-          );
-
-        if (unreadMessages.length > 0) {
-          await chatService.markAsRead(currentChat._id);
-        }
+        await chatService.markAsRead(currentChat._id);
+        loadUnreadCount();
       } catch (err) {
         console.error("Error marking messages as read:", err);
       }
     };
 
     markAsRead();
-
-    return () => {
-      if (socket && currentChat?._id) {
-        socket.emit("leave_chat", currentChat._id);
-      }
-    };
   }, [currentChat?._id, socket]);
 
   const loadChats = async () => {
@@ -304,32 +338,47 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
-  const loadMessages = async () => {
-    if (!currentChat) {
+  const loadMessages = async (chatId = currentChat?._id) => {
+    if (!chatId) {
       setMessages(new Map());
+      messageIdsRef.current.clear();
       return;
     }
 
-    try {
-      setLoading(true);
-      const response = await chatService.getChatMessages(currentChat._id);
+    const normalizedChatId = normalizeId(chatId);
 
-      const newMessagesMap = new Map();
-      messageIdsRef.current.clear();
-      
-      response.data.forEach(message => {
-        messageIdsRef.current.add(message._id);
-        newMessagesMap.set(message._id, message);
+    try {
+      setMessagesLoading(true);
+
+      const response = await chatService.getChatMessages(chatId);
+
+      setMessages((prev) => {
+        const merged = new Map();
+
+        response.data.forEach((message) => {
+          const id = normalizeId(message._id);
+          merged.set(id, message);
+        });
+
+        prev.forEach((message, id) => {
+          if (
+            normalizeId(message.chat) === normalizedChatId &&
+            !merged.has(id)
+          ) {
+            merged.set(id, message);
+          }
+        });
+
+        messageIdsRef.current = new Set(merged.keys());
+        return merged;
       });
-      
-      setMessages(newMessagesMap);
 
       setTimeout(() => scrollToBottom(), 100);
     } catch (err) {
       setError("Failed to load messages");
       console.error("Error loading messages:", err);
     } finally {
-      setLoading(false);
+      setMessagesLoading(false);
     }
   };
 
@@ -413,7 +462,13 @@ export const ChatProvider = ({ children }) => {
         replyTo,
       });
 
-      return response.data;
+      const message = response.data;
+      if (message) {
+        addMessage(message);
+        socketRef.current?.emit("join_chat", currentChat._id);
+      }
+
+      return message;
     } catch (err) {
       setError("Failed to send message");
       console.error("Error sending message:", err);
@@ -491,10 +546,6 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
   const getChatName = (chat) => {
     if (chat.type === "group") {
       return chat.name;
@@ -540,17 +591,25 @@ export const ChatProvider = ({ children }) => {
   };
 
   const isUserOnline = (userId) => {
-    const onlineUser = onlineUsers.find((u) => u.userId === userId);
-    return onlineUser?.isOnline || false;
+    const normalizedUserId = normalizeId(userId);
+    if (!normalizedUserId) return false;
+    const onlineUser = onlineUsers.find(
+      (u) => normalizeId(u.userId) === normalizedUserId
+    );
+    return onlineUser?.isOnline === true;
   };
 
   const getTypingUsers = (chatId) => {
     return typingUsers[chatId] || [];
   };
 
-  const messagesArray = Array.from(messages.values()).sort(
-    (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
-  );
+  const messagesArray = Array.from(messages.values())
+    .filter(
+      (message) =>
+        !currentChat ||
+        normalizeId(message.chat) === normalizeId(currentChat._id)
+    )
+    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
   const value = {
     chats,
@@ -563,7 +622,7 @@ export const ChatProvider = ({ children }) => {
     loading,
     error,
     messagesEndRef,
-
+    messagesLoading,
     createChat,
     setCurrentChat,
     sendMessage,

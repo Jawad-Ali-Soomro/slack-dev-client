@@ -697,7 +697,7 @@ const Meetings = () => {
                 </SelectContent>
               </Select>
               <Select value={filterType} onValueChange={setFilterType}>
-                <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 bg-white cursor-pointer dark:bg-[black] dark:text-white">
+                <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 bg-white cursor-pointer ">
                   <SelectValue placeholder="All Types" />
                 </SelectTrigger>
                 <SelectContent className="bg-white dark:bg-[black]  border-gray-200 dark:border-gray-700">
@@ -1083,7 +1083,7 @@ const Meetings = () => {
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className=" bg-white dark:bg-[black] rounded-[15px] shadow-2xl border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+              className=" bg-white dark:bg-gray-900 rounded-[15px] shadow-2xl border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
             
@@ -1096,7 +1096,7 @@ const Meetings = () => {
                     type="text"
                     value={newMeeting.title}
                     onChange={(e) => setNewMeeting({...newMeeting, title: e.target.value})}
-                    className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-[black] text-black dark:text-white"
+                    className="w-full  border-gray-200 dark:border-gray-700   text-black dark:text-white"
                     placeholder="Enter meeting title"
                   />
                 </div>
@@ -1108,7 +1108,7 @@ const Meetings = () => {
                   <Textarea
                     value={newMeeting.description}
                     onChange={(e) => setNewMeeting({...newMeeting, description: e.target.value})}
-                    className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-[black] text-black dark:text-white"
+                    className="w-full  border-gray-200 dark:border-gray-700   text-black dark:text-white"
                     placeholder="Enter meeting description"
                     rows="3"
                   />
@@ -1120,10 +1120,10 @@ const Meetings = () => {
                       Meeting Type
                     </label> */}
                     <Select value={newMeeting.type} onValueChange={(value) => setNewMeeting({...newMeeting, type: value})}>
-                      <SelectTrigger className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-[black] text-black dark:text-white">
+                      <SelectTrigger className="w-full  border-gray-200 dark:border-gray-700">
                         <SelectValue placeholder="Select meeting type" />
                       </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-[black]  border-gray-200 dark:border-gray-700">
+                      <SelectContent className="  border-gray-200 dark:border-gray-700">
                         <SelectItem className={'cursor-pointer h-10 px-5'} value="online">Online</SelectItem>
                         <SelectItem className={'cursor-pointer h-10 px-5'} value="in-person">in-person</SelectItem>
                         <SelectItem className={'cursor-pointer h-10 px-5'} value="hybrid">Hybrid</SelectItem>
@@ -1139,7 +1139,7 @@ const Meetings = () => {
                       type="text"
                       value={newMeeting.location}
                       onChange={(e) => setNewMeeting({...newMeeting, location: e.target.value})}
-                      className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-[black] text-black dark:text-white"
+                      className="w-full  border-gray-200 dark:border-gray-700   text-black dark:text-white"
                       placeholder="Enter location or platform"
                     />
                   </div>
@@ -1159,16 +1159,16 @@ const Meetings = () => {
                           setShowAssignedToSuggestions(true)
                         }
                       }}
-                      className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-[black] text-black dark:text-white"
+                      className="w-full  border-gray-200 dark:border-gray-700   text-black dark:text-white"
                       placeholder="Assign To Person"
                     />
                     {showAssignedToSuggestions && assignedToSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-[black]  border-gray-200 dark:border-gray-700 rounded-[15px] shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1  border-gray-200 dark:border-gray-700 rounded-[15px] shadow-lg max-h-48 overflow-y-auto">
                         {assignedToSuggestions.map((user) => (
                           <div
                             key={user.id}
                             onClick={() => selectUser(user)}
-                            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                            className="px-4 py-3 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
                           >
                             <div className="flex items-center gap-3">
                               <img 
@@ -1202,7 +1202,7 @@ const Meetings = () => {
                       type="date"
                       value={newMeeting.startDate}
                       onChange={(e) => setNewMeeting({...newMeeting, startDate: e.target.value})}
-                      className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-[black] text-black dark:text-white"
+                      className="w-full  border-gray-200 dark:border-gray-700   text-black dark:text-white"
                     />
                   </div>
 
@@ -1214,7 +1214,7 @@ const Meetings = () => {
                       type="date"
                       value={newMeeting.endDate}
                       onChange={(e) => setNewMeeting({...newMeeting, endDate: e.target.value})}
-                      className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-[black] text-black dark:text-white"
+                      className="w-full  border-gray-200 dark:border-gray-700   text-black dark:text-white"
                     />
                   </div>
                 </div>
@@ -1223,19 +1223,19 @@ const Meetings = () => {
                   {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
                     Meeting Link (Optional)
                   </label> */}
-                  <div className="flex gap-2">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <Input
                       type="url"
                       value={newMeeting.meetingLink}
                       onChange={(e) => setNewMeeting({...newMeeting, meetingLink: e.target.value})}
-                      className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-[black] text-black dark:text-white"
+                      className="w-full  border-gray-200 dark:border-gray-700   text-black dark:text-white"
                       placeholder="Enter meeting link or create Zoom meeting"
                     />
                     <Button
                       type="button"
                       onClick={handleScheduleZoomMeeting}
                       disabled={loading || !newMeeting.title}
-                      className={`${getButtonClasses('secondary', 'md', 'whitespace-nowrap')} disabled:opacity-50 disabled:cursor-not-allowed`}
+                      variant={'default'}
                       title={!newMeeting.title ? "Please enter a meeting title first" : "Create video meeting (Jitsi Meet)"}
                     >
                       {loading ? (
@@ -1265,15 +1265,15 @@ const Meetings = () => {
                           setShowAttendeeSuggestions(true)
                         }
                       }}
-                      className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-[black] text-black dark:text-white"
+                      className="w-full  border-gray-200 dark:border-gray-700   text-black dark:text-white"
                     />
                     {showAttendeeSuggestions && attendeeSuggestions.length > 0 && (
-                      <div className="absolute z-10 w-full mt-1 bg-white dark:bg-[black]  border-gray-200 dark:border-gray-700 rounded-[15px] shadow-lg max-h-48 overflow-y-auto">
+                      <div className="absolute z-10 w-full mt-1  border-gray-200 dark:border-gray-700 rounded-[15px] shadow-lg max-h-48 overflow-y-auto">
                         {attendeeSuggestions.map((user) => (
                           <div
                             key={user.id}
                             onClick={() => handleAddAttendee(user)}
-                            className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                            className="px-4 py-3 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
                           >
                             <div className="flex items-center gap-3">
                               <img 
@@ -1338,7 +1338,7 @@ const Meetings = () => {
                       value={newTag}
                       onChange={(e) => setNewTag(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleAddTag()}
-                      className="flex-1  border-gray-200 dark:border-gray-700   bg-white dark:bg-[black] text-black dark:text-white"
+                      className="flex-1  border-gray-200 dark:border-gray-700    text-black dark:text-white"
                       placeholder="Add a tag and press Enter"
                     />
                     <Button
@@ -1376,10 +1376,10 @@ const Meetings = () => {
                 <div>
                   {/* Project Selection */}
                   <Select value={newMeeting.projectId} onValueChange={(value) => setNewMeeting({...newMeeting, projectId: value})}>
-                    <SelectTrigger className="w-full  border-gray-200 dark:border-gray-700   bg-white dark:bg-[black] text-black dark:text-white">
+                    <SelectTrigger className="w-full  border-gray-200 dark:border-gray-700">
                       <SelectValue placeholder="Select project (optional)" />
                     </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-[black]  border-gray-200 dark:border-gray-700">
+                    <SelectContent className="  border-gray-200 dark:border-gray-700">
                       <SelectItem className={'cursor-pointer h-10 px-5'} value="none">No Project</SelectItem>
                       {projects.map((project) => (
                         <SelectItem className={'cursor-pointer h-10 px-5'} key={project.id} value={project.id}>
@@ -1394,14 +1394,15 @@ const Meetings = () => {
               <div className="flex gap-3 mt-6 text-white dark:text-black">
                 <Button
                   onClick={() => setShowNewMeetingPopup(false)}
-                  className={getButtonClasses('outline', 'md', 'flex-1 text-black bg-white dark:bg-[black]')}
+                  variant={'outline'}
+                  className={'flex-1 text-black dark:text-white'}
                 >
                   Cancel
                 </Button>
                 <Button
                   onClick={handleNewMeeting}
                   disabled={loading}
-                  className={`${getButtonClasses('primary', 'md', 'flex-1')} disabled:opacity-50 disabled:cursor-not-allowed`}
+                  className={`${getButtonClasses('primary', 'md', 'flex-1')} font-bold disabled:opacity-50 disabled:cursor-not-allowed`}
                 >
                   {loading ? (
                     <span className="loader w-5 h-5"></span>

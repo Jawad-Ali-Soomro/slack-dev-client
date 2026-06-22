@@ -126,8 +126,14 @@ const ChatList = () => {
               const isActive = currentChat?._id === chat._id;
               const chatName = getChatName(chat);
               const chatAvatar = getChatAvatar(chat);
-              const otherParticipant = chat.participants.find(p => p._id !== user?.id && p._id !== user?._id);
-              const isOnline = otherParticipant ? isUserOnline(otherParticipant._id) : false;
+              const currentUserId = String(user?.id || user?._id || "");
+              const otherParticipant = chat.participants.find((p) => {
+                const participantId = String(p._id || p.id || "");
+                return participantId && participantId !== currentUserId;
+              });
+              const isOnline = otherParticipant
+                ? isUserOnline(otherParticipant._id || otherParticipant.id)
+                : false;
 
               return (
                 <Card

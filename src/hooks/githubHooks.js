@@ -78,6 +78,118 @@ export const getGithubIssues = async (token, owner, repo) => {
   }
 };
 
+export const getGithubContributors = async (token, owner, repo) => {
+  try {
+    const res = await axios.get(
+      `https://api.github.com/repos/${owner}/${repo}/contributors?per_page=100`,
+      {
+        headers: {
+          Authorization: `token ${token}`,
+          "User-Agent": "Slack Developers",
+        },
+      },
+    );
+    return Array.isArray(res.data) ? res.data : [];
+  } catch (err) {
+    console.error("Error fetching GitHub contributors:", err.response?.data || err.message);
+    return [];
+  }
+};
+
+export const getGithubLanguages = async (token, owner, repo) => {
+  try {
+    const res = await axios.get(
+      `https://api.github.com/repos/${owner}/${repo}/languages`,
+      {
+        headers: {
+          Authorization: `token ${token}`,
+          "User-Agent": "Slack Developers",
+        },
+      },
+    );
+    return res.data || {};
+  } catch (err) {
+    console.error("Error fetching GitHub languages:", err.response?.data || err.message);
+    return {};
+  }
+};
+
+export const getGithubBranches = async (token, owner, repo) => {
+  try {
+    const res = await axios.get(
+      `https://api.github.com/repos/${owner}/${repo}/branches?per_page=100`,
+      {
+        headers: {
+          Authorization: `token ${token}`,
+          "User-Agent": "Slack Developers",
+        },
+      },
+    );
+    return Array.isArray(res.data) ? res.data : [];
+  } catch (err) {
+    console.error("Error fetching GitHub branches:", err.response?.data || err.message);
+    return [];
+  }
+};
+
+export const getGithubCommits = async (token, owner, repo) => {
+  try {
+    const res = await axios.get(
+      `https://api.github.com/repos/${owner}/${repo}/commits?per_page=10`,
+      {
+        headers: {
+          Authorization: `token ${token}`,
+          "User-Agent": "Slack Developers",
+        },
+      },
+    );
+    return Array.isArray(res.data) ? res.data : [];
+  } catch (err) {
+    console.error("Error fetching GitHub commits:", err.response?.data || err.message);
+    return [];
+  }
+};
+
+export const createGithubPullRequest = async (
+  token,
+  owner,
+  repo,
+  { title, head, base, body },
+) => {
+  try {
+    const res = await axios.post(
+      `https://api.github.com/repos/${owner}/${repo}/pulls`,
+      { title, head, base, body },
+      {
+        headers: {
+          Authorization: `token ${token}`,
+          "User-Agent": "Slack Developers",
+          Accept: "application/vnd.github+json",
+        },
+      },
+    );
+    return res.data;
+  } catch (err) {
+    const message =
+      err.response?.data?.errors?.[0]?.message ||
+      err.response?.data?.message ||
+      err.message ||
+      "Failed to create pull request";
+    console.error("Error creating GitHub pull request:", err.response?.data || err.message);
+    throw new Error(message);
+  }
+};
+
+export const getRepoExtraDetails = async (token, owner, repo) => {
+  const [contributors, languages, branches, commits] = await Promise.all([
+    getGithubContributors(token, owner, repo),
+    getGithubLanguages(token, owner, repo),
+    getGithubBranches(token, owner, repo),
+    getGithubCommits(token, owner, repo),
+  ]);
+  return { contributors, languages, branches, commits };
+};
+
 export const getGithubDetails = async (token) => {
   try {
     const profile = await getGithubProfile(token);

@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, useMemo } from 'react'
 import { authService } from '../services/authService'
+import { clearGithubStorage } from '../utils/githubStorage'
 
 const AuthContext = createContext()
 
@@ -32,6 +33,7 @@ export const AuthProvider = ({ children }) => {
         const userProfile = await authService.getCurrentUser()
         setUser(userProfile.user)
       } else {
+        clearGithubStorage()
         setToken(null)
         setIsAuthenticated(false)
         setUser(null)
@@ -39,6 +41,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       localStorage.removeItem('authToken')
       localStorage.removeItem('userData')
+      clearGithubStorage()
       setToken(null)
       setIsAuthenticated(false)
       setUser(null)
@@ -55,6 +58,7 @@ export const AuthProvider = ({ children }) => {
       if (result.success) {
 
         if (result.token) {
+          clearGithubStorage()
           localStorage.setItem('authToken', result.token)
           setToken(result.token)
           setUser(result.user)
@@ -89,6 +93,7 @@ export const AuthProvider = ({ children }) => {
     } finally {
       localStorage.removeItem('authToken')
       localStorage.removeItem('userData')
+      clearGithubStorage()
       setToken(null)
       setUser(null)
       setIsAuthenticated(false)

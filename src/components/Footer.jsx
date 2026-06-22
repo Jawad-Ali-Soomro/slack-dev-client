@@ -11,7 +11,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-8 mb-12">
           {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-xl ">Core Stack</h3>
+            <h3 className="text-xl ">Skack Developers</h3>
             <p className="text-gray-300 text-sm leading-relaxed">
               Empowering developers worldwide with cutting-edge tools and platforms 
               for modern project management and collaboration.
@@ -106,7 +106,7 @@ const Footer = () => {
         <div className="border-t border-gray-800 pt-8 icon">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 icon">
             <div className="text-gray-400 text-sm">
-              © 2024 Core Stack. All rights reserved.
+              © 2024 Skack Developers. All rights reserved.
             </div>
             <div className="flex space-x-6">
               <a href="#" className="text-gray-400 hover:text-white text-sm transition-colors">

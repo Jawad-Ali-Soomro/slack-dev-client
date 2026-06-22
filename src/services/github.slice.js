@@ -5,14 +5,23 @@ const githubSlice = createSlice({
   name: "github",
   initialState: {
     data: null,
+    userId: null,
+    githubUserId: null,
     loading: false,
     error: null,
   },
   reducers: {
     setGithubData: (state, action) => {
-      state.data = encryptData(action.payload);
-      state.loading = false;
-      state.error = null;
+      const { userId, githubUserId, data } = action.payload
+      state.data = encryptData(data)
+      state.userId = userId ? String(userId) : null
+      state.githubUserId = githubUserId
+        ? String(githubUserId)
+        : data?.profile?.id
+          ? String(data.profile.id)
+          : null
+      state.loading = false
+      state.error = null
     },
 
     setLoading: (state) => {
@@ -26,6 +35,10 @@ const githubSlice = createSlice({
 
     clearGithubData: (state) => {
       state.data = null;
+      state.userId = null;
+      state.githubUserId = null;
+      state.loading = false;
+      state.error = null;
     },
   },
 });

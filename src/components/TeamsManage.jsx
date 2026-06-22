@@ -36,12 +36,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '.
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu'
 import { toast } from 'sonner'
 import teamService from '../services/teamService'
+import invitationService from '../services/invitationService'
 import friendService from '../services/friendService'
 import { getAvatarProps } from '../utils/avatarUtils'
 import { useAuth } from '../contexts/AuthContext'
 import { useNotifications } from '../contexts/NotificationContext'
 import { BsTools } from 'react-icons/bs'
 import { PiUserDuotone, PiUserPlusDuotone, PiUsersDuotone } from 'react-icons/pi'
+import { Skeleton } from './ui/skeleton'
 
 const TeamsManage = () => {
 
@@ -222,23 +224,21 @@ const TeamsManage = () => {
 
     try {
       setLoading(true)
-      
-      await teamService.addMember(selectedTeam.id, { userId, role })
-      await loadTeams()
-      
-      if (selectedTeam) {
-        const response = await teamService.getTeamById(selectedTeam.id)
-        setSelectedTeam(response.team)
-        setRefreshKey(prev => prev + 1)
-      }
-      
+
+      await invitationService.sendInvitation({
+        targetType: 'team',
+        targetId: selectedTeam.id,
+        inviteeId: userId,
+        role,
+      })
+
       setMemberSearch('')
       setShowMemberSuggestions(false)
       setMemberSuggestions([])
-      toast.success('Member added successfully')
+      toast.success('Invitation sent successfully')
     } catch (error) {
-      console.error('Error adding member:', error)
-      toast.error(error.message || 'Failed to add member')
+      console.error('Error sending invitation:', error)
+      toast.error(error.message || 'Failed to send invitation')
     } finally {
       setLoading(false)
     }
@@ -449,10 +449,39 @@ const TeamsManage = () => {
       {/* Filters */}
    
 
-      {/* Teams Grid */}
+      {/* Teams Grid - skeleton matching card layout until loading finished */}
       {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <div className="animate-spin rounded-[15px] h-8 w-8 border-b-2 border-blue-600"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <div
+              key={i}
+              className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] border dark:border-none p-6"
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-5 w-[160px] rounded-md" />
+                  <Skeleton className="h-4 w-full max-w-[220px] rounded-md" />
+                </div>
+                <div className="flex items-center gap-1">
+                  <Skeleton className="h-10 w-10 rounded-md" />
+                  <Skeleton className="h-10 w-10 rounded-md" />
+                </div>
+              </div>
+              <div className="flex gap-2 mb-4">
+                <Skeleton className="h-8 w-[80px] rounded-[15px]" />
+              </div>
+              <div className="mb-4">
+                <div className="flex -space-x-1">
+                  <Skeleton className="h-10 w-10 rounded-[15px]" />
+                  <Skeleton className="h-10 w-10 rounded-[15px]" />
+                  <Skeleton className="h-10 w-10 rounded-[15px]" />
+                </div>
+              </div>
+              <div className="flex items-center justify-between border-t border-gray-200 dark:border-gray-700 pt-4">
+                <Skeleton className="h-4 w-[100px] rounded-md" />
+              </div>
+            </div>
+          ))}
         </div>
       ) : filteredTeams.length === 0 ? (
         <div className="text-center py-12">

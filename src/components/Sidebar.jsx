@@ -1,14 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
-  CheckSquare,
-  GitPullRequest,
-  AlertCircle,
   LogOut,
-  KeyIcon,
   ChevronDown,
-  Dock,
   Compass,
   Package,
   CheckCircle,
@@ -17,240 +12,177 @@ import { Link, useLocation } from "react-router-dom";
 import { useSidebar } from "../contexts/SidebarContext";
 import { useAuth } from "../contexts/AuthContext";
 import { useNotifications } from "../contexts/NotificationContext";
-import { GoCalendar, GoWorkflow } from "react-icons/go";
+import { GoCalendar } from "react-icons/go";
 import { IoFolderOpenOutline } from "react-icons/io5";
 import { PiUsersDuotone, PiUserCheck } from "react-icons/pi";
 import { BiMessageSquareDetail } from "react-icons/bi";
-import { FolderOpen as RepoIcon, FileText } from "lucide-react";
+
+const EXPANDED_WIDTH = 240;
+const COLLAPSED_WIDTH = 72;
 
 const Sidebar = () => {
-  const { isOpen, closeSidebar } = useSidebar();
-  const { isAuthenticated, logout, user } = useAuth();
+  const { isOpen, isMobile, closeSidebar } = useSidebar();
+  const { isAuthenticated, logout } = useAuth();
   const { unreadCounts } = useNotifications();
   const location = useLocation();
   const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path;
+  const collapsed = !isOpen && !isMobile;
 
   const sidebarItems = [
-    {
-      title: "Dashboard",
-      icon: LayoutDashboard,
-      path: "/dashboard",
-      badgeCount: 0,
-    },
-    {
-      title: "Explore",
-      icon: Compass,
-      path: "/dashboard/explore",
-    },
-    {
-      title: "Purchased",
-      icon: Package,
-      path: "/dashboard/my-bought-projects",
-    },
-    {
-      title: "Tasks",
-      icon: CheckCircle,
-      path: "/dashboard/tasks",
-      badgeCount: unreadCounts.tasks,
-    },
-    {
-      title: "Meetings",
-      icon: GoCalendar,
-      path: "/dashboard/meetings",
-      badgeCount: unreadCounts.meetings,
-    },
-
-    {
-      title: "Projects",
-      icon: IoFolderOpenOutline,
-      path: "/dashboard/projects",
-      badgeCount: unreadCounts.projects,
-    },
-    {
-      title: "Teams",
-      icon: PiUsersDuotone,
-      path: "/dashboard/teams",
-      badgeCount: unreadCounts.teams,
-    },
-    {
-      title: "Friends",
-      icon: PiUserCheck,
-      path: "/dashboard/friends",
-      badgeCount: 0,
-    },
-    {
-      title: "Messages",
-      icon: BiMessageSquareDetail,
-      path: "/dashboard/chat",
-      badgeCount: unreadCounts.messages,
-    },
+    { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
+    { title: "Explore", icon: Compass, path: "/dashboard/explore" },
+    { title: "Purchased", icon: Package, path: "/dashboard/my-bought-projects" },
+    { title: "Tasks", icon: CheckCircle, path: "/dashboard/tasks", badgeCount: unreadCounts.tasks },
+    { title: "Meetings", icon: GoCalendar, path: "/dashboard/meetings", badgeCount: unreadCounts.meetings },
+    { title: "Projects", icon: IoFolderOpenOutline, path: "/dashboard/projects", badgeCount: unreadCounts.projects },
+    { title: "Teams", icon: PiUsersDuotone, path: "/dashboard/teams", badgeCount: unreadCounts.teams },
+    { title: "Friends", icon: PiUserCheck, path: "/dashboard/friends" },
+    { title: "Messages", icon: BiMessageSquareDetail, path: "/dashboard/chat", badgeCount: unreadCounts.messages },
   ];
-
-  const sidebarVariants = {
-    open: { x: 0, transition: { type: "spring", stiffness: 300, damping: 40 } },
-    closed: {
-      x: "-100%",
-      transition: { type: "spring", stiffness: 300, damping: 40 },
-    },
-  };
 
   if (!isAuthenticated) return null;
 
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <motion.aside
-          variants={sidebarVariants}
-          initial="closed"
-          animate="open"
-          exit="closed"
-          className="fixed left-0 top-0 h-[91.5vh] mt-[8.5vh] w-[240px] 
-                     bg-[#eee] text-black dark:bg-[black] dark:text-white 
-                     border-r border-gray-300 dark:border-gray-800 
-                     z-50 flex flex-col justify-between icon"
-        >
-          <nav className="flex flex-col items-center justify-start px-5 p-3 gap-2 icon">
-            {sidebarItems.map((item) => {
-              const Icon = item.icon;
-              const active =
-                isActive(item.path) ||
-                (item.hasDropdown &&
-                  item.dropdownItems?.some((sub) => isActive(sub.path)));
+  const sidebarWidth = isMobile ? EXPANDED_WIDTH : isOpen ? EXPANDED_WIDTH : COLLAPSED_WIDTH;
+  const showOnScreen = isMobile ? isOpen : true;
 
-              return (
-                <div
-                  key={item.path}
-                  className="w-full flex flex-col items-center"
-                >
-                  {item.hasDropdown ? (
-                    <>
-                      <button
-                        onClick={() => {
-                          if (item.title === "Admin") {
-                            setAdminDropdownOpen((prev) => !prev);
-                          }
-                        }}
-                        className={`flex items-center  gap-4 cursor-pointer justify-start px-5 relative w-[220px] h-[50px] rounded-[15px] transition-colors duration-200
-                          ${
-                            active
-                              ? "border-l-5 border bg-white text-black border dark:bg-white dark:text-black border-l-4 border"
-                              : "hover:bg-white dark:hover:bg-gray-800 text-gray-500 dark:text-gray-300"
-                          }
-                        `}
-                        title={item.title}
-                      >
-                        <Icon className="w-5 h-5" />
-                        <label
-                          className="font-bold cursor-pointer"
-                          htmlFor={item.title}
-                        >
-                          {item.title}
-                        </label>
-                        <ChevronDown className="w-5 h-5 icon icon icon absolute right-4" />
-                      </button>
+  const NavItem = ({ item }) => {
+    const Icon = item.icon;
+    const active =
+      isActive(item.path) ||
+      (item.hasDropdown && item.dropdownItems?.some((sub) => isActive(sub.path)));
+    const badge = item.badgeCount > 0 ? item.badgeCount : null;
 
-                      <AnimatePresence>
-                        {item.title === "Admin" && adminDropdownOpen && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: "auto" }}
-                            exit={{ opacity: 0, height: 0 }}
-                            className="flex flex-col items-center gap-1 mt-1"
-                          >
-                            {item.dropdownItems.map((sub) => {
-                              const SubIcon = sub.icon;
-                              const subActive = isActive(sub.path);
-                              return (
-                                <Link
-                                  key={sub.path}
-                                  to={sub.path}
-                                  className={`flex relative items-center justify-start px-5  gap-4 cursor-pointer w-[200px] ml-[20px] h-[45px] rounded-[15px] transition-all
-                                    ${
-                                      subActive
-                                        ? "bg-white text-black border dark:bg-white dark:text-black"
-                                        : "hover:bg-white dark:hover:bg-gray-800 text-gray-500 dark:text-gray-300"
-                                    }
-                                  `}
-                                  title={sub.title}
-                                >
-                                  <SubIcon className="w-5 h-5 icon icon icon" />
-                                  <label
-                                    className="font-bold cursor-pointer"
-                                    htmlFor={sub.title}
-                                  >
-                                    {sub.title}
-                                  </label>
-                                  {/* <div className="absolute w-[12px] h-full -left-[11px] -top-[22px] border-l border-b border-gray-300 rounded-bl-lg"></div> */}
-                                </Link>
-                              );
-                            })}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </>
-                  ) : (
-                    <Link
-                      to={item.path}
-                      title={item.title}
-                      className="relative flex items-center justify-start p-2 gap-4 cursor-pointer w-[220px] rounded-[10px]"
-                    >
-                      {active && (
-                        <motion.div
-                          layoutId="sidebar-active"
-                          className="absolute inset-0 bg-white dark:bg-[rgba(255,255,255,.1)] border border-gray-300 dark:border-gray-600 rounded-[10px]"
-                          transition={{
-                            type: "spring",
-                            stiffness: 400,
-                            damping: 30,
-                          }}
-                        />
-                      )}
-
-                      <motion.div
-                       transition={{
-                            type: "spring",
-                            stiffness: 400,
-                            damping: 30,
-                          }}
-                        className={`relative flex p-3 rounded-[10px] ${
-                          active
-                            ? "bg-black text-white dark:bg-white dark:text-black"
-                            : ""
-                        }`}
-                      >
-                        <Icon className="w-5 h-5 icon" />
-                      </motion.div>
-
-                      <label
-                        className={`relative font-bold cursor-pointer ${
-                          active
-                            ? "text-black dark:text-white"
-                            : "text-gray-500 dark:text-gray-300"
-                        }`}
-                      >
-                        {item.title}
-                      </label>
-                    </Link>
-                  )}
-                </div>
-              );
-            })}
-          </nav>
-
-          <div
-            onClick={logout}
-            className="flex items-center justify-center px-5 w-[220px] gap-4 h-[50px] m-auto mb-5 rounded-[15px] bg-red-500 text-white 
-                       hover:bg-red-600 transition-all cursor-pointer"
-            title="Logout"
+    if (item.hasDropdown) {
+      return (
+        <div className="w-full">
+          <button
+            type="button"
+            onClick={() => item.title === "Admin" && setAdminDropdownOpen((p) => !p)}
+            title={item.title}
+            className={`sidebar-nav-item w-full ${collapsed ? "sidebar-nav-item--collapsed" : ""} ${
+              active ? "sidebar-nav-item--active" : ""
+            }`}
           >
-            <LogOut className="w-5 h-5 icon icon" />
-            Logout
-          </div>
-        </motion.aside>
+            <span className={`sidebar-icon-wrap ${active ? "sidebar-icon-wrap--active" : ""}`}>
+              <Icon className="w-5 h-5 shrink-0" />
+            </span>
+            {!collapsed && (
+              <>
+                <span className="sidebar-label">{item.title}</span>
+                <ChevronDown className="w-4 h-4 ml-auto shrink-0 opacity-60" />
+              </>
+            )}
+          </button>
+          <AnimatePresence>
+            {!collapsed && item.title === "Admin" && adminDropdownOpen && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                className="overflow-hidden pl-3 mt-1 space-y-1"
+              >
+                {item.dropdownItems?.map((sub) => {
+                  const SubIcon = sub.icon;
+                  const subActive = isActive(sub.path);
+                  return (
+                    <Link
+                      key={sub.path}
+                      to={sub.path}
+                      title={sub.title}
+                      className={`sidebar-nav-item sidebar-nav-item--sub ${subActive ? "sidebar-nav-item--active" : ""}`}
+                    >
+                      <span className={`sidebar-icon-wrap sidebar-icon-wrap--sm ${subActive ? "sidebar-icon-wrap--active" : ""}`}>
+                        <SubIcon className="w-4 h-4 shrink-0" />
+                      </span>
+                      <span className="sidebar-label text-sm">{sub.title}</span>
+                    </Link>
+                  );
+                })}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+      );
+    }
+
+    return (
+      <Link
+        to={item.path}
+        title={item.title}
+        onClick={() => isMobile && closeSidebar()}
+        className={`sidebar-nav-item ${collapsed ? "sidebar-nav-item--collapsed" : ""} ${
+          active ? "sidebar-nav-item--active" : ""
+        }`}
+      >
+        <span className={`sidebar-icon-wrap relative ${active ? "sidebar-icon-wrap--active" : ""}`}>
+          <Icon className="w-5 h-5 shrink-0" />
+          {badge && collapsed && (
+            <span className="sidebar-badge sidebar-badge--dot" aria-label={`${badge} unread`} />
+          )}
+        </span>
+        {!collapsed && (
+          <span className="sidebar-label flex-1 truncate">{item.title}</span>
+        )}
+        {!collapsed && badge && (
+          <span className="sidebar-badge sidebar-badge--inline">{badge > 99 ? "99+" : badge}</span>
+        )}
+      </Link>
+    );
+  };
+
+  return (
+    <>
+      {isMobile && isOpen && (
+        <button
+          type="button"
+          aria-label="Close sidebar"
+          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+          onClick={closeSidebar}
+        />
       )}
-    </AnimatePresence>
+
+      <motion.aside
+        initial={false}
+        animate={{
+          width: sidebarWidth,
+          x: showOnScreen ? 0 : -EXPANDED_WIDTH,
+        }}
+        transition={{ type: "spring", stiffness: 380, damping: 38 }}
+        className={`app-sidebar fixed left-0 top-0 h-[91.5vh] mt-[8.5vh] z-50 flex flex-col border-r border-gray-200 dark:border-white/10 bg-[#eee] dark:bg-black ${
+          collapsed ? "app-sidebar--collapsed" : ""
+        }`}
+      >
+        {/* Logo strip */}
+        <div className={`sidebar-brand ${collapsed ? "sidebar-brand--collapsed" : ""}`}>
+          <img src="/logo.png" alt="logo" className="w-8 h-8 shrink-0" />
+          {!collapsed && (
+            <span className="text-[10px] font-black uppercase tracking-widest truncate">
+              Slack Dev
+            </span>
+          )}
+        </div>
+
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2 py-3 space-y-1">
+          {sidebarItems.map((item) => (
+            <NavItem key={item.path} item={item} />
+          ))}
+        </nav>
+
+        <div className="p-2 border-t border-gray-200 dark:border-white/10">
+          <button
+            type="button"
+            onClick={logout}
+            title="Logout"
+            className={`sidebar-logout ${collapsed ? "sidebar-logout--collapsed" : ""}`}
+          >
+            <LogOut className="w-5 h-5 shrink-0" />
+            {!collapsed && <span>Logout</span>}
+          </button>
+        </div>
+      </motion.aside>
+    </>
   );
 };
 

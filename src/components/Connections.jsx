@@ -1,6 +1,7 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { PiGithubLogo, PiInstagramLogo, PiLinkedinLogo } from "react-icons/pi";
+import { PiGithubLogo, PiGithubLogoDuotone, PiInstagramLogo, PiLinkedinLogo } from "react-icons/pi";
 import { Button } from "./ui/button";
+import { connectGithub } from "@/hooks/useGithubRepos";
 
 const backdropVariants = {
   hidden: { opacity: 0 },
@@ -29,12 +30,6 @@ const modalVariants = {
 };
 
 const Connections = ({ onClose, isOpen }) => {
-
-    const connectGithub = async () => {
- const encryptedToken = localStorage.getItem('authToken'); // or wherever you store it
-
-window.location.href = `https://github.com/login/oauth/authorize?client_id=${import.meta.env.VITE_CLIENT_ID}&scope=repo user&state=${encodeURIComponent(encryptedToken)}`;
-};
   return (
     <AnimatePresence>
       {isOpen && (
@@ -51,43 +46,34 @@ window.location.href = `https://github.com/login/oauth/authorize?client_id=${imp
             animate="visible"
             exit="exit"
             onClick={(e) => e.stopPropagation()}
-            className="rounded-2xl p-8 bg-white dark:bg-gray-800 border border-gray-700 shadow-2xl"
+            className="rounded-2xl p-8 bg-white dark:bg-gray-800 border border-gray-700 shadow-2xl max-w-md w-full mx-4"
           >
-            <h2 className="text-2xl font-bold mb-2 text-center">
-              Connect Your Accounts
+            <h2 className="text-2xl font-bold mb-2 text-center text-gray-900 dark:text-white">
+              Connect GitHub
             </h2>
 
-            <p className="text-gray-400 text-sm mb-6 text-center">
-              GitHub connection is required to continue.
+            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 text-center">
+              Link your GitHub account to view repositories and create tasks from
+              your repos.
             </p>
 
-            {/* GitHub */}
             <div className="flex gap-3 items-center justify-center">
               <button
+                type="button"
                 onClick={connectGithub}
-                className="w-20 h-20 rounded-full flex items-center cursor-pointer justify-center px-6 gap-4 bg-black text-white font-semibold hover:opacity-90 transition-all"
+                className="w-full h-20 rounded-[20px] gap-5 flex items-center cursor-pointer justify-center bg-black text-white font-semibold hover:opacity-90 transition-all"
+                title="Connect GitHub"
               >
-                <PiGithubLogo size={30} />
-              </button>
-
-              {/* LinkedIn */}
-              <button
-                onClick={() => (window.location.href = "/api/auth/linkedin")}
-                className="w-20  h-20 rounded-full flex items-center cursor-pointer justify-center px-6 gap-4 bg-[#0A66C2] font-semibold text-white hover:opacity-90 transition-all"
-              >
-                <PiLinkedinLogo size={30} />
-              </button>
-
-              {/* Instagram */}
-              <button
-                onClick={() => (window.location.href = "/api/auth/instagram")}
-                className="w-20 h-20 rounded-full flex items-center cursor-pointer justify-center px-6 gap-4 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-semibold hover:opacity-90 transition-all"
-              >
-                <PiInstagramLogo size={30} />
+                <PiGithubLogoDuotone size={30} />
+                Let's Connect
               </button>
             </div>
-            <Button className={"w-full mt-5"} onClick={onClose}>
-              May Be Later!
+            <Button
+              variant="outline"
+              className="w-full mt-5"
+              onClick={onClose}
+            >
+              Maybe later
             </Button>
           </motion.div>
         </motion.div>

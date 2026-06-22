@@ -1,417 +1,483 @@
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { 
-  Search, 
-  UserPlus, 
-  Check, 
-  X, 
-  Users, 
-  UserCheck, 
+import { useState, useEffect, useCallback, useMemo } from "react"
+import {
+  Check,
+  X,
+  Users,
   Clock,
   Trash2,
-  Send
-} from 'lucide-react'
-import { toast } from 'sonner'
-import { Button } from '../components/ui/button'
-import { Input } from '../components/ui/input'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../components/ui/card'
-import { Badge } from '../components/ui/badge'
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar'
-import friendService from '../services/friendService'
-import { useAuth } from '../contexts/AuthContext'
-import { getAvatarProps } from '../utils/avatarUtils'
-import UserDetailsModal from '../components/UserDetailsModal'
-import FindFriendsModal from '../components/FindFriendsModal'
-import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
-import { PiUserDuotone } from 'react-icons/pi'
+  Send,
+  UserPlus,
+  Sparkles,
+} from "lucide-react"
+import { toast } from "sonner"
+import { Button } from "../components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
+import { Badge } from "../components/ui/badge"
+import friendService from "../services/friendService"
+import { useAuth } from "../contexts/AuthContext"
+import UserDetailsModal from "../components/UserDetailsModal"
+import FindFriendsModal from "../components/FindFriendsModal"
+import FriendUserCard from "../components/friends/FriendUserCard"
+import { Skeleton } from "@/components/ui/skeleton"
+import { PiUserDuotone, PiUserPlusDuotone, PiUsersDuotone } from "react-icons/pi"
+import { cn } from "@/lib/utils"
+import {
+  getExcludedUserIds,
+  filterRecommendableUsers,
+  getPendingRequestStatus,
+} from "@/utils/friendSuggestions"
 
 const Friends = () => {
   const { user } = useAuth()
-  const [activeTab, setActiveTab] = useState('friends')
+  const [activeTab, setActiveTab] = useState("friends")
   const [selectedUserId, setSelectedUserId] = useState(null)
   const [showUserDetails, setShowUserDetails] = useState(false)
   const [showFindFriendsModal, setShowFindFriendsModal] = useState(false)
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [statsLoading, setStatsLoading] = useState(true)
+  const [suggestionsLoading, setSuggestionsLoading] = useState(true)
   const [friends, setFriends] = useState([])
   const [friendRequests, setFriendRequests] = useState([])
+  const [suggestions, setSuggestions] = useState([])
   const [stats, setStats] = useState(null)
-
+  const [sendingId, setSendingId] = useState(null)
+  const [sentSuggestionIds, setSentSuggestionIds] = useState(new Set())
+  const [actionId, setActionId] = useState(null)
 
   const handleUserAvatarClick = (userId) => {
     setSelectedUserId(userId)
     setShowUserDetails(true)
   }
 
-  const loadFriends = async () => {
-    try {
-      setLoading(true)
-      const response = await friendService.getFriends()
-      setFriends(response.friends || [])
-    } catch (error) {
-      console.error('Error loading friends:', error)
-      toast.error('Failed to load friends')
-    } finally {
-      setLoading(false)
-    }
-  }
+  const loadFriends = useCallback(async () => {
+    const response = await friendService.getFriends()
+    setFriends(response.friends || [])
+  }, [])
 
-  const loadFriendRequests = async () => {
-    try {
-      const response = await friendService.getFriendRequests()
-      setFriendRequests(response.requests || [])
-    } catch (error) {
-      console.error('Error loading friend requests:', error)
-      toast.error('Failed to load friend requests')
-    }
-  }
+  const loadFriendRequests = useCallback(async () => {
+    const response = await friendService.getFriendRequests()
+    setFriendRequests(response.requests || [])
+  }, [])
 
-  const loadStats = async () => {
+  const loadStats = useCallback(async () => {
+    const response = await friendService.getFriendStats()
+    setStats(response.stats)
+  }, [])
+
+  const loadSuggestions = useCallback(async () => {
+    const response = await friendService.searchUsersForFriends("", 12)
+    setSuggestions(response.users || [])
+  }, [])
+
+  const excludedIds = useMemo(
+    () =>
+      getExcludedUserIds({
+        friends,
+        friendRequests,
+        currentUserId: user?.id,
+        extraIds: [...sentSuggestionIds],
+      }),
+    [friends, friendRequests, user?.id, sentSuggestionIds],
+  )
+
+  const visibleSuggestions = useMemo(
+    () => filterRecommendableUsers(suggestions, excludedIds),
+    [suggestions, excludedIds],
+  )
+
+  const refreshAll = useCallback(async () => {
     try {
-      const response = await friendService.getFriendStats()
-      setStats(response.stats)
+      await Promise.all([
+        loadFriends(),
+        loadFriendRequests(),
+        loadStats(),
+        loadSuggestions(),
+      ])
     } catch (error) {
-      console.error('Error loading stats:', error)
+      console.error("Error refreshing friends data:", error)
     }
-  }
+  }, [loadFriends, loadFriendRequests, loadStats, loadSuggestions])
+
+  useEffect(() => {
+    let mounted = true
+
+    const init = async () => {
+      try {
+        setLoading(true)
+        setStatsLoading(true)
+        setSuggestionsLoading(true)
+        await Promise.all([
+          loadFriends(),
+          loadFriendRequests(),
+          loadStats(),
+          loadSuggestions(),
+        ])
+      } catch (error) {
+        if (mounted) {
+          console.error("Error loading friends page:", error)
+          toast.error("Failed to load friends")
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false)
+          setStatsLoading(false)
+          setSuggestionsLoading(false)
+        }
+      }
+    }
+
+    init()
+    return () => {
+      mounted = false
+    }
+  }, [loadFriends, loadFriendRequests, loadStats, loadSuggestions])
 
   const handleSendFriendRequest = async (userId) => {
+    const status = getPendingRequestStatus(userId, friendRequests, user?.id)
+    if (sendingId || sentSuggestionIds.has(userId) || status === "sent") return
+
     try {
+      setSendingId(userId)
       await friendService.sendFriendRequest(userId)
-      toast.success('Friend request sent!')
-      loadFriendRequests()
-      loadStats()
+      setSentSuggestionIds((prev) => new Set([...prev, String(userId)]))
+      setSuggestions((prev) =>
+        prev.filter((u) => String(u.id) !== String(userId)),
+      )
+      toast.success("Friend request sent!")
+      await Promise.all([loadFriendRequests(), loadStats(), loadSuggestions()])
     } catch (error) {
-      toast.error(error.message || 'Failed to send friend request')
+      toast.error(error.message || "Failed to send friend request")
+    } finally {
+      setSendingId(null)
     }
   }
 
   const handleRespondToRequest = async (requestId, action) => {
     try {
+      setActionId(requestId)
       await friendService.respondToFriendRequest(requestId, action)
       toast.success(`Friend request ${action}ed!`)
-      loadFriendRequests()
-      loadFriends()
-      loadStats()
+      await refreshAll()
     } catch (error) {
       toast.error(error.message || `Failed to ${action} friend request`)
+    } finally {
+      setActionId(null)
     }
   }
 
   const handleRemoveFriend = async (friendId) => {
-    if (!window.confirm('Are you sure you want to remove this friend?')) {
-      return
-    }
+    if (!window.confirm("Are you sure you want to remove this friend?")) return
 
     try {
+      setActionId(friendId)
       await friendService.removeFriend(friendId)
-      toast.success('Friend removed!')
-      loadFriends()
-      loadStats()
+      toast.success("Friend removed!")
+      await refreshAll()
     } catch (error) {
-      toast.error(error.message || 'Failed to remove friend')
+      toast.error(error.message || "Failed to remove friend")
+    } finally {
+      setActionId(null)
     }
   }
 
-  useEffect(() => {
-    loadFriends()
-    loadFriendRequests()
-    loadStats()
-  }, [])
-
-
-  const pendingReceivedRequests = friendRequests.filter(req => 
-    req.receiver.id === user?.id && req.status === 'pending'
+  const pendingReceivedRequests = friendRequests.filter(
+    (req) => req.receiver.id === user?.id && req.status === "pending",
   )
 
-  const pendingSentRequests = friendRequests.filter(req => 
-    req.sender.id === user?.id && req.status === 'pending'
+  const pendingSentRequests = friendRequests.filter(
+    (req) => req.sender.id === user?.id && req.status === "pending",
+  )
+
+  const statPills = [
+    {
+      label: "Total Friends",
+      value: stats?.totalFriends ?? 0,
+      icon: Users,
+      color: "var(--theme-accent)",
+    },
+    {
+      label: "Received",
+      value: stats?.pendingReceivedRequests ?? 0,
+      icon: Clock,
+      color: "#f59e0b",
+    },
+    {
+      label: "Sent",
+      value: stats?.pendingSentRequests ?? 0,
+      icon: Send,
+      color: "#6b7280",
+    },
+  ]
+
+  const renderPersonCard = ({ person, actions, index = 0 }) => (
+    <FriendUserCard
+      person={person}
+      index={index}
+      onAvatarClick={handleUserAvatarClick}
+      action={actions}
+    />
   )
 
   document.title = "Friends - Manage Your Friends"
+
   return (
-    <div className="pt-10">
+    <div className="dashboard-page min-h-screen pt-6 md:pt-10 pb-10">
       <div className="mx-auto">
         {/* Header */}
-        <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
-        <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
-        <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
-                  <PiUserDuotone  size={15} />
-                  </div>
-                  <h1 className="text-2xl font-bold">Your Friends</h1>
-                </div>
-                </div>  
-
-        {/* Stats Cards */}
-        {stats && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className={'bg-white rounded-[15px] border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Friends</CardTitle>
-                <Users className="h-4 w-4 icon text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.totalFriends}</div>
-              </CardContent>
-            </Card>
-            <Card className={'bg-white rounded-[15px] border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Pending Received</CardTitle>
-                <Clock className="h-4 w-4 icon text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.pendingReceivedRequests}</div>
-              </CardContent>
-            </Card>
-            <Card className={'bg-white rounded-[15px] border dark:border-none dark:bg-[rgba(255,255,255,.1)]'}>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Pending Sent</CardTitle>
-                <Send className="h-4 w-4 icon text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.pendingSentRequests}</div>
-              </CardContent>
-            </Card>
+        <div className="mb-6">
+          <div className="dashboard-page-header">
+            <div className="dashboard-welcome">
+              <div className="dashboard-welcome__icon">
+                <PiUserDuotone size={22} />
+              </div>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white">
+                  Friends
+                </h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mt-0.5">
+                  Connect, manage requests, and grow your network
+                </p>
+              </div>
+            </div>
           </div>
-        )}
 
-        {/* Find Friends Button */}
-        <div className="mb-6 flex justify-end">
-          <Button
-            onClick={() => setShowFindFriendsModal(true)}
-            className={getButtonClasses('primary', 'md', 'w-[200px] font-bold')}
-          >
-            <PiUserDuotone className={ICON_SIZES.md} />
-            Find Friends
-          </Button>
+          <div className="flex flex-wrap items-center justify-between gap-3 mt-5">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 flex-1 min-w-[240px]">
+              {statsLoading
+                ? [1, 2, 3].map((i) => (
+                    <Skeleton key={i} className="h-[72px] rounded-xl" />
+                  ))
+                : statPills.map((pill) => (
+                    <div key={pill.label} className="dashboard-pill h-13">
+                      <div
+                        className="dashboard-pill__dot"
+                        style={{ background: pill.color }}
+                      />
+                      <div className="flex items-center gap-2 justify-between w-full uppercase">
+                        <p className="text-[13px] font-bold tracking-wider text-gray-500 dark:text-gray-400">
+                          {pill.label}
+                        </p>
+                        <p className="text-[13px] font-bold text-gray-500 dark:text-white">
+                          {pill.value}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+            </div>
+            <Button
+              type="button"
+              onClick={() => setShowFindFriendsModal(true)}
+              className="h-12 px-5 w-[200px] rounded-xl font-bold bg-theme-gradient text-white hover:opacity-90 shadow-sm"
+            >
+              <PiUserPlusDuotone className="h-4 w-4 mr-2" />
+              Find Friends
+            </Button>
+          </div>
+        </div>
+
+        {/* Suggested friends */}
+        <div className="dashboard-card p-5 mb-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Sparkles className="h-4 w-4 text-theme" />
+            <h2 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white">
+              Suggested for you
+            </h2>
+          </div>
+
+          {suggestionsLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+              {[1, 2, 3, 4].map((i) => (
+                <Skeleton key={i} className="h-[76px] rounded-xl" />
+              ))}
+            </div>
+          ) : visibleSuggestions.length === 0 ? (
+            <p className="text-sm text-gray-500 dark:text-gray-400 py-4 text-center">
+              No new suggestions. Everyone you know may already be connected or
+              pending.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {visibleSuggestions.map((person, index) => {
+                const requestStatus = getPendingRequestStatus(
+                  person.id,
+                  friendRequests,
+                  user?.id,
+                )
+                const isSent =
+                  sentSuggestionIds.has(String(person.id)) ||
+                  requestStatus === "sent"
+
+                return (
+                  <FriendUserCard
+                    key={person.id}
+                    person={person}
+                    index={index}
+                    onAvatarClick={handleUserAvatarClick}
+                    onAdd={handleSendFriendRequest}
+                    isSending={sendingId === person.id}
+                    requestStatus={isSent ? "sent" : requestStatus}
+                  />
+                )
+              })}
+            </div>
+          )}
         </div>
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full md:w-auto">
-        <TabsList className="flex flex-col sm:flex-row w-full md:w-auto h-auto gap-3 bg-transparent p-0">
-  <TabsTrigger
-    value="friends"
-    className={`min-h-[56px] cursor-pointer flex-1 w-full rounded-[15px] border px-6 py-3 text-sm font-semibold tracking-wide transition-all duration-200 ${
-      activeTab === 'friends'
-        ? 'bg-white text-black border-gray-200 shadow-md'
-        : 'bg-transparent text-gray-400 dark:text-gray-300 border-gray-200/30 dark:border-gray-700 hover:border-gray-400/60'
-    }`}
-  >
-    Friends ({friends.length})
-  </TabsTrigger>
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="flex flex-wrap w-full h-auto gap-2 bg-transparent p-0 mb-5">
+            {[
+              { value: "friends", label: "Friends", count: friends.length },
+              {
+                value: "received",
+                label: "Received",
+                count: pendingReceivedRequests.length,
+              },
+              { value: "sent", label: "Sent", count: pendingSentRequests.length },
+            ].map((tab) => (
+              <TabsTrigger
+                key={tab.value}
+                value={tab.value}
+                className={cn(
+                  "h-11 px-5 rounded-xl cursor-pointer h-12 border text-sm font-bold transition-all",
+                  activeTab === tab.value
+                    ? "bg-black text-black dark:bg-white dark:text-black border-transparent shadow-sm"
+                    : "bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-white/10",
+                )}
+              >
+                {tab.label} ({tab.count})
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-  <TabsTrigger
-    value="received"
-    className={`min-h-[56px] cursor-pointer flex-1 w-full rounded-[15px] border px-6 py-3 text-sm font-semibold tracking-wide transition-all duration-200 ${
-      activeTab === 'received'
-        ? 'bg-white text-black border-gray-200 shadow-md'
-        : 'bg-transparent text-gray-400 dark:text-gray-300 border-gray-200/30 dark:border-gray-700 hover:border-gray-400/60'
-    }`}
-  >
-    Received ({pendingReceivedRequests.length})
-  </TabsTrigger>
-
-  <TabsTrigger
-    value="sent"
-    className={`min-h-[56px] cursor-pointer flex-1 w-full rounded-[15px] border px-6 py-3 text-sm font-semibold tracking-wide transition-all duration-200 ${
-      activeTab === 'sent'
-        ? 'bg-white text-black border-gray-200 shadow-md'
-        : 'bg-transparent text-gray-400 dark:text-gray-300 border-gray-200/30 dark:border-gray-700 hover:border-gray-400/60'
-    }`}
-  >
-    Sent ({pendingSentRequests.length})
-  </TabsTrigger>
-</TabsList>
-
-
-          {/* Friends Tab */}
-          <TabsContent  value="friends" className="mt-6">
-            <Card className={'bg-transparent dark:bg-[black]'}>
-              <CardHeader>
-                <CardTitle className={'font-bold'}>Your Friends</CardTitle>
-                <CardDescription>
-                  People you're connected with
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {loading ? (
-                  <div className="text-center py-8">Loading friends...</div>
-                ) : friends.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    No friends yet. Start by finding people to connect with!
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {friends.map((friendship) => (
-                      <motion.div
-                        key={friendship.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center space-x-4 p-4 border rounded-[15px] hover:bg-gray-50 dark:bg-[rgba(255,255,255,.1)] bg-white dark:bg-[black]"
-                      >
-                        <Avatar 
-                          className="cursor-pointer hover:scale-110 transition-transform"
-                          onClick={() => handleUserAvatarClick(friendship.friend.id)}
-                          title={`View ${friendship.friend.username}'s profile`}
-                        >
-                          <AvatarImage {...getAvatarProps(friendship.friend.avatar, friendship.friend.username)} />
-                          <AvatarFallback>
-                            {friendship.friend.username.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
-                            {friendship.friend.username}
-                          </p>
-                          <p className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                            {friendship.friend.email}
-                          </p>
-                        </div>
+          <TabsContent value="friends" className="mt-0">
+            <div>
+              {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {[1, 2, 3].map((i) => (
+                    <Skeleton key={i} className="h-[80px] rounded-xl" />
+                  ))}
+                </div>
+              ) : friends.length === 0 ? (
+                <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                  <PiUsersDuotone className="h-10 w-10 mx-auto mb-3 opacity-40" />
+                  <p className="font-medium">No friends yet</p>
+                  <p className="text-sm mt-1">
+                    Send a request from suggestions above
+                  </p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {friends.map((friendship, index) =>
+                    renderPersonCard({
+                      person: friendship.friend,
+                      index,
+                      actions: (
                         <Button
+                          type="button"
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleRemoveFriend(friendship.friend.id)}
-                          className="text-red-600 hover:text-red-700 w-12"
+                          disabled={actionId === friendship.friend.id}
+                          onClick={() =>
+                            handleRemoveFriend(friendship.friend.id)
+                          }
+                          className="text-red-500 hover:text-red-600 hover:bg-red-500/10 h-9 w-9 p-0 rounded-lg"
                         >
-                          <Trash2 className="h-4 w-4 icon" />
+                          <Trash2 className="h-4 w-4" />
                         </Button>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                      ),
+                    }),
+                  )}
+                </div>
+              )}
+            </div>
           </TabsContent>
 
-          {/* Received Requests Tab */}
-          <TabsContent value="received" className="mt-6">
-            <Card className={'bg-transparent dark:bg-[black]'}>
-              <CardHeader>
-                <CardTitle className={'font-bold'}>Received Requests</CardTitle>
-                <CardDescription>
-                  Friend requests waiting for your response
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {pendingReceivedRequests.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    No pending friend requests
-                  </div>
-                ) : (
-                  <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {pendingReceivedRequests.map((request) => (
-                      <motion.div
-                        key={request.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center justify-between p-4 border rounded-[15px]"
-                      >
-                        <div className="flex items-center space-x-4">
-                          <Avatar 
-                            className="cursor-pointer hover:scale-110 transition-transform"
-                            onClick={() => handleUserAvatarClick(request.sender.id)}
-                            title={`View ${request.sender.username}'s profile`}
-                          >
-                            <AvatarImage {...getAvatarProps(request.sender.avatar, request.sender.username)} />
-                            <AvatarFallback>
-                              {request.sender.username.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">
-                              {request.sender.username}
-                            </p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              {request.sender.email}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex space-x-2">
+          <TabsContent value="received" className="mt-0">
+            <div>
+              {pendingReceivedRequests.length === 0 ? (
+                <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                  <Clock className="h-10 w-10 mx-auto mb-3 opacity-40" />
+                  <p className="font-medium">No pending requests</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {pendingReceivedRequests.map((request, index) =>
+                    renderPersonCard({
+                      person: request.sender,
+                      index,
+                      actions: (
+                        <div className="flex gap-2 shrink-0">
                           <Button
-                            onClick={() => handleRespondToRequest(request.id, 'accept')}
-                            className={getButtonClasses('primary', 'sm', 'w-12')}
+                            type="button"
+                            size="sm"
+                            disabled={actionId === request.id}
+                            onClick={() =>
+                              handleRespondToRequest(request.id, "accept")
+                            }
+                            className="h-9 w-9 p-0 rounded-lg bg-emerald-500 hover:bg-emerald-600 text-white"
                           >
-                            <Check className={ICON_SIZES.sm} />
+                            <Check className="h-4 w-4" />
                           </Button>
                           <Button
-                            onClick={() => handleRespondToRequest(request.id, 'reject')}
-                            className={getButtonClasses('danger', 'sm', 'w-12')}
+                            type="button"
+                            size="sm"
+                            disabled={actionId === request.id}
+                            onClick={() =>
+                              handleRespondToRequest(request.id, "reject")
+                            }
+                            className="h-9 w-9 p-0 rounded-lg bg-red-500 hover:bg-red-600 text-white"
                           >
-                            <X className={ICON_SIZES.sm} />
+                            <X className="h-4 w-4" />
                           </Button>
                         </div>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                      ),
+                    }),
+                  )}
+                </div>
+              )}
+            </div>
           </TabsContent>
 
-          {/* Sent Requests Tab */}
-          <TabsContent value="sent" className="mt-6">
-            <Card className={'bg-transparent dark:bg-[black] '}>
-              <CardHeader>
-                <CardTitle className={'font-bold'}>Sent Requests</CardTitle>
-                <CardDescription>
-                  Friend requests you've sent
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                {pendingSentRequests.length === 0 ? (
-                  <div className="text-center py-8 text-gray-500">
-                    No pending sent requests
-                  </div>
-                ) : (
-                  <div className="space-y-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {pendingSentRequests.map((request) => (
-                      <motion.div
-                        key={request.id}
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="flex items-center justify-between p-4 border rounded-[15px]"
-                      >
-                        <div className="flex items-center space-x-4">
-                          <Avatar 
-                            className="cursor-pointer hover:scale-110 transition-transform"
-                            onClick={() => handleUserAvatarClick(request.receiver.id)}
-                            title={`View ${request.receiver.username}'s profile`}
-                          >
-                            <AvatarImage {...getAvatarProps(request.receiver.avatar, request.receiver.username)} />
-                            <AvatarFallback>
-                              {request.receiver.username.charAt(0).toUpperCase()}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium text-gray-900 dark:text-white">
-                              {request.receiver.username}
-                            </p>
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              {request.receiver.email}
-                            </p>
-                          </div>
-                        </div>
-                        <Badge variant="outline" className="text-yellow-600 px-4 py-2 bg-gray-100">
-                          <Clock className="h-3 w-3 icon mr-1" />
+          <TabsContent value="sent" className="mt-0">
+            <div>
+              {pendingSentRequests.length === 0 ? (
+                <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+                  <Send className="h-10 w-10 mx-auto mb-3 opacity-40" />
+                  <p className="font-medium">No sent requests</p>
+                </div>
+              ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {pendingSentRequests.map((request, index) =>
+                    renderPersonCard({
+                      person: request.receiver,
+                      index,
+                      actions: (
+                        <Badge
+                          variant="outline"
+                          className="text-amber-600 border-amber-200 bg-amber-50 dark:bg-amber-500/10 shrink-0"
+                        >
+                          <Clock className="h-3 w-3 mr-1" />
                           Pending
                         </Badge>
-                      </motion.div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                      ),
+                    }),
+                  )}
+                </div>
+              )}
+            </div>
           </TabsContent>
-
         </Tabs>
 
-        {/* Find Friends Modal */}
         <FindFriendsModal
           isOpen={showFindFriendsModal}
           onClose={() => setShowFindFriendsModal(false)}
+          onRequestSent={refreshAll}
+          excludedIds={excludedIds}
+          friendRequests={friendRequests}
+          currentUserId={user?.id}
         />
 
-        {/* User Details Modal */}
         <UserDetailsModal
           userId={selectedUserId}
           isOpen={showUserDetails}
@@ -426,4 +492,3 @@ const Friends = () => {
 }
 
 export default Friends
-

@@ -5,26 +5,24 @@ import HorizontalLoader from "../components/HorizontalLoader";
 import { usePermissions } from "../hooks/usePermissions";
 import {
   Search,
-  Plus,
   Edit,
   Trash2,
   Calendar,
-  User,
   Clock,
   CheckCircle,
   AlertCircle,
   MoreVertical,
-  Filter,
-  ChevronDown,
-  RefreshCw,
   Eye,
   FolderOpen,
+  FolderGit2,
   ArrowRight,
+  ListTodo,
+  Target,
 } from "lucide-react";
+import { connectGithub } from "@/hooks/useGithubRepos";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Textarea } from "../components/ui/textarea";
 import { Checkbox } from "../components/ui/checkbox";
 import {
   Select,
@@ -49,6 +47,7 @@ import { useAuth } from "../contexts/AuthContext";
 import { useNotifications } from "../contexts/NotificationContext";
 import { getAvatarProps } from "../utils/avatarUtils";
 import TaskEditModal from "../components/TaskEditModal";
+import CreateTaskModal from "../components/CreateTaskModal";
 import UserDetailsModal from "../components/UserDetailsModal";
 import {
   getButtonClasses,
@@ -63,7 +62,6 @@ import {
   SheetTitle,
 } from "../components/ui/sheet";
 import { cn } from "../lib/utils";
-import { toUTCDate } from "@/utils/timeConverter";
 import { PiPlus } from "react-icons/pi";
 
 const Tasks = () => {
@@ -73,6 +71,8 @@ const Tasks = () => {
   const location = useLocation();
   const [searchTerm, setSearchTerm] = useState("");
   const [showNewTaskPopup, setShowNewTaskPopup] = useState(false);
+  const [modalRepository, setModalRepository] = useState(null);
+  const [modalDueDate, setModalDueDate] = useState("");
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -82,27 +82,11 @@ const Tasks = () => {
   const [filterPriority, setFilterPriority] = useState("all");
   const [selectedTaskDetails, setSelectedTaskDetails] = useState(null);
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
-  const [newTask, setNewTask] = useState({
-    title: "",
-    description: "",
-    priority: "medium",
-    assignedTo: "",
-    assignedToId: "",
-    dueDate: "",
-    dueTime: "",
-    projectId: "none",
-  });
-  const [assignedToSuggestions, setAssignedToSuggestions] = useState([]);
-  const [showAssignedToSuggestions, setShowAssignedToSuggestions] =
-    useState(false);
   const [loading, setLoading] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
   const [teams, setTeams] = useState([]);
-  const [selectedTeam, setSelectedTeam] = useState("");
-  const [teamMembers, setTeamMembers] = useState([]);
-  const [availableUsers, setAvailableUsers] = useState([]);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
@@ -190,14 +174,25 @@ const Tasks = () => {
   }, [user, markAsReadByType]);
 
   useEffect(() => {
-    if (location.state?.openModal && location.state?.date) {
-      const date = new Date(location.state.date);
-      setNewTask((prev) => ({
-        ...prev,
-        dueDate: date.toISOString().split("T")[0]
-      }));
-      setShowNewTaskPopup(true);
+    const { openModal, date, repoId, name } = location.state || {};
+    if (!openModal && !repoId) return;
+
+    if (date) {
+      const parsed = new Date(date);
+      if (!Number.isNaN(parsed.getTime())) {
+        setModalDueDate(parsed.toISOString().split("T")[0]);
+      }
+    } else {
+      setModalDueDate("");
     }
+
+    if (repoId && name) {
+      setModalRepository({ repoId: String(repoId), repoName: name });
+    } else {
+      setModalRepository(null);
+    }
+
+    setShowNewTaskPopup(true);
   }, [location.state]);
 
   const loadUsers = async () => {
@@ -245,48 +240,11 @@ const Tasks = () => {
     }
   };
 
-  const loadTeamMembers = async (teamId) => {
-    if (!teamId) {
-      setTeamMembers([]);
-      setAvailableUsers(users);
-      return;
-    }
-    try {
-      const response = await teamService.getTeamMembers(teamId);
-      setTeamMembers(response.members || []);
-      setAvailableUsers(response.members || []);
-    } catch (error) {
-      console.error("Error loading team members:", error);
-      setAvailableUsers(users);
-    }
-  };
-
-  const updateAvailableUsers = useCallback(() => {
-    if (newTask.projectId && newTask.projectId !== "none") {
-      const selectedProject = projects.find((p) => p.id === newTask.projectId);
-      if (selectedProject && selectedProject.teamId) {
-        loadTeamMembers(selectedProject.teamId);
-      } else {
-        setAvailableUsers(users);
-      }
-    } else {
-      setAvailableUsers(users);
-    }
-  }, [newTask.projectId, projects, users]);
-
   useEffect(() => {
     loadUsers();
     loadProjects();
     loadTeams();
   }, []);
-
-  useEffect(() => {
-    setAvailableUsers(users);
-  }, [users]);
-
-  useEffect(() => {
-    updateAvailableUsers();
-  }, [updateAvailableUsers]);
 
   const filteredTasks = tasks.filter((task) => {
     const matchesSearch =
@@ -329,42 +287,16 @@ const Tasks = () => {
     toast.success(`${selectedTasks.length} task(s) deleted successfully!`);
   };
 
-  const handleAssignedToChange = async (value) => {
-    setNewTask({ ...newTask, assignedTo: value, assignedToId: "" });
-    if (value.length > 0) {
-      const filtered = availableUsers.filter(
-        (user) =>
-          (user.username || user.name)
-            .toLowerCase()
-            .includes(value.toLowerCase()) ||
-          user.email.toLowerCase().includes(value.toLowerCase()),
-      );
-      setAssignedToSuggestions(filtered);
-      setShowAssignedToSuggestions(true);
-    } else {
-      setShowAssignedToSuggestions(false);
-    }
-  };
-
-  const selectUser = (user) => {
-    setNewTask({
-      ...newTask,
-      assignedTo: user.username || user.name,
-      assignedToId: user.id,
-    });
-    setShowAssignedToSuggestions(false);
-  };
-
   const getPriorityColor = (priority) => {
     switch (priority) {
       case "high":
-        return "text-white bg-red-500 border border-red-500 px-4 py-2 min-w-[80px]";
+        return "text-dark dark:border-transparent dark:text-black bg-red-100 border border-red-500 px-4 py-2 min-w-[80px]";
       case "medium":
-        return "text-white bg-yellow-500 border border-yellow-500 px-4 py-2 min-w-[80px]";
+        return "text-dark dark:border-transparent dark:text-black bg-yellow-100 border border-yellow-500 px-4 py-2 min-w-[80px]";
       case "low":
-        return "text-white bg-green-500 border border-green-500 px-4 py-2 min-w-[80px]";
+        return "text-dark dark:border-transparent dark:text-black bg-green-100 border border-green-500 px-4 py-2 min-w-[80px]";
       default:
-        return "text-white bg-green-500 border border-green-500 px-4 py-2 min-w-[80px]";
+        return "text-dark dark:border-transparent dark:text-black bg-green-100 border border-green-500 px-4 py-2 min-w-[80px]";
     }
   };
 
@@ -436,80 +368,11 @@ const Tasks = () => {
     }
   };
 
-  const handleNewTask = async () => {
-    if (!newTask.title.trim()) {
-      toast.error("Please enter a task title");
-      return;
-    }
-
-    if (!newTask.assignedTo.trim() || !newTask.assignedToId) {
-      toast.error("Please select a person to assign the task to");
-      return;
-    }
-
-    try {
-      setLoading(true);
-
-      if (!newTask.assignedToId) {
-        toast.error("Please select a user to assign the task to");
-        return;
-      }
-
-      let dueDate;
-
-      if (newTask.dueDate) {
-        const time = newTask.dueTime || "18:00";
-        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-
-        dueDate = toUTCDate(newTask.dueDate, time, timeZone);
-      }
-
-      const taskData = {
-        title: newTask.title,
-        description: newTask.description,
-        assignTo: newTask.assignedToId, // Use the stored user ID
-        priority: newTask.priority,
-        dueDate,
-        projectId:
-          newTask.projectId && newTask.projectId !== "none"
-            ? newTask.projectId
-            : undefined,
-      };
-
-      await taskService.createTask(taskData);
-
-      try {
-        await taskService.clearTaskCaches();
-      } catch (cacheError) {
-        console.warn("Cache clear failed:", cacheError);
-      }
-
-      await loadTasks();
-
-      setNewTask({
-        title: "",
-        description: "",
-        priority: "medium",
-        assignedTo: "",
-        assignedToId: "",
-        dueDate: "",
-        projectId: "none",
-      });
-      setShowNewTaskPopup(false);
-      toast.success("Task created successfully!");
-    } catch (error) {
-      console.error("Error creating task:", error);
-      toast.error(error.message || "Failed to create task");
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleDeleteTask = async (id) => {
     try {
       setLoading(true);
       await taskService.deleteTask(id);
-      await loadTasks(); // Reload tasks after deletion
+      await loadTasks();
       toast.success("Task deleted successfully!");
     } catch (error) {
       console.error("Error deleting task:", error);
@@ -722,6 +585,8 @@ const Tasks = () => {
                       );
                       return;
                     }
+                    setModalRepository(null);
+                    setModalDueDate("");
                     setShowNewTaskPopup(true);
                   }}
                   className={
@@ -746,7 +611,7 @@ const Tasks = () => {
           <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 rounded-[15px]">
             <table className="w-full">
               <thead className="bg-white dark:bg-white dark:text-black text-black border-b dark:border-gray-700 sticky top-0 z-10">
-                <tr>
+                <tr className="bg-white">
                   <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
                     Task
                   </th>
@@ -766,6 +631,9 @@ const Tasks = () => {
                     Project
                   </th>
                   <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
+                    Repository
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
                     Due Date
                   </th>
                   <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider"></th>
@@ -774,7 +642,7 @@ const Tasks = () => {
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {loading ? (
                   <tr>
-                    <td colSpan="7" className="px-6 py-8 text-center">
+                    <td colSpan="9" className="px-6 py-8 text-center">
                       <HorizontalLoader
                         message="Loading tasks..."
                         subMessage="Fetching your task list"
@@ -796,7 +664,7 @@ const Tasks = () => {
                   filteredTasks.map((task) => (
                     <motion.tr
                       key={task.id}
-                      className={`hover:bg-gray-50 dark:hover:bg-black transition-colors ${selectedTasks.includes(task.id) ? "bg-gray-100 dark:bg-transparent" : ""}`}
+                      className={`hover:bg-gray-50 dark:hover:bg-white dark:hover:text-black dark:bg-black transition-colors ${selectedTasks.includes(task.id) ? "bg-gray-100 dark:bg-transparent" : ""}`}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.2 }}
@@ -962,6 +830,20 @@ const Tasks = () => {
                           </span>
                         )}
                       </td>
+                      <td className="px-6 py-4 w-[200px] rounded-[15px]">
+                        {task.repository?.repoName ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm flex items-center gap-2 text-gray-900 dark:text-white truncate">
+                              <FolderGit2 className="w-4 h-4 text-theme shrink-0" />
+                              {task.repository.repoName}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                            No Repository
+                          </span>
+                        )}
+                      </td>
                       <td className="px-6 py-4">
                         <div className="flex items-center gap-2">
                           <Calendar className="w-4 h-4 icon text-gray-400 icon" />
@@ -1024,7 +906,7 @@ const Tasks = () => {
                               {user &&
                                 user.id &&
                                 task.assignedBy?.id === user.id && (
-                                  <DropdownMenuItem className="text-black h-12 px-5 cursor-pointer  dark:text-white hover:bg-gray-100 dark:hover:bg-black">
+                                  <DropdownMenuItem className="text-black h-12 px-5 cursor-pointer  dark:text-white hover:bg-gray-100 dark:hover:bg-white dark:hover:text-black dark:bg-black">
                                     <Edit className="w-4 h-4 icon mr-2 icon" />
                                     Edit Task
                                   </DropdownMenuItem>
@@ -1032,9 +914,9 @@ const Tasks = () => {
                               {user &&
                                 user.id &&
                                 task.assignTo?.id === user.id && (
-                                  <DropdownMenu>
+                                  <DropdownMenu >
                                     <DropdownMenuTrigger asChild>
-                                      <DropdownMenuItem className="text-black h-12 px-5 cursor-pointer   dark:text-white hover:bg-gray-100 dark:hover:bg-black">
+                                      <DropdownMenuItem className="text-black h-12 px-5 cursor-pointer dark:text-white hover:bg-gray-100 dark:hover:bg-white dark:hover:text-black dark:bg-black dark:bg-black">
                                         <Clock className="w-4 h-4 icon mr-2 icon" />
                                         Change Status
                                       </DropdownMenuItem>
@@ -1047,7 +929,7 @@ const Tasks = () => {
                                         onClick={() =>
                                           handleStatusChange(task.id, "pending")
                                         }
-                                        className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
+                                        className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-white dark:hover:text-black dark:bg-black"
                                       >
                                         <AlertCircle className="w-4 h-4 icon mr-2 icon" />
                                         Pending
@@ -1059,7 +941,7 @@ const Tasks = () => {
                                             "in_progress",
                                           )
                                         }
-                                        className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
+                                        className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-white dark:hover:text-black dark:bg-black"
                                       >
                                         <Clock className="w-4 h-4 icon mr-2 icon" />
                                         In Progress
@@ -1071,7 +953,7 @@ const Tasks = () => {
                                             "completed",
                                           )
                                         }
-                                        className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
+                                        className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-white dark:hover:text-black dark:bg-black"
                                       >
                                         <CheckCircle className="w-4 h-4 icon mr-2 icon" />
                                         Completed
@@ -1083,7 +965,7 @@ const Tasks = () => {
                                             "cancelled",
                                           )
                                         }
-                                        className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
+                                        className="text-black dark:text-white px-5 h-10 cursor-pointer hover:bg-gray-100 dark:hover:bg-white dark:hover:text-black dark:bg-black"
                                       >
                                         <AlertCircle className="w-4 h-4 icon mr-2 icon" />
                                         Cancelled
@@ -1114,226 +996,19 @@ const Tasks = () => {
           </div>
         </motion.div>
 
-        {/* New Task Popup */}
-        {showNewTaskPopup && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0  bg-black/50 icon backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-50"
-            onClick={() => setShowNewTaskPopup(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className=" bg-white dark:bg-gray-900 rounded-[15px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="space-y-4">
-                <div>
-                  {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
-                    Task Title
-                  </label> */}
-                  <Input
-                    type="text"
-                    value={newTask.title}
-                    onChange={(e) =>
-                      setNewTask({ ...newTask, title: e.target.value })
-                    }
-                    className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white"
-                    placeholder="Enter task title"
-                  />
-                </div>
-
-                <div>
-                  {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
-                    Description
-                  </label> */}
-                  <Textarea
-                    value={newTask.description}
-                    onChange={(e) =>
-                      setNewTask({ ...newTask, description: e.target.value })
-                    }
-                    className="w-full border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white"
-                    placeholder="Enter task description"
-                    rows="3"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
-                      Priority
-                    </label> */}
-                    <Select
-                      value={newTask.priority}
-                      onValueChange={(value) =>
-                        setNewTask({ ...newTask, priority: value })
-                      }
-                    >
-                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white">
-                        <SelectValue placeholder="Select priority" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-transparent border-gray-200 dark:border-gray-700">
-                        <SelectItem
-                          className={"h-10 cursor-pointer px-5"}
-                          value="low"
-                        >
-                          Low
-                        </SelectItem>
-                        <SelectItem
-                          className={"h-10 cursor-pointer px-5"}
-                          value="medium"
-                        >
-                          Medium
-                        </SelectItem>
-                        <SelectItem
-                          className={"h-10 cursor-pointer px-5"}
-                          value="high"
-                        >
-                          High
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
-                      Due Date
-                    </label> */}
-                    <Input
-                      type="date"
-                      value={newTask.dueDate}
-                      onChange={(e) =>
-                        setNewTask({ ...newTask, dueDate: e.target.value })
-                      }
-                      className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white"
-                    />
-                  </div>
-                </div>
-                <div>
-                  <Input
-                    type="time"
-                    value={newTask.dueTime}
-                    onChange={(e) =>
-                      setNewTask({ ...newTask, dueTime: e.target.value })
-                    }
-                    className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-transparent text-black dark:text-white"
-                  />
-                </div>
-
-                <div>
-                  {/* <label className="block text-sm  text-gray-700 dark:text-gray-300 mb-2">
-                    Assign To Person
-                  </label> */}
-                  <div className="relative">
-                    <Input
-                      type="text"
-                      value={newTask.assignedTo}
-                      onChange={(e) => handleAssignedToChange(e.target.value)}
-                      onFocus={() => {
-                        if (newTask.assignedTo.length > 0) {
-                          setShowAssignedToSuggestions(true);
-                        }
-                      }}
-                      className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white"
-                      placeholder="Type to search users..."
-                    />
-                    {showAssignedToSuggestions &&
-                      assignedToSuggestions.length > 0 && (
-                        <div className="absolute z-10 w-full mt-1 bg-white dark:bg-transparent border-gray-200 dark:border-gray-700 rounded-[15px] shadow-lg max-h-48 overflow-y-auto">
-                          {assignedToSuggestions.map((user) => (
-                            <div
-                              key={user.id}
-                              onClick={() => selectUser(user)}
-                              className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 truncate cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
-                            >
-                              <div className="flex items-center gap-3">
-                                <img
-                                  {...getAvatarProps(
-                                    user.avatar,
-                                    user.username || user.name,
-                                  )}
-                                  alt={user.username || user.name}
-                                  className="w-8 h-8 rounded-[15px] object-cover border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleUserAvatarClick(user.id);
-                                  }}
-                                  title={
-                                    user.username || user.name
-                                      ? `View ${user.username || user.name}'s profile`
-                                      : ""
-                                  }
-                                />
-                                <div>
-                                  <div className="font-medium text-gray-900 dark:text-white">
-                                    {user.username || user.name}
-                                  </div>
-                                  <div className="text-sm text-gray-500 dark:text-gray-400">
-                                    {user.email}
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                  </div>
-                </div>
-
-                <div>
-                  {/* Project Selection */}
-                  <Select
-                    value={newTask.projectId}
-                    onValueChange={(value) =>
-                      setNewTask({ ...newTask, projectId: value })
-                    }
-                  >
-                    <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700   bg-white dark:bg-transparent text-black dark:text-white">
-                      <SelectValue placeholder="Select project (optional)" />
-                    </SelectTrigger>
-                    <SelectContent className="bg-white dark:bg-transparent border-gray-200 dark:border-gray-700">
-                      <SelectItem
-                        className={"h-10 cursor-pointer px-5"}
-                        value="none"
-                      >
-                        No Project
-                      </SelectItem>
-                      {projects.map((project) => (
-                        <SelectItem
-                          className={"h-10 cursor-pointer px-5"}
-                          key={project.id}
-                          value={project.id}
-                        >
-                          {project.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="flex gap-3 mt-6">
-                <Button
-                  variant="outline"
-                  onClick={() => setShowNewTaskPopup(false)}
-                  className="flex-1 px-4 py-3 h-12 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-black"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleNewTask}
-                  disabled={loading}
-                  className="flex-1 px-4 py-3 h-12 bg-black text-white hover:bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {loading ? <span class="loader w-5 h-5"></span> : "Assign"}
-                </Button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
+        <CreateTaskModal
+          open={showNewTaskPopup}
+          onOpenChange={(open) => {
+            setShowNewTaskPopup(open);
+            if (!open) {
+              setModalRepository(null);
+              setModalDueDate("");
+            }
+          }}
+          repository={modalRepository}
+          defaultDueDate={modalDueDate}
+          onCreated={loadTasks}
+        />
 
         <Sheet
           open={isTaskSheetOpen}
@@ -1426,6 +1101,21 @@ const Tasks = () => {
                         </div>
                       </div>
                     </div>
+                    {selectedTaskDetails.repository?.repoName && (
+                      <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm sm:col-span-2">
+                        <div className="flex items-center gap-3">
+                          <FolderGit2 className="w-4 h-4 text-theme shrink-0" />
+                          <div>
+                            <p className="text-[10px] uppercase tracking-wider font-bold text-gray-500 dark:text-gray-400">
+                              GitHub Repository
+                            </p>
+                            <p className="text-sm font-medium text-gray-900 dark:text-white">
+                              {selectedTaskDetails.repository.repoName}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

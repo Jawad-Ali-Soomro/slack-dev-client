@@ -28,9 +28,9 @@ import { useAuth } from '../contexts/AuthContext'
 import { getAvatarProps } from '../utils/avatarUtils'
 
 const DIFFICULTY_COLORS = {
-  beginner: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  intermediate: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-  advanced: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
+  beginner: 'bg-green-100 text-green-800 px-3 py-1.5 border border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700',
+  intermediate: 'bg-yellow-100 text-yellow-800 px-3 py-1.5 border border-yellow-300 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-700',
+  advanced: 'bg-red-100 text-red-800 px-3 py-1.5 border border-red-300 dark:bg-red-900 dark:text-red-200 dark:border-red-700',
 }
 
 const DIFFICULTY_ICONS = {
@@ -313,9 +313,9 @@ const Challenges = () => {
           <div className="flex gap-2 mb-6">
             <button
               onClick={() => setActiveTab('all')}
-              className={`px-4 py-2 rounded-[15px] font-medium transition-colors ${
+              className={`w-[200px] h-12 rounded-[15px] text-sm cursor-pointer font-medium transition-colors ${
                 activeTab === 'all'
-                  ? 'bg-black dark:bg-white text-white dark:text-black'
+                  ? 'bg-[#ff914b] dark:bg-white text-white dark:text-black'
                   : 'bg-white dark:bg-[rgba(255,255,255,.1)] text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700'
               }`}
             >
@@ -323,9 +323,9 @@ const Challenges = () => {
             </button>
             <button
               onClick={() => setActiveTab('completed')}
-              className={`px-4 py-2 rounded-[15px] font-medium transition-colors ${
+              className={`w-[200px] h-12 text-sm rounded-[15px] cursor-pointer font-medium transition-colors ${
                 activeTab === 'completed'
-                  ? 'bg-black dark:bg-white text-white dark:text-black'
+                  ? 'bg-[#ff914b] dark:bg-white text-white dark:text-black'
                   : 'bg-white dark:bg-[rgba(255,255,255,.1)] text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700'
               }`}
             >
@@ -334,7 +334,7 @@ const Challenges = () => {
           </div>
 
           {/* Search and Filters */}
-          <div className="flex flex-col md:flex-row gap-4 mb-6">
+          <div className="flex flex-col md:flex-row gap-2 mb-6">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
               <Input
@@ -346,10 +346,10 @@ const Challenges = () => {
             </div>
             <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
               <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
-                <SelectValue placeholder="All Difficulties" />
+                <SelectValue placeholder="Select Difficulty" />
               </SelectTrigger>
               <SelectContent className="bg-white dark:bg-[black]">
-                <SelectItem className={'h-10 cursor-pointer px-5'} value="all">All Difficulties</SelectItem>
+                <SelectItem className={'h-10 cursor-pointer px-5'} value="all">Select Difficulty</SelectItem>
                 <SelectItem className={'h-10 cursor-pointer px-5'} value="beginner">Beginner</SelectItem>
                 <SelectItem className={'h-10 cursor-pointer px-5'} value="intermediate">Intermediate</SelectItem>
                 <SelectItem className={'h-10 cursor-pointer px-5'} value="advanced">Advanced</SelectItem>
@@ -357,10 +357,10 @@ const Challenges = () => {
             </Select>
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
-                <SelectValue placeholder="All Categories" />
+                <SelectValue placeholder="Select Category" />
               </SelectTrigger>
               <SelectContent className="bg-white dark:bg-[black]">
-                <SelectItem className={'h-10 cursor-pointer px-5'} value="all">All Categories</SelectItem>
+                <SelectItem className={'h-10 cursor-pointer px-5'} value="all">Select Category</SelectItem>
                 {categories.map((cat) => (
                   <SelectItem key={cat} className={'h-10 cursor-pointer px-5'} value={cat}>
                     {cat}
@@ -377,8 +377,8 @@ const Challenges = () => {
                 setShowCreateModal(true)
               }}
               disabled={totalPoints < 50}
-              className="bg-black dark:bg-white text-white dark:text-black hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed relative group"
-              title={totalPoints < 50 ? `Requires 50+ points (You have ${totalPoints})` : 'Create Challenge'}
+              className="bg-black w-[200px] dark:bg-white text-white dark:text-black hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed relative group"
+              title={totalPoints < 50 ? `You need at least 50 challenge points to create a challenge. You currently have ${totalPoints} points. Keep solving challenges to unlock this feature!` : 'Create Challenge'}
             >
               <Plus className="w-4 h-4 icon mr-2" />
               Create Challenge
@@ -409,7 +409,7 @@ const Challenges = () => {
                     {DIFFICULTY_ICONS[challenge.difficulty]} {challenge.difficulty}
                   </Badge>
                   {completedChallenges.has(challenge._id) && (
-                    <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
+                    <Badge className="bg-green-100 text-green-800 px-3 py-1.5 border border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700">
                       <CheckCircle className="w-3 h-3 mr-1" />
                       Completed
                     </Badge>
@@ -429,7 +429,7 @@ const Challenges = () => {
               </p>
 
               <div className="flex items-center justify-between">
-                <Badge variant="outline" className="border-gray-300 dark:border-gray-700">
+                <Badge variant="outline" className="px-3 py-1.5 border border-gray-300 dark:border-gray-700">
                   {challenge.category}
                 </Badge>
                 {user && challenge.createdBy?._id === user.id && (
@@ -599,4 +599,3 @@ const Challenges = () => {
 }
 
 export default Challenges
-

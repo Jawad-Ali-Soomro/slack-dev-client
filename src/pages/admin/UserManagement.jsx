@@ -357,11 +357,11 @@ const UserManagement = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="overflow-x-auto max-h-[700px] overflow-y-auto rounded-[15px] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
             <table className="w-full rounded-[15px] overflow-hidden">
               <thead className="bg-white text-black rounded-[15px] dark:border-gray-700 sticky top-0 z-10">
                 <tr className="rounded-t-r-[10px]">
-                  <th className="px-5 py-4 rounded-[15px] text-left text-xs text-black dark:text-black uppercase tracking-wider">User</th>
+                  <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider">User</th>
                   <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider">Role</th>
                   <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider truncate">Email Verification</th>
                   <th className="px-5 py-4 text-left text-xs text-black dark:text-black uppercase tracking-wider">Joined</th>

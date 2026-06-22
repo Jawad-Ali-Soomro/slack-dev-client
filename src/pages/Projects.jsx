@@ -23,6 +23,8 @@ import {
   Minus,
   AlertTriangle,
   Camera,
+  ImageIcon,
+  UploadCloud,
   ArrowUpRightSquare,
   Folder
 } from 'lucide-react'
@@ -35,12 +37,14 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import projectService from '../services/projectService'
 import friendService from '../services/friendService'
 import teamService from '../services/teamService'
+import invitationService from '../services/invitationService'
 import { useAuth } from '../contexts/AuthContext'
 import { useNotifications } from '../contexts/NotificationContext'
 import { getAvatarProps } from '../utils/avatarUtils'
 
 import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
 import UserDetailsModal from '../components/UserDetailsModal'
+import { Skeleton } from '@/components/ui/skeleton'
 import { PiFolderDuotone, PiUsersDuotone } from 'react-icons/pi'
 import { usePermissions } from '@/hooks/usePermissions'
 import { Link } from 'react-router-dom'
@@ -398,25 +402,20 @@ const Projects = () => {
 
     try {
       setLoading(true)
-      await projectService.addMember(selectedProject.id, { userId, role })
-      await loadProjects()
-      
-      if (selectedProject) {
-        const response = await projectService.getProjectById(selectedProject.id)
+      await invitationService.sendInvitation({
+        targetType: 'project',
+        targetId: selectedProject.id,
+        inviteeId: userId,
+        role,
+      })
 
-        const projectInList = projects.find(p => p.id === selectedProject.id)
-        
-        setSelectedProject(response.project)
-        setRefreshKey(prev => prev + 1)
-      }
-      
       setProjectMemberSearch('')
       setShowProjectMemberSuggestions(false)
       setProjectMemberSuggestions([])
-      toast.success('Member added successfully!')
+      toast.success('Invitation sent successfully!')
     } catch (error) {
-      console.error('Error adding member:', error)
-      toast.error(error.message || 'Failed to add member')
+      console.error('Error sending invitation:', error)
+      toast.error(error.message || 'Failed to send invitation')
     } finally {
       setLoading(false)
     }
@@ -700,23 +699,43 @@ const Projects = () => {
         {/* Filters */}
         
 
-        {/* Projects Grid */}
+        {/* Projects Grid - skeleton matching card layout until loading finished */}
         <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {loading ? (
-
-            Array.from({ length: 6 }).map((_, index) => (
-              <div key={index} className="bg-white dark:bg-black rounded-[15px]  border-gray-200 dark:border-gray-700 p-6 animate-pulse">
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-                <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-                <div className="flex gap-2 mb-4">
-                  <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
-                  <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-20"></div>
+            [1, 2, 3, 4, 5, 6].map((i) => (
+              <div
+                key={i}
+                className="dark:bg-[rgba(255,255,255,.1)] rounded-[15px] bg-white dark:border-none border border-gray-200 dark:border-gray-700 p-6"
+              >
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1 min-h-[3rem] flex items-center gap-3">
+                    <Skeleton className="h-8 w-8 rounded-[15px] flex-shrink-0" />
+                    <Skeleton className="h-5 w-[140px] rounded-md" />
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <Skeleton className="h-10 w-10 rounded-md" />
+                    <Skeleton className="h-10 w-10 rounded-md" />
+                    <Skeleton className="h-10 w-10 rounded-md" />
+                  </div>
                 </div>
-                <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
-                <div className="flex justify-between items-center">
-                  <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
-                  <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-8"></div>
+                <div className="flex gap-2 mb-4">
+                  <Skeleton className="h-8 w-[80px] rounded-[15px]" />
+                  <Skeleton className="h-8 w-[70px] rounded-[15px]" />
+                </div>
+                <div className="mb-4">
+                  <div className="flex justify-between text-sm mb-1">
+                    <Skeleton className="h-4 w-14 rounded-md" />
+                    <Skeleton className="h-4 w-8 rounded-md" />
+                  </div>
+                  <Skeleton className="w-full h-2 rounded-[15px]" />
+                </div>
+                <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                  <div className="flex -space-x-2">
+                    <Skeleton className="h-10 w-10 rounded-[15px]" />
+                    <Skeleton className="h-10 w-10 rounded-[15px]" />
+                    <Skeleton className="h-10 w-10 rounded-[15px]" />
+                  </div>
+                  <Skeleton className="h-4 w-20 rounded-md" />
                 </div>
               </div>
             ))
@@ -1058,7 +1077,7 @@ const Projects = () => {
                   </div>
                   <div>
                     <Select value={newProject.teamId || "none"} onValueChange={(value) => setNewProject({...newProject, teamId: value === "none" ? "" : value})}>
-                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white">
+                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                         <SelectValue placeholder="Select Team (Optional)" />
                       </SelectTrigger>
                       <
@@ -1077,56 +1096,81 @@ const Projects = () => {
 
                 {/* Project Logo Upload */}
                 <div>
-                
-                  <div className="flex items-center gap-4">
-                    {newProject.logo ? (
-                      <div className="relative">
-                        <img
-                          src={URL.createObjectURL(newProject.logo)}
-                          alt="Project logo preview"
-                          className="w-16 h-16 rounded-[15px] object-cover  border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-900"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setNewProject({...newProject, logo: null})}
-                          className="absolute -top-2 -right-2 w-6 h-6 bg-red-500 text-white rounded-[15px] flex items-center justify-center text-xs hover:bg-red-600"
-                        >
-                          <X className="w-3 h-3 icon" />
-                        </button>
-                      </div>
-                    ) : (
-                      null
-                    )}
-                    <div className="w-full flex justify-center items-center">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files[0]
-                          if (file) {
-                            setNewProject({...newProject, logo: file})
-                          }
-                        }}
-                        className="hidden"
-                        id="logo-upload"
+                  
+
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files[0]
+                      if (file) {
+                        setNewProject({ ...newProject, logo: file })
+                      }
+                      e.target.value = ''
+                    }}
+                    className="hidden"
+                    id="logo-upload"
+                  />
+
+                  {newProject.logo ? (
+                    <div className="flex items-center gap-4 p-3 rounded-[15px] border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/60">
+                      <img
+                        src={URL.createObjectURL(newProject.logo)}
+                        alt="Project logo preview"
+                        className="w-16 h-16 rounded-[12px] object-cover border border-gray-200 dark:border-gray-700 flex-shrink-0"
                       />
-                      <label
-                        htmlFor="logo-upload"
-                        className="cursor-pointer border inline-flex items-center justify-center px-10 py-5 w-full border border-gray-300 dark:border-gray-600 rounded-[15px] shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-900 hover:bg-gray-50 dark:hover:bg-gray-700"
-                      >
-                        <Camera className="w-4 h-4 icon icon mr-2 icon" />
-                        {newProject.logo ? 'Change Logo' : 'Upload Logo'}
-                      </label>
-                    
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                          {newProject.logo.name}
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          {(newProject.logo.size / 1024).toFixed(0)} KB
+                        </p>
+                        <div className="flex items-center gap-3 mt-2">
+                          <label
+                            htmlFor="logo-upload"
+                            className="cursor-pointer inline-flex items-center gap-1.5 text-xs font-semibold text-theme hover:underline"
+                          >
+                            <Camera className="w-3.5 h-3.5" />
+                            Change
+                          </label>
+                          <button
+                            type="button"
+                            onClick={() => setNewProject({ ...newProject, logo: null })}
+                            className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-500 hover:text-red-600"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            Remove
+                          </button>
+                        </div>
+                      </div>
                     </div>
-                  </div>
+                  ) : (
+                    <label
+                      htmlFor="logo-upload"
+                      className="group cursor-pointer flex flex-col items-center justify-center gap-2 px-6 py-8 w-full border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-[15px] bg-gray-50/60 dark:bg-gray-900/40 hover:border-theme hover:bg-theme/5 transition-colors"
+                    >
+                      <div className="w-12 h-12 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center group-hover:scale-105 transition-transform">
+                        <UploadCloud className="w-5 h-5 text-gray-500 dark:text-gray-400 group-hover:text-theme transition-colors" />
+                      </div>
+                      <div className="text-center">
+                        <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                          <span className="text-theme">Click to upload</span> a logo
+                        </p>
+                        <p className="text-xs text-gray-400 mt-0.5 flex items-center justify-center gap-1">
+                          <ImageIcon className="w-3 h-3" />
+                          PNG, JPG or GIF
+                        </p>
+                      </div>
+                    </label>
+                  )}
                 </div>
 
                 {/* Status, Priority, and Dates */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Select value={newProject.status} onValueChange={(value) => setNewProject({...newProject, status: value})}>
-                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white">
+                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                         <SelectValue placeholder="Status" />
                       </SelectTrigger>
                       <
@@ -1142,7 +1186,7 @@ const Projects = () => {
                   </div>
                   <div>
                     <Select value={newProject.priority} onValueChange={(value) => setNewProject({...newProject, priority: value})}>
-                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white">
+                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                         <SelectValue placeholder="Priority" />
                       </SelectTrigger>
                       <
@@ -1261,7 +1305,7 @@ const Projects = () => {
                       className="flex-1 h-12 rounded-[15px] border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                     />
                     <Select value={newLink.type} onValueChange={(value) => setNewLink({...newLink, type: value})}>
-                      <SelectTrigger className="w-32 h-12 cursor-pointer border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white">
+                      <SelectTrigger className="w-32 h-12 cursor-pointer border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                         <SelectValue />
                       </SelectTrigger>
                       <
@@ -1314,10 +1358,8 @@ const Projects = () => {
                       className="flex-1 h-12 rounded-[15px] border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                       onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                     />
-                    <
-
-                    Button type="button" onClick={handleAddTag} variant="outline" className="border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white">
-                      Add
+                    <Button type="button" onClick={handleAddTag} className="border-gray-200 dark:border-gray-700">
+                      Add Tag
                     </Button>
                   </div>
                   
@@ -1362,7 +1404,7 @@ const Projects = () => {
 
                   Button
                     type="submit"
-                    className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[15px] border-gray-200 dark:border-gray-700 bg-black dark:bg-white text-white dark:text-black "
+                    className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[15px] border-gray-200 dark:border-gray-700"
                     disabled={loading}
                   >
                     {loading ? (
@@ -2007,6 +2049,7 @@ const Projects = () => {
                         }}
                         className="flex-1 h-12 rounded-[15px]"
                       >
+                        <PiLinkSimpleDuotone className="w-4 h-4 icon icon" />
                         Add Link
                       </Button>
                     </div>

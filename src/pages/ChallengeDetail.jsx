@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import CodeMirror from '@uiw/react-codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { oneDark } from '@codemirror/theme-one-dark'
+import { EditorView } from '@codemirror/view'
 import {
   ArrowLeft,
   CheckCircle,
@@ -50,6 +50,22 @@ const ChallengeDetail = () => {
   const [isCompleted, setIsCompleted] = useState(false)
   const [userSolutionData, setUserSolutionData] = useState(null)
   const [activeTab, setActiveTab] = useState('instructions') // 'instructions'
+  const [isDark, setIsDark] = useState(() =>
+    document.documentElement.classList.contains('dark'),
+  )
+
+  const codeExtensions = useMemo(
+    () => [javascript({ jsx: true }), EditorView.lineWrapping],
+    [],
+  )
+
+  useEffect(() => {
+    const root = document.documentElement
+    const syncTheme = () => setIsDark(root.classList.contains('dark'))
+    const observer = new MutationObserver(syncTheme)
+    observer.observe(root, { attributes: true, attributeFilter: ['class'] })
+    return () => observer.disconnect()
+  }, [])
 
   useEffect(() => {
     document.title = challenge ? `${challenge.title} - Challenge` : 'Challenge Detail'
@@ -344,8 +360,8 @@ const ChallengeDetail = () => {
                         <CodeMirror
                           value={userSolution}
                           height="100%"
-                          extensions={[javascript({ jsx: true })]}
-                          theme={document.documentElement.classList.contains('dark') ? oneDark : null}
+                          extensions={codeExtensions}
+                          {...(isDark ? { theme: oneDark } : {})}
                           onChange={(value) => setUserSolution(value)}
                           basicSetup={{
                             lineNumbers: true,
@@ -357,9 +373,8 @@ const ChallengeDetail = () => {
                             closeBrackets: true,
                             autocompletion: true,
                             highlightSelectionMatches: false,
-                            lineWrapping: true,
                           }}
-                          className="text-sm"
+                          className="text-sm h-full"
                         />
                       </div>
                     )}

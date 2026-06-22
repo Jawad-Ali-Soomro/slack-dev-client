@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import HorizontalLoader from "../components/HorizontalLoader";
+import DashboardSkeleton, { GithubReposSkeleton } from "../components/dashboard/DashboardSkeleton";
 import { usePermissions } from "../hooks/usePermissions";
 import ReactECharts from "echarts-for-react";
 import {
@@ -24,6 +24,7 @@ import {
   AlertCircle,
   CalendarDays,
   XCircle,
+  PlusCircle,
 } from "lucide-react";
 import { useAuth } from "../contexts/AuthContext";
 import UserDetailsModal from "../components/UserDetailsModal";
@@ -33,15 +34,14 @@ import projectService from "../services/projectService";
 import { toast } from "sonner";
 import StatsCard from "../components/StatsCard";
 import { Button } from "@/components/ui/button";
-import { useDispatch, useSelector } from 'react-redux'
-import { getGithubDetails } from "@/hooks/githubHooks";
+import useGithubRepos, { connectGithub } from "@/hooks/useGithubRepos";
 import { RiDashboard2Line } from "react-icons/ri";
-import { setGithubData } from "@/services/github.slice";
-import { decryptData } from "@/utils/encryption";
-import { BiLogoInternetExplorer } from "react-icons/bi";
+import { BiKey, BiLogoInternetExplorer } from "react-icons/bi";
+import { GoBrowser } from "react-icons/go";
+import CreateTaskModal from "../components/CreateTaskModal";
+import LanguageIcon from "@/components/Languages";
 const Dashboard = () => {
   document.title = "Dashboard";
-  const dispatch = useDispatch()
   const { user } = useAuth();
   const { permissions } = usePermissions();
   const [stats, setStats] = useState({
@@ -69,22 +69,12 @@ const Dashboard = () => {
     averageProgress: 0,
   });
 
-  const encryptedGithubData = useSelector((state) => state.github.data)
-  const githubData = decryptData(encryptedGithubData)
-  const getGithubDetailsForCurrentUser = async () => {
-    try {
-      const data = await getGithubDetails(user?.socialLinks?.github?.accessToken);
-
-      console.log("GitHub Details:", data);
-
-      dispatch(setGithubData(data));
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  useEffect(() => {
-    getGithubDetailsForCurrentUser();
-  }, []);
+  const {
+    githubData,
+    repos: githubReposRaw,
+    loading: githubLoading,
+    isGithubConnected,
+  } = useGithubRepos();
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState([]);
   const [meetings, setMeetings] = useState([]);
@@ -95,6 +85,20 @@ const Dashboard = () => {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [calendarMonth, setCalendarMonth] = useState(new Date());
   const [showAllRepos, setShowAllRepos] = useState(false);
+  const [taskRepoModal, setTaskRepoModal] = useState(null);
+
+  const handleCreateTaskFromRepo = (repo) => {
+    if (!permissions.canCreateTask) {
+      toast.error(
+        "You do not have permission to create tasks. Contact an admin.",
+      );
+      return;
+    }
+    setTaskRepoModal({
+      repoId: String(repo.id),
+      repoName: repo.name,
+    });
+  };
 
   const startOfMonth = (date) =>
     new Date(date.getFullYear(), date.getMonth(), 1);
@@ -408,19 +412,43 @@ const Dashboard = () => {
 
   const weeklyData = getWeeklyData();
 
+  const weeklyMeetingsList = useMemo(() => {
+    const now = new Date();
+    const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+    oneWeekAgo.setHours(0, 0, 0, 0);
+
+    return meetings.filter((meeting) => {
+      const dateValue = meeting.startDate || meeting.createdAt;
+      if (!dateValue) return false;
+      const date = new Date(dateValue);
+      return date >= oneWeekAgo && date <= now;
+    });
+  }, [meetings]);
+
   const meetingStatusData = useMemo(
     () => [
-      { name: "Scheduled", value: stats.scheduledMeetings, color: "#3B82F6" },
-      { name: "Concluded", value: stats.completedMeetings, color: "#10B981" },
-      { name: "Draft", value: stats.pendingMeetings, color: "#F59E0B" },
-      { name: "Cancelled", value: stats.cancelledMeetings, color: "#EF4444" },
+      {
+        name: "Scheduled",
+        value: weeklyMeetingsList.filter((m) => m.status === "scheduled").length,
+        color: "#3B82F6",
+      },
+      {
+        name: "Concluded",
+        value: weeklyMeetingsList.filter((m) => m.status === "completed").length,
+        color: "#10B981",
+      },
+      {
+        name: "Draft",
+        value: weeklyMeetingsList.filter((m) => m.status === "pending").length,
+        color: "#F59E0B",
+      },
+      {
+        name: "Cancelled",
+        value: weeklyMeetingsList.filter((m) => m.status === "cancelled").length,
+        color: "#EF4444",
+      },
     ],
-    [
-      stats.scheduledMeetings,
-      stats.completedMeetings,
-      stats.pendingMeetings,
-      stats.cancelledMeetings,
-    ],
+    [weeklyMeetingsList],
   );
 
   function createPattern() {
@@ -441,15 +469,25 @@ const Dashboard = () => {
     return canvas;
   }
  const meetingStatusOption = useMemo(() => {
-  const days = ["S", "M", "T", "W", "T", "F", "S"];
+  const dayLabels = [];
+  const weeklyMeetings = [];
 
-  const weeklyMeetings = new Array(7).fill(0);
+  for (let i = 6; i >= 0; i--) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    date.setHours(0, 0, 0, 0);
 
-  meetings.forEach((meeting) => {
-    const date = new Date(meeting.createdAt);
-    const day = date.getDay();
-    weeklyMeetings[day] += 1;
-  });
+    dayLabels.push(
+      date.toLocaleDateString("en-US", { weekday: "short" }).slice(0, 1),
+    );
+
+    const count = weeklyMeetingsList.filter((meeting) => {
+      const meetingDate = new Date(meeting.startDate || meeting.createdAt);
+      return meetingDate.toDateString() === date.toDateString();
+    }).length;
+
+    weeklyMeetings.push(count);
+  }
 
   const maxValue = Math.max(...weeklyMeetings, 1);
 
@@ -469,7 +507,7 @@ const Dashboard = () => {
 
     xAxis: {
       type: "category",
-      data: days,
+      data: dayLabels,
       axisTick: { show: false },
       axisLine: { show: false },
       axisLabel: {
@@ -503,14 +541,14 @@ const Dashboard = () => {
         data: weeklyMeetings.map((value) => ({
           value,
           itemStyle: {
-            color: value === maxValue ? "#3B82F6" : "#10B981",
+            color: value === maxValue ? "#ff914b" : "#e8772e",
             borderRadius: 40,
           },
         })),
       },
     ],
   };
-}, [meetings]);
+}, [weeklyMeetingsList]);
   const projectStatusData = useMemo(
     () => [
       { name: "Active", value: stats.activeProjects, color: "#10B981" },
@@ -552,10 +590,8 @@ const Dashboard = () => {
   }, [meetings]);
 
   const githubRepos = useMemo(() => {
-    const publicRepos = githubData?.publicRepos ?? [];
-    const privateRepos = githubData?.privateRepos ?? [];
-    return [...(Array.isArray(publicRepos) ? publicRepos : []), ...(Array.isArray(privateRepos) ? privateRepos : [])];
-  }, [githubData?.publicRepos, githubData?.privateRepos]);
+    return githubReposRaw ?? [];
+  }, [githubReposRaw]);
 
   const displayedRepos = showAllRepos ? githubRepos : githubRepos.slice(0, 5);
   const hasMoreRepos = githubRepos.length > 5;
@@ -568,75 +604,6 @@ const Dashboard = () => {
     return Math.round((completed / projects.length) * 100);
   }, [projects]);
 
-  const projectStatusOption = useMemo(() => {
-    if (!projects?.length) return {};
-  
-    const completed = projects.filter(p => p.status === "completed").length;
-    const percent = Math.round((completed / projects.length) * 100);
-  
-    const segments = 40;
-    const filled = Math.round((percent / 100) * segments);
-  
-    const data = Array.from({ length: segments }).map((_, i) => ({
-      value: 1,
-      itemStyle: {
-        color: i < filled ? "#22C55E" : "#E5E7EB"
-      }
-    }));
-  
-    return {
-      polar: {
-        radius: "120%",
-        center: ["50%", "75%"]
-      },
-  
-      angleAxis: {
-        max: segments,
-        startAngle: 180,
-        clockwise: false,
-        show: false
-      },
-  
-      radiusAxis: {
-        type: "category",
-        show: false
-      },
-  
-      series: [
-        {
-          type: "bar",
-          coordinateSystem: "polar",
-          data,
-          roundCap: true,
-          barWidth: 8
-        }
-      ],
-  
-      graphic: [
-        {
-          type: "text",
-          left: "center",
-          top: "55%",
-          style: {
-            text: `${percent}%`,
-            fontSize: 42,
-            fontWeight: 700,
-            fill: "#111827"
-          }
-        },
-        {
-          type: "text",
-          left: "center",
-          top: "68%",
-          style: {
-            text: "Project Completion",
-            fontSize: 14,
-            fill: "#6B7280"
-          }
-        }
-      ]
-    };
-  }, [projects, completionRate]);
   
   const weeklyActivityOption = useMemo(() => {
     return {
@@ -703,10 +670,10 @@ const Dashboard = () => {
           smooth: true,
           lineStyle: {
             width: 3,
-            color: "#3B82F6",
+            color: "#ff914b",
           },
           itemStyle: {
-            color: "#3B82F6",
+            color: "#ff914b",
           },
           symbol: "circle",
           symbolSize: 6,
@@ -733,10 +700,10 @@ const Dashboard = () => {
           smooth: true,
           lineStyle: {
             width: 3,
-            color: "#8B5CF6",
+            color: "#e8772e",
           },
           itemStyle: {
-            color: "#8B5CF6",
+            color: "#e8772e",
           },
           symbol: "circle",
           symbolSize: 6,
@@ -746,94 +713,74 @@ const Dashboard = () => {
   }, [weeklyData]);
 
   if (loading) {
-    return (
-      <HorizontalLoader
-        message="Loading your dashboard..."
-        subMessage="Preparing your workspace"
-        progress={75}
-        className="min-h-screen"
-      />
-    );
+    return <DashboardSkeleton />;
   }
 
+  const quickPills = [
+    { label: "System Status", value: "All Systems Active", variant: "theme" },
+    { label: "Tasks This Week", value: `${stats.tasksThisWeek} new`, variant: "green" },
+    { label: "Completion Rate", value: `${stats.completionRate}%`, variant: "orange" },
+    { label: "Active Projects", value: `${stats.activeProjects} running`, variant: "neutral" },
+  ];
+
   return (
-    <div className="min-h-screen ambient-light pt-10">
+    <div className="dashboard-page min-h-screen pt-6 md:pt-10">
       <div className="mx-auto">
-        <div className="mb-16">
-          <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30">
-            <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
-              <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
-                <RiDashboard2Line size={15} className="icon" />
+        <div className="mb-8">
+          <div className="dashboard-page-header">
+            <div className="dashboard-welcome">
+              <div className="dashboard-welcome__icon">
+                <RiDashboard2Line size={22} />
               </div>
-              <h1 className="text-2xl font-bold">Dashboard</h1>
+              <div>
+                <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white">
+                  Dashboard
+                </h1>
+                <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mt-0.5">
+                  Welcome back, {user?.username || "Developer"}
+                </p>
+              </div>
             </div>
           </div>
 
           {/* Quick stats bar */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="grid grid-cols-1 md:grid-cols-4 gap-4"
+            transition={{ delay: 0.1 }}
+            className="grid grid-cols-2 md:grid-cols-4 gap-3"
           >
-            <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[25px] p-4 border border-purple-200 dark:border-gray-700">
-              <div className="flex items-center space-x-3">
-                <div className="w-5 h-5  bg-purple-600 rounded-[15px] animate-pulse"></div>
-                <div>
-                  <p className="text-xs font-medium text-purple-600 dark:text-purple-400  tracking-wide">
-                    System Status
+            {quickPills.map((pill) => (
+              <div
+                key={pill.label}
+                className={`dashboard-pill ${pill.variant === "theme" ? "dashboard-pill--theme" : ""}`}
+              >
+                <div
+                  className="dashboard-pill__dot"
+                  style={{
+                    background:
+                      pill.variant === "green"
+                        ? "#10b981"
+                        : pill.variant === "orange"
+                          ? "var(--theme-accent)"
+                          : pill.variant === "theme"
+                            ? "var(--theme-accent)"
+                            : "#6b7280",
+                  }}
+                />
+                <div className="min-w-0">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                    {pill.label}
                   </p>
-                  <p className="text-sm  text-purple-800 dark:text-purple-200">
-                    All Systems Active
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[25px] p-4 border border-green-200 dark:border-gray-700">
-              <div className="flex items-center space-x-3">
-                <div className="w-5 h-5  bg-green-600 rounded-[15px] animate-pulse"></div>
-                <div>
-                  <p className="text-xs font-medium text-green-600 dark:text-green-400  tracking-wide">
-                    Last Updated
-                  </p>
-                  <p className="text-sm line-clamp-1 text-green-800 dark:text-green-200">
-                    Updated Just now
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[25px] p-4 border border-orange-200 dark:border-gray-700">
-              <div className="flex items-center space-x-3">
-                <div className="w-5 h-5  bg-orange-600 rounded-[15px] animate-pulse"></div>
-                <div>
-                  <p className="text-xs font-medium text-orange-600 dark:text-orange-400  tracking-wide">
-                    Performance
-                  </p>
-                  <p className="text-sm line-clamp-1 text-orange-800 dark:text-orange-200">
-                    Excellent Performance
+                  <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                    {pill.value}
                   </p>
                 </div>
               </div>
-            </div>
-
-            <div className="bg-white dark:bg-gray-800 backdrop-blur-sm rounded-[25px] p-4 border border-blue-200 dark:border-gray-700">
-              <div className="flex items-center space-x-3">
-                <div className="w-5 h-5  bg-blue-600 rounded-[15px] animate-pulse"></div>
-                <div>
-                  <p className="text-xs font-medium text-blue-600 dark:text-blue-400  tracking-wide">
-                    Sync Status
-                  </p>
-                  <p className="text-sm line-clamp-1 text-blue-800 dark:text-blue-200">
-                    Real Time Synchronization
-                  </p>
-                </div>
-              </div>
-            </div>
+            ))}
           </motion.div>
         </div>
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="card-glow">
             <StatsCard
               title="Active Tasks"
@@ -883,17 +830,25 @@ const Dashboard = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.6 }}
-              className="mb-12 overflow-hidden ambient-section"
+              className="mb-8 overflow-hidden"
             >
               {/* Weekly Activity Chart */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.3 }}
-                className="mt-10"
+                transition={{ delay: 0.3 }}
+                className="dashboard-card p-6 hidden md:block"
               >
-                <div className="rounded-[15px] hidden md:block">
-                  <div style={{ width: "100%", height: "600px" }}>
+                <div className="dashboard-section-title mb-6">
+                  <div className="dashboard-section-icon">
+                    <Activity className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-lg font-black text-gray-900 dark:text-white">Weekly Activity</h4>
+                    <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Tasks, meetings & projects over 7 days</p>
+                  </div>
+                </div>
+                <div style={{ width: "100%", height: "400px" }}>
                     <ReactECharts
                       option={weeklyActivityOption}
                       style={{ height: "100%", width: "100%" }}
@@ -901,7 +856,6 @@ const Dashboard = () => {
                       notMerge={true}
                       lazyUpdate={true}
                     />
-                  </div>
                 </div>
               </motion.div>
 
@@ -909,15 +863,15 @@ const Dashboard = () => {
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 1.4 }}
-                className="grid grid-cols-1 gap-8 mt-8 pt-8 border-t border-gray-200/50 dark:border-gray-700/50"
+                transition={{ delay: 0.4 }}
+                className="grid grid-cols-1 gap-5 mt-5"
               >
                 {/* Task Status Distribution */}
-                <div className="backdrop-blur-sm rounded-[15px] p-6 bg-white dark:bg-[rgba(255,255,255,.1)]">
+                <div className="dashboard-card p-6">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[15px]">
-                        <Target className="w-5 h-5  text-white dark:text-gray-800" />
+                      <div className="dashboard-section-icon">
+                        <Target className="w-5 h-5" />
                       </div>
                       <div>
                         <h4 className="text-xl  text-gray-900 dark:text-white font-bold">
@@ -980,27 +934,27 @@ const Dashboard = () => {
                 </div>
 
                 {/* Meeting Status Distribution */}
-                <div className="rounded-[15px] p-6 bg-white dark:bg-[rgba(255,255,255,.1)]">
+                <div className="dashboard-card p-6">
                   <div className="flex items-center justify-between mb-8">
                     <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-gradient-to-br from-gray-800 to-gray-900 dark:from-gray-200 dark:to-gray-300 rounded-[15px]">
-                        <Video className="w-5 h-5  text-white dark:text-gray-800" />
+                      <div className="dashboard-section-icon">
+                        <Video className="w-5 h-5" />
                       </div>
                       <div>
                         <h4 className="text-xl  text-gray-900 dark:text-white font-bold">
                           Meeting Status
                         </h4>
                         <p className="text-sm text-gray-600 dark:text-gray-400 font-bold">
-                          Current Meeting distribution
+                          This week&apos;s meeting distribution
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
                       <div className="text-2xl  text-gray-900 dark:text-white">
-                        {stats.totalMeetings}
+                        {weeklyMeetingsList.length}
                       </div>
                       <div className="text-sm text-gray-500 dark:text-gray-400">
-                        Total Meetings
+                        This Week
                       </div>
                     </div>
                   </div>
@@ -1057,12 +1011,12 @@ const Dashboard = () => {
               transition={{ delay: 1.7, duration: 0.6 }}
               className="mb-20 grid grid-cols-1 items-stretch gap-8"
             >
-              <div className="rounded-[15px] p-6 shadow-sm bg-white dark:bg-[rgba(255,255,255,.1)]">
+              <div className="dashboard-card p-6">
                 {/* Calendar Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gray-100 dark:bg-gray-800 rounded-[15px]">
-                      <CalendarIcon className="w-5 h-5 text-gray-70 icon dark:text-gray-300" />
+                <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+                  <div className="dashboard-section-title">
+                    <div className="dashboard-section-icon">
+                      <CalendarIcon className="w-5 h-5" />
                     </div>
                     <h3 className="text-lg font-bold text-gray-800 dark:text-gray-200">
                       Calendar
@@ -1160,10 +1114,10 @@ const Dashboard = () => {
                             ? "border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-500 hover:shadow-md cursor-pointer"
                             : "border-transparent cursor-default",
                           isToday
-                            ? "ring-2 ring-blue-500 dark:ring-blue-400 ring-offset-1"
+                            ? "ring-2 ring-[#ff914b] dark:ring-[#ffb07a] ring-offset-1"
                             : "",
                           isSelected
-                            ? "bg-gray-100 text-black border-blue-400 font-bold"
+                            ? "bg-theme-subtle text-black border-[#ff914b] font-bold"
                             : "text-gray-800 dark:text-gray-200",
                           hasEvents && !isSelected
                             ? "bg-gray-50 dark:bg-gray-800/50"
@@ -1183,12 +1137,12 @@ const Dashboard = () => {
                                   <div className="w-1.5 h-1.5 rounded-[15px] bg-green-500"></div>
                                 )}
                                 {events.meetings.length > 0 && (
-                                  <div className="w-1.5 h-1.5 rounded-[15px] bg-blue-500"></div>
+                                  <div className="w-1.5 h-1.5 rounded-full bg-theme"></div>
                                 )}
                               </div>
                             )}
                             {events.total > 2 && (
-                              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-[15px] bg-blue-500 text-white text-[10px] font-bold flex items-center justify-center">
+                              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-theme text-white text-[10px] font-bold flex items-center justify-center">
                                 {events.total}
                               </span>
                             )}
@@ -1208,7 +1162,7 @@ const Dashboard = () => {
                     </span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-[15px] bg-blue-500"></div>
+                    <div className="w-3 h-3 rounded-full bg-theme"></div>
                     <span className="text-xs text-gray-600 dark:text-gray-400">
                       Meetings
                     </span>
@@ -1266,7 +1220,7 @@ const Dashboard = () => {
                       });
                     }}
                     disabled={!permissions.canCreateMeeting}
-                    className="flex-1 h-14 sm:h-12 rounded-xl text-sm border-2 border-blue-500 dark:border-blue-400 font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="flex-1 h-14 sm:h-12 rounded-xl text-sm border font-semibold border-[#ff914b] dark:border-[#ffb07a] text-theme dark:text-theme-light hover:bg-theme-subtle transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     <Video className="w-4 h-4" />
                     Schedule Meeting
@@ -1277,50 +1231,72 @@ const Dashboard = () => {
           </div>
           <motion.div className="h-auto flex flex-col gap-5 w-full lg:w-[40%] pb-20">
             {/* GitHub */}
+            {githubLoading ? (
+              <GithubReposSkeleton />
+            ) : (
             <motion.div
-              className="p-6 bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] mt-10 border border-gray-100 dark:border-white/10 shadow-sm"
+              className="dashboard-card p-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.7 }}
+              transition={{ delay: 0.2 }}
             >
               <div className="flex gap-2 items-center justify-between border-b icon border-gray-100 dark:border-[rgba(255,255,255,.1)] pb-4 mb-4">
                 <div className="flex items-center gap-3 min-w-0 icon">
                   <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-gray-100 dark:bg-white/10 overflow-hidden border border-gray-200/50 dark:border-white/10">
-                    <img className="w-full h-full object-cover p-2 border" src={githubData?.profile?.avatar_url} alt="" />
+                    {githubData?.profile?.avatar_url ? (
+                      <img
+                        className="w-full h-full object-cover rounded-[10px]"
+                        src={githubData.profile.avatar_url}
+                        alt={githubData?.profile?.login || "GitHub avatar"}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Github className="w-5 h-5 text-gray-400" />
+                      </div>
+                    )}
                   </div>
                   <div className="min-w-0">
-                    <h2 className="text-lg font-bold text-gray-900 dark:text-white truncate icon">{githubData?.profile?.login}</h2>
-                    {/* <p className="text-xs text-gray-500 dark:text-gray-400 flex items-center gap-1">
-                      {githubData?.profile?.user_view_type === "private" ? <LockKeyhole size={12} /> : <LockKeyholeOpen size={12} />}
-                      {githubData?.profile?.user_view_type === "private" ? "Private" : "Public"} profile
-                    </p> */}
+                    <h2 className="text-lg font-bold text-gray-900 dark:text-white truncate icon">
+                      {githubData?.profile?.login || "GitHub"}
+                    </h2>
                   </div>
                 </div>
               </div>
-              {githubRepos.length > 0 ? (
+              {isGithubConnected && githubRepos.length > 0 ? (
                 <>
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">Repositories</h3>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">{githubRepos.length} total</span>
-                  </div>
                   <ul className="space-y-2">
                     {displayedRepos.map((repo) => (
                       <li key={repo.id ?? repo.full_name ?? repo.name}>
-                        <a
-                          href={repo.html_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-3 py-2.5 px-3 rounded-lg border border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors group"
+                        <span
+                          role="button"
+                          tabIndex={0}
+                          onClick={() => navigate(`/dashboard/repos/${repo.id}`)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              navigate(`/dashboard/repos/${repo.id}`);
+                            }
+                          }}
+                          className="flex items-center gap-3 py-2.5 w-full px-3 relative rounded-lg border border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors group cursor-pointer"
                         >
                           <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gray-200/80 dark:bg-white/10 flex items-center justify-center">
                             <FolderGit2 className="w-4 h-4 icon text-gray-600 dark:text-gray-400" />
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-400">{repo.name}</p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{repo.private ? "Private" : "Public"} · {repo.language || "—"}</p>
+                          <div className="flex gap-2 justify-center items-center min-w-0">
+                            <p className="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-theme">{repo.name}</p>
+                            <p className="text-[10px] uppercase text-gray-500 dark:text-gray-400 truncate flex justify-start gap-2 items-center icon"><span className="px-3 py-1.5 bg-theme text-white rounded-full">{repo.private ? "Private" : "Public"} </span>{<LanguageIcon language={repo.language} />}</p>
                           </div>
-                          <ExternalLink className="w-4 h-4 text-gray-400 flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity" />
-                        </a>
+                          <button
+                            type="button"
+                            className="w-4 h-4 text-gray-400 flex-shrink-0 opacity-0 group-hover:opacity-100 hover:text-theme transition-all absolute right-3"
+                            title={`Create task for ${repo.name}`}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleCreateTaskFromRepo(repo);
+                            }}
+                          >
+                            <PlusCircle className="w-4 h-4" />
+                          </button>
+                        </span>
                       </li>
                     ))}
                   </ul>
@@ -1336,21 +1312,38 @@ const Dashboard = () => {
                   )}
                 </>
               ) : (
-                <p className="text-sm text-gray-500 dark:text-gray-400 py-3">No repositories to show. Connect GitHub or add repos.</p>
+                <div className="text-center py-6 px-4">
+                  <Github className="w-10 h-10 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
+                  <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                    {isGithubConnected
+                      ? "No repositories to show."
+                      : "Connect your GitHub account to see your repositories."}
+                  </p>
+                  {!isGithubConnected && (
+                    <Button
+                      type="button"
+                      onClick={connectGithub}
+                      className="rounded-xl bg-black text-white dark:bg-white dark:text-black"
+                    >
+                      Connect GitHub
+                    </Button>
+                  )}
+                </div>
               )}
             </motion.div>
+            )}
 
             {/* Recent Tasks */}
             <motion.div
-              className="p-6 bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] border border-gray-100 dark:border-white/10 shadow-sm"
+              className="dashboard-card p-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.85 }}
+              transition={{ delay: 0.5 }}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-emerald-500/10 dark:bg-emerald-400/10">
-                    <Target className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                  <div className="dashboard-section-icon !w-8 !h-8 !rounded-lg">
+                    <Target className="w-4 h-4" />
                   </div>
                   <h3 className="text-base font-bold text-gray-900 dark:text-white">Recent Tasks</h3>
                 </div>
@@ -1408,15 +1401,15 @@ const Dashboard = () => {
 
             {/* Recent Meetings */}
             <motion.div
-              className="p-6 bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] border border-gray-100 dark:border-white/10 shadow-sm"
+              className="dashboard-card p-6"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 2 }}
+              transition={{ delay: 0.55 }}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="p-1.5 rounded-lg bg-blue-500/10 dark:bg-blue-400/10">
-                    <Video className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <div className="dashboard-section-icon !w-8 !h-8 !rounded-lg">
+                    <Video className="w-4 h-4" />
                   </div>
                   <h3 className="text-base font-bold text-gray-900 dark:text-white">Recent Meetings</h3>
                 </div>
@@ -1476,6 +1469,12 @@ const Dashboard = () => {
       </div>
 
       {/* User Details Modal */}
+      <CreateTaskModal
+        open={!!taskRepoModal}
+        onOpenChange={(open) => !open && setTaskRepoModal(null)}
+        repository={taskRepoModal}
+        onCreated={loadDashboardData}
+      />
       <UserDetailsModal
         userId={selectedUserId}
         isOpen={showUserDetails}

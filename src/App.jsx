@@ -30,6 +30,7 @@ import Explore from "./pages/Explore";
 import LearnPoint from "./pages/LearnPoint";
 import Challenges from "./pages/Challenges";
 import ChallengeDetail from "./pages/ChallengeDetail";
+import RepoDetail from "./pages/RepoDetail";
 import Notes from "./pages/Notes";
 import KeyboardShortcuts from "./components/Keyboard";
 
@@ -178,6 +179,14 @@ function App() {
                         element={
                           <ProtectedRoute requireAuth={true}>
                             <ChallengeDetail />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/dashboard/repos/:id"
+                        element={
+                          <ProtectedRoute requireAuth={true}>
+                            <RepoDetail />
                           </ProtectedRoute>
                         }
                       />
