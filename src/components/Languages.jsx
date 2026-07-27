@@ -4,14 +4,10 @@ import {
   FaPython,
   FaNodeJs,
   FaHtml5,
-  FaCss3Alt
+  FaCss3Alt,
 } from "react-icons/fa";
 
-import {
-  SiTypescript,
-  SiMongodb,
-  SiCplusplus
-} from "react-icons/si";
+import { SiTypescript, SiMongodb, SiCplusplus } from "react-icons/si";
 
 const icons = {
   JavaScript: FaJs,
@@ -22,7 +18,7 @@ const icons = {
   React: FaReact,
   "Node.js": FaNodeJs,
   MongoDB: SiMongodb,
-  "C++": SiCplusplus
+  "C++": SiCplusplus,
 };
 
 const LanguageIcon = ({ language, className = "text-sm" }) => {

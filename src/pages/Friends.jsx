@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react";
 import {
   Check,
   X,
@@ -8,66 +8,75 @@ import {
   Send,
   UserPlus,
   Sparkles,
-} from "lucide-react"
-import { toast } from "sonner"
-import { Button } from "../components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
-import { Badge } from "../components/ui/badge"
-import friendService from "../services/friendService"
-import { useAuth } from "../contexts/AuthContext"
-import UserDetailsModal from "../components/UserDetailsModal"
-import FindFriendsModal from "../components/FindFriendsModal"
-import FriendUserCard from "../components/friends/FriendUserCard"
-import { Skeleton } from "@/components/ui/skeleton"
-import { PiUserDuotone, PiUserPlusDuotone, PiUsersDuotone } from "react-icons/pi"
-import { cn } from "@/lib/utils"
+} from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "../components/ui/button";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "../components/ui/tabs";
+import { Badge } from "../components/ui/badge";
+import friendService from "../services/friendService";
+import { useAuth } from "../contexts/AuthContext";
+import UserDetailsModal from "../components/UserDetailsModal";
+import FindFriendsModal from "../components/FindFriendsModal";
+import FriendUserCard from "../components/friends/FriendUserCard";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  PiUserDuotone,
+  PiUserPlusDuotone,
+  PiUsersDuotone,
+} from "react-icons/pi";
+import { cn } from "@/lib/utils";
 import {
   getExcludedUserIds,
   filterRecommendableUsers,
   getPendingRequestStatus,
-} from "@/utils/friendSuggestions"
+} from "@/utils/friendSuggestions";
 
 const Friends = () => {
-  const { user } = useAuth()
-  const [activeTab, setActiveTab] = useState("friends")
-  const [selectedUserId, setSelectedUserId] = useState(null)
-  const [showUserDetails, setShowUserDetails] = useState(false)
-  const [showFindFriendsModal, setShowFindFriendsModal] = useState(false)
-  const [loading, setLoading] = useState(true)
-  const [statsLoading, setStatsLoading] = useState(true)
-  const [suggestionsLoading, setSuggestionsLoading] = useState(true)
-  const [friends, setFriends] = useState([])
-  const [friendRequests, setFriendRequests] = useState([])
-  const [suggestions, setSuggestions] = useState([])
-  const [stats, setStats] = useState(null)
-  const [sendingId, setSendingId] = useState(null)
-  const [sentSuggestionIds, setSentSuggestionIds] = useState(new Set())
-  const [actionId, setActionId] = useState(null)
+  const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState("friends");
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showUserDetails, setShowUserDetails] = useState(false);
+  const [showFindFriendsModal, setShowFindFriendsModal] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(true);
+  const [friends, setFriends] = useState([]);
+  const [friendRequests, setFriendRequests] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [sendingId, setSendingId] = useState(null);
+  const [sentSuggestionIds, setSentSuggestionIds] = useState(new Set());
+  const [actionId, setActionId] = useState(null);
 
   const handleUserAvatarClick = (userId) => {
-    setSelectedUserId(userId)
-    setShowUserDetails(true)
-  }
+    setSelectedUserId(userId);
+    setShowUserDetails(true);
+  };
 
   const loadFriends = useCallback(async () => {
-    const response = await friendService.getFriends()
-    setFriends(response.friends || [])
-  }, [])
+    const response = await friendService.getFriends();
+    setFriends(response.friends || []);
+  }, []);
 
   const loadFriendRequests = useCallback(async () => {
-    const response = await friendService.getFriendRequests()
-    setFriendRequests(response.requests || [])
-  }, [])
+    const response = await friendService.getFriendRequests();
+    setFriendRequests(response.requests || []);
+  }, []);
 
   const loadStats = useCallback(async () => {
-    const response = await friendService.getFriendStats()
-    setStats(response.stats)
-  }, [])
+    const response = await friendService.getFriendStats();
+    setStats(response.stats);
+  }, []);
 
   const loadSuggestions = useCallback(async () => {
-    const response = await friendService.searchUsersForFriends("", 12)
-    setSuggestions(response.users || [])
-  }, [])
+    const response = await friendService.searchUsersForFriends("", 12);
+    setSuggestions(response.users || []);
+  }, []);
 
   const excludedIds = useMemo(
     () =>
@@ -78,12 +87,12 @@ const Friends = () => {
         extraIds: [...sentSuggestionIds],
       }),
     [friends, friendRequests, user?.id, sentSuggestionIds],
-  )
+  );
 
   const visibleSuggestions = useMemo(
     () => filterRecommendableUsers(suggestions, excludedIds),
     [suggestions, excludedIds],
-  )
+  );
 
   const refreshAll = useCallback(async () => {
     try {
@@ -92,101 +101,101 @@ const Friends = () => {
         loadFriendRequests(),
         loadStats(),
         loadSuggestions(),
-      ])
+      ]);
     } catch (error) {
-      console.error("Error refreshing friends data:", error)
+      console.error("Error refreshing friends data:", error);
     }
-  }, [loadFriends, loadFriendRequests, loadStats, loadSuggestions])
+  }, [loadFriends, loadFriendRequests, loadStats, loadSuggestions]);
 
   useEffect(() => {
-    let mounted = true
+    let mounted = true;
 
     const init = async () => {
       try {
-        setLoading(true)
-        setStatsLoading(true)
-        setSuggestionsLoading(true)
+        setLoading(true);
+        setStatsLoading(true);
+        setSuggestionsLoading(true);
         await Promise.all([
           loadFriends(),
           loadFriendRequests(),
           loadStats(),
           loadSuggestions(),
-        ])
+        ]);
       } catch (error) {
         if (mounted) {
-          console.error("Error loading friends page:", error)
-          toast.error("Failed to load friends")
+          console.error("Error loading friends page:", error);
+          toast.error("Failed to load friends");
         }
       } finally {
         if (mounted) {
-          setLoading(false)
-          setStatsLoading(false)
-          setSuggestionsLoading(false)
+          setLoading(false);
+          setStatsLoading(false);
+          setSuggestionsLoading(false);
         }
       }
-    }
+    };
 
-    init()
+    init();
     return () => {
-      mounted = false
-    }
-  }, [loadFriends, loadFriendRequests, loadStats, loadSuggestions])
+      mounted = false;
+    };
+  }, [loadFriends, loadFriendRequests, loadStats, loadSuggestions]);
 
   const handleSendFriendRequest = async (userId) => {
-    const status = getPendingRequestStatus(userId, friendRequests, user?.id)
-    if (sendingId || sentSuggestionIds.has(userId) || status === "sent") return
+    const status = getPendingRequestStatus(userId, friendRequests, user?.id);
+    if (sendingId || sentSuggestionIds.has(userId) || status === "sent") return;
 
     try {
-      setSendingId(userId)
-      await friendService.sendFriendRequest(userId)
-      setSentSuggestionIds((prev) => new Set([...prev, String(userId)]))
+      setSendingId(userId);
+      await friendService.sendFriendRequest(userId);
+      setSentSuggestionIds((prev) => new Set([...prev, String(userId)]));
       setSuggestions((prev) =>
         prev.filter((u) => String(u.id) !== String(userId)),
-      )
-      toast.success("Friend request sent!")
-      await Promise.all([loadFriendRequests(), loadStats(), loadSuggestions()])
+      );
+      toast.success("Friend request sent!");
+      await Promise.all([loadFriendRequests(), loadStats(), loadSuggestions()]);
     } catch (error) {
-      toast.error(error.message || "Failed to send friend request")
+      toast.error(error.message || "Failed to send friend request");
     } finally {
-      setSendingId(null)
+      setSendingId(null);
     }
-  }
+  };
 
   const handleRespondToRequest = async (requestId, action) => {
     try {
-      setActionId(requestId)
-      await friendService.respondToFriendRequest(requestId, action)
-      toast.success(`Friend request ${action}ed!`)
-      await refreshAll()
+      setActionId(requestId);
+      await friendService.respondToFriendRequest(requestId, action);
+      toast.success(`Friend request ${action}ed!`);
+      await refreshAll();
     } catch (error) {
-      toast.error(error.message || `Failed to ${action} friend request`)
+      toast.error(error.message || `Failed to ${action} friend request`);
     } finally {
-      setActionId(null)
+      setActionId(null);
     }
-  }
+  };
 
   const handleRemoveFriend = async (friendId) => {
-    if (!window.confirm("Are you sure you want to remove this friend?")) return
+    if (!window.confirm("Are you sure you want to remove this friend?")) return;
 
     try {
-      setActionId(friendId)
-      await friendService.removeFriend(friendId)
-      toast.success("Friend removed!")
-      await refreshAll()
+      setActionId(friendId);
+      await friendService.removeFriend(friendId);
+      toast.success("Friend removed!");
+      await refreshAll();
     } catch (error) {
-      toast.error(error.message || "Failed to remove friend")
+      toast.error(error.message || "Failed to remove friend");
     } finally {
-      setActionId(null)
+      setActionId(null);
     }
-  }
+  };
 
   const pendingReceivedRequests = friendRequests.filter(
     (req) => req.receiver.id === user?.id && req.status === "pending",
-  )
+  );
 
   const pendingSentRequests = friendRequests.filter(
     (req) => req.sender.id === user?.id && req.status === "pending",
-  )
+  );
 
   const statPills = [
     {
@@ -207,7 +216,7 @@ const Friends = () => {
       icon: Send,
       color: "#6b7280",
     },
-  ]
+  ];
 
   const renderPersonCard = ({ person, actions, index = 0 }) => (
     <FriendUserCard
@@ -216,9 +225,9 @@ const Friends = () => {
       onAvatarClick={handleUserAvatarClick}
       action={actions}
     />
-  )
+  );
 
-  document.title = "Friends - Manage Your Friends"
+  document.title = "Friends - Manage Your Friends";
 
   return (
     <div className="dashboard-page min-h-screen pt-6 md:pt-10 pb-10">
@@ -302,10 +311,10 @@ const Friends = () => {
                   person.id,
                   friendRequests,
                   user?.id,
-                )
+                );
                 const isSent =
                   sentSuggestionIds.has(String(person.id)) ||
-                  requestStatus === "sent"
+                  requestStatus === "sent";
 
                 return (
                   <FriendUserCard
@@ -317,7 +326,7 @@ const Friends = () => {
                     isSending={sendingId === person.id}
                     requestStatus={isSent ? "sent" : requestStatus}
                   />
-                )
+                );
               })}
             </div>
           )}
@@ -333,7 +342,11 @@ const Friends = () => {
                 label: "Received",
                 count: pendingReceivedRequests.length,
               },
-              { value: "sent", label: "Sent", count: pendingSentRequests.length },
+              {
+                value: "sent",
+                label: "Sent",
+                count: pendingSentRequests.length,
+              },
             ].map((tab) => (
               <TabsTrigger
                 key={tab.value}
@@ -482,13 +495,13 @@ const Friends = () => {
           userId={selectedUserId}
           isOpen={showUserDetails}
           onClose={() => {
-            setShowUserDetails(false)
-            setSelectedUserId(null)
+            setShowUserDetails(false);
+            setSelectedUserId(null);
           }}
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Friends
+export default Friends;

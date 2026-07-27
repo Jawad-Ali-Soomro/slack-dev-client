@@ -1,6 +1,6 @@
 import CryptoJS from "crypto-js";
 
-const SECRET_KEY = import.meta.env.VITE_ENCRYPTION_KEY
+const SECRET_KEY = import.meta.env.VITE_ENCRYPTION_KEY;
 
 export const encryptData = (data) => {
   try {

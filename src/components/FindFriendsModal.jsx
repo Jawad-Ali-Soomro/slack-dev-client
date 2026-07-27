@@ -1,18 +1,18 @@
-import { useState, useEffect, useCallback, useMemo } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Search, UserPlus, X, Sparkles } from "lucide-react"
-import { toast } from "sonner"
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
-import friendService from "../services/friendService"
-import UserDetailsModal from "./UserDetailsModal"
-import FriendUserCard from "./friends/FriendUserCard"
-import { Skeleton } from "@/components/ui/skeleton"
+import { useState, useEffect, useCallback, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Search, UserPlus, X, Sparkles } from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import friendService from "../services/friendService";
+import UserDetailsModal from "./UserDetailsModal";
+import FriendUserCard from "./friends/FriendUserCard";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   filterRecommendableUsers,
   getPendingRequestStatus,
-} from "@/utils/friendSuggestions"
-import { PiUserPlusDuotone } from "react-icons/pi"
+} from "@/utils/friendSuggestions";
+import { PiUserPlusDuotone } from "react-icons/pi";
 
 const FindFriendsModal = ({
   isOpen,
@@ -22,84 +22,95 @@ const FindFriendsModal = ({
   friendRequests = [],
   currentUserId,
 }) => {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [searchResults, setSearchResults] = useState([])
-  const [suggestions, setSuggestions] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [sendingId, setSendingId] = useState(null)
-  const [sentIds, setSentIds] = useState(new Set())
-  const [selectedUserId, setSelectedUserId] = useState(null)
-  const [showUserDetails, setShowUserDetails] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [sendingId, setSendingId] = useState(null);
+  const [sentIds, setSentIds] = useState(new Set());
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showUserDetails, setShowUserDetails] = useState(false);
 
   const excluded = useMemo(() => {
-    const ids = new Set(excludedIds)
-    sentIds.forEach((id) => ids.add(String(id)))
-    return ids
-  }, [excludedIds, sentIds])
+    const ids = new Set(excludedIds);
+    sentIds.forEach((id) => ids.add(String(id)));
+    return ids;
+  }, [excludedIds, sentIds]);
 
   const loadUsers = useCallback(
     async (query) => {
       try {
-        setLoading(true)
-        const response = await friendService.searchUsersForFriends(query, 20)
-        const users = filterRecommendableUsers(response.users || [], excluded)
+        setLoading(true);
+        const response = await friendService.searchUsersForFriends(query, 20);
+        const users = filterRecommendableUsers(response.users || [], excluded);
 
         if (query.trim()) {
-          setSearchResults(users)
+          setSearchResults(users);
         } else {
-          setSuggestions(users)
-          setSearchResults([])
+          setSuggestions(users);
+          setSearchResults([]);
         }
       } catch (error) {
-        console.error("Error loading users:", error)
-        toast.error("Failed to load users")
+        console.error("Error loading users:", error);
+        toast.error("Failed to load users");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     },
     [excluded],
-  )
+  );
 
   const handleSendFriendRequest = async (userId) => {
-    const status = getPendingRequestStatus(userId, friendRequests, currentUserId)
-    if (sendingId || sentIds.has(userId) || status === "sent") return
+    const status = getPendingRequestStatus(
+      userId,
+      friendRequests,
+      currentUserId,
+    );
+    if (sendingId || sentIds.has(userId) || status === "sent") return;
 
     try {
-      setSendingId(userId)
-      await friendService.sendFriendRequest(userId)
-      setSentIds((prev) => new Set([...prev, String(userId)]))
-      setSuggestions((prev) => prev.filter((u) => String(u.id) !== String(userId)))
-      setSearchResults((prev) => prev.filter((u) => String(u.id) !== String(userId)))
-      toast.success("Friend request sent!")
-      onRequestSent?.()
+      setSendingId(userId);
+      await friendService.sendFriendRequest(userId);
+      setSentIds((prev) => new Set([...prev, String(userId)]));
+      setSuggestions((prev) =>
+        prev.filter((u) => String(u.id) !== String(userId)),
+      );
+      setSearchResults((prev) =>
+        prev.filter((u) => String(u.id) !== String(userId)),
+      );
+      toast.success("Friend request sent!");
+      onRequestSent?.();
     } catch (error) {
-      toast.error(error.message || "Failed to send friend request")
+      toast.error(error.message || "Failed to send friend request");
     } finally {
-      setSendingId(null)
+      setSendingId(null);
     }
-  }
+  };
 
   useEffect(() => {
-    if (!isOpen) return
+    if (!isOpen) return;
 
-    const timeoutId = setTimeout(() => {
-      loadUsers(searchTerm.trim())
-    }, searchTerm.trim() ? 400 : 0)
+    const timeoutId = setTimeout(
+      () => {
+        loadUsers(searchTerm.trim());
+      },
+      searchTerm.trim() ? 400 : 0,
+    );
 
-    return () => clearTimeout(timeoutId)
-  }, [searchTerm, isOpen, loadUsers])
+    return () => clearTimeout(timeoutId);
+  }, [searchTerm, isOpen, loadUsers]);
 
   useEffect(() => {
     if (!isOpen) {
-      setSearchTerm("")
-      setSearchResults([])
-      setSuggestions([])
-      setSentIds(new Set())
-      setSendingId(null)
+      setSearchTerm("");
+      setSearchResults([]);
+      setSuggestions([]);
+      setSentIds(new Set());
+      setSendingId(null);
     }
-  }, [isOpen])
+  }, [isOpen]);
 
-  const displayUsers = searchTerm.trim() ? searchResults : suggestions
+  const displayUsers = searchTerm.trim() ? searchResults : suggestions;
 
   return (
     <>
@@ -190,10 +201,10 @@ const FindFriendsModal = ({
                         person.id,
                         friendRequests,
                         currentUserId,
-                      )
+                      );
                       const isSent =
                         sentIds.has(String(person.id)) ||
-                        requestStatus === "sent"
+                        requestStatus === "sent";
 
                       return (
                         <FriendUserCard
@@ -201,14 +212,14 @@ const FindFriendsModal = ({
                           person={person}
                           index={index}
                           onAvatarClick={(id) => {
-                        setSelectedUserId(id)
-                        setShowUserDetails(true)
-                      }}
+                            setSelectedUserId(id);
+                            setShowUserDetails(true);
+                          }}
                           onAdd={handleSendFriendRequest}
                           isSending={sendingId === person.id}
                           requestStatus={isSent ? "sent" : requestStatus}
                         />
-                      )
+                      );
                     })}
                   </div>
                 )}
@@ -224,7 +235,7 @@ const FindFriendsModal = ({
         onClose={() => setSelectedUserId(null)}
       />
     </>
-  )
-}
+  );
+};
 
-export default FindFriendsModal
+export default FindFriendsModal;

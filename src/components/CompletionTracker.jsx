@@ -1,90 +1,92 @@
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { CheckCircle, Clock, AlertCircle, Trophy, Star } from 'lucide-react'
-import { Button } from './ui/button'
-import { toast } from 'sonner'
-import completionService from '../services/completionService'
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { CheckCircle, Clock, AlertCircle, Trophy, Star } from "lucide-react";
+import { Button } from "./ui/button";
+import { toast } from "sonner";
+import completionService from "../services/completionService";
 
-const CompletionTracker = ({ 
-  itemId, 
-  itemType, 
-  onCompletionChange, 
+const CompletionTracker = ({
+  itemId,
+  itemType,
+  onCompletionChange,
   showBadge = true,
   showButton = true,
-  className = '' 
+  className = "",
 }) => {
-  const [isCompleted, setIsCompleted] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [completionData, setCompletionData] = useState(null)
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [completionData, setCompletionData] = useState(null);
 
   useEffect(() => {
-    checkCompletionStatus()
-  }, [itemId, itemType])
+    checkCompletionStatus();
+  }, [itemId, itemType]);
 
   const checkCompletionStatus = async () => {
     try {
-      let response
+      let response;
       switch (itemType) {
-        case 'task':
-          response = await completionService.isTaskCompleted(itemId)
-          break
-        case 'meeting':
-          response = await completionService.isMeetingCompleted(itemId)
-          break
+        case "task":
+          response = await completionService.isTaskCompleted(itemId);
+          break;
+        case "meeting":
+          response = await completionService.isMeetingCompleted(itemId);
+          break;
         default:
-          return
+          return;
       }
-      
-      setIsCompleted(response.completed)
-      setCompletionData(response)
+
+      setIsCompleted(response.completed);
+      setCompletionData(response);
     } catch (error) {
-      console.error('Error checking completion status:', error)
+      console.error("Error checking completion status:", error);
     }
-  }
+  };
 
   const handleMarkCompleted = async () => {
-    if (isCompleted) return
+    if (isCompleted) return;
 
     try {
-      setIsLoading(true)
-      let response
-      
+      setIsLoading(true);
+      let response;
+
       switch (itemType) {
-        case 'task':
-          response = await completionService.markTaskCompleted(itemId)
-          break
-        case 'meeting':
-          response = await completionService.markMeetingCompleted(itemId)
-          break
+        case "task":
+          response = await completionService.markTaskCompleted(itemId);
+          break;
+        case "meeting":
+          response = await completionService.markMeetingCompleted(itemId);
+          break;
         default:
-          return
+          return;
       }
 
-      setIsCompleted(true)
-      setCompletionData(response)
-      
+      setIsCompleted(true);
+      setCompletionData(response);
+
       if (onCompletionChange) {
-        onCompletionChange(true, response)
+        onCompletionChange(true, response);
       }
-      
-      toast.success(`${itemType.charAt(0).toUpperCase() + itemType.slice(1)} marked as completed!`)
+
+      toast.success(
+        `${itemType.charAt(0).toUpperCase() + itemType.slice(1)} marked as completed!`,
+      );
     } catch (error) {
-      console.error('Error marking as completed:', error)
-      toast.error(`Failed to mark ${itemType} as completed`)
+      console.error("Error marking as completed:", error);
+      toast.error(`Failed to mark ${itemType} as completed`);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const getCompletionIcon = () => {
     if (isCompleted) {
-      return <CheckCircle className="w-4 h-4 icon icon text-green-500" />
+      return <CheckCircle className="w-4 h-4 icon icon text-green-500" />;
     }
-    return <Clock className="w-4 h-4 icon icon text-gray-400" />
-  }
+    return <Clock className="w-4 h-4 icon icon text-gray-400" />;
+  };
 
   const getCompletionBadge = () => {
-    if (!showBadge) return null
+    if (!showBadge) return null;
 
     if (isCompleted) {
       return (
@@ -96,7 +98,7 @@ const CompletionTracker = ({
           <CheckCircle className="w-3 h-3 icon" />
           Completed
         </motion.div>
-      )
+      );
     }
 
     return (
@@ -104,11 +106,11 @@ const CompletionTracker = ({
         <Clock className="w-3 h-3 icon" />
         Pending
       </div>
-    )
-  }
+    );
+  };
 
   const getCompletionButton = () => {
-    if (!showButton) return null
+    if (!showButton) return null;
 
     if (isCompleted) {
       return (
@@ -121,7 +123,7 @@ const CompletionTracker = ({
           <CheckCircle className="w-4 h-4 icon icon" />
           Completed
         </Button>
-      )
+      );
     }
 
     return (
@@ -138,8 +140,8 @@ const CompletionTracker = ({
         )}
         Mark Complete
       </Button>
-    )
-  }
+    );
+  };
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
@@ -147,9 +149,7 @@ const CompletionTracker = ({
       {getCompletionBadge()}
       {getCompletionButton()}
     </div>
-  )
-}
+  );
+};
 
-export default CompletionTracker
-
-
+export default CompletionTracker;

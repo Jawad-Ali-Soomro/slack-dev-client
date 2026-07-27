@@ -225,13 +225,15 @@ const ChatWindow = ({ isMobile = false }) => {
 
   if (!currentChat) {
     return (
-      <div className="flex items-center justify-center h-full bg-muted/20">
-        <div className="text-center">
-          <div className="h-16 w-16 mx-auto mb-4 rounded-[15px] bg-muted flex items-center justify-center">
-            <Send className="h-8 w-8 text-muted-foreground" />
+      <div className="flex h-full items-center justify-center">
+        <div className="text-center px-6">
+          <div className="mx-auto mb-5 flex h-20 w-20 items-center justify-center rounded-[24px] bg-gradient-to-br from-[#FF914B] to-[#ff6a3d] shadow-lg shadow-[#FF914B]/20">
+            <Send className="h-9 w-9 text-white" />
           </div>
-          <h3 className="text-lg font-medium mb-2">Select a chat</h3>
-          <p className="text-muted-foreground">
+          <h3 className="mb-1.5 text-xl font-bold text-gray-900 dark:text-white">
+            Your messages
+          </h3>
+          <p className="text-sm text-muted-foreground">
             Choose a conversation to start messaging
           </p>
         </div>
@@ -244,16 +246,16 @@ const ChatWindow = ({ isMobile = false }) => {
       {/* Header */}
 
       <div
-        className={`flex-shrink-0 border-b icon ${isMobile ? "p-2" : "p-4"}`}
+        className={`flex-shrink-0 border-b border-gray-100 bg-white/80 backdrop-blur-md dark:border-white/10 dark:bg-black/40 ${isMobile ? "p-2" : "px-4 py-3"}`}
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-3">
             {isMobile && (
               <Button
                 variant="ghost"
                 size="sm"
                 onClick={() => setCurrentChat(null)}
-                className="p-2 -ml-2 hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="-ml-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-800"
                 title="Back to chat list"
               >
                 <ArrowLeft className="h-5 w-5 icon" />
@@ -261,7 +263,7 @@ const ChatWindow = ({ isMobile = false }) => {
             )}
             <div className="relative">
               <Avatar
-                className="h-10 w-10 cursor-pointer hover:opacity-80 transition-opacity"
+                className="h-11 w-11 cursor-pointer ring-2 ring-[#FF914B]/20 transition-all hover:ring-[#FF914B]/50"
                 onClick={() =>
                   otherParticipant &&
                   handleUserAvatarClick(
@@ -274,14 +276,23 @@ const ChatWindow = ({ isMobile = false }) => {
                   {getChatName(currentChat).charAt(0).toUpperCase()}
                 </AvatarFallback>
               </Avatar>
-              {isOnline ? (
-                <div className="w-3 rounded-[15px] absolute bottom-0 -right-1 h-3 bg-green-500"></div>
-              ) : (
-                <div className="w-3 rounded-[15px] absolute bottom-0 -right-1 h-3 bg-red-500"></div>
-              )}
+              <span
+                className={`absolute bottom-0 -right-0.5 h-3 w-3 rounded-full ring-2 ring-white dark:ring-black ${
+                  isOnline ? "bg-green-500" : "bg-gray-400"
+                }`}
+              ></span>
             </div>
-            <div className="flex items-center gap-2">
-              <h3 className="font-bold">{getChatName(currentChat)}</h3>
+            <div className="flex flex-col">
+              <h3 className="font-bold leading-tight text-gray-900 dark:text-white">
+                {getChatName(currentChat)}
+              </h3>
+              <span className="text-xs font-medium text-muted-foreground">
+                {typingUsers.length > 0
+                  ? "typing..."
+                  : isOnline
+                    ? "Active now"
+                    : "Offline"}
+              </span>
             </div>
           </div>
         </div>
@@ -293,7 +304,7 @@ const ChatWindow = ({ isMobile = false }) => {
 
         <div
           ref={messagesContainerRef}
-          className={`flex-1 overflow-y-auto  relative ${isMobile ? "p-2" : "p-4"}`}
+          className={`relative flex-1 space-y-1 overflow-y-auto dark:bg-transparent ${isMobile ? "p-2" : "p-4"}`}
         >
           {messagesLoading ? (
             // <div className="flex flex-col items-center justify-center h-full w-full">
@@ -355,13 +366,13 @@ const ChatWindow = ({ isMobile = false }) => {
               return (
                 <div
                   key={message._id}
-                  className={`flex ${isOwn ? "justify-end rounded-[15px]" : "justify-start rounded-[15px]"}`}
+                  className={`group flex py-1.5 ${isOwn ? "justify-end" : "justify-start"}`}
                 >
                   <div
-                    className={`flex gap-2 max-w-[70%] ${isOwn ? "flex-row-reverse rounded-[15px]" : "flex-row rounded-[15px]"}`}
+                    className={`flex max-w-[78%] items-end gap-2 ${isOwn ? "flex-row-reverse" : "flex-row"}`}
                   >
                     <Avatar
-                      className="h-10 w-10 mt-1 border border-gray-200 dark:border-gray-600 p-1 rounded-[15px] cursor-pointer hover:opacity-80 transition-opacity shrink-0"
+                      className="mt-1 h-9 w-9 shrink-0 cursor-pointer rounded-[12px] border border-gray-200 p-0.5 transition-opacity hover:opacity-80 dark:border-gray-600"
                       onClick={() =>
                         handleUserAvatarClick(
                           message.sender._id || message.sender.id,
@@ -375,7 +386,7 @@ const ChatWindow = ({ isMobile = false }) => {
                     >
                       <AvatarImage
                         src={getAvatarUrl(senderAvatar)}
-                        className="rounded-[15px]"
+                        className="rounded-[10px]"
                       />
                       <AvatarFallback>
                         {senderLabel.charAt(0).toUpperCase()}
@@ -383,47 +394,53 @@ const ChatWindow = ({ isMobile = false }) => {
                     </Avatar>
 
                     <div
-                      className={`space-y-1 ${isOwn ? "items-end rounded-[15px]" : "items-start rounded-[15px]"}`}
+                      className={`flex flex-col gap-1 ${isOwn ? "items-end" : "items-start"}`}
                     >
                       <div
-                        className={`px-5 py-3 relative ${
+                        className={`relative px-4 py-2.5 shadow-sm font-bold ${
                           isOwn
-                            ? "bg-primary text-primary-foreground mt-5 rounded-b-[20px] rounded-tl-[20px]"
-                            : "dark:bg-[rgba(255,255,255,.1)] bg-white mt-5 rounded-b-[20px] rounded-tr-[20px]"
+                            ? "rounded-2xl rounded-br-none bg-white text-gray-900"
+                            : "rounded-2xl rounded-bl-none border border-gray-100 bg-white text-gray-900 dark:border-white/10 dark:bg-white/[0.06] dark:text-white"
                         } ${isDeleted ? "opacity-60" : ""}`}
                       >
-                        <p className={`text-sm rounded-b-20px font-bold`}>
+                        {message.replyTo && (
+                          <div
+                            className={`mb-1.5 rounded-lg border-l-2 px-2 py-1 text-xs ${
+                              isOwn
+                                ? "border-white/60 bg-white/15 text-white/90"
+                                : "border-[#FF914B] bg-[#FF914B]/10 text-gray-600 dark:text-gray-300"
+                            }`}
+                          >
+                            <span className="line-clamp-2">
+                              {message.replyTo?.content}
+                            </span>
+                          </div>
+                        )}
+
+                        <p className="text-sm font-medium leading-relaxed whitespace-pre-wrap break-words">
                           {message.content}
                         </p>
 
-                        <div className="flex justify-between pt-1">
-                          {message.replyTo && (
-                            <div className="text-xs opacity-70 mb-1 rounded">
-                              (Replied to {message.replyTo?.content})
-                            </div>
-                          )}
-                          {
-                            console.log(message.replyTo?.content)
-                          }
-                          {message.isEdited && (
-                            <p className="text-xs opacity-70">(edited)</p>
-                          )}
-                        </div>
+                        {message.isEdited && (
+                          <span className="mt-0.5 block text-[10px] opacity-70">
+                            (edited)
+                          </span>
+                        )}
                       </div>
 
                       <div
-                        className={`flex items-center gap-2 text-xs text-muted-foreground ${isOwn ? "flex-row-reverse" : "flex-row"}`}
+                        className={`flex items-center gap-1 text-xs text-muted-foreground ${isOwn ? "flex-row-reverse" : "flex-row"}`}
                       >
-                        <span className="lowercase text-[10px] font-bold">
+                        <span className="text-[10px] font-semibold lowercase">
                           {formatMessageTime(message.createdAt)}
                         </span>
 
                         {isOwn && !isDeleted && (
-                          <div className="flex items-center gap-1">
+                          <div className="flex items-center gap-0.5 opacity-0 transition-opacity group-hover:opacity-100">
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-6 w-6 p-0"
+                              className="h-6 w-6 rounded-full p-0 hover:text-[#FF914B]"
                               onClick={() => handleEditMessage(message)}
                             >
                               <Edit className="h-3 w-3 icon" />
@@ -431,7 +448,7 @@ const ChatWindow = ({ isMobile = false }) => {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-6 w-6 p-0"
+                              className="h-6 w-6 rounded-full p-0 hover:text-red-500"
                               onClick={() => handleDeleteMessage(message._id)}
                             >
                               <Trash2 className="h-3 w-3 icon" />
@@ -443,7 +460,7 @@ const ChatWindow = ({ isMobile = false }) => {
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="h-6 w-6 p-0"
+                            className="h-6 w-6 rounded-full p-0 opacity-0 transition-opacity hover:text-[#FF914B] group-hover:opacity-100"
                             onClick={() => handleReplyToMessage(message)}
                           >
                             <Reply className="h-3 w-3 icon" />
@@ -459,19 +476,19 @@ const ChatWindow = ({ isMobile = false }) => {
 
           {/* Typing indicator */}
           {typingUsers.length > 0 && (
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-muted-foreground rounded-[15px] animate-bounce"></div>
+            <div className="flex items-center gap-2 py-2">
+              <div className="flex items-center gap-1 rounded-2xl rounded-bl-md border border-gray-100 bg-white px-4 py-3 shadow-sm dark:border-white/10 dark:bg-white/[0.06]">
+                <div className="h-2 w-2 animate-bounce rounded-full bg-[#FF914B]"></div>
                 <div
-                  className="w-2 h-2 bg-muted-foreground rounded-[15px] animate-bounce"
-                  style={{ animationDelay: "0.1s" }}
+                  className="h-2 w-2 animate-bounce rounded-full bg-[#FF914B]"
+                  style={{ animationDelay: "0.15s" }}
                 ></div>
                 <div
-                  className="w-2 h-2 bg-muted-foreground rounded-[15px] animate-bounce"
-                  style={{ animationDelay: "0.2s" }}
+                  className="h-2 w-2 animate-bounce rounded-full bg-[#FF914B]" 
+                  style={{ animationDelay: "0.3s" }}
                 ></div>
               </div>
-              <span>
+              <span className="text-xs text-muted-foreground">
                 {typingUsers.map((u) => u.userName).join(", ")}{" "}
                 {typingUsers.length === 1 ? "is" : "are"} typing...
               </span>
@@ -483,74 +500,106 @@ const ChatWindow = ({ isMobile = false }) => {
 
         {/* Scroll to bottom button */}
         {showScrollButton && (
-          <Button
-            variant="secondary"
-            size="sm"
-            className="absolute bottom-25 border w-12 right-4 shadow-md"
+          <button
+            type="button"
+            className="absolute bottom-24 right-4 z-10 flex h-10 w-10 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 shadow-lg transition-all hover:scale-105 hover:text-[#FF914B] dark:border-white/10 dark:bg-white/10 dark:text-white"
             onClick={scrollToBottomLocal}
           >
             <ArrowDown className="h-4 w-4" />
-          </Button>
+          </button>
         )}
 
         {/* Message Input */}
         <div
-          className={`flex-shrink-0 border-t icon relative ${isMobile ? "p-2" : "p-4"}`}
+          className={`relative flex-shrink-0 border-t border-gray-100 bg-white/80 backdrop-blur-md dark:border-white/10 dark:bg-black/40 ${isMobile ? "p-2" : "p-4"}`}
         >
+          {/* Reply / Edit preview */}
+          {(replyTo || editingMessage) && (
+            <div className="mb-2 flex items-center justify-between gap-2 rounded-[14px] border-l-2 border-[#FF914B] bg-[#FF914B]/10 px-3 py-2">
+              <div className="min-w-0">
+                <p className="text-xs font-bold text-[#FF914B]">
+                  {editingMessage ? "Editing message" : "Replying to"}
+                </p>
+                <p className="truncate text-xs text-gray-600 dark:text-gray-300">
+                  {editingMessage ? editingMessage.content : replyTo?.content}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setReplyTo(null);
+                  setEditingMessage(null);
+                  setMessageText("");
+                }}
+                className="shrink-0 rounded-full p-1 text-gray-500 hover:bg-black/5 hover:text-red-500 dark:hover:bg-white/10"
+              >
+                <Trash2 className="h-3.5 w-3.5 icon" />
+              </button>
+            </div>
+          )}
+
           <form
             onSubmit={handleSendMessage}
             className="flex items-center gap-2"
           >
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Paperclip className="h-4 w-4 icon" />
-            </Button>
-
-            <Input
-              ref={inputRef}
-              value={messageText}
-              onChange={handleTyping}
-              onKeyPress={handleKeyPress}
-              placeholder={
-                editingMessage ? "Edit message..." : replyTo ? "Aa" : "Aa"
-              }
-              className="flex-1 border-gray-300 dark:border-gray-800"
-              disabled={messagesLoading}
-            />
-
-            <div className="relative emoji-picker-wrapper" ref={emojiPickerRef}>
+            <div className="flex flex-1 items-center gap-1 rounded-full border border-gray-200 bg-gray-50 px-2 transition-colors focus-within:border-[#FF914B]/50 dark:border-white/10 dark:bg-white/[0.04]">
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className={"w-12 border-gray-300 dark:border-gray-800 border"}
-                onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                className="h-9 w-9 shrink-0 rounded-full p-0 text-muted-foreground hover:text-[#FF914B]"
+                onClick={() => fileInputRef.current?.click()}
+                title="Attach file"
               >
-                <Smile className="h-4 w-4 icon" />
+                <Paperclip className="h-4 w-4 icon" />
               </Button>
 
-              {showEmojiPicker && (
-                <div className="absolute bottom-full right-0 mb-2 z-50">
-                  <EmojiPicker
-                    onEmojiClick={handleEmojiClick}
-                    autoFocusSearch={false}
-                    theme={theme === "dark" ? "dark" : "light"}
-                    width={350}
-                    height={400}
-                  />
-                </div>
-              )}
+              <Input
+                ref={inputRef}
+                value={messageText}
+                onChange={handleTyping}
+                onKeyPress={handleKeyPress}
+                placeholder={
+                  editingMessage ? "Edit message..." : "Type a message..."
+                }
+                className="h-11 flex-1 border-0 bg-transparent px-1 shadow-none focus-visible:ring-0"
+                disabled={messagesLoading}
+              />
+
+              <div
+                className="relative emoji-picker-wrapper shrink-0"
+                ref={emojiPickerRef}
+              >
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="h-9 w-9 rounded-full p-0 text-muted-foreground hover:text-[#FF914B]"
+                  onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                >
+                  <Smile className="h-4 w-4 icon" />
+                </Button>
+
+                {showEmojiPicker && (
+                  <div className="absolute bottom-full right-0 mb-2 z-50">
+                    <EmojiPicker
+                      onEmojiClick={handleEmojiClick}
+                      autoFocusSearch={false}
+                      theme={theme === "dark" ? "dark" : "light"}
+                      width={350}
+                      height={400}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
 
             <Button
               type="submit"
               size="sm"
               disabled={!messageText.trim() || messagesLoading}
-              className={"w-12"}
+              className="h-11 w-11 shrink-0 rounded-full p-0"
+              title="Send message"
             >
               <Send className="h-4 w-4 icon" />
             </Button>

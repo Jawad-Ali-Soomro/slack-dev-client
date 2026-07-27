@@ -1,5 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { PiGithubLogo, PiGithubLogoDuotone, PiInstagramLogo, PiLinkedinLogo } from "react-icons/pi";
+import {
+  PiGithubLogo,
+  PiGithubLogoDuotone,
+  PiInstagramLogo,
+  PiLinkedinLogo,
+} from "react-icons/pi";
 import { Button } from "./ui/button";
 import { connectGithub } from "@/hooks/useGithubRepos";
 
@@ -53,26 +58,22 @@ const Connections = ({ onClose, isOpen }) => {
             </h2>
 
             <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 text-center">
-              Link your GitHub account to view repositories and create tasks from
-              your repos.
+              Link your GitHub account to view repositories and create tasks
+              from your repos.
             </p>
 
             <div className="flex gap-3 items-center justify-center">
               <button
                 type="button"
                 onClick={connectGithub}
-                className="w-full h-20 rounded-[20px] gap-5 flex items-center cursor-pointer justify-center bg-black text-white font-semibold hover:opacity-90 transition-all"
+                className="w-full h-14 rounded-[15px] gap-5 flex items-center cursor-pointer justify-center bg-black text-white font-semibold hover:opacity-90 transition-all"
                 title="Connect GitHub"
               >
                 <PiGithubLogoDuotone size={30} />
                 Let's Connect
               </button>
             </div>
-            <Button
-              variant="outline"
-              className="w-full mt-5"
-              onClick={onClose}
-            >
+            <Button variant="outline" className="w-full mt-5 font-bold" onClick={onClose}>
               Maybe later
             </Button>
           </motion.div>

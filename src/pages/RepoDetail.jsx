@@ -25,6 +25,10 @@ import {
   X,
   Loader2,
   ArrowRight,
+  GitMerge,
+  MessageSquare,
+  Send,
+  XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "../components/ui/badge";
@@ -40,7 +44,14 @@ import {
 } from "../components/ui/select";
 import { useAuth } from "../contexts/AuthContext";
 import useGithubRepos from "@/hooks/useGithubRepos";
-import { getRepoExtraDetails, createGithubPullRequest } from "@/hooks/githubHooks";
+import {
+  getRepoExtraDetails,
+  createGithubPullRequest,
+  mergeGithubPullRequest,
+  closeGithubPullRequest,
+  getGithubComments,
+  createGithubComment,
+} from "@/hooks/githubHooks";
 import HorizontalLoader from "@/components/HorizontalLoader";
 import { PiUsersDuotone } from "react-icons/pi";
 
@@ -110,15 +121,94 @@ const StateBadge = ({ state, merged }) => {
       <Badge className="bg-red-500/90 text-white border-none">Closed</Badge>
     );
   }
-  return (
-    <Badge className="bg-green-500/90 text-white border-none">Open</Badge>
-  );
+  return <Badge className="bg-green-500/90 text-white border-none">Open</Badge>;
 };
 
-const AccordionItem = ({ item, type }) => {
+const AccordionItem = ({ item, type, owner, repo, token, onPrUpdated }) => {
   const [open, setOpen] = useState(false);
   const isPr = type === "pr";
-  const merged = Boolean(item.merged_at);
+  const merged = Boolean(item.merged_at) || item.merged === true;
+  const isOpen = item.state === "open" && !merged;
+
+  const [comments, setComments] = useState([]);
+  const [commentsLoading, setCommentsLoading] = useState(false);
+  const [commentsLoaded, setCommentsLoaded] = useState(false);
+  const [commentText, setCommentText] = useState("");
+  const [posting, setPosting] = useState(false);
+  const [merging, setMerging] = useState(false);
+  const [closing, setClosing] = useState(false);
+
+  const canAct = Boolean(owner && repo && token);
+
+  const loadComments = useCallback(async () => {
+    if (!canAct || commentsLoaded) return;
+    try {
+      setCommentsLoading(true);
+      const data = await getGithubComments(token, owner, repo, item.number);
+      setComments(data);
+      setCommentsLoaded(true);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setCommentsLoading(false);
+    }
+  }, [canAct, commentsLoaded, token, owner, repo, item.number]);
+
+  useEffect(() => {
+    if (open) loadComments();
+  }, [open, loadComments]);
+
+  const handlePostComment = async () => {
+    if (!canAct || !commentText.trim()) return;
+    try {
+      setPosting(true);
+      const newComment = await createGithubComment(
+        token,
+        owner,
+        repo,
+        item.number,
+        commentText.trim(),
+      );
+      setComments((prev) => [...prev, newComment]);
+      setCommentText("");
+      toast.success("Comment posted.");
+    } catch (err) {
+      toast.error(err.message || "Failed to post comment");
+    } finally {
+      setPosting(false);
+    }
+  };
+
+  const handleMerge = async () => {
+    if (!canAct) return;
+    try {
+      setMerging(true);
+      await mergeGithubPullRequest(token, owner, repo, item.number, {
+        commit_title: `${item.title} (#${item.number})`,
+        merge_method: "merge",
+      });
+      onPrUpdated?.(item.id, { state: "closed", merged: true });
+      toast.success(`Pull request #${item.number} merged!`);
+    } catch (err) {
+      toast.error(err.message || "Failed to merge pull request");
+    } finally {
+      setMerging(false);
+    }
+  };
+
+  const handleClose = async () => {
+    if (!canAct) return;
+    try {
+      setClosing(true);
+      await closeGithubPullRequest(token, owner, repo, item.number);
+      onPrUpdated?.(item.id, { state: "closed", merged: false });
+      toast.success(`Pull request #${item.number} closed.`);
+    } catch (err) {
+      toast.error(err.message || "Failed to close pull request");
+    } finally {
+      setClosing(false);
+    }
+  };
 
   return (
     <div className="rounded-[15px] border border-gray-100 dark:border-white/10 bg-white dark:bg-[rgba(255,255,255,.04)] overflow-hidden">
@@ -150,7 +240,8 @@ const AccordionItem = ({ item, type }) => {
             <span className="text-xs text-gray-400">#{item.number}</span>
           </div>
           <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-            opened by {item.user?.login || "unknown"} · {formatDate(item.created_at)}
+            opened by {item.user?.login || "unknown"} ·{" "}
+            {formatDate(item.created_at)}
           </p>
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
@@ -196,9 +287,7 @@ const AccordionItem = ({ item, type }) => {
                 {item.head.ref} → {item.base.ref}
               </span>
             )}
-            {item.comments != null && (
-              <span>{item.comments} comments</span>
-            )}
+            {item.comments != null && <span>{item.comments} comments</span>}
             <a
               href={item.html_url}
               target="_blank"
@@ -209,6 +298,104 @@ const AccordionItem = ({ item, type }) => {
               View on GitHub <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
+
+          {/* Merge / reject actions (open PRs only) */}
+          {isPr && isOpen && canAct && (
+            <div className="flex flex-wrap items-center gap-2 mt-4 pt-4 border-t border-gray-100 dark:border-white/10">
+              <Button
+                size="sm"
+                onClick={handleMerge}
+                disabled={merging || closing}
+                className="rounded-[12px] w-[150px] bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                {merging ? (
+                  <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+                ) : (
+                  <GitMerge className="w-4 h-4 mr-1.5" />
+                )}
+                Merge
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={handleClose}
+                disabled={merging || closing}
+                className="rounded-[12px] w-[150px] border-red-300 text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10"
+              >
+                {closing ? (
+                  <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
+                ) : (
+                  <XCircle className="w-4 h-4 mr-1.5" />
+                )}
+                Reject
+              </Button>
+            </div>
+          )}
+
+          {/* Comments */}
+          {canAct && (
+            <div className="mt-4 pt-4 border-t border-gray-100 dark:border-white/10">
+              <p className="text-xs font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3 flex items-center gap-1.5">
+                <MessageSquare className="w-3.5 h-3.5" />
+                Comments
+              </p>
+
+              {commentsLoading ? (
+                <div className="flex items-center gap-2 text-sm text-gray-400 py-2">
+                  <Loader2 className="w-4 h-4 animate-spin" /> Loading comments…
+                </div>
+              ) : comments.length > 0 ? (
+                <div className="space-y-3 mb-3">
+                  {comments.map((c) => (
+                    <div key={c.id} className="flex gap-3">
+                      <img
+                        src={c.user?.avatar_url}
+                        alt={c.user?.login}
+                        className="w-7 h-7 rounded-full border border-gray-200 dark:border-white/10 flex-shrink-0"
+                      />
+                      <div className="min-w-0 flex-1 rounded-[12px] bg-gray-50 dark:bg-white/5 px-3 py-2">
+                        <p className="text-xs font-semibold text-gray-700 dark:text-gray-200">
+                          {c.user?.login}{" "}
+                          <span className="text-gray-400 font-normal">
+                            · {formatDate(c.created_at)}
+                          </span>
+                        </p>
+                        <p className="text-sm text-gray-600 dark:text-gray-300 whitespace-pre-wrap break-words mt-0.5">
+                          {c.body}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-gray-400 italic mb-3">
+                  No comments yet.
+                </p>
+              )}
+
+              <div className="flex items-end gap-2">
+                <Textarea
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="Write a comment…"
+                  rows={2}
+                  className="rounded-[12px] resize-none flex-1"
+                />
+                <Button
+                  size="sm"
+                  onClick={handlePostComment}
+                  disabled={posting || !commentText.trim()}
+                  className="rounded-[12px] w-[50px] bg-theme hover:bg-theme text-white flex-shrink-0"
+                >
+                  {posting ? (
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                </Button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -256,8 +443,14 @@ const RepoDetail = () => {
   const [extra, setExtra] = useState(null);
   const [extraLoading, setExtraLoading] = useState(false);
   const [createdPulls, setCreatedPulls] = useState([]);
+  const [prOverrides, setPrOverrides] = useState({});
   const [showPrModal, setShowPrModal] = useState(false);
-  const [prForm, setPrForm] = useState({ title: "", body: "", head: "", base: "" });
+  const [prForm, setPrForm] = useState({
+    title: "",
+    body: "",
+    head: "",
+    base: "",
+  });
   const [creatingPr, setCreatingPr] = useState(false);
 
   const githubToken = user?.socialLinks?.github?.accessToken ?? null;
@@ -290,9 +483,21 @@ const RepoDetail = () => {
     loadExtra();
   }, [loadExtra]);
 
+  const owner = repo?.owner?.login;
+
+  const handlePrUpdated = useCallback((prId, changes) => {
+    setPrOverrides((prev) => ({
+      ...prev,
+      [prId]: { ...prev[prId], ...changes },
+    }));
+  }, []);
+
   const pulls = useMemo(
-    () => [...createdPulls, ...(repo?.pulls || [])],
-    [repo, createdPulls],
+    () =>
+      [...createdPulls, ...(repo?.pulls || [])].map((pr) =>
+        prOverrides[pr.id] ? { ...pr, ...prOverrides[pr.id] } : pr,
+      ),
+    [repo, createdPulls, prOverrides],
   );
   const issues = useMemo(
     () => (repo?.issues || []).filter((i) => !i.pull_request),
@@ -336,12 +541,17 @@ const RepoDetail = () => {
 
     try {
       setCreatingPr(true);
-      const newPr = await createGithubPullRequest(githubToken, owner, repo.name, {
-        title: prForm.title.trim(),
-        body: prForm.body,
-        head: prForm.head,
-        base: prForm.base,
-      });
+      const newPr = await createGithubPullRequest(
+        githubToken,
+        owner,
+        repo.name,
+        {
+          title: prForm.title.trim(),
+          body: prForm.body,
+          head: prForm.head,
+          base: prForm.base,
+        },
+      );
       setCreatedPulls((prev) => [newPr, ...prev]);
       setShowPrModal(false);
       setSection("pulls");
@@ -403,7 +613,7 @@ const RepoDetail = () => {
         variant="outline"
         size="sm"
         onClick={() => navigate(-1)}
-        className="mb-6 rounded-[12px]"
+        className="mb-6 rounded-[12px] w-[150px]"
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
         Back
@@ -424,8 +634,8 @@ const RepoDetail = () => {
               <Badge
                 className={
                   repo.private
-                    ? "bg-gray-700 text-white border-none"
-                    : "bg-theme text-white border-none"
+                    ? "bg-gray-700 px-5 py-2 text-white border-none"
+                    : "bg-theme px-5 py-2 text-white border-none"
                 }
               >
                 {repo.private ? (
@@ -479,7 +689,7 @@ const RepoDetail = () => {
       </motion.div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
         <StatCard
           icon={Star}
           label="Stars"
@@ -575,7 +785,15 @@ const RepoDetail = () => {
             {section === "pulls" &&
               (pulls.length > 0 ? (
                 pulls.map((pr) => (
-                  <AccordionItem key={pr.id} item={pr} type="pr" />
+                  <AccordionItem
+                    key={pr.id}
+                    item={pr}
+                    type="pr"
+                    owner={owner}
+                    repo={repo.name}
+                    token={githubToken}
+                    onPrUpdated={handlePrUpdated}
+                  />
                 ))
               ) : (
                 <div className="text-center py-12 rounded-[15px] border border-dashed border-gray-200 dark:border-white/10">
@@ -589,7 +807,15 @@ const RepoDetail = () => {
             {section === "issues" &&
               (issues.length > 0 ? (
                 issues.map((issue) => (
-                  <AccordionItem key={issue.id} item={issue} type="issue" />
+                  <AccordionItem
+                    key={issue.id}
+                    item={issue}
+                    type="issue"
+                    owner={owner}
+                    repo={repo.name}
+                    token={githubToken}
+                    onPrUpdated={handlePrUpdated}
+                  />
                 ))
               ) : (
                 <div className="text-center py-12 rounded-[15px] border border-dashed border-gray-200 dark:border-white/10">
@@ -709,7 +935,9 @@ const RepoDetail = () => {
             count={extra?.contributors?.length}
           >
             {extraLoading ? (
-              <p className="text-sm text-gray-400 pt-1">Loading contributors…</p>
+              <p className="text-sm text-gray-400 pt-1">
+                Loading contributors…
+              </p>
             ) : extra?.contributors?.length ? (
               <div className="space-y-3 pt-1">
                 {extra.contributors.slice(0, 10).map((c) => (
@@ -731,13 +959,15 @@ const RepoDetail = () => {
                       </p>
                     </div>
                     <p className="text-xs text-gray-500">
-                        {c.contributions} Commits
-                      </p>
+                      {c.contributions} Commits
+                    </p>
                   </a>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-gray-400 pt-1">No contributors found.</p>
+              <p className="text-sm text-gray-400 pt-1">
+                No contributors found.
+              </p>
             )}
           </CollapsibleSection>
 

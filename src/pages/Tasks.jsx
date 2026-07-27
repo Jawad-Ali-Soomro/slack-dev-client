@@ -276,15 +276,41 @@ const Tasks = () => {
     }
   };
 
-  const handleBulkDelete = () => {
+  const handleBulkDelete = async () => {
     if (selectedTasks.length === 0) {
       toast.error("No tasks selected");
       return;
     }
 
-    setTasks(tasks.filter((task) => !selectedTasks.includes(task.id)));
-    setSelectedTasks([]);
-    toast.success(`${selectedTasks.length} task(s) deleted successfully!`);
+    if (
+      !confirm(
+        `Are you sure you want to delete ${selectedTasks.length} task(s)? This action cannot be undone.`,
+      )
+    ) {
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const results = await Promise.allSettled(
+        selectedTasks.map((id) => taskService.deleteTask(id)),
+      );
+      const failed = results.filter((r) => r.status === "rejected").length;
+      const deleted = selectedTasks.length - failed;
+
+      setSelectedTasks([]);
+      await loadTasks();
+      window.dispatchEvent(new CustomEvent("tasks:changed"));
+
+      if (deleted > 0)
+        toast.success(`${deleted} task(s) deleted successfully!`);
+      if (failed > 0) toast.error(`${failed} task(s) could not be deleted.`);
+    } catch (error) {
+      console.error("Error deleting tasks:", error);
+      toast.error(error.message || "Failed to delete tasks");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getPriorityColor = (priority) => {
@@ -303,15 +329,15 @@ const Tasks = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "completed":
-        return "text-white bg-green-500 border border-green-500 px-4 py-2 min-w-[100px]";
+        return "text-black dark:text-black font-bold dark:text-white bg-green-500/15 text-black dark:text-black border border-green-400/40 px-4 py-2 min-w-[100px]";
       case "in_progress":
-        return "text-white bg-gray-500 border border-gray-500 px-4 py-2 min-w-[100px]";
+        return "text-black dark:text-black font-bold dark:text-white bg-gray-500/15 text-gray-600 border border-gray-400/40 px-4 py-2 min-w-[100px]";
       case "pending":
-        return "text-white bg-yellow-500 border border-yellow-500 px-4 py-2 min-w-[100px]";
+        return "text-black dark:text-black font-bold dark:text-white bg-yellow-500/15 text-yellow-600 border border-yellow-400/40 px-4 py-2 min-w-[100px]";
       case "cancelled":
-        return "text-white bg-red-500 border border-red-500 px-4 py-2 min-w-[100px]";
+        return "text-black dark:text-black font-bold dark:text-white bg-red-500/15 text-red-600 border border-red-400/40 px-4 py-2 min-w-[100px]";
       default:
-        return "text-white bg-yellow-500 border border-yellow-500 px-4 py-2 min-w-[100px]";
+        return "text-black dark:text-black font-bold dark:text-white bg-yellow-500/15 text-yellow-600 border border-yellow-400/40 px-4 py-2 min-w-[100px]";
     }
   };
 
@@ -341,9 +367,9 @@ const Tasks = () => {
   const getStatusBadgeStyles = (status) => {
     switch (status) {
       case "completed":
-        return "bg-emerald-500/15 text-emerald-600 border border-emerald-400/40";
+        return "bg-emerald-500/15 text-black dark:text-black border border-emerald-400/40";
       case "in_progress":
-        return "bg-gray-500/15 text-gray-600 border border-gray-400/40";
+        return "bg-gray-500/15 text-black dark:text-black border border-gray-400/40";
       case "pending":
         return "bg-amber-500/15 text-amber-600 border border-amber-400/40";
       case "cancelled":
@@ -373,6 +399,7 @@ const Tasks = () => {
       setLoading(true);
       await taskService.deleteTask(id);
       await loadTasks();
+      window.dispatchEvent(new CustomEvent("tasks:changed"));
       toast.success("Task deleted successfully!");
     } catch (error) {
       console.error("Error deleting task:", error);
@@ -568,7 +595,7 @@ const Tasks = () => {
               {selectedTasks.length > 0 && (
                 <motion.button
                   onClick={handleBulkDelete}
-                  className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-[15px] md:w-[200px] w-[400px] hover:bg-red-700 transition-colors"
+                  className="flex items-center h-12 flex items-center justify-center font-bold gap-2 px-4 py-2 bg-red-600 text-white rounded-[15px] md:w-[200px] w-[400px] hover:bg-red-700 transition-colors"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                 >
@@ -612,6 +639,21 @@ const Tasks = () => {
             <table className="w-full">
               <thead className="bg-white dark:bg-white dark:text-black text-black border-b dark:border-gray-700 sticky top-0 z-10">
                 <tr className="bg-white">
+                  <th className="pl-6 py-4 text-left w-12">
+                    <Checkbox
+                      checked={
+                        filteredTasks.length === 0
+                          ? false
+                          : selectedTasks.length === filteredTasks.length
+                            ? true
+                            : selectedTasks.length > 0
+                              ? "indeterminate"
+                              : false
+                      }
+                      onCheckedChange={handleSelectAll}
+                      aria-label="Select all tasks"
+                    />
+                  </th>
                   <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
                     Task
                   </th>
@@ -642,7 +684,7 @@ const Tasks = () => {
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {loading ? (
                   <tr>
-                    <td colSpan="9" className="px-6 py-8 text-center">
+                    <td colSpan="10" className="px-6 py-8 text-center">
                       <HorizontalLoader
                         message="Loading tasks..."
                         subMessage="Fetching your task list"
@@ -664,11 +706,21 @@ const Tasks = () => {
                   filteredTasks.map((task) => (
                     <motion.tr
                       key={task.id}
-                      className={`hover:bg-gray-50 dark:hover:bg-white dark:hover:text-black dark:bg-black transition-colors ${selectedTasks.includes(task.id) ? "bg-gray-100 dark:bg-transparent" : ""}`}
+                      className={`hover:bg-gray-50 dark:hover:bg-transparent dark:hover:text-black dark:bg-black transition-colors ${selectedTasks.includes(task.id) ? "bg-gray-100 dark:bg-transparent" : ""}`}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.2 }}
                     >
+                      <td
+                        className="pl-6 py-4 w-12"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <Checkbox
+                          checked={selectedTasks.includes(task.id)}
+                          onCheckedChange={() => handleSelectTask(task.id)}
+                          aria-label={`Select task ${task.title}`}
+                        />
+                      </td>
                       <td className="px-6 py-4">
                         <div>
                           <div className="flex items-center gap-2">
@@ -702,15 +754,19 @@ const Tasks = () => {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <button
-                              className={`inline-flex items-center gap-1 rounded-[15px] text-[9px] uppercase cursor-pointer hover:opacity-80 transition-opacity px-4 py-2 min-w-[100px]
-    ${isTaskOverdue(task) ? "bg-red-600 text-white border border-red-600" : getStatusColor(task.status)}`}
+                              className={`inline-flex items-center gap-1 font-bold rounded-[15px] text-[9px] uppercase cursor-pointer hover:opacity-80 transition-opacity px-4 py-2 min-w-[100px]
+    ${isTaskOverdue(task) ? "bg-red-500/15 text-red-600 border border-red-400/40" : getStatusColor(task.status)}`}
                             >
                               {isTaskOverdue(task) ? (
                                 <AlertCircle className="w-4 h-4 icon icon" />
                               ) : (
                                 getStatusIcon(task.status)
                               )}
-                              {isTaskOverdue(task) ? "Overdue" : task.status}
+                              {isTaskOverdue(task)
+                                ? "Overdue"
+                                : task.status === "in_progress"
+                                  ? "Progress"
+                                  : formatLabel(task.status)}
                             </button>
                           </DropdownMenuTrigger>
                           {!isTaskOverdue(task) && (
@@ -758,7 +814,7 @@ const Tasks = () => {
                           )}
                         </DropdownMenu>
                       </td>
-                      <td className="px-6 py-4 w-[150px] rounded-[15px]">
+                      <td className="px-6 py-4 w-[150px]">
                         <div className="flex items-center gap-3 w-[150px]">
                           <img
                             {...getAvatarProps(
@@ -784,7 +840,7 @@ const Tasks = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 w-[200px] rounded-[15px]">
+                      <td className="px-6 py-4 w-[200px]">
                         <div className="flex items-center gap-3">
                           <img
                             {...getAvatarProps(
@@ -810,7 +866,7 @@ const Tasks = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-6 py-4 w-[200px] rounded-[15px]">
+                      <td className="px-6 py-4 w-[200px]">
                         {task.project ? (
                           <div className="flex items-center gap-2">
                             {/* {task.project.logo && (
@@ -830,7 +886,7 @@ const Tasks = () => {
                           </span>
                         )}
                       </td>
-                      <td className="px-6 py-4 w-[200px] rounded-[15px]">
+                      <td className="px-6 py-4 w-[200px]">
                         {task.repository?.repoName ? (
                           <div className="flex items-center gap-2">
                             <span className="text-sm flex items-center gap-2 text-gray-900 dark:text-white truncate">
@@ -914,7 +970,7 @@ const Tasks = () => {
                               {user &&
                                 user.id &&
                                 task.assignTo?.id === user.id && (
-                                  <DropdownMenu >
+                                  <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                       <DropdownMenuItem className="text-black h-12 px-5 cursor-pointer dark:text-white hover:bg-gray-100 dark:hover:bg-white dark:hover:text-black dark:bg-black dark:bg-black">
                                         <Clock className="w-4 h-4 icon mr-2 icon" />
@@ -1074,20 +1130,21 @@ const Tasks = () => {
                 <div className="flex-1 overflow-y-auto text-black dark:text-white px-6  space-y-6">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
-                     <div className="flex items-center gap-3">
-  <Calendar className="w-4 h-4 icon text-gray-400 icon" />
-  <div>
-    <p className="text-sm font-medium text-gray-900 dark:text-white">
-      {selectedTaskDetails.dueDate
-        ? new Date(selectedTaskDetails.dueDate).toLocaleString([], {
-            dateStyle: "medium",
-            timeStyle: "short",
-          })
-        : "No due date"}
-    </p>
-  </div>
-</div>
-
+                      <div className="flex items-center gap-3">
+                        <Calendar className="w-4 h-4 icon text-gray-400 icon" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {selectedTaskDetails.dueDate
+                              ? new Date(
+                                  selectedTaskDetails.dueDate,
+                                ).toLocaleString([], {
+                                  dateStyle: "medium",
+                                  timeStyle: "short",
+                                })
+                              : "No due date"}
+                          </p>
+                        </div>
+                      </div>
                     </div>
                     <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
                       <div className="flex items-center gap-3">

@@ -825,7 +825,7 @@ const LearnPoint = () => {
         note.description.toLowerCase().includes(searchTerm.toLowerCase()));
     return matchesSearch;
   });
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   return (
     <div className="overflow-hidden pt-10">
@@ -1063,7 +1063,6 @@ const LearnPoint = () => {
                     </div>
                   )}
                   <div className="mt-auto flex justify-between gap-2">
-
                     <div className="flex gap-2">
                       {note.fileUrl && (
                         <Button
@@ -1089,8 +1088,6 @@ const LearnPoint = () => {
                             <Button
                               variant="ghost"
                               className={"w-[50px]"}
-
-                              
                               size="sm"
                               onClick={() => handleEditNote(note)}
                             >
@@ -1264,7 +1261,6 @@ const LearnPoint = () => {
                         {pdfFile.name}
                       </span>
                     )}
-                   
                   </div>
                   {editingNote?.fileUrl && !pdfFile && (
                     <div className="flex p-3 border-2 border-dashed rounded-[15px] mt-5 flex items-center justify-between">

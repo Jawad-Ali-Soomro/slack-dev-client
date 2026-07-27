@@ -1,185 +1,182 @@
-import { useState, useRef } from "react"
-import { Mail, Lock, Eye, EyeOff, CheckCircle2 } from "lucide-react"
-import { Link } from "react-router-dom"
-import { toast } from "sonner"
-import { authService } from "../services/authService"
+import { useState, useRef } from "react";
+import { Mail, Lock, Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { toast } from "sonner";
+import { authService } from "../services/authService";
 import {
   AuthLayout,
   AuthButton,
   AuthField,
   AuthInput,
   AuthOtpInput,
-} from "../components/auth/AuthLayout"
+} from "../components/auth/AuthLayout";
 
 const STEP_TITLES = {
   1: "Forgot Password",
   2: "Enter OTP",
   3: "New Password",
   4: "All Done!",
-}
+};
 
 const STEP_SUBTITLES = {
   1: "Enter your email to receive reset instructions",
   2: (email) => `We sent a 4-digit code to ${email}`,
   3: "Create a strong new password for your account",
   4: "Your password has been reset successfully",
-}
+};
 
 const ForgotPassword = () => {
-  const [step, setStep] = useState(1)
-  const [email, setEmail] = useState("")
-  const [otp, setOtp] = useState(["", "", "", ""])
-  const [newPassword, setNewPassword] = useState("")
-  const [confirmPassword, setConfirmPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
+  const [step, setStep] = useState(1);
+  const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState(["", "", "", ""]);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
-  const otpRefs = [useRef(), useRef(), useRef(), useRef()]
+  const otpRefs = [useRef(), useRef(), useRef(), useRef()];
 
   const handleEmailSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
 
     try {
-      const result = await authService.forgotPassword(email)
+      const result = await authService.forgotPassword(email);
 
       if (result.message === "password reset code sent to email") {
         toast.success("Reset code sent!", {
           description: "Please check your email for the reset code",
-        })
-        setStep(2)
+        });
+        setStep(2);
       } else {
         toast.error("Failed to send reset code", {
           description: result.message || "Please try again",
-        })
+        });
       }
     } catch (error) {
-      console.error("Forgot password error:", error)
+      console.error("Forgot password error:", error);
       toast.error("Failed to send reset code", {
         description: error.message || "Please try again",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleOtpChange = (index, value) => {
-    if (value.length > 1) return
+    if (value.length > 1) return;
 
-    const newOtp = [...otp]
-    newOtp[index] = value.replace(/\D/g, "")
-    setOtp(newOtp)
+    const newOtp = [...otp];
+    newOtp[index] = value.replace(/\D/g, "");
+    setOtp(newOtp);
 
     if (value && index < 3) {
-      otpRefs[index + 1].current.focus()
+      otpRefs[index + 1].current.focus();
     }
-  }
+  };
 
   const handleOtpKeyDown = (index, e) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      otpRefs[index - 1].current.focus()
+      otpRefs[index - 1].current.focus();
     }
-  }
+  };
 
   const handleOtpSubmit = async (e) => {
-    e.preventDefault()
-    const otpCode = otp.join("")
+    e.preventDefault();
+    const otpCode = otp.join("");
 
     if (otpCode.length !== 4) {
-      toast.error("Please enter the complete 4-digit code")
-      return
+      toast.error("Please enter the complete 4-digit code");
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       toast.success("OTP verified!", {
         description: "Now enter your new password",
-      })
-      setStep(3)
+      });
+      setStep(3);
     } catch (error) {
-      console.error("OTP verification error:", error)
+      console.error("OTP verification error:", error);
       toast.error("Verification failed", {
         description: error.message || "Please check your code and try again",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   const handleResendOtp = async () => {
     try {
-      const result = await authService.forgotPassword(email)
+      const result = await authService.forgotPassword(email);
       if (result.message === "password reset code sent to email") {
         toast.success("Reset code resent!", {
           description: "Please check your email for the new code",
-        })
-        setOtp(["", "", "", ""])
-        otpRefs[0].current.focus()
+        });
+        setOtp(["", "", "", ""]);
+        otpRefs[0].current.focus();
       } else {
         toast.error("Failed to resend code", {
           description: result.message || "Please try again",
-        })
+        });
       }
     } catch (error) {
-      console.error("Resend OTP error:", error)
+      console.error("Resend OTP error:", error);
       toast.error("Failed to resend code", {
         description: error.message || "Please try again",
-      })
+      });
     }
-  }
+  };
 
   const handlePasswordSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (newPassword !== confirmPassword) {
       toast.error("Passwords don't match", {
         description: "Please make sure both passwords are the same",
-      })
-      return
+      });
+      return;
     }
 
     if (newPassword.length < 6) {
       toast.error("Password too short", {
         description: "Password must be at least 6 characters",
-      })
-      return
+      });
+      return;
     }
 
-    setIsLoading(true)
+    setIsLoading(true);
 
     try {
       const result = await authService.resetPassword(
         email,
         otp.join(""),
-        newPassword
-      )
+        newPassword,
+      );
 
       if (result.message === "password reset successfully") {
         toast.success("Password reset successful!", {
           description: "You can now login with your new password",
-        })
-        setStep(4)
+        });
+        setStep(4);
       } else {
         toast.error("Password reset failed", {
           description: result.message || "Please try again",
-        })
+        });
       }
     } catch (error) {
-      console.error("Password reset error:", error)
+      console.error("Password reset error:", error);
       toast.error("Password reset failed", {
         description: error.message || "Please try again",
-      })
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
-  const subtitle =
-    step === 2
-      ? STEP_SUBTITLES[2](email)
-      : STEP_SUBTITLES[step]
+  const subtitle = step === 2 ? STEP_SUBTITLES[2](email) : STEP_SUBTITLES[step];
 
   return (
     <AuthLayout
@@ -309,7 +306,7 @@ const ForgotPassword = () => {
         </div>
       )}
     </AuthLayout>
-  )
-}
+  );
+};
 
-export default ForgotPassword
+export default ForgotPassword;

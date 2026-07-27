@@ -1,31 +1,30 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState } from "react";
 
-const SearchContext = createContext()
+const SearchContext = createContext();
 
 export const useSearch = () => {
-  const context = useContext(SearchContext)
+  const context = useContext(SearchContext);
   if (!context) {
-    throw new Error('useSearch must be used within a SearchProvider')
+    throw new Error("useSearch must be used within a SearchProvider");
   }
-  return context
-}
+  return context;
+};
 
 export const SearchProvider = ({ children }) => {
-  const [searchTerm, setSearchTerm] = useState('')
-  const [searchResults, setSearchResults] = useState([])
-  const [isSearching, setIsSearching] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [isSearching, setIsSearching] = useState(false);
 
   const handleSearch = (term) => {
-    setSearchTerm(term)
-    setIsSearching(true)
-
-  }
+    setSearchTerm(term);
+    setIsSearching(true);
+  };
 
   const clearSearch = () => {
-    setSearchTerm('')
-    setSearchResults([])
-    setIsSearching(false)
-  }
+    setSearchTerm("");
+    setSearchResults([]);
+    setIsSearching(false);
+  };
 
   const value = {
     searchTerm,
@@ -35,13 +34,10 @@ export const SearchProvider = ({ children }) => {
     isSearching,
     setIsSearching,
     handleSearch,
-    clearSearch
-  }
+    clearSearch,
+  };
 
   return (
-    <SearchContext.Provider value={value}>
-      {children}
-    </SearchContext.Provider>
-  )
-}
-
+    <SearchContext.Provider value={value}>{children}</SearchContext.Provider>
+  );
+};

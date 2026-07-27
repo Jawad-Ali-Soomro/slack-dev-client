@@ -3,20 +3,9 @@ import path from "path";
 
 const ROOT_DIR = process.cwd();
 
-const IGNORE_DIRS = new Set([
-  "node_modules",
-  ".git",
-  "dist",
-  "build",
-  ".next"
-]);
+const IGNORE_DIRS = new Set(["node_modules", ".git", "dist", "build", ".next"]);
 
-const TARGET_EXTENSIONS = new Set([
-  ".ts",
-  ".tsx",
-  ".js",
-  ".jsx"
-]);
+const TARGET_EXTENSIONS = new Set([".ts", ".tsx", ".js", ".jsx"]);
 
 function walk(dir) {
   for (const file of fs.readdirSync(dir)) {

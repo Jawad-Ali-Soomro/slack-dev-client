@@ -432,8 +432,10 @@ const MyBoughtProjects = () => {
                 </div>
               </div>
             </div>
-   <div className="flex text-justify max-w-[70%] line-clamp-2 icon">
-              <p className="line-clamp-2 icon max-w-5xl">{selectedProject.description}...</p>
+            <div className="flex text-justify max-w-[70%] line-clamp-2 icon">
+              <p className="line-clamp-2 icon max-w-5xl">
+                {selectedProject.description}...
+              </p>
             </div>
             {/* Content */}
             <div className="flex-1 overflow-hidden mt-6">
@@ -484,7 +486,7 @@ const MyBoughtProjects = () => {
                     </div>
                   </div>
 
-            <div className="rounded-3xl border border-gray-100 dark:border-gray-800 bg-[#eee] dark:bg-[rgba(255,255,255,.1)] shadow-sm p-3">
+                  <div className="rounded-3xl border border-gray-100 dark:border-gray-800 bg-[#eee] dark:bg-[rgba(255,255,255,.1)] shadow-sm p-3">
                     {/* <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4">Creator</h4> */}
                     <div className="flex items-center gap-3">
                       {selectedProject.createdBy?.avatar ? (

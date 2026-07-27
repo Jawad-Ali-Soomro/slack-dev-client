@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import permissionsService from '../services/permissionsService';
+import { useState, useEffect } from "react";
+import { useAuth } from "../contexts/AuthContext";
+import permissionsService from "../services/permissionsService";
 
 export const usePermissions = () => {
   const { user } = useAuth();
@@ -10,7 +10,7 @@ export const usePermissions = () => {
     canCreateTask: false,
     canCreateMeeting: false,
     canManageUsers: false,
-    canViewAllData: false
+    canViewAllData: false,
   });
   const [loading, setLoading] = useState(true);
 
@@ -22,25 +22,23 @@ export const usePermissions = () => {
       }
 
       try {
-
-        if (user.role === 'admin' || user.role === 'superadmin') {
+        if (user.role === "admin" || user.role === "superadmin") {
           setPermissions({
             canCreateTeam: true,
             canCreateProject: true,
             canCreateTask: true,
             canCreateMeeting: true,
             canManageUsers: true,
-            canViewAllData: true
+            canViewAllData: true,
           });
         } else {
-
           const response = await permissionsService.getUserPermissions(user.id);
           if (response.success) {
             setPermissions(response.permissions);
           }
         }
       } catch (error) {
-        console.error('Error loading permissions:', error);
+        console.error("Error loading permissions:", error);
 
         setPermissions({
           canCreateTeam: false,
@@ -48,7 +46,7 @@ export const usePermissions = () => {
           canCreateTask: false,
           canCreateMeeting: false,
           canManageUsers: false,
-          canViewAllData: false
+          canViewAllData: false,
         });
       } finally {
         setLoading(false);

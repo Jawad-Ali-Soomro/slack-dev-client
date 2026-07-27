@@ -1,7 +1,7 @@
-import Header from "../components/Header"
-import Footer from "../components/Footer"
-import { motion } from "framer-motion"
-import { Mail, Phone, MapPin, Send } from "lucide-react"
+import Header from "../components/Header";
+import Footer from "../components/Footer";
+import { motion } from "framer-motion";
+import { Mail, Phone, MapPin, Send } from "lucide-react";
 
 const Contact = () => {
   const containerVariants = {
@@ -10,24 +10,26 @@ const Contact = () => {
       opacity: 1,
       transition: {
         delayChildren: 0.3,
-        staggerChildren: 0.2
-      }
-    }
-  }
+        staggerChildren: 0.2,
+      },
+    },
+  };
 
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
       y: 0,
-      opacity: 1
-    }
-  }
+      opacity: 1,
+    },
+  };
 
   return (
-    <div className="flex flex-col items-center justify-center relative pt-30 overflow-hidden bg-gray-50 dark:bg-black min-h-screen">
-      <Header />
-      
-      <motion.main 
+    <>
+      <div className="landing-header w-full">
+        <Header />
+      </div>
+      <div className="flex flex-col items-center justify-center relative pt-30 overflow-hidden bg-gray-50 dark:bg-black min-h-screen">
+      <motion.main
         className="container mx-auto px-6 py-20"
         variants={containerVariants}
         initial="hidden"
@@ -35,17 +37,16 @@ const Contact = () => {
       >
         {/* Hero Section */}
         <div className="text-center mb-20">
-          <motion.h1 
+          <motion.h1
             variants={itemVariants}
             className="text-6xl  text-gray-900 dark:text-white  mb-6"
             style={{ fontWeight: 900 }}
           >
             Contact Us
           </motion.h1>
-          <motion.p 
+          <motion.p
             variants={itemVariants}
             className="text-xl max-w-3xl mx-auto "
-
           >
             Get in touch with our team for support, partnerships, or questions
           </motion.p>
@@ -54,7 +55,10 @@ const Contact = () => {
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Contact Info */}
           <motion.div variants={itemVariants}>
-            <h2 className="text-3xl text-gray-900 dark:text-white  mb-8" style={{ fontWeight: 600 }}>
+            <h2
+              className="text-3xl text-gray-900 dark:text-white  mb-8"
+              style={{ fontWeight: 600 }}
+            >
               Get in Touch
             </h2>
             <div className="space-y-6">
@@ -62,18 +66,18 @@ const Contact = () => {
                 {
                   icon: <Mail />,
                   title: "Email",
-                  info: "hello@corestack.dev"
+                  info: "hello@corestack.dev",
                 },
                 {
                   icon: <Phone />,
                   title: "Phone",
-                  info: "+1 (555) 123-4567"
+                  info: "+1 (555) 123-4567",
                 },
                 {
                   icon: <MapPin />,
                   title: "Address",
-                  info: "123 Tech Street, San Francisco, CA 94105"
-                }
+                  info: "123 Tech Street, San Francisco, CA 94105",
+                },
               ].map((contact, index) => (
                 <motion.div
                   key={index}
@@ -86,7 +90,10 @@ const Contact = () => {
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg  text-gray-600 dark:text-white " style={{ fontWeight: 700 }}>
+                    <h3
+                      className="text-lg  text-gray-600 dark:text-white "
+                      style={{ fontWeight: 700 }}
+                    >
                       {contact.title}
                     </h3>
                     <p className="text-sm  text-gray-600 dark:text-gray-300 ">
@@ -100,7 +107,10 @@ const Contact = () => {
 
           {/* Contact Form */}
           <motion.div variants={itemVariants}>
-            <h2 className="text-3xl text-gray-900 dark:text-white  mb-8" style={{ fontWeight: 600 }}>
+            <h2
+              className="text-3xl text-gray-900 dark:text-white  mb-8"
+              style={{ fontWeight: 600 }}
+            >
               Send Message
             </h2>
             <form className="space-y-6">
@@ -145,10 +155,11 @@ const Contact = () => {
           </motion.div>
         </div>
       </motion.main>
-      
-      <Footer />
-    </div>
-  )
-}
 
-export default Contact
+      <Footer />
+      </div>
+    </>
+  );
+};
+
+export default Contact;

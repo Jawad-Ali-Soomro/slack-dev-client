@@ -35,6 +35,7 @@ Slack Dev Client is a **modern, feature-rich frontend application** designed to 
 ## 🚀 **Quick Start**
 
 ### Prerequisites
+
 - Node.js 18+
 - npm or yarn
 - Slack Dev Backend Server running (see [server README](../server/README.md))
@@ -76,6 +77,7 @@ VITE_ENABLE_DEBUG_MODE=false
 ## 🎨 **Features**
 
 ### 🔒 **Authentication & Security**
+
 - Secure login and registration
 - Email verification flow
 - Password reset functionality
@@ -84,6 +86,7 @@ VITE_ENABLE_DEBUG_MODE=false
 - Auto-logout on token expiration
 
 ### 💬 **Real-time Communication**
+
 - Live chat with Socket.io
 - Real-time notifications
 - Online/offline status
@@ -91,6 +94,7 @@ VITE_ENABLE_DEBUG_MODE=false
 - File sharing in chat
 
 ### 📊 **Dashboard & Analytics**
+
 - Comprehensive dashboard with stats
 - Task completion tracking
 - Project progress visualization
@@ -98,6 +102,7 @@ VITE_ENABLE_DEBUG_MODE=false
 - Activity timeline
 
 ### 📋 **Task Management**
+
 - Create, edit, and delete tasks
 - Task status tracking
 - Priority management
@@ -105,6 +110,7 @@ VITE_ENABLE_DEBUG_MODE=false
 - Task assignment to team members
 
 ### 📅 **Meeting Management**
+
 - Schedule and manage meetings
 - Calendar integration
 - Meeting reminders
@@ -112,6 +118,7 @@ VITE_ENABLE_DEBUG_MODE=false
 - Meeting notes and recordings
 
 ### 👥 **Team Collaboration**
+
 - Team creation and management
 - Role-based permissions
 - Team chat channels
@@ -119,6 +126,7 @@ VITE_ENABLE_DEBUG_MODE=false
 - Team analytics
 
 ### 👫 **Social Features**
+
 - Friend system
 - User profiles
 - Find and connect with users
@@ -126,6 +134,7 @@ VITE_ENABLE_DEBUG_MODE=false
 - User search
 
 ### 🚀 **Project Management**
+
 - Create and manage projects
 - Project templates
 - Version control integration
@@ -133,6 +142,7 @@ VITE_ENABLE_DEBUG_MODE=false
 - Bought projects marketplace
 
 ### 💻 **Code Collaboration**
+
 - Real-time code editing
 - Multi-language support (JavaScript, Python, Java, C++, etc.)
 - Syntax highlighting
@@ -140,18 +150,21 @@ VITE_ENABLE_DEBUG_MODE=false
 - Collaborative coding sessions
 
 ### 🎓 **Learning Hub**
+
 - LearnPoint educational content
 - Interactive tutorials
 - Code examples
 - Learning progress tracking
 
 ### 🔍 **Explore & Discovery**
+
 - Browse public projects
 - Discover trending content
 - Search functionality
 - Category filtering
 
 ### 🎨 **UI/UX Features**
+
 - Dark/Light theme toggle
 - Responsive design
 - Smooth animations (Framer Motion)
@@ -207,21 +220,21 @@ client/
 
 ## 🔧 **Tech Stack**
 
-| Technology | Purpose | Version |
-|------------|---------|---------|
-| **React** | UI Framework | 19.1+ |
-| **Vite** | Build Tool & Dev Server | 7.1+ |
-| **React Router** | Client-side Routing | 7.9+ |
-| **Tailwind CSS** | Utility-first CSS | 4.1+ |
-| **Axios** | HTTP Client | 1.12+ |
-| **Socket.io Client** | Real-time Communication | 4.8+ |
-| **CodeMirror** | Code Editor | 6.0+ |
-| **Radix UI** | Accessible Components | Latest |
-| **Framer Motion** | Animation Library | 12.23+ |
-| **Sonner** | Toast Notifications | 2.0+ |
-| **Recharts** | Data Visualization | 3.2+ |
-| **Stripe** | Payment Processing | Latest |
-| **date-fns** | Date Utilities | 4.1+ |
+| Technology           | Purpose                 | Version |
+| -------------------- | ----------------------- | ------- |
+| **React**            | UI Framework            | 19.1+   |
+| **Vite**             | Build Tool & Dev Server | 7.1+    |
+| **React Router**     | Client-side Routing     | 7.9+    |
+| **Tailwind CSS**     | Utility-first CSS       | 4.1+    |
+| **Axios**            | HTTP Client             | 1.12+   |
+| **Socket.io Client** | Real-time Communication | 4.8+    |
+| **CodeMirror**       | Code Editor             | 6.0+    |
+| **Radix UI**         | Accessible Components   | Latest  |
+| **Framer Motion**    | Animation Library       | 12.23+  |
+| **Sonner**           | Toast Notifications     | 2.0+    |
+| **Recharts**         | Data Visualization      | 3.2+    |
+| **Stripe**           | Payment Processing      | Latest  |
+| **date-fns**         | Date Utilities          | 4.1+    |
 
 ---
 
@@ -230,15 +243,15 @@ client/
 ### Making API Calls
 
 ```javascript
-import axios from '@/lib/axios';
+import axios from "@/lib/axios";
 
 // Authenticated request
 const fetchUserProfile = async () => {
   try {
-    const response = await axios.get('/api/user/profile');
+    const response = await axios.get("/api/user/profile");
     return response.data;
   } catch (error) {
-    console.error('Error fetching profile:', error);
+    console.error("Error fetching profile:", error);
   }
 };
 ```
@@ -246,11 +259,11 @@ const fetchUserProfile = async () => {
 ### Using Context
 
 ```javascript
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuth } from "@/contexts/AuthContext";
 
 function MyComponent() {
   const { user, login, logout, isAuthenticated } = useAuth();
-  
+
   return (
     <div>
       {isAuthenticated ? (
@@ -266,18 +279,18 @@ function MyComponent() {
 ### Real-time Chat
 
 ```javascript
-import { useChat } from '@/contexts/ChatContext';
+import { useChat } from "@/contexts/ChatContext";
 
 function ChatComponent() {
   const { messages, sendMessage, isConnected } = useChat();
-  
+
   const handleSend = (text) => {
     sendMessage(text);
   };
-  
+
   return (
     <div>
-      {messages.map(msg => (
+      {messages.map((msg) => (
         <div key={msg.id}>{msg.text}</div>
       ))}
     </div>
@@ -288,16 +301,16 @@ function ChatComponent() {
 ### Protected Routes
 
 ```jsx
-import ProtectedRoute from '@/components/ProtectedRoute';
+import ProtectedRoute from "@/components/ProtectedRoute";
 
-<Route 
-  path="/dashboard" 
+<Route
+  path="/dashboard"
   element={
     <ProtectedRoute requireAuth={true}>
       <Dashboard />
     </ProtectedRoute>
-  } 
-/>
+  }
+/>;
 ```
 
 ---
@@ -330,6 +343,7 @@ This project uses **Tailwind CSS** for styling. Key conventions:
 - **Components**: Reusable UI components in `src/components/ui/`
 
 Example:
+
 ```jsx
 <div className="bg-white dark:bg-gray-900 p-4 md:p-6 lg:p-8">
   <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
@@ -354,6 +368,7 @@ The client communicates with the backend API through:
 ## 🧩 **Key Components**
 
 ### Context Providers
+
 - `AuthContext` - Authentication state and methods
 - `ChatContext` - Real-time chat functionality
 - `NotificationContext` - Notification management
@@ -362,6 +377,7 @@ The client communicates with the backend API through:
 - `SearchContext` - Global search functionality
 
 ### UI Components
+
 - `Header` - Main navigation header
 - `Sidebar` - Side navigation menu
 - `DashboardHeader` - Dashboard-specific header
@@ -405,6 +421,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 If you find this project helpful, please give it a ⭐ on GitHub!
 
 For support and questions:
+
 - 📧 Email: support@slackdev.com
 - 💬 Issues: [GitHub Issues](https://github.com/slack-dev-client/issues)
 - 📖 Docs: [API Documentation](http://localhost:8080/api-docs)
@@ -416,12 +433,14 @@ For support and questions:
 ### Common Issues
 
 **Port already in use:**
+
 ```bash
 # Kill process on port 5173
 lsof -ti:5173 | xargs kill -9
 ```
 
 **Module not found errors:**
+
 ```bash
 # Clear node_modules and reinstall
 rm -rf node_modules package-lock.json
@@ -429,6 +448,7 @@ npm install
 ```
 
 **Build errors:**
+
 ```bash
 # Clear Vite cache
 rm -rf node_modules/.vite

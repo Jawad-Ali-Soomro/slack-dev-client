@@ -7,47 +7,47 @@ class CompilationService {
   constructor() {
     this.supportedLanguages = {
       javascript: {
-        name: 'JavaScript',
-        extension: 'js',
+        name: "JavaScript",
+        extension: "js",
         executor: this.executeJavaScript.bind(this),
-        icon: '🟨',
-        color: 'text-yellow-600 dark:text-yellow-400'
+        icon: "🟨",
+        color: "text-yellow-600 dark:text-yellow-400",
       },
       python: {
-        name: 'Python',
-        extension: 'py',
+        name: "Python",
+        extension: "py",
         executor: this.executePython.bind(this),
-        icon: '🐍',
-        color: 'text-green-600 dark:text-green-400'
+        icon: "🐍",
+        color: "text-green-600 dark:text-green-400",
       },
       java: {
-        name: 'Java',
-        extension: 'java',
+        name: "Java",
+        extension: "java",
         executor: this.executeJava.bind(this),
-        icon: '☕',
-        color: 'text-red-600 dark:text-red-400'
+        icon: "☕",
+        color: "text-red-600 dark:text-red-400",
       },
       cpp: {
-        name: 'C++',
-        extension: 'cpp',
+        name: "C++",
+        extension: "cpp",
         executor: this.executeCpp.bind(this),
-        icon: '⚙️',
-        color: 'text-purple-600 dark:text-purple-400'
+        icon: "⚙️",
+        color: "text-purple-600 dark:text-purple-400",
       },
       csharp: {
-        name: 'C#',
-        extension: 'cs',
+        name: "C#",
+        extension: "cs",
         executor: this.executeCSharp.bind(this),
-        icon: '🔷',
-        color: 'text-indigo-600 dark:text-indigo-400'
+        icon: "🔷",
+        color: "text-indigo-600 dark:text-indigo-400",
       },
       c: {
-        name: 'C',
-        extension: 'c',
+        name: "C",
+        extension: "c",
         executor: this.executeC.bind(this),
-        icon: '🔧',
-        color: 'text-gray-600 dark:text-gray-400'
-      }
+        icon: "🔧",
+        color: "text-gray-600 dark:text-gray-400",
+      },
     };
   }
 
@@ -92,7 +92,7 @@ class CompilationService {
         error: null,
         executionTime,
         language: languageInfo.name,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     } catch (error) {
       return {
@@ -101,7 +101,7 @@ class CompilationService {
         error: error.message,
         executionTime: null,
         language: this.getLanguageInfo(language)?.name || language,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
     }
   }
@@ -112,7 +112,6 @@ class CompilationService {
   async executeJavaScript(code, options = {}) {
     return new Promise((resolve, reject) => {
       try {
-
         const consoleLogs = [];
         const consoleErrors = [];
         const consoleWarns = [];
@@ -122,23 +121,41 @@ class CompilationService {
         const originalWarn = console.warn;
 
         console.log = (...args) => {
-          consoleLogs.push(args.map(arg => 
-            typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
-          ).join(' '));
+          consoleLogs.push(
+            args
+              .map((arg) =>
+                typeof arg === "object"
+                  ? JSON.stringify(arg, null, 2)
+                  : String(arg),
+              )
+              .join(" "),
+          );
           originalLog(...args);
         };
-        
+
         console.error = (...args) => {
-          consoleErrors.push(args.map(arg => 
-            typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
-          ).join(' '));
+          consoleErrors.push(
+            args
+              .map((arg) =>
+                typeof arg === "object"
+                  ? JSON.stringify(arg, null, 2)
+                  : String(arg),
+              )
+              .join(" "),
+          );
           originalError(...args);
         };
-        
+
         console.warn = (...args) => {
-          consoleWarns.push(args.map(arg => 
-            typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
-          ).join(' '));
+          consoleWarns.push(
+            args
+              .map((arg) =>
+                typeof arg === "object"
+                  ? JSON.stringify(arg, null, 2)
+                  : String(arg),
+              )
+              .join(" "),
+          );
           originalWarn(...args);
         };
 
@@ -148,27 +165,26 @@ class CompilationService {
         console.error = originalError;
         console.warn = originalWarn;
 
-        let resultOutput = '';
+        let resultOutput = "";
         if (result !== undefined) {
-          resultOutput = typeof result === 'object' ? 
-            JSON.stringify(result, null, 2) : 
-            String(result);
+          resultOutput =
+            typeof result === "object"
+              ? JSON.stringify(result, null, 2)
+              : String(result);
         }
 
         const allOutput = [
           ...consoleLogs,
           ...consoleWarns,
           ...consoleErrors,
-          resultOutput
+          resultOutput,
         ].filter(Boolean);
 
         resolve({
-          output: allOutput.join('\n'),
-          warnings: consoleWarns.length > 0 ? consoleWarns.join('\n') : null
+          output: allOutput.join("\n"),
+          warnings: consoleWarns.length > 0 ? consoleWarns.join("\n") : null,
         });
-        
       } catch (error) {
-
         console.log = console.log;
         console.error = console.error;
         console.warn = console.warn;
@@ -180,21 +196,21 @@ class CompilationService {
   /**
    * Execute Python code using Pyodide (Python in the browser)
    */
-  async executePython(code, options = {}) { 
+  async executePython(code, options = {}) {
     return new Promise(async (resolve, reject) => {
       try {
-
-        if (typeof window.pyodide === 'undefined') {
-
-          if (typeof window.loadPyodide === 'undefined') {
-
-            const script = document.createElement('script');
-            script.src = 'https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js';
-            script.onload = () => this.initializePythonExecution(code, resolve, reject);
-            script.onerror = () => resolve({
-              output: `Python execution requires Pyodide to be loaded.\n\nTo enable Python execution, add this to your HTML:\n<script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>\n\nThen reload the page.`,
-              warnings: null
-            });
+        if (typeof window.pyodide === "undefined") {
+          if (typeof window.loadPyodide === "undefined") {
+            const script = document.createElement("script");
+            script.src =
+              "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js";
+            script.onload = () =>
+              this.initializePythonExecution(code, resolve, reject);
+            script.onerror = () =>
+              resolve({
+                output: `Python execution requires Pyodide to be loaded.\n\nTo enable Python execution, add this to your HTML:\n<script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>\n\nThen reload the page.`,
+                warnings: null,
+              });
             document.head.appendChild(script);
           } else {
             this.initializePythonExecution(code, resolve, reject);
@@ -205,7 +221,7 @@ class CompilationService {
       } catch (error) {
         resolve({
           output: `Python execution error: ${error.message}\n\nNote: Python execution requires Pyodide. Add this script to your HTML:\n<script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>`,
-          warnings: null
+          warnings: null,
         });
       }
     });
@@ -248,7 +264,7 @@ capture = PythonOutputCapture()
     } catch (error) {
       resolve({
         output: `Failed to initialize Python interpreter: ${error.message}\n\nPython execution requires Pyodide to be loaded properly.`,
-        warnings: null
+        warnings: null,
       });
     }
   }
@@ -270,18 +286,18 @@ with capture:
         traceback.print_exc()
 `);
 
-      const output = window.pyodide.runPython('capture.get_output()');
+      const output = window.pyodide.runPython("capture.get_output()");
       const executionTime = Date.now() - startTime;
 
       resolve({
-        output: output || 'Python code executed successfully (no output)',
+        output: output || "Python code executed successfully (no output)",
         warnings: null,
-        executionTime
+        executionTime,
       });
     } catch (error) {
       resolve({
         output: `Python execution error: ${error.message}\n\nCode:\n${code}`,
-        warnings: null
+        warnings: null,
       });
     }
   }
@@ -299,13 +315,15 @@ with capture:
 
         resolve({
           output: output,
-          warnings: ['Note: This is a simulated Java execution. For full Java support, a backend service is required.'],
-          executionTime
+          warnings: [
+            "Note: This is a simulated Java execution. For full Java support, a backend service is required.",
+          ],
+          executionTime,
         });
       } catch (error) {
         resolve({
           output: `Java execution error: ${error.message}\n\nCode:\n${code}`,
-          warnings: null
+          warnings: null,
         });
       }
     });
@@ -315,15 +333,15 @@ with capture:
    * Simulate Java execution for demonstration purposes
    */
   simulateJavaExecution(code) {
-    const lines = code.split('\n');
-    let output = '';
+    const lines = code.split("\n");
+    let output = "";
     let inMainMethod = false;
     let braceCount = 0;
 
     for (const line of lines) {
       const trimmed = line.trim();
 
-      if (trimmed.includes('public static void main')) {
+      if (trimmed.includes("public static void main")) {
         inMainMethod = true;
         continue;
       }
@@ -331,34 +349,37 @@ with capture:
       if (inMainMethod) {
         braceCount += (line.match(/\{/g) || []).length;
         braceCount -= (line.match(/\}/g) || []).length;
-        
-        if (braceCount === 0 && trimmed !== '') {
+
+        if (braceCount === 0 && trimmed !== "") {
           inMainMethod = false;
           continue;
         }
 
-        if (trimmed.startsWith('System.out.println')) {
+        if (trimmed.startsWith("System.out.println")) {
           const match = trimmed.match(/System\.out\.println\((.+)\)/);
           if (match) {
             let content = match[1];
 
-            content = content.replace(/"/g, '').replace(/\s*\+\s*/g, ' ');
-            output += content + '\n';
+            content = content.replace(/"/g, "").replace(/\s*\+\s*/g, " ");
+            output += content + "\n";
           }
         }
 
-        if (trimmed.startsWith('System.out.print')) {
+        if (trimmed.startsWith("System.out.print")) {
           const match = trimmed.match(/System\.out\.print\((.+)\)/);
           if (match) {
             let content = match[1];
-            content = content.replace(/"/g, '').replace(/\s*\+\s*/g, ' ');
+            content = content.replace(/"/g, "").replace(/\s*\+\s*/g, " ");
             output += content;
           }
         }
       }
     }
 
-    return output || 'Java code simulated (no output detected)\n\nNote: This is a basic simulation. Full Java execution requires a backend service.';
+    return (
+      output ||
+      "Java code simulated (no output detected)\n\nNote: This is a basic simulation. Full Java execution requires a backend service."
+    );
   }
 
   /**
@@ -374,13 +395,15 @@ with capture:
 
         resolve({
           output: output,
-          warnings: ['Note: This is a simulated C++ execution. For full C++ support, a backend service is required.'],
-          executionTime
+          warnings: [
+            "Note: This is a simulated C++ execution. For full C++ support, a backend service is required.",
+          ],
+          executionTime,
         });
       } catch (error) {
         resolve({
           output: `C++ execution error: ${error.message}\n\nCode:\n${code}`,
-          warnings: null
+          warnings: null,
         });
       }
     });
@@ -390,15 +413,15 @@ with capture:
    * Simulate C++ execution for demonstration purposes
    */
   simulateCppExecution(code) {
-    const lines = code.split('\n');
-    let output = '';
+    const lines = code.split("\n");
+    let output = "";
     let inMainFunction = false;
     let braceCount = 0;
 
     for (const line of lines) {
       const trimmed = line.trim();
 
-      if (trimmed.includes('int main(') || trimmed.includes('void main(')) {
+      if (trimmed.includes("int main(") || trimmed.includes("void main(")) {
         inMainFunction = true;
         continue;
       }
@@ -406,42 +429,47 @@ with capture:
       if (inMainFunction) {
         braceCount += (line.match(/\{/g) || []).length;
         braceCount -= (line.match(/\}/g) || []).length;
-        
-        if (braceCount === 0 && trimmed !== '') {
+
+        if (braceCount === 0 && trimmed !== "") {
           inMainFunction = false;
           continue;
         }
 
-        if (trimmed.includes('cout') && trimmed.includes('<<')) {
+        if (trimmed.includes("cout") && trimmed.includes("<<")) {
           const match = trimmed.match(/cout\s*<<\s*(.+)/);
           if (match) {
             let content = match[1];
 
-            content = content.replace(/endl/g, '\n');
-            content = content.replace(/"([^"]*)"/g, '$1');
-            content = content.replace(/\s*<<\s*/g, '');
+            content = content.replace(/endl/g, "\n");
+            content = content.replace(/"([^"]*)"/g, "$1");
+            content = content.replace(/\s*<<\s*/g, "");
             output += content;
           }
         }
 
-        if (trimmed.startsWith('printf(')) {
+        if (trimmed.startsWith("printf(")) {
           const match = trimmed.match(/printf\("([^"]*)"(?:,\s*(.+))?\)/);
           if (match) {
             let format = match[1];
-            let args = match[2] ? match[2].split(',').map(arg => arg.trim()) : [];
+            let args = match[2]
+              ? match[2].split(",").map((arg) => arg.trim())
+              : [];
 
             let result = format;
-            args.forEach(arg => {
-              result = result.replace(/%[sdif]/, arg.replace(/"/g, ''));
+            args.forEach((arg) => {
+              result = result.replace(/%[sdif]/, arg.replace(/"/g, ""));
             });
-            
+
             output += result;
           }
         }
       }
     }
 
-    return output || 'C++ code simulated (no output detected)\n\nNote: This is a basic simulation. Full C++ execution requires a backend service.';
+    return (
+      output ||
+      "C++ code simulated (no output detected)\n\nNote: This is a basic simulation. Full C++ execution requires a backend service."
+    );
   }
 
   /**
@@ -457,13 +485,15 @@ with capture:
 
         resolve({
           output: output,
-          warnings: ['Note: This is a simulated C# execution. For full C# support, a backend service is required.'],
-          executionTime
+          warnings: [
+            "Note: This is a simulated C# execution. For full C# support, a backend service is required.",
+          ],
+          executionTime,
         });
       } catch (error) {
         resolve({
           output: `C# execution error: ${error.message}\n\nCode:\n${code}`,
-          warnings: null
+          warnings: null,
         });
       }
     });
@@ -473,15 +503,18 @@ with capture:
    * Simulate C# execution for demonstration purposes
    */
   simulateCSharpExecution(code) {
-    const lines = code.split('\n');
-    let output = '';
+    const lines = code.split("\n");
+    let output = "";
     let inMainMethod = false;
     let braceCount = 0;
 
     for (const line of lines) {
       const trimmed = line.trim();
 
-      if (trimmed.includes('static void Main(') || trimmed.includes('static int Main(')) {
+      if (
+        trimmed.includes("static void Main(") ||
+        trimmed.includes("static int Main(")
+      ) {
         inMainMethod = true;
         continue;
       }
@@ -489,34 +522,37 @@ with capture:
       if (inMainMethod) {
         braceCount += (line.match(/\{/g) || []).length;
         braceCount -= (line.match(/\}/g) || []).length;
-        
-        if (braceCount === 0 && trimmed !== '') {
+
+        if (braceCount === 0 && trimmed !== "") {
           inMainMethod = false;
           continue;
         }
 
-        if (trimmed.startsWith('Console.WriteLine')) {
+        if (trimmed.startsWith("Console.WriteLine")) {
           const match = trimmed.match(/Console\.WriteLine\((.+)\)/);
           if (match) {
             let content = match[1];
 
-            content = content.replace(/"/g, '').replace(/\s*\+\s*/g, ' ');
-            output += content + '\n';
+            content = content.replace(/"/g, "").replace(/\s*\+\s*/g, " ");
+            output += content + "\n";
           }
         }
 
-        if (trimmed.startsWith('Console.Write')) {
+        if (trimmed.startsWith("Console.Write")) {
           const match = trimmed.match(/Console\.Write\((.+)\)/);
           if (match) {
             let content = match[1];
-            content = content.replace(/"/g, '').replace(/\s*\+\s*/g, ' ');
+            content = content.replace(/"/g, "").replace(/\s*\+\s*/g, " ");
             output += content;
           }
         }
       }
     }
 
-    return output || 'C# code simulated (no output detected)\n\nNote: This is a basic simulation. Full C# execution requires a backend service.';
+    return (
+      output ||
+      "C# code simulated (no output detected)\n\nNote: This is a basic simulation. Full C# execution requires a backend service."
+    );
   }
 
   /**
@@ -532,13 +568,15 @@ with capture:
 
         resolve({
           output: output,
-          warnings: ['Note: This is a simulated C execution. For full C support, a backend service is required.'],
-          executionTime
+          warnings: [
+            "Note: This is a simulated C execution. For full C support, a backend service is required.",
+          ],
+          executionTime,
         });
       } catch (error) {
         resolve({
           output: `C execution error: ${error.message}\n\nCode:\n${code}`,
-          warnings: null
+          warnings: null,
         });
       }
     });
@@ -548,15 +586,15 @@ with capture:
    * Simulate C execution for demonstration purposes
    */
   simulateCExecution(code) {
-    const lines = code.split('\n');
-    let output = '';
+    const lines = code.split("\n");
+    let output = "";
     let inMainFunction = false;
     let braceCount = 0;
 
     for (const line of lines) {
       const trimmed = line.trim();
 
-      if (trimmed.includes('int main(') || trimmed.includes('void main(')) {
+      if (trimmed.includes("int main(") || trimmed.includes("void main(")) {
         inMainFunction = true;
         continue;
       }
@@ -564,39 +602,43 @@ with capture:
       if (inMainFunction) {
         braceCount += (line.match(/\{/g) || []).length;
         braceCount -= (line.match(/\}/g) || []).length;
-        
-        if (braceCount === 0 && trimmed !== '') {
+
+        if (braceCount === 0 && trimmed !== "") {
           inMainFunction = false;
           continue;
         }
 
-        if (trimmed.startsWith('printf(')) {
+        if (trimmed.startsWith("printf(")) {
           const match = trimmed.match(/printf\("([^"]*)"(?:,\s*(.+))?\)/);
           if (match) {
             let format = match[1];
-            let args = match[2] ? match[2].split(',').map(arg => arg.trim()) : [];
+            let args = match[2]
+              ? match[2].split(",").map((arg) => arg.trim())
+              : [];
 
             let result = format;
-            args.forEach(arg => {
-              result = result.replace(/%[sdif]/, arg.replace(/"/g, ''));
+            args.forEach((arg) => {
+              result = result.replace(/%[sdif]/, arg.replace(/"/g, ""));
             });
-            
+
             output += result;
           }
         }
 
-        if (trimmed.startsWith('puts(')) {
+        if (trimmed.startsWith("puts(")) {
           const match = trimmed.match(/puts\("([^"]*)"\)/);
           if (match) {
-            output += match[1] + '\n';
+            output += match[1] + "\n";
           }
         }
       }
     }
 
-    return output || 'C code simulated (no output detected)\n\nNote: This is a basic simulation. Full C execution requires a backend service.';
+    return (
+      output ||
+      "C code simulated (no output detected)\n\nNote: This is a basic simulation. Full C execution requires a backend service."
+    );
   }
-
 
   /**
    * Format execution result for display
@@ -604,9 +646,13 @@ with capture:
   formatResult(result) {
     return {
       ...result,
-      formattedOutput: result.output ? result.output.split('\n').join('\n') : '',
-      formattedError: result.error ? result.error.split('\n').join('\n') : '',
-      executionTimeFormatted: result.executionTime ? `${result.executionTime}ms` : null
+      formattedOutput: result.output
+        ? result.output.split("\n").join("\n")
+        : "",
+      formattedError: result.error ? result.error.split("\n").join("\n") : "",
+      executionTimeFormatted: result.executionTime
+        ? `${result.executionTime}ms`
+        : null,
     };
   }
 
@@ -615,12 +661,12 @@ with capture:
    */
   getCompilationStatus() {
     return {
-      service: 'Code Compilation Service',
-      version: '1.0.0',
+      service: "Code Compilation Service",
+      version: "1.0.0",
       supportedLanguages: this.getSupportedLanguages().length,
-      status: 'active',
-      pythonReady: typeof window.pyodide !== 'undefined',
-      pyodideLoaded: typeof window.loadPyodide !== 'undefined'
+      status: "active",
+      pythonReady: typeof window.pyodide !== "undefined",
+      pyodideLoaded: typeof window.loadPyodide !== "undefined",
     };
   }
 
@@ -628,7 +674,7 @@ with capture:
    * Check if Python is ready for execution
    */
   isPythonReady() {
-    return typeof window.pyodide !== 'undefined';
+    return typeof window.pyodide !== "undefined";
   }
 
   /**
@@ -639,7 +685,7 @@ with capture:
       return true;
     }
 
-    if (typeof window.loadPyodide === 'undefined') {
+    if (typeof window.loadPyodide === "undefined") {
       return false;
     }
 
@@ -673,7 +719,7 @@ capture = PythonOutputCapture()
 
       return true;
     } catch (error) {
-      console.error('Failed to initialize Python:', error);
+      console.error("Failed to initialize Python:", error);
       return false;
     }
   }

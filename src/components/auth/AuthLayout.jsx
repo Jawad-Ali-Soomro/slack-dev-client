@@ -1,14 +1,14 @@
-import { useRef } from "react"
-import { Link, useNavigate } from "react-router-dom"
-import { ArrowLeft, Sparkles } from "lucide-react"
-import gsap from "gsap"
-import { useGSAP } from "@gsap/react"
+import { useRef } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ArrowLeft, Sparkles } from "lucide-react";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 
 const BRAND_POINTS = [
   "Manage projects like a pro",
   "Real-time team collaboration",
   "Built by developers, for developers",
-]
+];
 
 export function AuthLayout({
   title,
@@ -22,15 +22,15 @@ export function AuthLayout({
   steps,
   currentStep,
 }) {
-  const containerRef = useRef(null)
-  const navigate = useNavigate()
+  const containerRef = useRef(null);
+  const navigate = useNavigate();
 
   useGSAP(
     () => {
       const prefersReducedMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches
-      if (prefersReducedMotion) return
+        "(prefers-reduced-motion: reduce)",
+      ).matches;
+      if (prefersReducedMotion) return;
 
       gsap.from(".auth-animate", {
         y: 28,
@@ -38,7 +38,7 @@ export function AuthLayout({
         duration: 0.7,
         stagger: 0.08,
         ease: "power3.out",
-      })
+      });
 
       gsap.to(".auth-orb", {
         y: "+=24",
@@ -47,10 +47,10 @@ export function AuthLayout({
         yoyo: true,
         repeat: -1,
         stagger: { each: 0.6, from: "random" },
-      })
+      });
     },
-    { scope: containerRef }
-  )
+    { scope: containerRef },
+  );
 
   return (
     <div
@@ -88,8 +88,8 @@ export function AuthLayout({
             </h2>
 
             <p className="mt-4 text-sm text-gray-600 dark:text-gray-400 max-w-sm leading-relaxed">
-              Join thousands of developers managing projects, teams, and workflows
-              in one powerful platform.
+              Join thousands of developers managing projects, teams, and
+              workflows in one powerful platform.
             </p>
 
             <ul className="mt-8 space-y-3">
@@ -120,18 +120,19 @@ export function AuthLayout({
 
             {steps && (
               <div className="flex items-center gap-2 mb-6">
-                {steps?.length > 0 && steps?.map((_, i) => (
-                  <div
-                    key={i}
-                    className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
-                      i < currentStep
-                        ? "step-active"
-                        : i === currentStep
-                          ? "step-current"
-                          : "bg-gray-200 dark:bg-white/10"
-                    }`}
-                  />
-                ))}
+                {steps?.length > 0 &&
+                  steps?.map((_, i) => (
+                    <div
+                      key={i}
+                      className={`h-1 flex-1 rounded-full transition-colors duration-300 ${
+                        i < currentStep
+                          ? "step-active"
+                          : i === currentStep
+                            ? "step-current"
+                            : "bg-gray-200 dark:bg-white/10"
+                      }`}
+                    />
+                  ))}
               </div>
             )}
 
@@ -174,7 +175,7 @@ export function AuthLayout({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export function AuthDivider() {
@@ -189,7 +190,7 @@ export function AuthDivider() {
         </span>
       </div>
     </div>
-  )
+  );
 }
 
 export function AuthButton({ children, loading, className = "", ...props }) {
@@ -201,7 +202,7 @@ export function AuthButton({ children, loading, className = "", ...props }) {
     >
       {loading ? <span className="loader mx-auto" /> : children}
     </button>
-  )
+  );
 }
 
 export function AuthAltLink({ text, linkText, to }) {
@@ -215,7 +216,7 @@ export function AuthAltLink({ text, linkText, to }) {
         {linkText}
       </Link>
     </div>
-  )
+  );
 }
 
 export function AuthField({ icon: Icon, children }) {
@@ -226,7 +227,7 @@ export function AuthField({ icon: Icon, children }) {
       )}
       {children}
     </div>
-  )
+  );
 }
 
 export function AuthInput({ className = "", icon: Icon, ...props }) {
@@ -237,7 +238,7 @@ export function AuthInput({ className = "", icon: Icon, ...props }) {
         {...props}
       />
     </AuthField>
-  )
+  );
 }
 
 export function AuthOtpInput({ value, onChange, onKeyDown, inputRef, id }) {
@@ -255,5 +256,5 @@ export function AuthOtpInput({ value, onChange, onKeyDown, inputRef, id }) {
       autoComplete="off"
       className="auth-otp w-14 h-14 md:w-16 md:h-16 text-center text-xl font-black rounded-xl text-gray-900 dark:text-white"
     />
-  )
+  );
 }

@@ -189,7 +189,6 @@ const Notes = () => {
   return (
     <div className="h-[90vh] p-4 md:p-6">
       <div className="">
-
         {/* Mobile Header */}
         <div className="md:hidden mb-6">
           <div className="flex items-center gap-2 mb-2">
@@ -227,9 +226,7 @@ const Notes = () => {
 
                 {/* Note Details Form - Same structure as LearnPoint */}
                 <div className="space-y-4">
-    
                   <div>
-                 
                     <Input
                       type="text"
                       value={newNote.title}
@@ -243,7 +240,6 @@ const Notes = () => {
                   </div>
 
                   <div>
-                    
                     <Textarea
                       value={newNote.description}
                       onChange={(e) =>
@@ -256,7 +252,6 @@ const Notes = () => {
                   </div>
 
                   <div>
-                   
                     <Select
                       value={newNote.department}
                       onValueChange={handleDepartmentChange}
@@ -297,7 +292,7 @@ const Notes = () => {
                         className="w-full mt-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                       />
                     )}
-                    
+
                     {newNote.department &&
                       !PREDEFINED_DEPARTMENTS.includes(newNote.department) &&
                       newNote.department !== "Other" && (
@@ -308,7 +303,6 @@ const Notes = () => {
                   </div>
 
                   <div>
-                    
                     <Input
                       type="text"
                       name="subject"
@@ -321,7 +315,6 @@ const Notes = () => {
                   </div>
 
                   <div>
-                    
                     <Input
                       type="text"
                       name="tags"
@@ -330,7 +323,6 @@ const Notes = () => {
                       placeholder="Tags (comma separated)"
                       className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                     />
-                    
                   </div>
                 </div>
               </div>
@@ -349,18 +341,15 @@ const Notes = () => {
               <div className="h-full flex flex-col">
                 {/* Editor Header */}
                 <div className="flex items-center justify-end p-4 border-b border-gray-200 dark:border-gray-700">
-                
-
                   <div className="flex items-center gap-2">
-                  
-                      <Button
-              onClick={handleCreateNote}
-              disabled={isLoading || !savedFile}
-              className="bg-green-600 hover:bg-green-700 w-[200px]"
-            >
-              <Save className="w-4 h-4 icon mr-2" />
-              {isLoading ? "Saving..." : "Create Note"}
-            </Button>
+                    <Button
+                      onClick={handleCreateNote}
+                      disabled={isLoading || !savedFile}
+                      className="bg-green-600 hover:bg-green-700 w-[200px]"
+                    >
+                      <Save className="w-4 h-4 icon mr-2" />
+                      {isLoading ? "Saving..." : "Create Note"}
+                    </Button>
                   </div>
                 </div>
 
@@ -398,7 +387,9 @@ const Notes = () => {
                     <div className="flex gap-2">
                       {savedFile ? (
                         <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                          <span className="text-sm font-medium">✓ PDF Ready</span>
+                          <span className="text-sm font-medium">
+                            ✓ PDF Ready
+                          </span>
                         </div>
                       ) : (
                         <Button

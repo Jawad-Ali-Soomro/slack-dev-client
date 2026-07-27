@@ -12,16 +12,16 @@ const githubSlice = createSlice({
   },
   reducers: {
     setGithubData: (state, action) => {
-      const { userId, githubUserId, data } = action.payload
-      state.data = encryptData(data)
-      state.userId = userId ? String(userId) : null
+      const { userId, githubUserId, data } = action.payload;
+      state.data = encryptData(data);
+      state.userId = userId ? String(userId) : null;
       state.githubUserId = githubUserId
         ? String(githubUserId)
         : data?.profile?.id
           ? String(data.profile.id)
-          : null
-      state.loading = false
-      state.error = null
+          : null;
+      state.loading = false;
+      state.error = null;
     },
 
     setLoading: (state) => {
@@ -43,11 +43,7 @@ const githubSlice = createSlice({
   },
 });
 
-export const {
-  setGithubData,
-  setLoading,
-  setError,
-  clearGithubData,
-} = githubSlice.actions;
+export const { setGithubData, setLoading, setError, clearGithubData } =
+  githubSlice.actions;
 
 export default githubSlice.reducer;

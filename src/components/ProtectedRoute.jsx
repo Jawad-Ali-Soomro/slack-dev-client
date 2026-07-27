@@ -12,7 +12,7 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
 
   if (loading) {
     return (
-      <HorizontalLoader 
+      <HorizontalLoader
         message="Authenticating..."
         subMessage="Checking your credentials"
         progress={50}
@@ -33,11 +33,9 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
     <div className="min-h-screen bg-[#eee] dark:bg-[black]">
       <DashboardHeader />
       <div className="flex">
-       
-       <div onClick={(e) => e.stopPropagation()}>
-       <Sidebar />
-       </div>
-
+        <div onClick={(e) => e.stopPropagation()}>
+          <Sidebar />
+        </div>
 
         <div
           className={`transition-all duration-300 flex-1 pr-5 md:pr-5 md:pt-20 pt-25 pl-5 overflow-hidden ${

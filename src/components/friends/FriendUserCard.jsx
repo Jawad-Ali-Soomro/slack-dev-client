@@ -1,10 +1,10 @@
-import { Loader2, UserPlus, Clock, UserCheck } from "lucide-react"
-import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { getAvatarProps } from "@/utils/avatarUtils"
-import { cn } from "@/lib/utils"
-import { PiUserPlusDuotone } from "react-icons/pi"
+import { Loader2, UserPlus, Clock, UserCheck } from "lucide-react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAvatarProps } from "@/utils/avatarUtils";
+import { cn } from "@/lib/utils";
+import { PiUserPlusDuotone } from "react-icons/pi";
 
 export default function FriendUserCard({
   person,
@@ -16,8 +16,8 @@ export default function FriendUserCard({
   compact = false,
   index = 0,
 }) {
-  const isPending = requestStatus === "sent"
-  const isReceived = requestStatus === "received"
+  const isPending = requestStatus === "sent";
+  const isReceived = requestStatus === "received";
 
   return (
     <motion.div
@@ -29,7 +29,7 @@ export default function FriendUserCard({
         compact && "friend-user-card--compact",
       )}
     >
-      <div className="friend-user-card__accent" />
+      <div />
 
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <div className="relative shrink-0">
@@ -91,5 +91,5 @@ export default function FriendUserCard({
           ))}
       </div>
     </motion.div>
-  )
+  );
 }

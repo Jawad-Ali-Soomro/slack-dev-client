@@ -1,24 +1,25 @@
-import { useState, useEffect, useCallback } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { FolderGit2, X } from "lucide-react"
-import { toast } from "sonner"
-import useGithubRepos, { connectGithub } from "@/hooks/useGithubRepos"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+import { useState, useEffect, useCallback } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FolderGit2, X } from "lucide-react";
+import { toast } from "sonner";
+import useGithubRepos, { connectGithub } from "@/hooks/useGithubRepos";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { DatePicker, TimePicker } from "@/components/ui/date-picker";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import taskService from "@/services/taskService"
-import projectService from "@/services/projectService"
-import friendService from "@/services/friendService"
-import { useAuth } from "@/contexts/AuthContext"
-import { getAvatarProps } from "@/utils/avatarUtils"
-import { toUTCDate } from "@/utils/timeConverter"
+} from "@/components/ui/select";
+import taskService from "@/services/taskService";
+import projectService from "@/services/projectService";
+import friendService from "@/services/friendService";
+import { useAuth } from "@/contexts/AuthContext";
+import { getAvatarProps } from "@/utils/avatarUtils";
+import { toUTCDate } from "@/utils/timeConverter";
 
 const emptyForm = {
   title: "",
@@ -30,7 +31,7 @@ const emptyForm = {
   dueTime: "",
   projectId: "none",
   repoId: "none",
-}
+};
 
 export default function CreateTaskModal({
   open,
@@ -39,41 +40,41 @@ export default function CreateTaskModal({
   defaultDueDate = "",
   onCreated,
 }) {
-  const { user } = useAuth()
+  const { user } = useAuth();
   const {
     githubRepos,
     loading: githubLoading,
     isGithubConnected,
     fetchRepos,
-  } = useGithubRepos({ autoFetch: false })
+  } = useGithubRepos({ autoFetch: false });
 
-  const [form, setForm] = useState(emptyForm)
-  const [loading, setLoading] = useState(false)
-  const [users, setUsers] = useState([])
-  const [projects, setProjects] = useState([])
-  const [suggestions, setSuggestions] = useState([])
-  const [showSuggestions, setShowSuggestions] = useState(false)
+  const [form, setForm] = useState(emptyForm);
+  const [loading, setLoading] = useState(false);
+  const [users, setUsers] = useState([]);
+  const [projects, setProjects] = useState([]);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
 
   const resetForm = useCallback(() => {
     setForm({
       ...emptyForm,
       dueDate: defaultDueDate || "",
       repoId: repository?.repoId ? String(repository.repoId) : "none",
-    })
-    setShowSuggestions(false)
-  }, [defaultDueDate, repository?.repoId])
+    });
+    setShowSuggestions(false);
+  }, [defaultDueDate, repository?.repoId]);
 
   useEffect(() => {
-    if (!open) return
+    if (!open) return;
 
-    resetForm()
+    resetForm();
 
     const load = async () => {
       try {
         const [friendsRes, projectsRes] = await Promise.all([
           friendService.getFriends(),
           projectService.getProjects({ limit: 100 }),
-        ])
+        ]);
 
         const friends = (friendsRes.friends || [])
           .map((f) => ({
@@ -82,66 +83,74 @@ export default function CreateTaskModal({
             username: f.friend.username,
             email: f.friend.email,
             avatar: f.friend.avatar,
+            availability: f.friend.availability || "available",
+            jobRole: f.friend.jobRole || "unassigned",
           }))
-          .filter((f) => f.id !== user?.id)
+          .filter((f) => f.id !== user?.id);
 
-        setUsers(friends)
-        setProjects(projectsRes.projects || [])
+        setUsers(friends);
+        setProjects(projectsRes.projects || []);
       } catch (err) {
-        console.error(err)
-        toast.error("Failed to load form data")
+        console.error(err);
+        toast.error("Failed to load form data");
       }
-    }
+    };
 
-    load()
+    load();
 
     if (isGithubConnected) {
-      fetchRepos()
+      fetchRepos();
     }
-  }, [open, user?.id, resetForm, isGithubConnected, fetchRepos])
+  }, [open, user?.id, resetForm, isGithubConnected, fetchRepos]);
 
   const handleAssignedToChange = (value) => {
-    setForm((prev) => ({ ...prev, assignedTo: value, assignedToId: "" }))
+    setForm((prev) => ({ ...prev, assignedTo: value, assignedToId: "" }));
     if (value.length > 0) {
       const filtered = users.filter(
         (u) =>
           (u.username || u.name).toLowerCase().includes(value.toLowerCase()) ||
-          u.email?.toLowerCase().includes(value.toLowerCase())
-      )
-      setSuggestions(filtered)
-      setShowSuggestions(true)
+          u.email?.toLowerCase().includes(value.toLowerCase()),
+      );
+      setSuggestions(filtered);
+      setShowSuggestions(true);
     } else {
-      setShowSuggestions(false)
+      setShowSuggestions(false);
     }
-  }
+  };
 
   const selectUser = (selected) => {
+    if (selected.availability === "busy") {
+      toast.error(
+        `${selected.username || selected.name} is busy and can't be assigned tasks right now`,
+      );
+      return;
+    }
     setForm((prev) => ({
       ...prev,
       assignedTo: selected.username || selected.name,
       assignedToId: selected.id,
-    }))
-    setShowSuggestions(false)
-  }
+    }));
+    setShowSuggestions(false);
+  };
 
   const handleSubmit = async () => {
     if (!form.title.trim()) {
-      toast.error("Please enter a task title")
-      return
+      toast.error("Please enter a task title");
+      return;
     }
     if (!form.assignedToId) {
-      toast.error("Please select someone to assign the task to")
-      return
+      toast.error("Please select someone to assign the task to");
+      return;
     }
 
     try {
-      setLoading(true)
+      setLoading(true);
 
-      let dueDate
+      let dueDate;
       if (form.dueDate) {
-        const time = form.dueTime || "18:00"
-        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone
-        dueDate = toUTCDate(form.dueDate, time, timeZone)
+        const time = form.dueTime || "18:00";
+        const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        dueDate = toUTCDate(form.dueDate, time, timeZone);
       }
 
       const payload = {
@@ -151,42 +160,50 @@ export default function CreateTaskModal({
         priority: form.priority,
         dueDate,
         projectId:
-          form.projectId && form.projectId !== "none" ? form.projectId : undefined,
-      }
+          form.projectId && form.projectId !== "none"
+            ? form.projectId
+            : undefined,
+      };
 
       if (repository?.repoId && repository?.repoName) {
         payload.repository = {
           repoId: String(repository.repoId),
           repoName: repository.repoName,
-        }
+        };
       } else if (form.repoId && form.repoId !== "none") {
-        const selectedRepo = githubRepos.find((repo) => repo.id === form.repoId)
+        const selectedRepo = githubRepos.find(
+          (repo) => repo.id === form.repoId,
+        );
         if (selectedRepo) {
           payload.repository = {
             repoId: selectedRepo.id,
             repoName: selectedRepo.name,
-          }
+          };
         }
       }
 
-      await taskService.createTask(payload)
+      await taskService.createTask(payload);
 
       try {
-        await taskService.clearTaskCaches?.()
+        await taskService.clearTaskCaches?.();
       } catch {
         /* optional cache clear */
       }
 
-      toast.success("Task created successfully!")
-      onOpenChange(false)
-      onCreated?.()
+      toast.success("Task created successfully!");
+      onOpenChange(false);
+      onCreated?.();
     } catch (error) {
-      console.error(error)
-      toast.error(error?.message || "Failed to create task")
+      console.error(error);
+      toast.error(
+        error?.response?.data?.message ||
+          error?.message ||
+          "Failed to create task",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <AnimatePresence>
@@ -281,7 +298,9 @@ export default function CreateTaskModal({
             <div className="space-y-4">
               <Input
                 value={form.title}
-                onChange={(e) => setForm((p) => ({ ...p, title: e.target.value }))}
+                onChange={(e) =>
+                  setForm((p) => ({ ...p, title: e.target.value }))
+                }
                 className="h-12"
                 placeholder="Task title"
               />
@@ -312,23 +331,20 @@ export default function CreateTaskModal({
                   </SelectContent>
                 </Select>
 
-                <Input
-                  type="date"
+                <DatePicker
                   value={form.dueDate}
-                  onChange={(e) =>
-                    setForm((p) => ({ ...p, dueDate: e.target.value }))
+                  onChange={(value) =>
+                    setForm((p) => ({ ...p, dueDate: value }))
                   }
-                  className="h-12"
+                  placeholder="Due date"
+                  disablePast
                 />
               </div>
 
-              <Input
-                type="time"
+              <TimePicker
                 value={form.dueTime}
-                onChange={(e) =>
-                  setForm((p) => ({ ...p, dueTime: e.target.value }))
-                }
-                className="h-12"
+                onChange={(value) => setForm((p) => ({ ...p, dueTime: value }))}
+                placeholder="Due time"
               />
 
               <div className="relative">
@@ -336,35 +352,55 @@ export default function CreateTaskModal({
                   value={form.assignedTo}
                   onChange={(e) => handleAssignedToChange(e.target.value)}
                   onFocus={() => {
-                    if (form.assignedTo.length > 0) setShowSuggestions(true)
+                    if (form.assignedTo.length > 0) setShowSuggestions(true);
                   }}
                   className="h-12"
                   placeholder="Assign to (search friends)"
                 />
                 {showSuggestions && suggestions.length > 0 && (
                   <div className="absolute z-[210] w-full mt-1 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-xl shadow-lg max-h-48 overflow-y-auto">
-                    {suggestions.map((u) => (
-                      <button
-                        key={u.id}
-                        type="button"
-                        onClick={() => selectUser(u)}
-                        className="w-full px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 text-left border-b border-gray-100 dark:border-white/5 last:border-0"
-                      >
-                        <div className="flex items-center gap-3">
-                          <img
-                            {...getAvatarProps(u.avatar, u.username || u.name)}
-                            alt=""
-                            className="w-8 h-8 rounded-lg object-cover"
-                          />
-                          <div>
-                            <div className="text-sm font-bold text-gray-900 dark:text-white">
-                              {u.username || u.name}
+                    {suggestions.map((u) => {
+                      const isBusy = u.availability === "busy";
+                      return (
+                        <button
+                          key={u.id}
+                          type="button"
+                          onClick={() => selectUser(u)}
+                          aria-disabled={isBusy}
+                          className={`w-full px-4 py-3 text-left border-b border-gray-100 dark:border-white/5 last:border-0 ${
+                            isBusy
+                              ? "opacity-60 cursor-not-allowed"
+                              : "hover:bg-gray-50 dark:hover:bg-white/5"
+                          }`}
+                        >
+                          <div className="flex items-center gap-3">
+                            <img
+                              {...getAvatarProps(
+                                u.avatar,
+                                u.username || u.name,
+                              )}
+                              alt=""
+                              className="w-8 h-8 rounded-lg object-cover"
+                            />
+                            <div className="min-w-0 flex-1">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-bold text-gray-900 dark:text-white truncate">
+                                  {u.username || u.name}
+                                </span>
+                                {isBusy && (
+                                  <span className="shrink-0 rounded-full bg-red-500/10 px-2 py-0.5 text-[10px] font-semibold text-red-500">
+                                    Busy
+                                  </span>
+                                )}
+                              </div>
+                              <div className="text-xs text-gray-500 truncate">
+                                {u.email}
+                              </div>
                             </div>
-                            <div className="text-xs text-gray-500">{u.email}</div>
                           </div>
-                        </div>
-                      </button>
-                    ))}
+                        </button>
+                      );
+                    })}
                   </div>
                 )}
               </div>
@@ -409,5 +445,5 @@ export default function CreateTaskModal({
         </motion.div>
       )}
     </AnimatePresence>
-  )
+  );
 }

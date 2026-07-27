@@ -1,9 +1,9 @@
-import { useState } from "react"
-import { Eye, EyeOff, Mail, Lock } from "lucide-react"
-import { useNavigate } from "react-router-dom"
-import { toast } from "sonner"
-import { authService } from "../services/authService"
-import { PiUserDuotone } from "react-icons/pi"
+import { useState } from "react";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { authService } from "../services/authService";
+import { PiUserDuotone } from "react-icons/pi";
 import {
   AuthLayout,
   AuthButton,
@@ -11,51 +11,51 @@ import {
   AuthAltLink,
   AuthField,
   AuthInput,
-} from "../components/auth/AuthLayout"
+} from "../components/auth/AuthLayout";
 
 const Signup = () => {
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     email: "",
     password: "",
     role: "user",
-  })
-  const [loading, setLoading] = useState(false)
-  const navigate = useNavigate()
+  });
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  document.title = "Hello There! Please Register"
+  document.title = "Hello There! Please Register";
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
-      setLoading(true)
-      const result = await authService.register(formData)
+      setLoading(true);
+      const result = await authService.register(formData);
 
       if (result.message === "user registered successfully") {
-        localStorage.setItem("verificationEmail", formData.email)
+        localStorage.setItem("verificationEmail", formData.email);
         toast.info("Account created successfully!", {
           description: "Please check your email for verification code",
-        })
-        navigate("/verify-email")
+        });
+        navigate("/verify-email");
       } else {
         toast.error("Registration failed", {
           description: result.message || "Please try again",
-        })
+        });
       }
     } catch (error) {
       toast.error("Registration failed", {
         description: error.message || "Please try again",
-      })
+      });
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   return (
     <AuthLayout
@@ -111,9 +111,13 @@ const Signup = () => {
       </form>
 
       <AuthDivider />
-      <AuthAltLink text="Already have an account?" linkText="Sign In" to="/login" />
+      <AuthAltLink
+        text="Already have an account?"
+        linkText="Sign In"
+        to="/login"
+      />
     </AuthLayout>
-  )
-}
+  );
+};
 
-export default Signup
+export default Signup;

@@ -1,7 +1,7 @@
-import { useState, useEffect, useCallback } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import HorizontalLoader from '../components/HorizontalLoader'
+import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
+import HorizontalLoader from "../components/HorizontalLoader";
 import {
   Search,
   Plus,
@@ -16,259 +16,297 @@ import {
   Clock,
   Target,
   Award,
-} from 'lucide-react'
-import { toast } from 'sonner'
-import { Button } from '../components/ui/button'
-import { Input } from '../components/ui/input'
-import { Textarea } from '../components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select'
-import { Badge } from '../components/ui/badge'
-import challengeService from '../services/challengeService'
-import { useAuth } from '../contexts/AuthContext'
-import { getAvatarProps } from '../utils/avatarUtils'
+} from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import { Badge } from "../components/ui/badge";
+import challengeService from "../services/challengeService";
+import { useAuth } from "../contexts/AuthContext";
+import { getAvatarProps } from "../utils/avatarUtils";
 
 const DIFFICULTY_COLORS = {
-  beginner: 'bg-green-100 text-green-800 px-3 py-1.5 border border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700',
-  intermediate: 'bg-yellow-100 text-yellow-800 px-3 py-1.5 border border-yellow-300 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-700',
-  advanced: 'bg-red-100 text-red-800 px-3 py-1.5 border border-red-300 dark:bg-red-900 dark:text-red-200 dark:border-red-700',
-}
+  beginner:
+    "bg-green-100 text-green-800 px-3 py-1.5 border border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700",
+  intermediate:
+    "bg-yellow-100 text-yellow-800 px-3 py-1.5 border border-yellow-300 dark:bg-yellow-900 dark:text-yellow-200 dark:border-yellow-700",
+  advanced:
+    "bg-red-100 text-red-800 px-3 py-1.5 border border-red-300 dark:bg-red-900 dark:text-red-200 dark:border-red-700",
+};
 
 const DIFFICULTY_ICONS = {
-  beginner: '🟢',
-  intermediate: '🟡',
-  advanced: '🔴',
-}
+  beginner: "🟢",
+  intermediate: "🟡",
+  advanced: "🔴",
+};
 
 const CHALLENGE_CATEGORIES = [
-  'JavaScript',
-  'Python',
-  'React',
-  'Node.js',
-  'Data Structures',
-  'Algorithms',
-  'Web Development',
-  'Database',
-  'API Development',
-  'System Design',
-  'Frontend',
-  'Backend',
-  'Full Stack',
-  'Mobile Development',
-  'DevOps',
-  'Security',
-  'Testing',
-  'Other',
-]
+  "JavaScript",
+  "Python",
+  "React",
+  "Node.js",
+  "Data Structures",
+  "Algorithms",
+  "Web Development",
+  "Database",
+  "API Development",
+  "System Design",
+  "Frontend",
+  "Backend",
+  "Full Stack",
+  "Mobile Development",
+  "DevOps",
+  "Security",
+  "Testing",
+  "Other",
+];
 
 const Challenges = () => {
-  document.title = 'Challenges - Practice & Learn'
+  document.title = "Challenges - Practice & Learn";
 
-  const { user } = useAuth()
-  const navigate = useNavigate()
-  const [challenges, setChallenges] = useState([])
-  const [categories, setCategories] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [selectedDifficulty, setSelectedDifficulty] = useState('all')
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [activeTab, setActiveTab] = useState('all') // 'all' or 'completed'
-  const [showCreateModal, setShowCreateModal] = useState(false)
-  const [editingChallenge, setEditingChallenge] = useState(null)
-  const [completedChallenges, setCompletedChallenges] = useState(new Set())
-  const [totalPoints, setTotalPoints] = useState(0)
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [challenges, setChallenges] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedDifficulty, setSelectedDifficulty] = useState("all");
+  const [selectedCategory, setSelectedCategory] = useState("all");
+  const [activeTab, setActiveTab] = useState("all"); // 'all' or 'completed'
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingChallenge, setEditingChallenge] = useState(null);
+  const [completedChallenges, setCompletedChallenges] = useState(new Set());
+  const [totalPoints, setTotalPoints] = useState(0);
 
   const [newChallenge, setNewChallenge] = useState({
-    title: '',
-    description: '',
-    difficulty: 'beginner',
-    category: '',
-    instructions: '',
-    starterCode: '',
-    answer: '',
-    testCases: '',
+    title: "",
+    description: "",
+    difficulty: "beginner",
+    category: "",
+    instructions: "",
+    starterCode: "",
+    answer: "",
+    testCases: "",
     points: 10,
-    tags: '',
-  })
+    tags: "",
+  });
 
   const loadCategories = useCallback(async () => {
     try {
-      const response = await challengeService.getCategories()
-      const apiCategories = response.categories || []
-      const allCategories = [...new Set([...CHALLENGE_CATEGORIES, ...apiCategories])]
-      setCategories(allCategories.sort())
+      const response = await challengeService.getCategories();
+      const apiCategories = response.categories || [];
+      const allCategories = [
+        ...new Set([...CHALLENGE_CATEGORIES, ...apiCategories]),
+      ];
+      setCategories(allCategories.sort());
     } catch (error) {
-      console.error('Error loading categories:', error)
-      setCategories(CHALLENGE_CATEGORIES.sort())
+      console.error("Error loading categories:", error);
+      setCategories(CHALLENGE_CATEGORIES.sort());
     }
-  }, [])
+  }, []);
 
   const loadChallenges = useCallback(async () => {
     try {
-      setLoading(true)
+      setLoading(true);
 
-      if (activeTab === 'completed') {
-        const response = await challengeService.getMyChallenges()
-        let completedChallenges = response.challenges || []
+      if (activeTab === "completed") {
+        const response = await challengeService.getMyChallenges();
+        let completedChallenges = response.challenges || [];
 
-        if (selectedDifficulty && selectedDifficulty !== 'all') {
-          completedChallenges = completedChallenges.filter(c => c.difficulty === selectedDifficulty)
+        if (selectedDifficulty && selectedDifficulty !== "all") {
+          completedChallenges = completedChallenges.filter(
+            (c) => c.difficulty === selectedDifficulty,
+          );
         }
-        if (selectedCategory && selectedCategory !== 'all') {
-          completedChallenges = completedChallenges.filter(c => c.category === selectedCategory)
+        if (selectedCategory && selectedCategory !== "all") {
+          completedChallenges = completedChallenges.filter(
+            (c) => c.category === selectedCategory,
+          );
         }
         if (searchTerm) {
-          const searchLower = searchTerm.toLowerCase()
-          completedChallenges = completedChallenges.filter(c => 
-            c.title.toLowerCase().includes(searchLower) || 
-            c.description.toLowerCase().includes(searchLower)
-          )
+          const searchLower = searchTerm.toLowerCase();
+          completedChallenges = completedChallenges.filter(
+            (c) =>
+              c.title.toLowerCase().includes(searchLower) ||
+              c.description.toLowerCase().includes(searchLower),
+          );
         }
-        
-        setChallenges(completedChallenges)
-        setTotalPoints(response.totalPoints || 0)
-      } else {
 
+        setChallenges(completedChallenges);
+        setTotalPoints(response.totalPoints || 0);
+      } else {
         const filters = {
-          difficulty: selectedDifficulty && selectedDifficulty !== 'all' ? selectedDifficulty : undefined,
-          category: selectedCategory && selectedCategory !== 'all' ? selectedCategory : undefined,
+          difficulty:
+            selectedDifficulty && selectedDifficulty !== "all"
+              ? selectedDifficulty
+              : undefined,
+          category:
+            selectedCategory && selectedCategory !== "all"
+              ? selectedCategory
+              : undefined,
           search: searchTerm || undefined,
-        }
-        const response = await challengeService.getChallenges(filters)
-        setChallenges(response.challenges || [])
+        };
+        const response = await challengeService.getChallenges(filters);
+        setChallenges(response.challenges || []);
       }
     } catch (error) {
-      console.error('Error loading challenges:', error)
-      toast.error(error.message || 'Failed to load challenges')
+      console.error("Error loading challenges:", error);
+      toast.error(error.message || "Failed to load challenges");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [selectedDifficulty, selectedCategory, searchTerm, activeTab])
+  }, [selectedDifficulty, selectedCategory, searchTerm, activeTab]);
 
   useEffect(() => {
-    loadCategories()
-  }, [loadCategories])
+    loadCategories();
+  }, [loadCategories]);
 
   useEffect(() => {
-    loadChallenges()
-  }, [loadChallenges])
+    loadChallenges();
+  }, [loadChallenges]);
 
   const handleCreateChallenge = async () => {
-
     if (!editingChallenge && totalPoints < 50) {
-      toast.error(`You need at least 50 challenge points to create a challenge. You currently have ${totalPoints} points.`)
-      return
+      toast.error(
+        `You need at least 50 challenge points to create a challenge. You currently have ${totalPoints} points.`,
+      );
+      return;
     }
 
-    if (!newChallenge.title || !newChallenge.description || !newChallenge.category || !newChallenge.instructions || !newChallenge.answer) {
-      toast.error('Please fill in all required fields including the answer')
-      return
+    if (
+      !newChallenge.title ||
+      !newChallenge.description ||
+      !newChallenge.category ||
+      !newChallenge.instructions ||
+      !newChallenge.answer
+    ) {
+      toast.error("Please fill in all required fields including the answer");
+      return;
     }
 
     try {
-      setLoading(true)
+      setLoading(true);
       const challengeData = {
         ...newChallenge,
-        tags: newChallenge.tags ? newChallenge.tags.split(',').map((t) => t.trim()) : [],
+        tags: newChallenge.tags
+          ? newChallenge.tags.split(",").map((t) => t.trim())
+          : [],
         testCases: newChallenge.testCases
-          ? newChallenge.testCases.split('\n').map((tc) => {
-              const parts = tc.split('|')
+          ? newChallenge.testCases.split("\n").map((tc) => {
+              const parts = tc.split("|");
               return {
-                input: parts[0]?.trim() || '',
-                expectedOutput: parts[1]?.trim() || '',
-                description: parts[2]?.trim() || '',
-              }
+                input: parts[0]?.trim() || "",
+                expectedOutput: parts[1]?.trim() || "",
+                description: parts[2]?.trim() || "",
+              };
             })
           : [],
-      }
+      };
 
       if (editingChallenge) {
-        await challengeService.updateChallenge(editingChallenge._id, challengeData)
-        toast.success('Challenge updated successfully!')
+        await challengeService.updateChallenge(
+          editingChallenge._id,
+          challengeData,
+        );
+        toast.success("Challenge updated successfully!");
       } else {
-        await challengeService.createChallenge(challengeData)
-        toast.success('Challenge created successfully!')
+        await challengeService.createChallenge(challengeData);
+        toast.success("Challenge created successfully!");
       }
 
-      setShowCreateModal(false)
+      setShowCreateModal(false);
       setNewChallenge({
-        title: '',
-        description: '',
-        difficulty: 'beginner',
-        category: '',
-        instructions: '',
-        starterCode: '',
-        answer: '',
-        testCases: '',
+        title: "",
+        description: "",
+        difficulty: "beginner",
+        category: "",
+        instructions: "",
+        starterCode: "",
+        answer: "",
+        testCases: "",
         points: 10,
-        tags: '',
-      })
-      setEditingChallenge(null)
-      await loadChallenges()
-      await loadCategories()
+        tags: "",
+      });
+      setEditingChallenge(null);
+      await loadChallenges();
+      await loadCategories();
     } catch (error) {
-      console.error('Error creating challenge:', error)
-      toast.error(error.message || 'Failed to create challenge')
+      console.error("Error creating challenge:", error);
+      toast.error(error.message || "Failed to create challenge");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleDeleteChallenge = async (challengeId) => {
-    if (!window.confirm('Are you sure you want to delete this challenge?')) {
-      return
+    if (!window.confirm("Are you sure you want to delete this challenge?")) {
+      return;
     }
 
     try {
-      setLoading(true)
-      await challengeService.deleteChallenge(challengeId)
-      toast.success('Challenge deleted successfully!')
-      await loadChallenges()
+      setLoading(true);
+      await challengeService.deleteChallenge(challengeId);
+      toast.success("Challenge deleted successfully!");
+      await loadChallenges();
     } catch (error) {
-      console.error('Error deleting challenge:', error)
-      toast.error(error.message || 'Failed to delete challenge')
+      console.error("Error deleting challenge:", error);
+      toast.error(error.message || "Failed to delete challenge");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleEditChallenge = (challenge) => {
-    setEditingChallenge(challenge)
+    setEditingChallenge(challenge);
     setNewChallenge({
       title: challenge.title,
       description: challenge.description,
       difficulty: challenge.difficulty,
       category: challenge.category,
       instructions: challenge.instructions,
-      starterCode: challenge.starterCode || '',
-      answer: challenge.answer || '',
+      starterCode: challenge.starterCode || "",
+      answer: challenge.answer || "",
       testCases: challenge.testCases
-        ? challenge.testCases.map((tc) => `${tc.input}|${tc.expectedOutput}|${tc.description || ''}`).join('\n')
-        : '',
+        ? challenge.testCases
+            .map(
+              (tc) =>
+                `${tc.input}|${tc.expectedOutput}|${tc.description || ""}`,
+            )
+            .join("\n")
+        : "",
       points: challenge.points,
-      tags: challenge.tags ? challenge.tags.join(', ') : '',
-    })
-    setShowCreateModal(true)
-  }
+      tags: challenge.tags ? challenge.tags.join(", ") : "",
+    });
+    setShowCreateModal(true);
+  };
 
   const handleViewChallenge = (challengeId) => {
-    navigate(`/dashboard/challenges/${challengeId}`)
-  }
+    navigate(`/dashboard/challenges/${challengeId}`);
+  };
 
   useEffect(() => {
     const loadCompletedChallenges = async () => {
       try {
-        const response = await challengeService.getMyChallenges()
-        const completedIds = response.challenges.map(c => c._id)
-        setCompletedChallenges(new Set(completedIds))
-        setTotalPoints(response.totalPoints || 0)
+        const response = await challengeService.getMyChallenges();
+        const completedIds = response.challenges.map((c) => c._id);
+        setCompletedChallenges(new Set(completedIds));
+        setTotalPoints(response.totalPoints || 0);
       } catch (error) {
-        console.error('Error loading completed challenges:', error)
+        console.error("Error loading completed challenges:", error);
       }
-    }
+    };
     if (user) {
-      loadCompletedChallenges()
+      loadCompletedChallenges();
     }
-  }, [user])
+  }, [user]);
 
   if (loading && challenges.length === 0) {
     return (
@@ -278,7 +316,7 @@ const Challenges = () => {
         progress={75}
         className="min-h-screen"
       />
-    )
+    );
   }
 
   return (
@@ -292,16 +330,19 @@ const Challenges = () => {
             </div>
             <h1 className="text-2xl font-bold">Challenges</h1>
           </div>
-            <div className="ml-auto flex items-center gap-4">
-             <div className="flex items-center gap-2 p-2 border-2 pr-10 rounded-[15px] border-gray-300 dark:border-gray-700">
-               <div className="flex items-center justify-center bg-white dark:bg-[rgba(255,255,255,.1)] w-[40px] h-[40px] rounded-[15px]">
-                 <Award className="w-5 h-5 text-yellow-500" />
-               </div>
-               <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-                 Challenge Points: <span className="text-black dark:text-white font-bold">{totalPoints}</span>
-               </span>
-             </div>
-           </div>
+          <div className="ml-auto flex items-center gap-4">
+            <div className="flex items-center gap-2 p-2 border-2 pr-10 rounded-[15px] border-gray-300 dark:border-gray-700">
+              <div className="flex items-center justify-center bg-white dark:bg-[rgba(255,255,255,.1)] w-[40px] h-[40px] rounded-[15px]">
+                <Award className="w-5 h-5 text-yellow-500" />
+              </div>
+              <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                Challenge Points:{" "}
+                <span className="text-black dark:text-white font-bold">
+                  {totalPoints}
+                </span>
+              </span>
+            </div>
+          </div>
         </div>
 
         <motion.div
@@ -312,21 +353,21 @@ const Challenges = () => {
           {/* Tabs */}
           <div className="flex gap-2 mb-6">
             <button
-              onClick={() => setActiveTab('all')}
+              onClick={() => setActiveTab("all")}
               className={`w-[200px] h-12 rounded-[15px] text-sm cursor-pointer font-medium transition-colors ${
-                activeTab === 'all'
-                  ? 'bg-[#ff914b] dark:bg-white text-white dark:text-black'
-                  : 'bg-white dark:bg-[rgba(255,255,255,.1)] text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700'
+                activeTab === "all"
+                  ? "bg-[#ff914b] dark:bg-white text-white dark:text-black"
+                  : "bg-white dark:bg-[rgba(255,255,255,.1)] text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700"
               }`}
             >
               All Challenges
             </button>
             <button
-              onClick={() => setActiveTab('completed')}
+              onClick={() => setActiveTab("completed")}
               className={`w-[200px] h-12 text-sm rounded-[15px] cursor-pointer font-medium transition-colors ${
-                activeTab === 'completed'
-                  ? 'bg-[#ff914b] dark:bg-white text-white dark:text-black'
-                  : 'bg-white dark:bg-[rgba(255,255,255,.1)] text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700'
+                activeTab === "completed"
+                  ? "bg-[#ff914b] dark:bg-white text-white dark:text-black"
+                  : "bg-white dark:bg-[rgba(255,255,255,.1)] text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-gray-700"
               }`}
             >
               My Completed
@@ -344,25 +385,54 @@ const Challenges = () => {
                 className="w-full pl-10 h-12 max-w-[600px] border-gray-200 dark:border-gray-700 bg-white dark:bg-transparent text-black dark:text-white"
               />
             </div>
-            <Select value={selectedDifficulty} onValueChange={setSelectedDifficulty}>
+            <Select
+              value={selectedDifficulty}
+              onValueChange={setSelectedDifficulty}
+            >
               <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
                 <SelectValue placeholder="Select Difficulty" />
               </SelectTrigger>
               <SelectContent className="bg-white dark:bg-[black]">
-                <SelectItem className={'h-10 cursor-pointer px-5'} value="all">Select Difficulty</SelectItem>
-                <SelectItem className={'h-10 cursor-pointer px-5'} value="beginner">Beginner</SelectItem>
-                <SelectItem className={'h-10 cursor-pointer px-5'} value="intermediate">Intermediate</SelectItem>
-                <SelectItem className={'h-10 cursor-pointer px-5'} value="advanced">Advanced</SelectItem>
+                <SelectItem className={"h-10 cursor-pointer px-5"} value="all">
+                  Select Difficulty
+                </SelectItem>
+                <SelectItem
+                  className={"h-10 cursor-pointer px-5"}
+                  value="beginner"
+                >
+                  Beginner
+                </SelectItem>
+                <SelectItem
+                  className={"h-10 cursor-pointer px-5"}
+                  value="intermediate"
+                >
+                  Intermediate
+                </SelectItem>
+                <SelectItem
+                  className={"h-10 cursor-pointer px-5"}
+                  value="advanced"
+                >
+                  Advanced
+                </SelectItem>
               </SelectContent>
             </Select>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+            <Select
+              value={selectedCategory}
+              onValueChange={setSelectedCategory}
+            >
               <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
                 <SelectValue placeholder="Select Category" />
               </SelectTrigger>
               <SelectContent className="bg-white dark:bg-[black]">
-                <SelectItem className={'h-10 cursor-pointer px-5'} value="all">Select Category</SelectItem>
+                <SelectItem className={"h-10 cursor-pointer px-5"} value="all">
+                  Select Category
+                </SelectItem>
                 {categories.map((cat) => (
-                  <SelectItem key={cat} className={'h-10 cursor-pointer px-5'} value={cat}>
+                  <SelectItem
+                    key={cat}
+                    className={"h-10 cursor-pointer px-5"}
+                    value={cat}
+                  >
                     {cat}
                   </SelectItem>
                 ))}
@@ -371,14 +441,20 @@ const Challenges = () => {
             <Button
               onClick={() => {
                 if (totalPoints < 50) {
-                  toast.error(`You need at least 50 challenge points to create a challenge. You currently have ${totalPoints} points. Keep solving challenges to unlock this feature!`)
-                  return
+                  toast.error(
+                    `You need at least 50 challenge points to create a challenge. You currently have ${totalPoints} points. Keep solving challenges to unlock this feature!`,
+                  );
+                  return;
                 }
-                setShowCreateModal(true)
+                setShowCreateModal(true);
               }}
               disabled={totalPoints < 50}
               className="bg-black w-[200px] dark:bg-white text-white dark:text-black hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed relative group"
-              title={totalPoints < 50 ? `You need at least 50 challenge points to create a challenge. You currently have ${totalPoints} points. Keep solving challenges to unlock this feature!` : 'Create Challenge'}
+              title={
+                totalPoints < 50
+                  ? `You need at least 50 challenge points to create a challenge. You currently have ${totalPoints} points. Keep solving challenges to unlock this feature!`
+                  : "Create Challenge"
+              }
             >
               <Plus className="w-4 h-4 icon mr-2" />
               Create Challenge
@@ -406,7 +482,8 @@ const Challenges = () => {
                 <div className="flex items-center gap-2 flex-wrap">
                   <Code className="w-5 h-5 text-gray-700 dark:text-gray-300" />
                   <Badge className={DIFFICULTY_COLORS[challenge.difficulty]}>
-                    {DIFFICULTY_ICONS[challenge.difficulty]} {challenge.difficulty}
+                    {DIFFICULTY_ICONS[challenge.difficulty]}{" "}
+                    {challenge.difficulty}
                   </Badge>
                   {completedChallenges.has(challenge._id) && (
                     <Badge className="bg-green-100 text-green-800 px-3 py-1.5 border border-green-300 dark:bg-green-900 dark:text-green-200 dark:border-green-700">
@@ -417,7 +494,9 @@ const Challenges = () => {
                 </div>
                 <div className="flex items-center gap-1 text-gray-700 dark:text-gray-300">
                   <Star className="w-4 h-4 icon" />
-                  <span className="text-sm font-semibold">{challenge.points}</span>
+                  <span className="text-sm font-semibold">
+                    {challenge.points}
+                  </span>
                 </div>
               </div>
 
@@ -429,15 +508,18 @@ const Challenges = () => {
               </p>
 
               <div className="flex items-center justify-between">
-                <Badge variant="outline" className="px-3 py-1.5 border border-gray-300 dark:border-gray-700">
+                <Badge
+                  variant="outline"
+                  className="px-3 py-1.5 border border-gray-300 dark:border-gray-700"
+                >
                   {challenge.category}
                 </Badge>
                 {user && challenge.createdBy?._id === user.id && (
                   <div className="flex gap-2">
                     <button
                       onClick={(e) => {
-                        e.stopPropagation()
-                        handleEditChallenge(challenge)
+                        e.stopPropagation();
+                        handleEditChallenge(challenge);
                       }}
                       className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-[15px]"
                     >
@@ -445,8 +527,8 @@ const Challenges = () => {
                     </button>
                     <button
                       onClick={(e) => {
-                        e.stopPropagation()
-                        handleDeleteChallenge(challenge._id)
+                        e.stopPropagation();
+                        handleDeleteChallenge(challenge._id);
                       }}
                       className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-[15px]"
                     >
@@ -462,7 +544,9 @@ const Challenges = () => {
         {challenges.length === 0 && !loading && (
           <div className="text-center py-20">
             <Trophy className="w-16 h-16 text-gray-400 dark:text-gray-500 mx-auto mb-4" />
-            <p className="text-gray-600 dark:text-gray-400">No challenges found. Create one to get started!</p>
+            <p className="text-gray-600 dark:text-gray-400">
+              No challenges found. Create one to get started!
+            </p>
           </div>
         )}
       </div>
@@ -484,7 +568,7 @@ const Challenges = () => {
             <div className="flex items-center justify-between mb-6">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-                  {editingChallenge ? 'Edit Challenge' : 'Create Challenge'}
+                  {editingChallenge ? "Edit Challenge" : "Create Challenge"}
                 </h2>
                 {!editingChallenge && totalPoints < 50 && (
                   <p className="text-sm text-red-600 dark:text-red-400 mt-1">
@@ -504,38 +588,68 @@ const Challenges = () => {
               <Input
                 placeholder="Challenge Title *"
                 value={newChallenge.title}
-                onChange={(e) => setNewChallenge({ ...newChallenge, title: e.target.value })}
+                onChange={(e) =>
+                  setNewChallenge({ ...newChallenge, title: e.target.value })
+                }
               />
               <Textarea
                 placeholder="Description *"
                 value={newChallenge.description}
-                onChange={(e) => setNewChallenge({ ...newChallenge, description: e.target.value })}
+                onChange={(e) =>
+                  setNewChallenge({
+                    ...newChallenge,
+                    description: e.target.value,
+                  })
+                }
                 rows={3}
               />
               <div className="grid grid-cols-2 gap-4">
                 <Select
                   value={newChallenge.difficulty}
-                  onValueChange={(value) => setNewChallenge({ ...newChallenge, difficulty: value })}
+                  onValueChange={(value) =>
+                    setNewChallenge({ ...newChallenge, difficulty: value })
+                  }
                 >
                   <SelectTrigger className="w-full px-5 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
                     <SelectValue placeholder="Difficulty *" />
                   </SelectTrigger>
                   <SelectContent className="bg-white dark:bg-[black]">
-                    <SelectItem className={'h-10 cursor-pointer px-5'} value="beginner">Beginner</SelectItem>
-                    <SelectItem className={'h-10 cursor-pointer px-5'} value="intermediate">Intermediate</SelectItem>
-                    <SelectItem className={'h-10 cursor-pointer px-5'} value="advanced">Advanced</SelectItem>
+                    <SelectItem
+                      className={"h-10 cursor-pointer px-5"}
+                      value="beginner"
+                    >
+                      Beginner
+                    </SelectItem>
+                    <SelectItem
+                      className={"h-10 cursor-pointer px-5"}
+                      value="intermediate"
+                    >
+                      Intermediate
+                    </SelectItem>
+                    <SelectItem
+                      className={"h-10 cursor-pointer px-5"}
+                      value="advanced"
+                    >
+                      Advanced
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <Select
                   value={newChallenge.category}
-                  onValueChange={(value) => setNewChallenge({ ...newChallenge, category: value })}
+                  onValueChange={(value) =>
+                    setNewChallenge({ ...newChallenge, category: value })
+                  }
                 >
                   <SelectTrigger className="w-full px-5 h-13 bg-white dark:bg-transparent cursor-pointer dark:text-white">
                     <SelectValue placeholder="Category *" />
                   </SelectTrigger>
                   <SelectContent className="bg-white dark:bg-[black]">
                     {categories.map((cat) => (
-                      <SelectItem key={cat} className={'h-10 cursor-pointer px-5'} value={cat}>
+                      <SelectItem
+                        key={cat}
+                        className={"h-10 cursor-pointer px-5"}
+                        value={cat}
+                      >
                         {cat}
                       </SelectItem>
                     ))}
@@ -545,57 +659,78 @@ const Challenges = () => {
               <Textarea
                 placeholder="Instructions * (Markdown supported)"
                 value={newChallenge.instructions}
-                onChange={(e) => setNewChallenge({ ...newChallenge, instructions: e.target.value })}
+                onChange={(e) =>
+                  setNewChallenge({
+                    ...newChallenge,
+                    instructions: e.target.value,
+                  })
+                }
                 rows={5}
               />
               <Textarea
                 placeholder="Starter Code (optional)"
                 value={newChallenge.starterCode}
-                onChange={(e) => setNewChallenge({ ...newChallenge, starterCode: e.target.value })}
+                onChange={(e) =>
+                  setNewChallenge({
+                    ...newChallenge,
+                    starterCode: e.target.value,
+                  })
+                }
                 rows={5}
                 className="font-mono text-sm"
               />
               <Input
                 placeholder="Expected Answer/Output *"
                 value={newChallenge.answer}
-                onChange={(e) => setNewChallenge({ ...newChallenge, answer: e.target.value })}
+                onChange={(e) =>
+                  setNewChallenge({ ...newChallenge, answer: e.target.value })
+                }
                 className="font-mono text-sm"
               />
-              
-            
+
               <div className="grid grid-cols-2 gap-4">
                 <Input
                   type="number"
                   placeholder="Points"
                   value={newChallenge.points}
-                  onChange={(e) => setNewChallenge({ ...newChallenge, points: parseInt(e.target.value) || 10 })}
+                  onChange={(e) =>
+                    setNewChallenge({
+                      ...newChallenge,
+                      points: parseInt(e.target.value) || 10,
+                    })
+                  }
                 />
                 <Input
                   placeholder="Tags (comma separated)"
                   value={newChallenge.tags}
-                  onChange={(e) => setNewChallenge({ ...newChallenge, tags: e.target.value })}
+                  onChange={(e) =>
+                    setNewChallenge({ ...newChallenge, tags: e.target.value })
+                  }
                 />
               </div>
             </div>
 
             <div className="flex gap-3 mt-6">
-              <Button variant="outline" onClick={() => setShowCreateModal(false)} className="flex-1">
+              <Button
+                variant="outline"
+                onClick={() => setShowCreateModal(false)}
+                className="flex-1"
+              >
                 Cancel
               </Button>
-              <Button 
-                onClick={handleCreateChallenge} 
+              <Button
+                onClick={handleCreateChallenge}
                 disabled={!editingChallenge && totalPoints < 50}
                 className="flex-1 bg-black dark:bg-white text-white dark:text-black hover:opacity-90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {editingChallenge ? 'Update' : 'Create'}
+                {editingChallenge ? "Update" : "Create"}
               </Button>
             </div>
           </motion.div>
         </motion.div>
       )}
-
     </div>
-  )
-}
+  );
+};
 
-export default Challenges
+export default Challenges;

@@ -1,21 +1,21 @@
-import { Moon, Sun } from 'lucide-react'
-import { motion, AnimatePresence } from 'framer-motion'
-import { useTheme } from '../contexts/ThemeContext'
+import { Moon, Sun } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useTheme } from "../contexts/ThemeContext";
 
-export const ThemeToggle = ({ className = '' }) => {
-  const { theme, toggleTheme } = useTheme()
+export const ThemeToggle = ({ className = "" }) => {
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <motion.button 
-      onClick={toggleTheme} 
+    <motion.button
+      onClick={toggleTheme}
       className={`border rounded-[15px] cursor-pointer hover:shadow-lg border-gray-300 dark:border-gray-700 ${className}`}
       whileHover={{ scale: 1.1 }}
       whileTap={{ scale: 0.9 }}
       transition={{ type: "spring", stiffness: 400, damping: 17 }}
-      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      aria-label={`Switch to ${theme === "light" ? "dark" : "light"} mode`}
     >
       <AnimatePresence mode="wait" initial={false}>
-        {theme === 'light' ? (
+        {theme === "light" ? (
           <motion.div
             key="moon"
             initial={{ y: -20, opacity: 0 }}
@@ -23,7 +23,7 @@ export const ThemeToggle = ({ className = '' }) => {
             exit={{ y: 20, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <Moon className='w-4 h-4 icon' />
+            <Moon className="w-4 h-4 icon" />
           </motion.div>
         ) : (
           <motion.div
@@ -33,10 +33,10 @@ export const ThemeToggle = ({ className = '' }) => {
             exit={{ y: 20, opacity: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <Sun className='w-4 h-4 icon' />
+            <Sun className="w-4 h-4 icon" />
           </motion.div>
         )}
       </AnimatePresence>
     </motion.button>
-  )
-}
+  );
+};

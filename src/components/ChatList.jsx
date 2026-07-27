@@ -1,57 +1,64 @@
-import React, { useEffect, useState } from 'react';
-import { useChat } from '../contexts/ChatContext';
-import { useAuth } from '../contexts/AuthContext';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { Badge } from './ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { MessageCircle, Plus, Search, Users } from 'lucide-react';
-import UserDetailsModal from './UserDetailsModal';
+import React, { useEffect, useState } from "react";
+import { useChat } from "../contexts/ChatContext";
+import { useAuth } from "../contexts/AuthContext";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
+import { Badge } from "./ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { MessageCircle, Plus, Search, Users } from "lucide-react";
+import UserDetailsModal from "./UserDetailsModal";
 
 const ChatList = () => {
   const { user } = useAuth();
-  const { 
-    chats, 
-    currentChat, 
-    setCurrentChat, 
-    unreadCount, 
-    getChatName, 
+  const {
+    chats,
+    currentChat,
+    setCurrentChat,
+    unreadCount,
+    getChatName,
     getChatAvatar,
     isUserOnline,
-    chatsLoading 
+    chatsLoading,
   } = useChat();
 
   const getAvatarUrl = (avatar) => {
     if (!avatar) return null;
 
-    if (avatar.startsWith('http')) return avatar;
+    if (avatar.startsWith("http")) return avatar;
 
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
-    return `${apiUrl}${avatar.startsWith('/') ? '' : '/'}${avatar}`;
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
+    return `${apiUrl}${avatar.startsWith("/") ? "" : "/"}${avatar}`;
   };
-  
-  const [searchTerm, setSearchTerm] = useState('');
+
+  const [searchTerm, setSearchTerm] = useState("");
   const [showCreateChat, setShowCreateChat] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [showUserDetails, setShowUserDetails] = useState(false);
 
-  const filteredChats = chats.filter(chat => 
-    getChatName(chat).toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredChats = chats.filter((chat) =>
+    getChatName(chat).toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const formatTime = (date) => {
-    if (!date) return '';
+    if (!date) return "";
     const now = new Date();
     const messageDate = new Date(date);
     const diffInHours = (now - messageDate) / (1000 * 60 * 60);
-    
+
     if (diffInHours < 24) {
-      return messageDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    } else if (diffInHours < 168) { // 7 days
-      return messageDate.toLocaleDateString([], { weekday: 'short' });
+      return messageDate.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+    } else if (diffInHours < 168) {
+      // 7 days
+      return messageDate.toLocaleDateString([], { weekday: "short" });
     } else {
-      return messageDate.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      return messageDate.toLocaleDateString([], {
+        month: "short",
+        day: "numeric",
+      });
     }
   };
 
@@ -110,8 +117,14 @@ const ChatList = () => {
           <div className="flex items-center justify-center h-20">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-primary rounded-[15px] animate-bounce"></div>
-              <div className="w-2 h-2 bg-primary rounded-[15px] animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-              <div className="w-2 h-2 bg-primary rounded-[15px] animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+              <div
+                className="w-2 h-2 bg-primary rounded-[15px] animate-bounce"
+                style={{ animationDelay: "0.1s" }}
+              ></div>
+              <div
+                className="w-2 h-2 bg-primary rounded-[15px] animate-bounce"
+                style={{ animationDelay: "0.2s" }}
+              ></div>
             </div>
           </div>
         ) : filteredChats.length === 0 ? (
@@ -139,17 +152,29 @@ const ChatList = () => {
                 <Card
                   key={chat._id}
                   className={`cursor-pointer border dark:bg-transparent bg-transparent rounded-[15px] ${
-                    isActive ? 'bg-white border bg-white dark:bg-[rgba(255,255,255,.1)]' : ''
+                    isActive
+                      ? "bg-white border bg-white dark:bg-[rgba(255,255,255,.1)]"
+                      : ""
                   }`}
                   onClick={() => setCurrentChat(chat)}
                 >
                   <CardContent>
                     <div className="flex items-center gap-3">
                       <div className="relative">
-                        <Avatar 
+                        <Avatar
                           className="h-10 w-10 border border-gray-300 dark:border-gray-700 cursor-pointer hover:opacity-80 transition-opacity"
-                          onClick={(e) => otherParticipant && handleUserAvatarClick(e, otherParticipant._id || otherParticipant.id)}
-                          title={otherParticipant?.username ? `View ${otherParticipant.username}'s profile` : 'View profile'}
+                          onClick={(e) =>
+                            otherParticipant &&
+                            handleUserAvatarClick(
+                              e,
+                              otherParticipant._id || otherParticipant.id,
+                            )
+                          }
+                          title={
+                            otherParticipant?.username
+                              ? `View ${otherParticipant.username}'s profile`
+                              : "View profile"
+                          }
                         >
                           <AvatarImage src={getAvatarUrl(chatAvatar)} />
                           <AvatarFallback>
@@ -160,7 +185,7 @@ const ChatList = () => {
                           <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-[15px]"></div>
                         )}
                       </div>
-                      
+
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                           <h3 className="font-medium text-sm truncate">
@@ -170,13 +195,16 @@ const ChatList = () => {
                             {formatTime(chat.lastMessageAt)}
                           </span>
                         </div>
-                        
+
                         <div className="flex items-center gap-2 mt-2">
                           <p className="text-xs text-muted-foreground truncate">
-                            {chat.lastMessage?.content || 'No messages yet'}
+                            {chat.lastMessage?.content || "No messages yet"}
                           </p>
                           {chat.unreadCount > 0 && (
-                            <Badge variant="destructive" className="h-5 w-5 p-0 text-xs flex items-center justify-center">
+                            <Badge
+                              variant="destructive"
+                              className="h-5 w-5 p-0 text-xs flex items-center justify-center"
+                            >
                               {chat.unreadCount}
                             </Badge>
                           )}

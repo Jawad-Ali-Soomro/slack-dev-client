@@ -1,178 +1,205 @@
-import { useState, useEffect, useCallback } from 'react'
-import { motion } from 'framer-motion'
-import { 
-  Search, 
-  Plus, 
-  Edit, 
-  Trash2, 
-  Users, 
-  MoreVertical, 
+import { useState, useEffect, useCallback } from "react";
+import { motion } from "framer-motion";
+import {
+  Search,
+  Plus,
+  Edit,
+  Trash2,
+  Users,
+  MoreVertical,
   Settings,
   UserPlus,
   X,
   Crown,
   Shield,
-  User
-} from 'lucide-react'
-import { toast } from 'sonner'
-import { Button } from '../components/ui/button'
-import { Input } from '../components/ui/input'
-import { Textarea } from '../components/ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '../components/ui/dropdown-menu'
-import teamService from '../services/teamService'
-import { useAuth } from '../contexts/AuthContext'
-import { useNotifications } from '../contexts/NotificationContext'
-import { getAvatarProps } from '../utils/avatarUtils'
-import StatsCard from '../components/StatsCard'
-import { Skeleton } from '@/components/ui/skeleton'
-import { getButtonClasses, getInputClasses, COLOR_THEME, ICON_SIZES } from '../utils/uiConstants'
-import UserDetailsModal from '../components/UserDetailsModal'
+  User,
+  Calendar,
+} from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "../components/ui/button";
+import { Input } from "../components/ui/input";
+import { Textarea } from "../components/ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
+import teamService from "../services/teamService";
+import { useAuth } from "../contexts/AuthContext";
+import { useNotifications } from "../contexts/NotificationContext";
+import { getAvatarProps } from "../utils/avatarUtils";
+import StatsCard from "../components/StatsCard";
+import { Skeleton } from "@/components/ui/skeleton";
+import {
+  getButtonClasses,
+  getInputClasses,
+  COLOR_THEME,
+  ICON_SIZES,
+} from "../utils/uiConstants";
+import UserDetailsModal from "../components/UserDetailsModal";
+import { PiUsersDuotone } from "react-icons/pi";
 
 const Teams = () => {
-  const { user } = useAuth()
-  const { markAsReadByType } = useNotifications()
-  const [searchTerm, setSearchTerm] = useState('')
-  const [showNewTeamPopup, setShowNewTeamPopup] = useState(false)
-  const [selectedTeams, setSelectedTeams] = useState([])
-  const [filterRole, setFilterRole] = useState('all')
+  const { user } = useAuth();
+  const { markAsReadByType } = useNotifications();
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showNewTeamPopup, setShowNewTeamPopup] = useState(false);
+  const [selectedTeams, setSelectedTeams] = useState([]);
+  const [filterRole, setFilterRole] = useState("all");
   const [newTeam, setNewTeam] = useState({
-    name: '',
-    description: '',
-    isPublic: false
-  })
-  const [loading, setLoading] = useState(false)
-  const [statsLoading, setStatsLoading] = useState(true)
-  const [teams, setTeams] = useState([])
-  const [stats, setStats] = useState(null)
-  const [selectedUserId, setSelectedUserId] = useState(null)
-  const [showUserDetails, setShowUserDetails] = useState(false)
+    name: "",
+    description: "",
+    isPublic: false,
+  });
+  const [loading, setLoading] = useState(false);
+  const [statsLoading, setStatsLoading] = useState(true);
+  const [teams, setTeams] = useState([]);
+  const [stats, setStats] = useState(null);
+  const [selectedUserId, setSelectedUserId] = useState(null);
+  const [showUserDetails, setShowUserDetails] = useState(false);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 12,
     total: 0,
-    pages: 0
-  })
+    pages: 0,
+  });
 
   const loadTeams = useCallback(async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const response = await teamService.getTeams({
-        role: filterRole !== 'all' ? filterRole : undefined,
+        role: filterRole !== "all" ? filterRole : undefined,
         search: searchTerm || undefined,
         page: pagination.page,
-        limit: pagination.limit
-      })
-      setTeams(response.teams || [])
-      setPagination(response.pagination || pagination)
+        limit: pagination.limit,
+      });
+      setTeams(response.teams || []);
+      setPagination(response.pagination || pagination);
     } catch (error) {
-      console.error('Failed to load teams:', error)
-      toast.error('Failed to load teams')
+      console.error("Failed to load teams:", error);
+      toast.error("Failed to load teams");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [filterRole, searchTerm, pagination.page, pagination.limit])
+  }, [filterRole, searchTerm, pagination.page, pagination.limit]);
 
   const loadStats = useCallback(async () => {
     try {
-      setStatsLoading(true)
-      const response = await teamService.getTeamStats()
-      setStats(response.stats)
+      setStatsLoading(true);
+      const response = await teamService.getTeamStats();
+      setStats(response.stats);
     } catch (error) {
-      console.error('Failed to load stats:', error)
+      console.error("Failed to load stats:", error);
     } finally {
-      setStatsLoading(false)
+      setStatsLoading(false);
     }
-  }, [])
+  }, []);
 
   const handleUserAvatarClick = (userId) => {
     if (userId) {
-      setSelectedUserId(userId)
-      setShowUserDetails(true)
+      setSelectedUserId(userId);
+      setShowUserDetails(true);
     }
-  }
+  };
 
   useEffect(() => {
-    loadTeams()
-    loadStats()
-  }, [loadTeams, loadStats])
+    loadTeams();
+    loadStats();
+  }, [loadTeams, loadStats]);
 
   useEffect(() => {
     if (user && user.id) {
-      markAsReadByType('teams')
+      markAsReadByType("teams");
     }
-  }, [user, markAsReadByType])
+  }, [user, markAsReadByType]);
 
   const handleCreateTeam = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     if (!newTeam.name.trim()) {
-      toast.error('Team name is required')
-      return
+      toast.error("Team name is required");
+      return;
     }
 
     try {
-      setLoading(true)
-      const response = await teamService.createTeam(newTeam)
-      setTeams(prev => [response.team, ...prev])
-      setShowNewTeamPopup(false)
-      setNewTeam({ name: '', description: '', isPublic: false })
-      toast.success('Team created successfully!')
-      loadStats()
+      setLoading(true);
+      const response = await teamService.createTeam(newTeam);
+      setTeams((prev) => [response.team, ...prev]);
+      setShowNewTeamPopup(false);
+      setNewTeam({ name: "", description: "", isPublic: false });
+      toast.success("Team created successfully!");
+      loadStats();
     } catch (error) {
-      console.error('Error creating team:', error)
-      toast.error(error.message || 'Failed to create team')
+      console.error("Error creating team:", error);
+      toast.error(error.message || "Failed to create team");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleDeleteTeam = async (teamId) => {
-    if (!confirm('Are you sure you want to delete this team?')) return
+    if (!confirm("Are you sure you want to delete this team?")) return;
 
     try {
-      await teamService.deleteTeam(teamId)
-      setTeams(prev => prev.filter(team => team.id !== teamId))
-      toast.success('Team deleted successfully!')
-      loadStats()
+      await teamService.deleteTeam(teamId);
+      setTeams((prev) => prev.filter((team) => team.id !== teamId));
+      toast.success("Team deleted successfully!");
+      loadStats();
     } catch (error) {
-      console.error('Error deleting team:', error)
-      toast.error(error.message || 'Failed to delete team')
+      console.error("Error deleting team:", error);
+      toast.error(error.message || "Failed to delete team");
     }
-  }
+  };
 
   const getRoleColor = (role) => {
     switch (role) {
-      case 'owner': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-      case 'admin': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-      case 'member': return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200'
+      case "owner":
+        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
+      case "admin":
+        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+      case "member":
+        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
+      default:
+        return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
     }
-  }
+  };
 
   const getRoleIcon = (role) => {
     switch (role) {
-      case 'owner': return <Crown className="w-4 h-4 icon icon" />
-      case 'admin': return <Shield className="w-4 h-4 icon icon" />
-      case 'member': return <User className="w-4 h-4 icon icon" />
-      default: return <User className="w-4 h-4 icon icon" />
+      case "owner":
+        return <Crown className="w-4 h-4 icon icon" />;
+      case "admin":
+        return <Shield className="w-4 h-4 icon icon" />;
+      case "member":
+        return <User className="w-4 h-4 icon icon" />;
+      default:
+        return <User className="w-4 h-4 icon icon" />;
     }
-  }
+  };
 
-  const filteredTeams = teams.filter(team => {
-    const matchesSearch = team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         team.description.toLowerCase().includes(searchTerm.toLowerCase())
-    return matchesSearch
-  })
+  const filteredTeams = teams.filter((team) => {
+    const matchesSearch =
+      team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      team.description.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesSearch;
+  });
 
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.1
-      }
-    }
-  }
+        staggerChildren: 0.1,
+      },
+    },
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -180,10 +207,10 @@ const Teams = () => {
       opacity: 1,
       y: 0,
       transition: {
-        duration: 0.5
-      }
-    }
-  }
+        duration: 0.5,
+      },
+    },
+  };
 
   return (
     <div className="overflow-hidden pt-6 pl-6 pb-10">
@@ -194,15 +221,22 @@ const Teams = () => {
         animate="visible"
       >
         {/* Header */}
-        <motion.div variants={itemVariants} className="flex items-center justify-between mb-8">
+        <motion.div
+          variants={itemVariants}
+          className="flex items-center justify-between mb-8"
+        >
           <div>
-            <h1 className="text-3xl  text-gray-900 dark:text-white mb-2">Teams</h1>
-            <p className="text-gray-600 dark:text-gray-400">Manage your teams and collaborate with members</p>
+            <h1 className="text-3xl  text-gray-900 dark:text-white mb-2">
+              Teams
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              Manage your teams and collaborate with members
+            </p>
           </div>
           <div className="flex items-center gap-4">
             <Button
               onClick={() => setShowNewTeamPopup(true)}
-              className={'w-[200px] rounded-[15px] h-12'}
+              className={"w-[200px] rounded-[15px] h-12"}
             >
               <Plus className={ICON_SIZES.sm} />
               New Team
@@ -214,7 +248,10 @@ const Teams = () => {
         {statsLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="bg-white dark:bg-black rounded-[15px] border border-gray-200 dark:border-gray-700 p-6">
+              <div
+                key={i}
+                className="bg-white dark:bg-black rounded-[15px] border border-gray-200 dark:border-gray-700 p-6"
+              >
                 <div className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <Skeleton className="h-4 w-[100px] rounded-md" />
                   <Skeleton className="h-4 w-4 rounded-md" />
@@ -224,17 +261,20 @@ const Teams = () => {
             ))}
           </div>
         ) : stats ? (
-          <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <motion.div
+            variants={itemVariants}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          >
             <StatsCard
               title="Total Teams"
               value={stats.totalTeams}
-              icon={Users}
+              icon={PiUsersDuotone}
               color="gray"
             />
             <StatsCard
               title="My Teams"
               value={stats.myTeams}
-              icon={Users}
+              icon={PiUsersDuotone}
               color="blue"
             />
             <StatsCard
@@ -246,14 +286,17 @@ const Teams = () => {
             <StatsCard
               title="Active"
               value={stats.activeTeams}
-              icon={Users}
+              icon={PiUsersDuotone}
               color="purple"
             />
           </motion.div>
         ) : null}
 
         {/* Filters */}
-        <motion.div variants={itemVariants} className="flex flex-wrap justify-start items-center gap-4 mb-6">
+        <motion.div
+          variants={itemVariants}
+          className="flex flex-wrap justify-start items-center gap-4 mb-6"
+        >
           <div className="">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon icon" />
@@ -262,30 +305,48 @@ const Teams = () => {
                 placeholder="Search teams..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className={getInputClasses('default', 'md', 'pl-10 w-[350px] h-13')}
+                className={getInputClasses(
+                  "default",
+                  "md",
+                  "pl-10 w-[350px] h-13",
+                )}
               />
             </div>
           </div>
-          
+
           <Select value={filterRole} onValueChange={setFilterRole}>
             <SelectTrigger className="w-40 bg-white dark:bg-black h-13">
               <SelectValue placeholder="Role" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem className={'px-5 h-10 cursor-pointer'} value="all">All Roles</SelectItem>
-              <SelectItem className={'px-5 h-10 cursor-pointer'} value="owner">Owner</SelectItem>
-              <SelectItem className={'px-5 h-10 cursor-pointer'} value="admin">Admin</SelectItem>
-              <SelectItem className={'px-5 h-10 cursor-pointer'} value="member">Member</SelectItem>
+              <SelectItem className={"px-5 h-10 cursor-pointer"} value="all">
+                All Roles
+              </SelectItem>
+              <SelectItem className={"px-5 h-10 cursor-pointer"} value="owner">
+                Owner
+              </SelectItem>
+              <SelectItem className={"px-5 h-10 cursor-pointer"} value="admin">
+                Admin
+              </SelectItem>
+              <SelectItem className={"px-5 h-10 cursor-pointer"} value="member">
+                Member
+              </SelectItem>
             </SelectContent>
           </Select>
         </motion.div>
 
         {/* Teams Grid - skeleton until loading finished */}
-        <motion.div variants={itemVariants} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div
+          variants={itemVariants}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {loading ? (
             <>
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="bg-white dark:bg-black rounded-[15px] border border-gray-200 dark:border-gray-700 p-6">
+                <div
+                  key={i}
+                  className="bg-white dark:bg-black rounded-[15px] border border-gray-200 dark:border-gray-700 p-6"
+                >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1 space-y-2">
                       <Skeleton className="h-5 w-[140px] rounded-md" />
@@ -310,11 +371,15 @@ const Teams = () => {
             </>
           ) : filteredTeams.length === 0 ? (
             <div className="col-span-full text-center py-12">
-              <h3 className="text-xl  text-gray-900 dark:text-white mb-2">No teams found</h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">Get started by creating your first team</p>
+              <h3 className="text-xl  text-gray-900 dark:text-white mb-2">
+                No teams found
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">
+                Get started by creating your first team
+              </p>
               <Button
                 onClick={() => setShowNewTeamPopup(true)}
-                className={'w-[200px]'}
+                className={"w-[200px]"}
               >
                 <Plus className="w-4 h-4 icon icon mr-2 icon" />
                 Create Team
@@ -325,25 +390,41 @@ const Teams = () => {
               <motion.div
                 key={team.id}
                 variants={itemVariants}
-                className="bg-white dark:bg-black rounded-[15px]  border-gray-200 dark:border-gray-700 p-6 transition-shadow duration-300 hover:shadow-lg"
+                whileHover={{ y: -4 }}
+                className="group relative flex flex-col overflow-hidden rounded-[20px] border border-gray-200/70 dark:border-white/10 bg-white dark:bg-white/[0.03] p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-[#FF914B]/40"
               >
+                {/* Accent glow */}
+                <div className="pointer-events-none absolute -right-16 -top-16 h-32 w-32 rounded-full bg-[#FF914B]/10 blur-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+
                 {/* Team Header */}
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <h3 className="text-lg  text-gray-900 dark:text-white mb-2">
-                      {team.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
-                      {team.description}
-                    </p>
+                <div className="relative mb-4 flex items-start justify-between gap-3">
+                  <div className="flex min-w-0 flex-1 items-start gap-3">
+                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[15px] bg-gradient-to-br from-[#FF914B] to-[#ff6a3d] text-lg font-bold text-white shadow-md">
+                      {(team.name?.charAt(0) || "T").toUpperCase()}
+                    </div>
+                    <div className="min-w-0">
+                      <h3 className="truncate text-lg font-bold text-gray-900 dark:text-white">
+                        {team.name}
+                      </h3>
+                      <p className="mt-0.5 line-clamp-2 text-sm text-gray-500 dark:text-gray-400">
+                        {team.description || "No description provided"}
+                      </p>
+                    </div>
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="p-2 rounded-[15px]">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="p-2 rounded-[15px] shrink-0"
+                      >
                         <MoreVertical className="w-4 h-4 icon icon icon" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent className={"rounded-[15px]"} align="end">
+                    <DropdownMenuContent
+                      className={"rounded-[15px]"}
+                      align="end"
+                    >
                       <DropdownMenuItem className="h-10 px-5 cursor-pointer rounded-[15px]">
                         <Settings className="w-4 h-4 icon icon mr-2 icon" />
                         Manage Team
@@ -352,7 +433,8 @@ const Teams = () => {
                         <UserPlus className="w-4 h-4 icon icon mr-2 icon" />
                         Add Members
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="h-10 px-5 cursor-pointer text-red-600" 
+                      <DropdownMenuItem
+                        className="h-10 px-5 cursor-pointer text-red-600"
                         onClick={() => handleDeleteTeam(team.id)}
                       >
                         <Trash2 className="w-4 h-4 icon icon mr-2" />
@@ -363,43 +445,56 @@ const Teams = () => {
                 </div>
 
                 {/* Team Stats */}
-                <div className="grid grid-cols-2 gap-4 mb-4 text-sm">
-                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <Users className="w-4 h-4 icon icon icon" />
-                    <span>{team.members?.length || 0} members</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <span className={`px-2 py-1 rounded-[15px] text-xs font-medium ${getRoleColor(team.role)}`}>
-                      {getRoleIcon(team.role)}
-                      {team.role}
-                    </span>
-                  </div>
+                <div className="relative mb-5 flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-[15px] bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 dark:bg-white/5 dark:text-gray-300">
+                    <PiUsersDuotone className="h-3.5 w-3.5" />
+                    {team.members?.length || 0} members
+                  </span>
+                  <span
+                    className={`inline-flex items-center gap-1 rounded-[15px] px-3 py-1.5 text-xs font-medium ${getRoleColor(team.role)}`}
+                  >
+                    {getRoleIcon(team.role)}
+                    {team.role}
+                  </span>
                 </div>
 
                 {/* Team Members */}
-                <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+                <div className="relative mt-auto flex items-center justify-between border-t border-gray-100 pt-4 dark:border-white/10">
                   <div className="flex -space-x-2">
-                    {team.members?.slice(0, 3).map((member, index) => (
+                    {team.members?.slice(0, 4).map((member, index) => (
                       <div
                         key={index}
-                        className="w-8 h-8 rounded-[15px]  border-white dark:border-gray-900 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity"
+                        className="h-9 w-9 cursor-pointer overflow-hidden rounded-[12px] ring-2 ring-white transition-transform hover:z-10 hover:-translate-y-0.5 dark:ring-black"
                         title={member.user?.username}
-                        onClick={() => handleUserAvatarClick(member.user?._id || member.user?.id)}
+                        onClick={() =>
+                          handleUserAvatarClick(
+                            member.user?._id || member.user?.id,
+                          )
+                        }
                       >
                         <img
-                          {...getAvatarProps(member.user?.avatar, member.user?.username)}
+                          {...getAvatarProps(
+                            member.user?.avatar,
+                            member.user?.username,
+                          )}
                           alt={member.user?.username}
-                          className="w-full h-full object-cover"
+                          className="h-full w-full object-cover"
                         />
                       </div>
                     ))}
-                    {team.members?.length > 3 && (
-                      <div className="w-8 h-8 rounded-[15px]  border-white dark:border-gray-900 bg-gray-100 dark:bg-black flex items-center justify-center text-xs font-medium text-gray-600 dark:text-gray-400">
-                        +{team.members.length - 3}
+                    {team.members?.length > 4 && (
+                      <div className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-gray-100 text-xs font-semibold text-gray-600 ring-2 ring-white dark:bg-white/10 dark:text-gray-300 dark:ring-black">
+                        +{team.members.length - 4}
                       </div>
                     )}
+                    {(!team.members || team.members.length === 0) && (
+                      <span className="text-xs text-gray-400 dark:text-gray-500">
+                        No members yet
+                      </span>
+                    )}
                   </div>
-                  <div className="text-xs text-gray-500 dark:text-gray-400">
+                  <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
+                    <Calendar className="h-3.5 w-3.5" />
                     {new Date(team.createdAt).toLocaleDateString()}
                   </div>
                 </div>
@@ -425,7 +520,9 @@ const Teams = () => {
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl  text-gray-900 dark:text-white">Create New Team</h2>
+                <h2 className="text-2xl  text-gray-900 dark:text-white">
+                  Create New Team
+                </h2>
                 <button
                   onClick={() => setShowNewTeamPopup(false)}
                   className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
@@ -438,17 +535,21 @@ const Teams = () => {
                 <div>
                   <Input
                     value={newTeam.name}
-                    onChange={(e) => setNewTeam({...newTeam, name: e.target.value})}
+                    onChange={(e) =>
+                      setNewTeam({ ...newTeam, name: e.target.value })
+                    }
                     placeholder="Team name *"
                     className="w-full h-12 rounded-[15px]"
                     required
                   />
                 </div>
-                
+
                 <div>
                   <Textarea
                     value={newTeam.description}
-                    onChange={(e) => setNewTeam({...newTeam, description: e.target.value})}
+                    onChange={(e) =>
+                      setNewTeam({ ...newTeam, description: e.target.value })
+                    }
                     placeholder="Team description"
                     className="w-full h-12 rounded-[15px]"
                     rows="3"
@@ -460,10 +561,15 @@ const Teams = () => {
                     type="checkbox"
                     id="isPublic"
                     checked={newTeam.isPublic}
-                    onChange={(e) => setNewTeam({...newTeam, isPublic: e.target.checked})}
+                    onChange={(e) =>
+                      setNewTeam({ ...newTeam, isPublic: e.target.checked })
+                    }
                     className="w-4 h-4 icon icon text-gray-600 bg-gray-100 border-gray-300 rounded focus:ring-gray-500 dark:focus:ring-gray-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                   />
-                  <label htmlFor="isPublic" className="text-sm text-gray-700 dark:text-gray-300">
+                  <label
+                    htmlFor="isPublic"
+                    className="text-sm text-gray-700 dark:text-gray-300"
+                  >
                     Make this team public
                   </label>
                 </div>
@@ -486,7 +592,7 @@ const Teams = () => {
                     {loading ? (
                       <span className="loader w-5 h-5 icon"></span>
                     ) : (
-                      'Create Team'
+                      "Create Team"
                     )}
                   </Button>
                 </div>
@@ -501,14 +607,12 @@ const Teams = () => {
         userId={selectedUserId}
         isOpen={showUserDetails}
         onClose={() => {
-          setShowUserDetails(false)
-          setSelectedUserId(null)
+          setShowUserDetails(false);
+          setSelectedUserId(null);
         }}
       />
     </div>
-  )
-}
+  );
+};
 
-export default Teams
-
-
+export default Teams;

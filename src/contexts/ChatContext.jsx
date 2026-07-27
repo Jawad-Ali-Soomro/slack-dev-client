@@ -71,7 +71,7 @@ export const ChatProvider = ({ children }) => {
       const chatId = normalizeId(message.chat);
       setChats((prev) => {
         const chatIndex = prev.findIndex(
-          (chat) => normalizeId(chat._id) === chatId
+          (chat) => normalizeId(chat._id) === chatId,
         );
         if (chatIndex === -1) return prev;
 
@@ -103,7 +103,7 @@ export const ChatProvider = ({ children }) => {
         setTimeout(() => scrollToBottom(), 100);
       }
     },
-    [scrollToBottom]
+    [scrollToBottom],
   );
 
   const joinAllChats = useCallback((activeSocket) => {
@@ -169,7 +169,7 @@ export const ChatProvider = ({ children }) => {
           ...u,
           userId: normalizeId(u.userId),
           isOnline: true,
-        }))
+        })),
       );
     });
 
@@ -178,7 +178,7 @@ export const ChatProvider = ({ children }) => {
     newSocket.on("chat_updated", (updatedChat) => {
       setChats((prev) => {
         const index = prev.findIndex(
-          (c) => normalizeId(c._id) === normalizeId(updatedChat._id)
+          (c) => normalizeId(c._id) === normalizeId(updatedChat._id),
         );
 
         if (index === -1) {
@@ -223,8 +223,14 @@ export const ChatProvider = ({ children }) => {
         if (exists) {
           return prev.map((u) =>
             normalizeId(u.userId) === userId
-              ? { ...u, ...data, userId, isOnline: true, lastSeen: data.lastSeen }
-              : u
+              ? {
+                  ...u,
+                  ...data,
+                  userId,
+                  isOnline: true,
+                  lastSeen: data.lastSeen,
+                }
+              : u,
           );
         }
         return [...prev, { ...data, userId, isOnline: true }];
@@ -241,7 +247,7 @@ export const ChatProvider = ({ children }) => {
         return prev.map((u) =>
           normalizeId(u.userId) === userId
             ? { ...u, isOnline: false, lastSeen: data.lastSeen }
-            : u
+            : u,
         );
       });
     });
@@ -252,7 +258,7 @@ export const ChatProvider = ({ children }) => {
         [data.chatId]: data.isTyping
           ? [
               ...(prev[data.chatId] || []).filter(
-                (u) => u.userId !== data.userId
+                (u) => u.userId !== data.userId,
               ),
               data,
             ]
@@ -395,7 +401,7 @@ export const ChatProvider = ({ children }) => {
     participants,
     type = "direct",
     name = null,
-    description = null
+    description = null,
   ) => {
     try {
       setLoading(true);
@@ -427,7 +433,7 @@ export const ChatProvider = ({ children }) => {
       });
 
       const existingChatInList = chats.find(
-        (chat) => chat._id === response.data._id
+        (chat) => chat._id === response.data._id,
       );
 
       if (!existingChatInList) {
@@ -449,7 +455,7 @@ export const ChatProvider = ({ children }) => {
     content,
     type = "text",
     attachments = [],
-    replyTo = null
+    replyTo = null,
   ) => {
     if (!currentChat || !content.trim()) return;
 
@@ -594,7 +600,7 @@ export const ChatProvider = ({ children }) => {
     const normalizedUserId = normalizeId(userId);
     if (!normalizedUserId) return false;
     const onlineUser = onlineUsers.find(
-      (u) => normalizeId(u.userId) === normalizedUserId
+      (u) => normalizeId(u.userId) === normalizedUserId,
     );
     return onlineUser?.isOnline === true;
   };
@@ -607,7 +613,7 @@ export const ChatProvider = ({ children }) => {
     .filter(
       (message) =>
         !currentChat ||
-        normalizeId(message.chat) === normalizeId(currentChat._id)
+        normalizeId(message.chat) === normalizeId(currentChat._id),
     )
     .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 

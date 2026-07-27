@@ -1,47 +1,45 @@
-
-export const createTestNotification = (type = 'task') => {
+export const createTestNotification = (type = "task") => {
   const notifications = {
     task: {
       id: `test-task-${Date.now()}`,
-      title: 'New Task Assigned',
+      title: "New Task Assigned",
       message: 'You have been assigned a new task: "Test Task"',
-      type: 'task',
+      type: "task",
       isRead: false,
       createdAt: new Date().toISOString(),
     },
     meeting: {
       id: `test-meeting-${Date.now()}`,
-      title: 'Meeting Reminder',
-      message: 'Team standup meeting starts in 15 minutes',
-      type: 'meeting',
+      title: "Meeting Reminder",
+      message: "Team standup meeting starts in 15 minutes",
+      type: "meeting",
       isRead: false,
       createdAt: new Date().toISOString(),
     },
     system: {
       id: `test-system-${Date.now()}`,
-      title: 'System Update',
-      message: 'The application has been updated to version 2.1.0',
-      type: 'system',
+      title: "System Update",
+      message: "The application has been updated to version 2.1.0",
+      type: "system",
       isRead: false,
       createdAt: new Date().toISOString(),
     },
     alert: {
       id: `test-alert-${Date.now()}`,
-      title: 'Alert: High Priority',
-      message: 'Server response time is slower than usual',
-      type: 'alert',
+      title: "Alert: High Priority",
+      message: "Server response time is slower than usual",
+      type: "alert",
       isRead: false,
       createdAt: new Date().toISOString(),
     },
-  }
+  };
 
-  return notifications[type] || notifications.task
-}
+  return notifications[type] || notifications.task;
+};
 
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   window.addTestNotification = (type) => {
-
-    console.log('Test notification created:', createTestNotification(type))
-    return createTestNotification(type)
-  }
+    console.log("Test notification created:", createTestNotification(type));
+    return createTestNotification(type);
+  };
 }

@@ -1,13 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Link, Twitter, Facebook, Mail } from 'lucide-react';
-import { Button } from './ui/button';
-import { Input } from './ui/input';
-import { toast } from 'sonner';
-import { BsWhatsapp } from 'react-icons/bs';
+import React, { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, Link, Twitter, Facebook, Mail } from "lucide-react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { toast } from "sonner";
+import { BsWhatsapp } from "react-icons/bs";
 
-const ShareModal = ({ isOpen, onClose, postId, postTitle, postDescription }) => {
-  const [postUrl, setPostUrl] = useState('');
+const ShareModal = ({
+  isOpen,
+  onClose,
+  postId,
+  postTitle,
+  postDescription,
+}) => {
+  const [postUrl, setPostUrl] = useState("");
 
   useEffect(() => {
     if (isOpen && postId) {
@@ -17,29 +23,44 @@ const ShareModal = ({ isOpen, onClose, postId, postTitle, postDescription }) => 
   }, [isOpen, postId]);
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(postUrl)
-      .then(() => toast.success('Link copied to clipboard!'))
-      .catch(() => toast.error('Failed to copy link.'));
+    navigator.clipboard
+      .writeText(postUrl)
+      .then(() => toast.success("Link copied to clipboard!"))
+      .catch(() => toast.error("Failed to copy link."));
   };
 
   const shareOnTwitter = () => {
-    const text = encodeURIComponent(`${postTitle || 'Check out this post!'}: ${postDescription || ''}`);
-    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${text}`, '_blank');
+    const text = encodeURIComponent(
+      `${postTitle || "Check out this post!"}: ${postDescription || ""}`,
+    );
+    window.open(
+      `https://twitter.com/intent/tweet?url=${encodeURIComponent(postUrl)}&text=${text}`,
+      "_blank",
+    );
   };
 
   const shareOnFacebook = () => {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`, '_blank');
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(postUrl)}`,
+      "_blank",
+    );
   };
 
   const shareOnWhatsapp = () => {
-    const text = encodeURIComponent(`${postTitle || 'Check out this post!'}: ${postDescription || ''} ${postUrl}`);
-    window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    const text = encodeURIComponent(
+      `${postTitle || "Check out this post!"}: ${postDescription || ""} ${postUrl}`,
+    );
+    window.open(`https://api.whatsapp.com/send?text=${text}`, "_blank");
   };
 
   const shareViaEmail = () => {
-    const subject = encodeURIComponent(`Check out this post: ${postTitle || ''}`);
-    const body = encodeURIComponent(`${postDescription || ''}\n\nRead more here: ${postUrl}`);
-    window.open(`mailto:?subject=${subject}&body=${body}`, '_blank');
+    const subject = encodeURIComponent(
+      `Check out this post: ${postTitle || ""}`,
+    );
+    const body = encodeURIComponent(
+      `${postDescription || ""}\n\nRead more here: ${postUrl}`,
+    );
+    window.open(`mailto:?subject=${subject}&body=${body}`, "_blank");
   };
 
   if (!isOpen) return null;
@@ -62,7 +83,9 @@ const ShareModal = ({ isOpen, onClose, postId, postTitle, postDescription }) => 
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl  text-gray-900 dark:text-white">Share Post</h2>
+              <h2 className="text-2xl  text-gray-900 dark:text-white">
+                Share Post
+              </h2>
               <button
                 onClick={onClose}
                 className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
@@ -73,7 +96,6 @@ const ShareModal = ({ isOpen, onClose, postId, postTitle, postDescription }) => 
 
             <div className="space-y-4">
               <div>
-              
                 <div className="flex gap-2">
                   <Input
                     type="text"
@@ -81,7 +103,10 @@ const ShareModal = ({ isOpen, onClose, postId, postTitle, postDescription }) => 
                     readOnly
                     className="flex-1 h-12 rounded-[15px]"
                   />
-                  <Button onClick={handleCopyLink} className="h-12 rounded-[15px] w-12">
+                  <Button
+                    onClick={handleCopyLink}
+                    className="h-12 rounded-[15px] w-12"
+                  >
                     <Link className="w-4 h-4 icon icon " />
                     {/* Copy */}
                   </Button>
@@ -89,21 +114,36 @@ const ShareModal = ({ isOpen, onClose, postId, postTitle, postDescription }) => 
               </div>
 
               <div>
-              
                 <div className="grid grid-cols-2 gap-3">
-                  <Button variant="outline" onClick={shareOnTwitter} className="h-12 rounded-[15px] flex items-center justify-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={shareOnTwitter}
+                    className="h-12 rounded-[15px] flex items-center justify-center gap-2"
+                  >
                     <Twitter className="w-5 h-5 icon text-blue-400" />
                     Twitter
                   </Button>
-                  <Button variant="outline" onClick={shareOnFacebook} className="h-12 rounded-[15px] flex items-center justify-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={shareOnFacebook}
+                    className="h-12 rounded-[15px] flex items-center justify-center gap-2"
+                  >
                     <Facebook className="w-5 h-5 icon text-blue-600" />
                     Facebook
                   </Button>
-                  <Button variant="outline" onClick={shareOnWhatsapp} className="h-12 rounded-[15px] flex items-center justify-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={shareOnWhatsapp}
+                    className="h-12 rounded-[15px] flex items-center justify-center gap-2"
+                  >
                     <BsWhatsapp className="w-5 h-5 icon text-green-500" />
                     WhatsApp
                   </Button>
-                  <Button variant="outline" onClick={shareViaEmail} className="h-12 rounded-[15px] flex items-center justify-center gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={shareViaEmail}
+                    className="h-12 rounded-[15px] flex items-center justify-center gap-2"
+                  >
                     <Mail className="w-5 h-5 icon text-gray-500" />
                     Email
                   </Button>
@@ -118,5 +158,3 @@ const ShareModal = ({ isOpen, onClose, postId, postTitle, postDescription }) => 
 };
 
 export default ShareModal;
-
-

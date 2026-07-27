@@ -478,8 +478,8 @@ const Explore = () => {
         {/* Projects Grid */}
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[67vh] overflow-scroll pb-20">
-            {[1,2,3,4,5,6].map(() => {
-              return <Skeleton className={'w-full h-[310px]'} />
+            {[1, 2, 3, 4, 5, 6].map(() => {
+              return <Skeleton className={"w-full h-[310px]"} />;
             })}
           </div>
         ) : projects.length === 0 ? (
@@ -525,7 +525,7 @@ const Explore = () => {
                             : "";
                         })()}
                         alt={project.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full group-hover:scale-105 transition-transform duration-300"
                       />
                       {/* Price Badge - Top Right */}
                       <div className="absolute top-2 right-2">
@@ -572,76 +572,71 @@ const Explore = () => {
                 </motion.div>
               );
             })}
-
           </motion.div>
         )}
-     
 
         {/* Pagination */}
       </motion.div>
       {pagination.pages > 1 && (
-          <div className="flex items-center absolute right-5 -bottom-0 justify-end w-full col-span-3 gap-2 mt-8 mb-10">
-            {/* Previous */}
-            <Button
-              className={"w-10 h-10 bg-white hover:bg-white text-black"}
-              onClick={() =>
-                setPagination((prev) => ({ ...prev, page: prev.page - 1 }))
-              }
-              disabled={pagination.page === 1}
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Button>
+        <div className="flex items-center absolute right-5 -bottom-0 justify-end w-full col-span-3 gap-2 mt-8 mb-10">
+          {/* Previous */}
+          <Button
+            className={"w-10 h-10 bg-white hover:bg-white text-black"}
+            onClick={() =>
+              setPagination((prev) => ({ ...prev, page: prev.page - 1 }))
+            }
+            disabled={pagination.page === 1}
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </Button>
 
-            {/* Page Numbers */}
-            <div className="flex items-center gap-1">
-              {Array.from({ length: pagination.pages }, (_, i) => i + 1)
-                .filter((page) => {
-                  if (pagination.pages <= 9) return true;
+          {/* Page Numbers */}
+          <div className="flex items-center gap-1">
+            {Array.from({ length: pagination.pages }, (_, i) => i + 1)
+              .filter((page) => {
+                if (pagination.pages <= 9) return true;
 
-                  return (
-                    page === 1 ||
-                    page === pagination.pages ||
-                    Math.abs(page - pagination.page) <= 1
-                  );
-                })
-                .map((page, index, arr) => {
-                  const prevPage = arr[index - 1];
+                return (
+                  page === 1 ||
+                  page === pagination.pages ||
+                  Math.abs(page - pagination.page) <= 1
+                );
+              })
+              .map((page, index, arr) => {
+                const prevPage = arr[index - 1];
 
-                  return (
-                    <div key={page} className="flex items-center gap-1">
-                      {prevPage && page - prevPage > 1 && (
-                        <span className="px-2 text-muted-foreground">
-                          ...
-                        </span>
-                      )}
+                return (
+                  <div key={page} className="flex items-center gap-1">
+                    {prevPage && page - prevPage > 1 && (
+                      <span className="px-2 text-muted-foreground">...</span>
+                    )}
 
-                      <Button
-                        
-                        size="sm"
-                        className={`w-10 h-10 font-bold bg-[#ff914b] hover:bg-[#ff914b] ${pagination.page === page ? "bg-[#ff914b] dark:text-white hover:bg-[#ff914b]" : "bg-white text-black hover:bg-gray-100"}`}
-                        onClick={() =>
-                          setPagination((prev) => ({ ...prev, page }))
-                        }
-                      >
-                        {page < 10 ? `0${page}` : page}
-                      </Button>
-                    </div>
-                  );
-                })}
-            </div>
-
-            {/* Next */}
-            <Button
-              className={"w-10 h-10 bg-white hover:bg-white text-black"}
-              onClick={() =>
-                setPagination((prev) => ({ ...prev, page: prev.page + 1 }))
-              }
-              disabled={pagination.page === pagination.pages}
-            >
-              <ChevronRight className="w-4 h-4" />
-            </Button>
+                    <Button
+                      size="sm"
+                      className={`w-10 h-10 font-bold bg-[#ff914b] hover:bg-[#ff914b] ${pagination.page === page ? "bg-[#ff914b] dark:text-white hover:bg-[#ff914b]" : "bg-white text-black hover:bg-gray-100"}`}
+                      onClick={() =>
+                        setPagination((prev) => ({ ...prev, page }))
+                      }
+                    >
+                      {page < 10 ? `0${page}` : page}
+                    </Button>
+                  </div>
+                );
+              })}
           </div>
-        )}
+
+          {/* Next */}
+          <Button
+            className={"w-10 h-10 bg-white hover:bg-white text-black"}
+            onClick={() =>
+              setPagination((prev) => ({ ...prev, page: prev.page + 1 }))
+            }
+            disabled={pagination.page === pagination.pages}
+          >
+            <ChevronRight className="w-4 h-4" />
+          </Button>
+        </div>
+      )}
       {/* Project Detail Modal */}
       {showProjectModal && selectedProject && (
         <div
@@ -680,7 +675,9 @@ const Explore = () => {
               </div>
             </div>
             <div className="flex text-justify max-w-[70%] line-clamp-2 icon">
-              <p className="line-clamp-2 text-sm icon max-w-5xl">{selectedProject.description}</p>
+              <p className="line-clamp-2 text-sm icon max-w-5xl">
+                {selectedProject.description}
+              </p>
             </div>
             <div className="flex-1 overflow-hidden mt-6">
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
@@ -963,7 +960,6 @@ const Explore = () => {
                       setUploadForm({ ...uploadForm, category: value })
                     }
                     required
-                    
                   >
                     <SelectTrigger className="capitalize">
                       <SelectValue placeholder="Select category" />
@@ -1085,12 +1081,7 @@ const Explore = () => {
               </div>
 
               <div className="flex justify-end space-x-3 mt-6">
-                
-                <Button
-                  type="submit"
-                  disabled={uploading}
-                  className="w-full"
-                >
+                <Button type="submit" disabled={uploading} className="w-full">
                   {uploading ? (
                     <>
                       <Upload className="w-4 h-4 icon mr-2 animate-spin" />

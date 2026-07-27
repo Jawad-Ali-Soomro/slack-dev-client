@@ -1,9 +1,9 @@
-import { useState, useEffect, useMemo } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
-import CodeMirror from '@uiw/react-codemirror'
-import { javascript } from '@codemirror/lang-javascript'
-import { oneDark } from '@codemirror/theme-one-dark'
-import { EditorView } from '@codemirror/view'
+import { useState, useEffect, useMemo } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import CodeMirror from "@uiw/react-codemirror";
+import { javascript } from "@codemirror/lang-javascript";
+import { oneDark } from "@codemirror/theme-one-dark";
+import { EditorView } from "@codemirror/view";
 import {
   ArrowLeft,
   CheckCircle,
@@ -16,202 +16,223 @@ import {
   Play,
   FileText,
   Target,
-} from 'lucide-react'
-import { toast } from 'sonner'
-import { Button } from '../components/ui/button'
-import { Badge } from '../components/ui/badge'
-import challengeService from '../services/challengeService'
-import { useAuth } from '../contexts/AuthContext'
-import HorizontalLoader from '../components/HorizontalLoader'
+} from "lucide-react";
+import { toast } from "sonner";
+import { Button } from "../components/ui/button";
+import { Badge } from "../components/ui/badge";
+import challengeService from "../services/challengeService";
+import { useAuth } from "../contexts/AuthContext";
+import HorizontalLoader from "../components/HorizontalLoader";
 
 const DIFFICULTY_COLORS = {
-  beginner: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-  intermediate: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200',
-  advanced: 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200',
-}
+  beginner: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
+  intermediate:
+    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200",
+  advanced: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+};
 
 const DIFFICULTY_ICONS = {
-  beginner: '🟢',
-  intermediate: '🟡',
-  advanced: '🔴',
-}
+  beginner: "🟢",
+  intermediate: "🟡",
+  advanced: "🔴",
+};
 
 const ChallengeDetail = () => {
-  const { id } = useParams()
-  const navigate = useNavigate()
-  const { user } = useAuth()
-  const [challenge, setChallenge] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [submitting, setSubmitting] = useState(false)
-  const [userSolution, setUserSolution] = useState('')
-  const [userAnswer, setUserAnswer] = useState('')
-  const [codeOutput, setCodeOutput] = useState('')
-  const [codeError, setCodeError] = useState('')
-  const [isCompleted, setIsCompleted] = useState(false)
-  const [userSolutionData, setUserSolutionData] = useState(null)
-  const [activeTab, setActiveTab] = useState('instructions') // 'instructions'
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const [challenge, setChallenge] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+  const [userSolution, setUserSolution] = useState("");
+  const [userAnswer, setUserAnswer] = useState("");
+  const [codeOutput, setCodeOutput] = useState("");
+  const [codeError, setCodeError] = useState("");
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [userSolutionData, setUserSolutionData] = useState(null);
+  const [activeTab, setActiveTab] = useState("instructions"); // 'instructions'
   const [isDark, setIsDark] = useState(() =>
-    document.documentElement.classList.contains('dark'),
-  )
+    document.documentElement.classList.contains("dark"),
+  );
 
   const codeExtensions = useMemo(
     () => [javascript({ jsx: true }), EditorView.lineWrapping],
     [],
-  )
+  );
 
   useEffect(() => {
-    const root = document.documentElement
-    const syncTheme = () => setIsDark(root.classList.contains('dark'))
-    const observer = new MutationObserver(syncTheme)
-    observer.observe(root, { attributes: true, attributeFilter: ['class'] })
-    return () => observer.disconnect()
-  }, [])
+    const root = document.documentElement;
+    const syncTheme = () => setIsDark(root.classList.contains("dark"));
+    const observer = new MutationObserver(syncTheme);
+    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
-    document.title = challenge ? `${challenge.title} - Challenge` : 'Challenge Detail'
-  }, [challenge])
+    document.title = challenge
+      ? `${challenge.title} - Challenge`
+      : "Challenge Detail";
+  }, [challenge]);
 
   useEffect(() => {
-    loadChallenge()
-  }, [id])
+    loadChallenge();
+  }, [id]);
 
   const loadChallenge = async () => {
     try {
-      setLoading(true)
-      const response = await challengeService.getChallengeById(id)
-      
-      setChallenge(response.challenge)
-      setIsCompleted(response.isCompleted || false)
-      
+      setLoading(true);
+      const response = await challengeService.getChallengeById(id);
+
+      setChallenge(response.challenge);
+      setIsCompleted(response.isCompleted || false);
+
       if (response.userSolution) {
-        setUserSolutionData(response.userSolution)
-        setUserSolution(response.userSolution.solution)
-        setUserAnswer(response.userSolution.answer || '')
+        setUserSolutionData(response.userSolution);
+        setUserSolution(response.userSolution.solution);
+        setUserAnswer(response.userSolution.answer || "");
       } else {
-        setUserSolutionData(null)
-        setUserSolution(response.challenge.starterCode || '')
-        setUserAnswer('')
+        setUserSolutionData(null);
+        setUserSolution(response.challenge.starterCode || "");
+        setUserAnswer("");
       }
-      setCodeOutput('')
-      setCodeError('')
+      setCodeOutput("");
+      setCodeError("");
     } catch (error) {
-      console.error('Error loading challenge:', error)
-      toast.error(error.message || 'Failed to load challenge')
-      navigate('/dashboard/challenges')
+      console.error("Error loading challenge:", error);
+      toast.error(error.message || "Failed to load challenge");
+      navigate("/dashboard/challenges");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleRunCode = () => {
     if (!userSolution.trim()) {
-      toast.error('Please write some code first')
-      return
+      toast.error("Please write some code first");
+      return;
     }
 
     try {
-      setCodeError('')
-      setCodeOutput('')
-      const logs = []
-      const originalLog = console.log
+      setCodeError("");
+      setCodeOutput("");
+      const logs = [];
+      const originalLog = console.log;
       console.log = (...args) => {
-        logs.push(args.map(arg => 
-          typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
-        ).join(' '))
-        originalLog(...args)
-      }
+        logs.push(
+          args
+            .map((arg) =>
+              typeof arg === "object" ? JSON.stringify(arg) : String(arg),
+            )
+            .join(" "),
+        );
+        originalLog(...args);
+      };
 
-      let result
+      let result;
       try {
         const wrappedCode = `
           (function() {
             ${userSolution}
           })()
-        `
-        result = eval(wrappedCode)
+        `;
+        result = eval(wrappedCode);
       } catch (error) {
-        setCodeError(error.message || 'Syntax error or execution error')
-        console.log = originalLog
-        return
+        setCodeError(error.message || "Syntax error or execution error");
+        console.log = originalLog;
+        return;
       }
 
-      console.log = originalLog
+      console.log = originalLog;
 
-      let output = logs.join('\n')
+      let output = logs.join("\n");
       if (result !== undefined) {
-        if (output) output += '\n'
-        output += typeof result === 'object' ? JSON.stringify(result) : String(result)
+        if (output) output += "\n";
+        output +=
+          typeof result === "object" ? JSON.stringify(result) : String(result);
       }
 
-      setCodeOutput(output.trim() || 'No output')
-      
+      setCodeOutput(output.trim() || "No output");
+
       if (output.trim()) {
-        setUserAnswer(output.trim())
+        setUserAnswer(output.trim());
       } else {
-        setUserAnswer('')
+        setUserAnswer("");
       }
     } catch (error) {
-      setCodeError(error.message || 'Failed to execute code')
-      setCodeOutput('')
+      setCodeError(error.message || "Failed to execute code");
+      setCodeOutput("");
     }
-  }
+  };
 
   const handleSubmitSolution = async () => {
     if (!challenge || !userSolution.trim()) {
-      toast.error('Please write your solution code')
-      return
+      toast.error("Please write your solution code");
+      return;
     }
 
     if (!userAnswer.trim()) {
-      toast.error('Please run your code first to generate the answer/output')
-      return
+      toast.error("Please run your code first to generate the answer/output");
+      return;
     }
 
     if (isCreator) {
-      toast.error('You cannot solve challenges that you created yourself')
-      return
+      toast.error("You cannot solve challenges that you created yourself");
+      return;
     }
 
     try {
-      setSubmitting(true)
-      const response = await challengeService.submitSolution(challenge._id, userSolution, userAnswer)
-      
+      setSubmitting(true);
+      const response = await challengeService.submitSolution(
+        challenge._id,
+        userSolution,
+        userAnswer,
+      );
+
       if (response.isCorrect) {
-        let message = `Solution submitted! You earned ${response.pointsEarned} points! 🎉`
-        
-        if (response.newlyEarnedAwards && response.newlyEarnedAwards.length > 0) {
-          const awardsText = response.newlyEarnedAwards.map(a => `${a.icon} ${a.name}`).join(', ')
-          message += `\n\n🏆 New Award Unlocked: ${awardsText}`
-          
+        let message = `Solution submitted! You earned ${response.pointsEarned} points! 🎉`;
+
+        if (
+          response.newlyEarnedAwards &&
+          response.newlyEarnedAwards.length > 0
+        ) {
+          const awardsText = response.newlyEarnedAwards
+            .map((a) => `${a.icon} ${a.name}`)
+            .join(", ");
+          message += `\n\n🏆 New Award Unlocked: ${awardsText}`;
+
           toast.success(
             <div>
               {response.newlyEarnedAwards.map((award, idx) => (
                 <div key={idx} className="flex items-center gap-2">
-                  <div className="font-bold">New Award Unlocked! {award.icon}</div>
+                  <div className="font-bold">
+                    New Award Unlocked! {award.icon}
+                  </div>
                 </div>
               ))}
             </div>,
-            { duration: 5000 }
-          )
+            { duration: 5000 },
+          );
         } else {
-          toast.success(message)
+          toast.success(message);
         }
       } else {
         if (response.hasError) {
-          toast.error('No answer provided. Challenge marked as completed with 0 points.')
+          toast.error(
+            "No answer provided. Challenge marked as completed with 0 points.",
+          );
         } else {
-          toast.error('Wrong answer! You earned 0 points.')
+          toast.error("Wrong answer! You earned 0 points.");
         }
       }
 
-      await loadChallenge()
+      await loadChallenge();
     } catch (error) {
-      console.error('Error submitting solution:', error)
-      toast.error(error.message || 'Failed to submit solution')
+      console.error("Error submitting solution:", error);
+      toast.error(error.message || "Failed to submit solution");
     } finally {
-      setSubmitting(false)
+      setSubmitting(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -221,18 +242,21 @@ const ChallengeDetail = () => {
         progress={75}
         className="min-h-screen"
       />
-    )
+    );
   }
 
   if (!challenge) {
-    return null
+    return null;
   }
 
-  const isCreator = challenge && user && challenge.createdBy && (
-    challenge.createdBy._id === user.id || 
-    challenge.createdBy === user.id ||
-    (typeof challenge.createdBy === 'string' && challenge.createdBy === user.id)
-  )
+  const isCreator =
+    challenge &&
+    user &&
+    challenge.createdBy &&
+    (challenge.createdBy._id === user.id ||
+      challenge.createdBy === user.id ||
+      (typeof challenge.createdBy === "string" &&
+        challenge.createdBy === user.id));
 
   return (
     <div className="ambient-light overflow-hidden flex flex-col">
@@ -242,14 +266,14 @@ const ChallengeDetail = () => {
           <div className="flex items-center gap-3 mb-3">
             <Button
               variant="outline"
-              onClick={() => navigate('/dashboard/challenges')}
+              onClick={() => navigate("/dashboard/challenges")}
               className="rounded-[15px] p-2 border-2 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <ArrowLeft className="w-4 h-4 icon" />
             </Button>
             <div className="flex-1" />
           </div>
-          
+
           <div className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] p-6 border-2 border-gray-200 dark:border-gray-700 shadow-lg">
             <div className="flex items-start justify-between mb-4">
               <div className="flex-1 min-w-0">
@@ -262,10 +286,17 @@ const ChallengeDetail = () => {
                   </h1>
                 </div>
                 <div className="flex items-center gap-3 flex-wrap mb-3">
-                  <Badge className={`${DIFFICULTY_COLORS[challenge.difficulty]} font-semibold px-3 py-1.5 rounded-[15px] shadow-sm`}>
-                    {DIFFICULTY_ICONS[challenge.difficulty]} {challenge.difficulty.charAt(0).toUpperCase() + challenge.difficulty.slice(1)}
+                  <Badge
+                    className={`${DIFFICULTY_COLORS[challenge.difficulty]} font-semibold px-3 py-1.5 rounded-[15px] shadow-sm`}
+                  >
+                    {DIFFICULTY_ICONS[challenge.difficulty]}{" "}
+                    {challenge.difficulty.charAt(0).toUpperCase() +
+                      challenge.difficulty.slice(1)}
                   </Badge>
-                  <Badge variant="outline" className="border-2 border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-[15px] font-medium">
+                  <Badge
+                    variant="outline"
+                    className="border-2 border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-[15px] font-medium"
+                  >
                     <Code className="w-3 h-3 mr-1.5" />
                     {challenge.category}
                   </Badge>
@@ -277,7 +308,9 @@ const ChallengeDetail = () => {
                   )}
                   <div className="flex items-center gap-1.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white px-3 py-1.5 rounded-[15px] shadow-md">
                     <Star className="w-4 h-4 icon fill-current" />
-                    <span className="text-sm font-bold">{challenge.points} points</span>
+                    <span className="text-sm font-bold">
+                      {challenge.points} points
+                    </span>
                   </div>
                 </div>
               </div>
@@ -298,7 +331,9 @@ const ChallengeDetail = () => {
                   <div className="p-2 bg-gradient-to-br from-gray-500 to-gray-600 rounded-xl shadow-md">
                     <FileText className="w-5 h-5 text-white" />
                   </div>
-                  <h3 className="font-bold text-lg text-gray-900 dark:text-white">Instructions</h3>
+                  <h3 className="font-bold text-lg text-gray-900 dark:text-white">
+                    Instructions
+                  </h3>
                 </div>
               </div>
 
@@ -321,7 +356,7 @@ const ChallengeDetail = () => {
                     <Code className="w-5 h-5 text-white" />
                   </div>
                   <h3 className="font-bold text-lg text-gray-900 dark:text-white">
-                    {isCompleted ? 'Your Submitted Solution' : 'Your Solution'}
+                    {isCompleted ? "Your Submitted Solution" : "Your Solution"}
                   </h3>
                   {isCompleted && userSolutionData && (
                     <div className="flex items-center gap-2 ml-4">
@@ -336,7 +371,10 @@ const ChallengeDetail = () => {
                           Wrong
                         </Badge>
                       )}
-                      <Badge variant="outline" className="border-2 border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-[15px] font-medium">
+                      <Badge
+                        variant="outline"
+                        className="border-2 border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-[15px] font-medium"
+                      >
                         <Award className="w-3 h-3 mr-1.5" />
                         Points: {userSolutionData.pointsEarned || 0}
                       </Badge>
@@ -352,7 +390,7 @@ const ChallengeDetail = () => {
                     {isCompleted ? (
                       <div className="absolute inset-0 p-4 bg-gray-50 dark:bg-gray-900 overflow-y-auto">
                         <pre className="whitespace-pre-wrap text-sm text-gray-700 dark:text-gray-300 font-mono">
-                          {userSolution || 'No solution provided'}
+                          {userSolution || "No solution provided"}
                         </pre>
                       </div>
                     ) : (
@@ -388,7 +426,8 @@ const ChallengeDetail = () => {
                           <div className="flex items-center gap-2 text-yellow-700 dark:text-yellow-400">
                             <X className="w-5 h-5" />
                             <p className="text-sm font-semibold">
-                              You cannot solve challenges that you created yourself
+                              You cannot solve challenges that you created
+                              yourself
                             </p>
                           </div>
                         </div>
@@ -408,7 +447,9 @@ const ChallengeDetail = () => {
                               rows={3}
                             /> */}
                             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                              💡 This answer is automatically set when you run your code. Click "Run Code" to execute your solution.
+                              💡 This answer is automatically set when you run
+                              your code. Click "Run Code" to execute your
+                              solution.
                             </p>
                           </div>
 
@@ -416,7 +457,11 @@ const ChallengeDetail = () => {
                           <div className="p-4 border-t-2 border-gray-200 dark:border-gray-700 flex-shrink-0 bg-gray-50 dark:bg-gray-900/50">
                             <Button
                               onClick={handleSubmitSolution}
-                              disabled={!userSolution.trim() || !userAnswer.trim() || submitting}
+                              disabled={
+                                !userSolution.trim() ||
+                                !userAnswer.trim() ||
+                                submitting
+                              }
                               className="w-full h-12 rounded-xl bg-gradient-to-r from-black to-gray-800 dark:from-white dark:to-gray-200 text-white dark:text-black hover:opacity-90 shadow-lg font-semibold transition-all duration-200 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               {submitting ? (
@@ -455,12 +500,13 @@ const ChallengeDetail = () => {
 
                     {/* Output Display */}
                     <div className="flex-1 overflow-y-auto p-4">
-                      
                       {codeError ? (
                         <div className="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-xl p-4">
                           <div className="flex items-center gap-2 mb-2">
                             <X className="w-4 h-4 icon text-red-600 dark:text-red-400" />
-                            <span className="text-xs font-semibold text-red-600 dark:text-red-400">Error</span>
+                            <span className="text-xs font-semibold text-red-600 dark:text-red-400">
+                              Error
+                            </span>
                           </div>
                           <pre className="text-xs text-red-700 dark:text-red-300 font-mono whitespace-pre-wrap break-words">
                             {codeError}
@@ -470,7 +516,9 @@ const ChallengeDetail = () => {
                         <div className="bg-green-50 dark:bg-green-900/20 border-2 border-green-200 dark:border-green-800 rounded-xl p-4">
                           <div className="flex items-center gap-2 mb-2">
                             <CheckCircle className="w-4 h-4 icon text-green-600 dark:text-green-400" />
-                            <span className="text-xs font-semibold text-green-600 dark:text-green-400">Success</span>
+                            <span className="text-xs font-semibold text-green-600 dark:text-green-400">
+                              Success
+                            </span>
                           </div>
                           <pre className="text-sm text-gray-800 dark:text-gray-200 font-mono whitespace-pre-wrap break-words leading-relaxed">
                             {codeOutput}
@@ -496,8 +544,7 @@ const ChallengeDetail = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default ChallengeDetail
-
+export default ChallengeDetail;

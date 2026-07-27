@@ -1,161 +1,196 @@
-import axiosInstance from '../lib/axios'
+import axiosInstance from "../lib/axios";
 
 export const exploreService = {
-
   getPublicProjects: async (filters = {}) => {
     try {
-      const response = await axiosInstance.get('/api/explore/projects', { params: filters })
-      return response.data
+      const response = await axiosInstance.get("/api/explore/projects", {
+        params: filters,
+      });
+      return response.data;
     } catch (error) {
-      console.error('Get public projects error:', error)
-      throw new Error(error.response?.data?.message || 'Failed to fetch public projects')
+      console.error("Get public projects error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch public projects",
+      );
     }
   },
 
   getPublicProject: async (id) => {
     try {
-      const response = await axiosInstance.get(`/api/explore/projects/${id}`)
-      return response.data
+      const response = await axiosInstance.get(`/api/explore/projects/${id}`);
+      return response.data;
     } catch (error) {
-      console.error('Get public project error:', error)
-      throw new Error(error.response?.data?.message || 'Failed to fetch project')
+      console.error("Get public project error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch project",
+      );
     }
   },
 
   createPublicProject: async (projectData) => {
     try {
-      const formData = new FormData()
-      formData.append('title', projectData.title)
-      formData.append('description', projectData.description)
-      formData.append('price', projectData.price)
-      formData.append('category', projectData.category)
+      const formData = new FormData();
+      formData.append("title", projectData.title);
+      formData.append("description", projectData.description);
+      formData.append("price", projectData.price);
+      formData.append("category", projectData.category);
       if (projectData.tags) {
         if (Array.isArray(projectData.tags)) {
-          formData.append('tags', projectData.tags.join(','))
+          formData.append("tags", projectData.tags.join(","));
         } else {
-          formData.append('tags', projectData.tags)
+          formData.append("tags", projectData.tags);
         }
       }
 
       if (projectData.zipFile) {
-        formData.append('zipFile', projectData.zipFile)
+        formData.append("zipFile", projectData.zipFile);
       }
 
       if (projectData.previewImages && projectData.previewImages.length > 0) {
-        projectData.previewImages.forEach(image => {
-          formData.append('previewImages', image)
-        })
+        projectData.previewImages.forEach((image) => {
+          formData.append("previewImages", image);
+        });
       }
 
-      const response = await axiosInstance.post('/api/explore/projects', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      return response.data
+      const response = await axiosInstance.post(
+        "/api/explore/projects",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        },
+      );
+      return response.data;
     } catch (error) {
-      console.error('Create public project error:', error)
-      throw new Error(error.response?.data?.message || 'Failed to create project')
+      console.error("Create public project error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to create project",
+      );
     }
   },
 
   approveProject: async (projectId) => {
-  try {
-    const response = await axiosInstance.patch(
-      `/api/explore/projects/${projectId}/approve`
-    )
-    return response.data
-  } catch (error) {
-    console.error('Approve project error:', error)
-    throw new Error(
-      error.response?.data?.message || 'Failed to approve project'
-    )
-  }
-},
-rejectProject: async (projectId) => {
-  try {
-    const response = await axiosInstance.patch(
-      `/api/explore/projects/${projectId}/reject`
-    )
-    return response.data
-  } catch (error) {
-    console.error('Reject project error:', error)
-    throw new Error(
-      error.response?.data?.message || 'Failed to reject project'
-    )
-  }
-},
+    try {
+      const response = await axiosInstance.patch(
+        `/api/explore/projects/${projectId}/approve`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Approve project error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to approve project",
+      );
+    }
+  },
+  rejectProject: async (projectId) => {
+    try {
+      const response = await axiosInstance.patch(
+        `/api/explore/projects/${projectId}/reject`,
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Reject project error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to reject project",
+      );
+    }
+  },
 
   createPaymentIntent: async (projectId) => {
     try {
-      const response = await axiosInstance.post('/api/explore/checkout/payment-intent', { projectId })
-      return response.data
+      const response = await axiosInstance.post(
+        "/api/explore/checkout/payment-intent",
+        { projectId },
+      );
+      return response.data;
     } catch (error) {
-      console.error('Create payment intent error:', error)
-      throw new Error(error.response?.data?.message || 'Failed to initiate payment')
+      console.error("Create payment intent error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to initiate payment",
+      );
     }
   },
 
   purchaseProject: async ({ projectId, paymentIntentId }) => {
     try {
-      const response = await axiosInstance.post('/api/explore/purchase', { projectId, paymentIntentId })
-      return response.data
+      const response = await axiosInstance.post("/api/explore/purchase", {
+        projectId,
+        paymentIntentId,
+      });
+      return response.data;
     } catch (error) {
-      console.error('Purchase project error:', error)
-      throw new Error(error.response?.data?.message || 'Failed to complete project purchase')
+      console.error("Purchase project error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to complete project purchase",
+      );
     }
   },
 
   getMyPurchases: async (filters = {}) => {
     try {
-      const response = await axiosInstance.get('/api/explore/my-purchases', { params: filters })
-      return response.data
+      const response = await axiosInstance.get("/api/explore/my-purchases", {
+        params: filters,
+      });
+      return response.data;
     } catch (error) {
-      console.error('Get my purchases error:', error)
-      throw new Error(error.response?.data?.message || 'Failed to fetch purchases')
+      console.error("Get my purchases error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch purchases",
+      );
     }
   },
 
   deletePublicProject: async (projectId) => {
     try {
-      const response = await axiosInstance.delete(`/api/explore/projects/${projectId}`)
-      return response.data
+      const response = await axiosInstance.delete(
+        `/api/explore/projects/${projectId}`,
+      );
+      return response.data;
     } catch (error) {
-      console.error('Delete project error:', error)
-      throw new Error(error.response?.data?.message || 'Failed to delete project')
+      console.error("Delete project error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to delete project",
+      );
     }
   },
 
   downloadProject: async (projectId) => {
     try {
-      const response = await axiosInstance.get(`/api/explore/download/${projectId}`, {
-        responseType: 'blob'
-      })
+      const response = await axiosInstance.get(
+        `/api/explore/download/${projectId}`,
+        {
+          responseType: "blob",
+        },
+      );
 
-      const url = window.URL.createObjectURL(new Blob([response.data]))
-      const link = document.createElement('a')
-      link.href = url
-      link.setAttribute('download', `project-${projectId}.zip`)
-      document.body.appendChild(link)
-      link.click()
-      link.remove()
-      window.URL.revokeObjectURL(url)
-      
-      return { success: true }
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `project-${projectId}.zip`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+      return { success: true };
     } catch (error) {
-      console.error('Download project error:', error)
-      throw new Error(error.response?.data?.message || 'Failed to download project')
+      console.error("Download project error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to download project",
+      );
     }
   },
 
   getCategories: async () => {
     try {
-      const response = await axiosInstance.get('/api/explore/categories')
-      return response.data
+      const response = await axiosInstance.get("/api/explore/categories");
+      return response.data;
     } catch (error) {
-      console.error('Get categories error:', error)
-      throw new Error(error.response?.data?.message || 'Failed to fetch categories')
+      console.error("Get categories error:", error);
+      throw new Error(
+        error.response?.data?.message || "Failed to fetch categories",
+      );
     }
-  }
-}
-
+  },
+};

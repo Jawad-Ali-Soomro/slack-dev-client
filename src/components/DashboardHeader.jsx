@@ -1,242 +1,252 @@
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { User, Settings, LogOut, Camera, X, RefreshCw, Menu, BookOpen, Store, BookHeart, Book, Trophy } from 'lucide-react'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
-import { Textarea } from './ui/textarea'
-import { useAuth } from '../contexts/AuthContext'
-import { toast } from 'sonner'
-import profileService from '../services/profileService'
-import awardService from '../services/awardService'
-import { getAvatarProps } from '../utils/avatarUtils'
-import NotificationDropdown from './NotificationDropdown'
-import { useSidebar } from '../contexts/SidebarContext'
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  Camera,
+  X,
+  RefreshCw,
+  Book,
+} from "lucide-react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { useAuth } from "../contexts/AuthContext";
+import { toast } from "sonner";
+import profileService from "../services/profileService";
+import awardService from "../services/awardService";
+import { getAvatarProps } from "../utils/avatarUtils";
+import NotificationDropdown from "./NotificationDropdown";
+import { useSidebar } from "../contexts/SidebarContext";
 import { RiMenu3Fill } from "react-icons/ri";
-import { ThemeToggle } from './ThemeToggle'
-import { PiKeyDuotone, PiUserDuotone, PiUsersDuotone } from 'react-icons/pi'
-import { Link, useNavigate } from 'react-router-dom'
-import Connections from './Connections'
-import { Skeleton } from './ui/skeleton'
-import { isUserGithubConnected, getGithubDismissKey } from '@/utils/githubConnection'
+import { ThemeToggle } from "./ThemeToggle";
+import { PiUserDuotone } from "react-icons/pi";
+import { Link, useNavigate } from "react-router-dom";
+import Connections from "./Connections";
+import { Skeleton } from "./ui/skeleton";
+import {
+  isUserGithubConnected,
+  getGithubDismissKey,
+} from "@/utils/githubConnection";
 
 const DashboardHeader = () => {
-  const { user, logout, loading: authLoading, isAuthenticated } = useAuth()
-  const [showConnectionModal, setShowConnectionModal] = useState(false)
+  const { user, logout, loading: authLoading, isAuthenticated } = useAuth();
+  const [showConnectionModal, setShowConnectionModal] = useState(false);
 
   useEffect(() => {
     if (authLoading || !isAuthenticated || !user) {
-      setShowConnectionModal(false)
-      return
+      setShowConnectionModal(false);
+      return;
     }
 
     if (isUserGithubConnected(user)) {
-      setShowConnectionModal(false)
-      return
+      setShowConnectionModal(false);
+      return;
     }
 
-    const userId = user.id ?? user._id
+    const userId = user.id ?? user._id;
     const dismissed =
-      userId && sessionStorage.getItem(getGithubDismissKey(String(userId)))
+      userId && sessionStorage.getItem(getGithubDismissKey(String(userId)));
 
-    setShowConnectionModal(!dismissed)
-  }, [user, authLoading, isAuthenticated])
+    setShowConnectionModal(!dismissed);
+  }, [user, authLoading, isAuthenticated]);
 
   const handleCloseConnections = () => {
-    const userId = user?.id ?? user?._id
+    const userId = user?.id ?? user?._id;
     if (userId) {
-      sessionStorage.setItem(getGithubDismissKey(String(userId)), '1')
+      sessionStorage.setItem(getGithubDismissKey(String(userId)), "1");
     }
-    setShowConnectionModal(false)
-  }
+    setShowConnectionModal(false);
+  };
 
-  const [showProfileModal, setShowProfileModal] = useState(false)
-  const [isEditing, setIsEditing] = useState(false)
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
-    username: '',
-    bio: '',
-    userLocation: '',
-    website: '',
-    phone: ''
-  })
-  const [avatarFile, setAvatarFile] = useState(null)
-  const [avatarPreview, setAvatarPreview] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [awards, setAwards] = useState([])
-  const [totalPoints, setTotalPoints] = useState(0)
-  const [headerAwards, setHeaderAwards] = useState([])
+    username: "",
+    bio: "",
+    userLocation: "",
+    website: "",
+    phone: "",
+    jobRole: "unassigned",
+  });
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [avatarPreview, setAvatarPreview] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [awards, setAwards] = useState([]);
+  const [totalPoints, setTotalPoints] = useState(0);
+  const [headerAwards, setHeaderAwards] = useState([]);
 
   useEffect(() => {
     if (user) {
       setProfileData({
-        username: user.username || '',
-        bio: user.bio || '',
-        userLocation: user.userLocation || '',
-        website: user.website || '',
-        phone: user.phone || ''
-      })
-      setAvatarPreview(user.avatar || '')
+        username: user.username || "",
+        bio: user.bio || "",
+        userLocation: user.userLocation || "",
+        website: user.website || "",
+        phone: user.phone || "",
+        jobRole: user.jobRole || "unassigned",
+      });
+      setAvatarPreview(user.avatar || "");
     }
-  }, [user])
+  }, [user]);
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchHeaderAwards = async () => {
       if (user) {
         try {
-          const awardsResponse = await awardService.getMyAwards()
-          setHeaderAwards(awardsResponse.awards || [])
-          setTotalPoints(awardsResponse.totalPoints || 0)
+          const awardsResponse = await awardService.getMyAwards();
+          setHeaderAwards(awardsResponse.awards || []);
+          setTotalPoints(awardsResponse.totalPoints || 0);
         } catch (error) {
-          console.error('Failed to fetch header awards:', error)
+          console.error("Failed to fetch header awards:", error);
         }
       }
-    }
-    fetchHeaderAwards()
-  }, [user])
+    };
+    fetchHeaderAwards();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
 
   const fetchProfileData = async () => {
     try {
-      setLoading(true)
-      const response = await profileService.getProfile()
-      const profileUser = response.user
-      
+      setLoading(true);
+      const response = await profileService.getProfile();
+      const profileUser = response.user;
+
       setProfileData({
-        username: profileUser.username || '',
-        bio: profileUser.bio || '',
-        userLocation: profileUser.userLocation || '',
-        website: profileUser.website || '',
-        phone: profileUser.phone || ''
-      })
-      setAvatarPreview(profileUser.avatar || '')
+        username: profileUser.username || "",
+        bio: profileUser.bio || "",
+        userLocation: profileUser.userLocation || "",
+        website: profileUser.website || "",
+        phone: profileUser.phone || "",
+        jobRole: profileUser.jobRole || "unassigned",
+      });
+      setAvatarPreview(profileUser.avatar || "");
 
       try {
-        const awardsResponse = await awardService.getMyAwards()
-        setAwards(awardsResponse.awards || [])
-        setTotalPoints(awardsResponse.totalPoints || 0)
+        const awardsResponse = await awardService.getMyAwards();
+        setAwards(awardsResponse.awards || []);
+        setTotalPoints(awardsResponse.totalPoints || 0);
       } catch (error) {
-        console.error('Failed to fetch awards:', error)
+        console.error("Failed to fetch awards:", error);
       }
     } catch (error) {
-      console.error('Failed to fetch profile:', error)
-      toast.error('Failed to load profile data')
+      console.error("Failed to fetch profile:", error);
+      toast.error("Failed to load profile data");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleOpenProfileModal = () => {
-    setShowProfileModal(true)
-    fetchProfileData()
-  }
+    setShowProfileModal(true);
+    fetchProfileData();
+  };
 
   const handleProfileUpdate = async () => {
     try {
-      setLoading(true)
+      setLoading(true);
 
-      const response = await profileService.updateProfile(profileData)
+      const response = await profileService.updateProfile(profileData);
 
-      const updatedUser = { ...user, ...response.user }
-      localStorage.setItem('userData', JSON.stringify(updatedUser))
-      
-      toast.success('Profile updated successfully!')
-      setIsEditing(false)
-      setShowProfileModal(false)
+      const updatedUser = { ...user, ...response.user };
+      localStorage.setItem("userData", JSON.stringify(updatedUser));
 
-      window.location.reload()
+      toast.success("Profile updated successfully!");
+      setIsEditing(false);
+      setShowProfileModal(false);
+
+      window.location.reload();
     } catch (error) {
-      console.error('Profile update error:', error)
-      toast.error(error.message || 'Failed to update profile')
+      console.error("Profile update error:", error);
+      toast.error(error.message || "Failed to update profile");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleAvatarUpload = async (event) => {
-    const file = event.target.files[0]
-    if (!file) return
+    const file = event.target.files[0];
+    if (!file) return;
 
-    if (!file.type.startsWith('image/')) {
-      toast.error('Please select a valid image file')
-      return
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select a valid image file");
+      return;
     }
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error('Image size should be less than 5MB')
-      return
+      toast.error("Image size should be less than 5MB");
+      return;
     }
 
     try {
-      setLoading(true)
+      setLoading(true);
 
-      const response = await profileService.uploadAvatar(file)
+      const response = await profileService.uploadAvatar(file);
 
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
-      const avatarUrl = response.user.avatar.startsWith('http') 
-        ? response.user.avatar 
-        : `${apiUrl}${response.user.avatar}`
-      
-      setAvatarPreview(avatarUrl)
-      setAvatarFile(file)
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
+      const avatarUrl = response.user.avatar.startsWith("http")
+        ? response.user.avatar
+        : `${apiUrl}${response.user.avatar}`;
 
-      const updatedUser = { ...user, avatar: response.user.avatar }
-      localStorage.setItem('userData', JSON.stringify(updatedUser))
-      
-      toast.success('Avatar uploaded successfully!')
+      setAvatarPreview(avatarUrl);
+      setAvatarFile(file);
 
-      window.location.reload()
+      const updatedUser = { ...user, avatar: response.user.avatar };
+      localStorage.setItem("userData", JSON.stringify(updatedUser));
+
+      toast.success("Avatar uploaded successfully!");
+
+      window.location.reload();
     } catch (error) {
-      console.error('Avatar upload error:', error)
-      toast.error(error.message || 'Failed to upload avatar')
+      console.error("Avatar upload error:", error);
+      toast.error(error.message || "Failed to upload avatar");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-
-    const { toggleSidebar, isOpen } = useSidebar();
-
-  
+  const { toggleSidebar, isOpen } = useSidebar();
 
   return (
     <>
       {/* Dashboard Header */}
       <header className="bg-[#eee] dark:bg-[black] z-5 icon  border-gray-300 dark:border-gray-700 px-6 py-4 border-b fixed w-full">
         <div className={`flex items-center justify-between `}>
-
           <div className="flex justify-center items-center gap-4">
-              <div
-          className={`flex left-2 top-20 p-3 hover:bg-gray-100 cursor-pointer rounded-sm hover:text-black z-10`}
-          onClick={() => toggleSidebar()}
-        >
-          <RiMenu3Fill />
+            <div
+              className={`flex left-2 top-20 p-3 hover:bg-gray-100 cursor-pointer rounded-sm hover:text-black z-10`}
+              onClick={() => toggleSidebar()}
+            >
+              <RiMenu3Fill />
             </div>
-           
-      </div>
+          </div>
           <div className="flex items-center gap-2">
-
-          
-        <div className="flex gap-2">
-         <Link to="/learn-point" className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[15px]">
-         <Book className='w-4 h-4 icon' />
-         </Link>
-         <Link to="/dashboard/challenges" className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[15px]">
-         <Trophy className='w-4 h-4 icon' />
-         </Link>
-        
-         <ThemeToggle className="flex w-12 h-12  hidden md:flex items-center justify-center border-none  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] dark:hover:text-white hover:text-black cursor-pointer rounded-[15px]" />
-         
-        </div>
+            <div className="flex gap-2">
+              <Link
+                to="/learn-point"
+                className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[15px]"
+              >
+                <Book className="w-4 h-4 icon" />
+              </Link>
+              <ThemeToggle className="flex w-12 h-12  hidden md:flex items-center justify-center border-none  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] dark:hover:text-white hover:text-black cursor-pointer rounded-[15px]" />
+            </div>
             <NotificationDropdown />
 
             {/* User Info */}
             <div className="flex items-center gap-3 ">
               <div className="text-right hidden md:block">
                 <div className="text-sm font-bold text-gray-900 dark:text-white">
-                  {user?.username || 'User'}
+                  {user?.username || "User"}
                 </div>
               </div>
-              
+
               {/* Avatar with Awards */}
               <div className="flex flex-col items-center gap-1">
                 <button
@@ -245,20 +255,21 @@ const DashboardHeader = () => {
                 >
                   <div className="w-12 h-12 p-1 cursor-pointer overflow-hidden border rounded-xl border-gray-200 dark:border-gray-900 group-hover:border-black dark:group-hover:border-gray-600 transition-colors">
                     <img
-                      {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
-                      alt={user?.username || 'User'}
+                      {...getAvatarProps(
+                        avatarPreview || user?.avatar,
+                        user?.username,
+                      )}
+                      alt={user?.username || "User"}
                       className="w-full h-full rounded-xl"
                     />
                   </div>
                 </button>
-                
+
                 {/* Small Awards/Stars at Bottom of Avatar */}
-              
               </div>
             </div>
 
             {/* Logout Button */}
-            
           </div>
         </div>
       </header>
@@ -295,7 +306,9 @@ const DashboardHeader = () => {
                   disabled={loading}
                   title="Refresh profile data"
                 >
-                  <RefreshCw className={`w-5 h-5 icon ${loading ? 'animate-spin' : ''}`} />
+                  <RefreshCw
+                    className={`w-5 h-5 icon ${loading ? "animate-spin" : ""}`}
+                  />
                 </button>
                 <button
                   onClick={() => setShowProfileModal(false)}
@@ -311,8 +324,11 @@ const DashboardHeader = () => {
               <div className="relative group mb-2">
                 <div className="w-20 h-20 rounded-[15px] p-2 overflow-hidden border-1 border-gray-200 dark:border-gray-700 group-hover:border-black dark:group-hover:border-white transition-colors">
                   <img
-                    {...getAvatarProps(avatarPreview || user?.avatar, user?.username)}
-                    alt={user?.username || 'User'}
+                    {...getAvatarProps(
+                      avatarPreview || user?.avatar,
+                      user?.username,
+                    )}
+                    alt={user?.username || "User"}
                     className="w-full h-full object-cover rounded-[15px]"
                   />
                 </div>
@@ -327,7 +343,7 @@ const DashboardHeader = () => {
                   />
                 </label>
               </div>
-              
+
               {/* Small Awards/Stars at Bottom of Avatar */}
               {awards.length > 0 && (
                 <div className="flex items-center gap-1 mt-2 mb-2">
@@ -347,26 +363,22 @@ const DashboardHeader = () => {
                   )}
                 </div>
               )}
-              
+
               <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
-                {loading ? 'Uploading...' : 'Click the camera icon to upload a new avatar'}
+                {loading
+                  ? "Uploading..."
+                  : "Click the camera icon to upload a new avatar"}
               </p>
-              
+
               {/* User Stats */}
               <div className="flex gap-4 mt-4 text-center flex-wrap justify-center">
-                <div className="p-2 pl-5 rounded-[15px] bg-gray-100 dark:bg-black">
-                  <div className="text-sm font-medium flex gap-2 justify-center items-center text-green-600 dark:text-green-400">
-                    {user?.emailVerified ? 'Verified' : 'Pending'}
-                    {
-                      user?.role === 'superadmin' && <Button onClick={() => navigate('/dashboard/admin/permissions') + setShowProfileModal(false)} className={'w-10 h-10 ml-4'}><PiKeyDuotone /></Button>
-                    }
-                    {
-                      user?.role === 'superadmin' && <Button  onClick={() => navigate('/dashboard/admin/users') + setShowProfileModal(false)} className={'w-10 h-10'}><PiUsersDuotone /></Button>
-                    }
+                <div className="p-2 px-5 rounded-[15px] bg-gray-100 dark:bg-black">
+                  <div className="text-sm font-medium uppercase flex gap-2 justify-center items-center text-green-600 dark:text-green-400">
+                    {user?.emailVerified ? "Verified" : "Pending"}
                   </div>
                 </div>
                 {totalPoints > 0 && (
-                  <div className="px-5 py-2 bg-gray-100 dark:bg-black rounded-sm">
+                  <div className="px-5 py-2 bg-gray-100 dark:bg-black rounded-[15px]">
                     <div className="text-sm font-medium text-blue-600 dark:text-blue-400">
                       {totalPoints} Points
                     </div>
@@ -378,69 +390,113 @@ const DashboardHeader = () => {
             {/* Profile Form */}
             {loading ? (
               <div className="flex items-center justify-center flex-col gap-4 py-8 rounded-[15px]">
-                <Skeleton className={'w-10 bg-gray-200 h-10 w-full'} />
-                <Skeleton className={'w-10 bg-gray-200 h-20 w-full'} />
-                <Skeleton className={'w-10 bg-gray-200 h-10 w-full'} />
-                <Skeleton className={'w-10 bg-gray-200 h-10 w-full'} />
-                <Skeleton className={'w-10 bg-gray-200 h-10 w-full'} />
+                <Skeleton className={"w-10 bg-gray-200 h-10 w-full"} />
+                <Skeleton className={"w-10 bg-gray-200 h-20 w-full"} />
+                <Skeleton className={"w-10 bg-gray-200 h-10 w-full"} />
+                <Skeleton className={"w-10 bg-gray-200 h-10 w-full"} />
+                <Skeleton className={"w-10 bg-gray-200 h-10 w-full"} />
               </div>
             ) : (
               <div className="space-y-4">
                 <div>
-                 
                   <Input
                     value={profileData.username}
-                    onChange={(e) => setProfileData({...profileData, username: e.target.value})}
+                    onChange={(e) =>
+                      setProfileData({
+                        ...profileData,
+                        username: e.target.value,
+                      })
+                    }
                     disabled={!isEditing}
                     className="w-full"
                   />
                 </div>
 
-              <div>
-               
-                <Textarea
-                  value={profileData.bio}
-                  onChange={(e) => setProfileData({...profileData, bio: e.target.value})}
-                  disabled={!isEditing}
-                  className="w-full"
-                  rows="3"
-                  placeholder="Tell us about yourself..."
-                />
-              </div>
+                <div>
+                  <Textarea
+                    value={profileData.bio}
+                    onChange={(e) =>
+                      setProfileData({ ...profileData, bio: e.target.value })
+                    }
+                    disabled={!isEditing}
+                    className="w-full"
+                    rows="3"
+                    placeholder="Tell us about yourself..."
+                  />
+                </div>
 
-              <div>
-              
-                <Input
-                  value={profileData.userLocation}
-                  onChange={(e) => setProfileData({...profileData, userLocation: e.target.value})}
-                  disabled={!isEditing}
-                  className="w-full"
-                  placeholder="Your location"
-                />
-              </div>
+                <div>
+                  <Input
+                    value={profileData.userLocation}
+                    onChange={(e) =>
+                      setProfileData({
+                        ...profileData,
+                        userLocation: e.target.value,
+                      })
+                    }
+                    disabled={!isEditing}
+                    className="w-full"
+                    placeholder="Your location"
+                  />
+                </div>
 
-              <div>
-              
-                <Input
-                  value={profileData.website}
-                  onChange={(e) => setProfileData({...profileData, website: e.target.value})}
-                  disabled={!isEditing}
-                  className="w-full"
-                  placeholder="https://yourwebsite.com"
-                />
-              </div>
+                <div>
+                  <Input
+                    value={profileData.website}
+                    onChange={(e) =>
+                      setProfileData({
+                        ...profileData,
+                        website: e.target.value,
+                      })
+                    }
+                    disabled={!isEditing}
+                    className="w-full"
+                    placeholder="https://yourwebsite.com"
+                  />
+                </div>
 
-              <div>
-              
-                <Input
-                  value={profileData.phone}
-                  onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
-                  disabled={!isEditing}
-                  className="w-full"
-                  placeholder="Your phone number"
-                />
+                <div>
+                  <Input
+                    value={profileData.phone}
+                    onChange={(e) =>
+                      setProfileData({ ...profileData, phone: e.target.value })
+                    }
+                    disabled={!isEditing}
+                    className="w-full"
+                    placeholder="Your phone number"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-1.5">
+                    Role
+                  </label>
+                  <Select
+                    value={profileData.jobRole}
+                    onValueChange={(value) =>
+                      setProfileData({ ...profileData, jobRole: value })
+                    }
+                    disabled={!isEditing}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select your role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="frontend">
+                        Frontend Developer
+                      </SelectItem>
+                      <SelectItem value="backend">Backend Developer</SelectItem>
+                      <SelectItem value="qa">QA Engineer</SelectItem>
+                      <SelectItem value="devops">DevOps Engineer</SelectItem>
+                      <SelectItem value="fullstack">
+                        Full Stack Developer
+                      </SelectItem>
+                      <SelectItem value="designer">UI/UX Designer</SelectItem>
+                      <SelectItem value="unassigned">Unassigned</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-            </div>
             )}
 
             {/* Action Buttons */}
@@ -459,16 +515,17 @@ const DashboardHeader = () => {
                   <Button
                     variant="outline"
                     onClick={() => {
-                      setIsEditing(false)
+                      setIsEditing(false);
                       setProfileData({
-                        username: user?.username || '',
-                        bio: user?.bio || '',
-                        userLocation: user?.userLocation || '',
-                        website: user?.website || '',
-                        phone: user?.phone || ''
-                      })
-                      setAvatarFile(null)
-                      setAvatarPreview(user?.avatar || '')
+                        username: user?.username || "",
+                        bio: user?.bio || "",
+                        userLocation: user?.userLocation || "",
+                        website: user?.website || "",
+                        phone: user?.phone || "",
+                        jobRole: user?.jobRole || "unassigned",
+                      });
+                      setAvatarFile(null);
+                      setAvatarPreview(user?.avatar || "");
                     }}
                     className="flex-1"
                     disabled={loading}
@@ -480,7 +537,7 @@ const DashboardHeader = () => {
                     className="flex-1"
                     disabled={loading}
                   >
-                    {loading ? 'Saving...' : 'Save Changes'}
+                    {loading ? "Saving..." : "Save Changes"}
                   </Button>
                 </>
               )}
@@ -489,17 +546,14 @@ const DashboardHeader = () => {
         </motion.div>
       )}
 
-
-       {
-        showConnectionModal && (
-          <Connections
-            isOpen={showConnectionModal}
-            onClose={handleCloseConnections}
-          />
-        )
-      }
+      {showConnectionModal && (
+        <Connections
+          isOpen={showConnectionModal}
+          onClose={handleCloseConnections}
+        />
+      )}
     </>
-  )
-}
+  );
+};
 
-export default DashboardHeader
+export default DashboardHeader;

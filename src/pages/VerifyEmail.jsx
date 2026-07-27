@@ -1,131 +1,131 @@
-import { useState, useEffect } from "react"
-import { Mail, RefreshCw } from "lucide-react"
-import { useNavigate, useSearchParams } from "react-router-dom"
-import { toast } from "sonner"
-import { authService } from "../services/authService"
+import { useState, useEffect } from "react";
+import { Mail, RefreshCw } from "lucide-react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
+import { authService } from "../services/authService";
 import {
   AuthLayout,
   AuthButton,
   AuthOtpInput,
-} from "../components/auth/AuthLayout"
+} from "../components/auth/AuthLayout";
 
 const VerifyEmail = () => {
-  const [otp, setOtp] = useState(["", "", "", ""])
-  const [email, setEmail] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [resendLoading, setResendLoading] = useState(false)
-  const [searchParams] = useSearchParams()
-  const navigate = useNavigate()
+  const [otp, setOtp] = useState(["", "", "", ""]);
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const storedEmail = localStorage.getItem("verificationEmail")
-    const urlEmail = searchParams.get("email")
-    const token = searchParams.get("token")
+    const storedEmail = localStorage.getItem("verificationEmail");
+    const urlEmail = searchParams.get("email");
+    const token = searchParams.get("token");
 
     if (storedEmail) {
-      setEmail(storedEmail)
+      setEmail(storedEmail);
     } else if (urlEmail) {
-      setEmail(urlEmail)
-      localStorage.setItem("verificationEmail", urlEmail)
+      setEmail(urlEmail);
+      localStorage.setItem("verificationEmail", urlEmail);
     } else if (token) {
-      handleVerifyWithToken(token)
+      handleVerifyWithToken(token);
     } else {
-      toast.error("No verification email found")
-      navigate("/login")
+      toast.error("No verification email found");
+      navigate("/login");
     }
-  }, [searchParams, navigate])
+  }, [searchParams, navigate]);
 
   const handleVerifyWithToken = async (token) => {
     try {
-      setLoading(true)
-      const result = await authService.verifyEmail(email, token)
+      setLoading(true);
+      const result = await authService.verifyEmail(email, token);
       if (result.success) {
-        toast.success("Email verified successfully!")
-        localStorage.removeItem("verificationEmail")
-        navigate("/dashboard")
+        toast.success("Email verified successfully!");
+        localStorage.removeItem("verificationEmail");
+        navigate("/dashboard");
       } else {
-        toast.error(result.message || "Verification failed")
+        toast.error(result.message || "Verification failed");
       }
     } catch (error) {
-      console.error("Token verification error:", error)
-      toast.error("Verification failed")
+      console.error("Token verification error:", error);
+      toast.error("Verification failed");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleOtpChange = (index, value) => {
-    if (value.length > 1) return
+    if (value.length > 1) return;
 
-    const newOtp = [...otp]
-    newOtp[index] = value.replace(/\D/g, "")
-    setOtp(newOtp)
+    const newOtp = [...otp];
+    newOtp[index] = value.replace(/\D/g, "");
+    setOtp(newOtp);
 
     if (value && index < 3) {
-      const nextInput = document.getElementById(`otp-${index + 1}`)
-      if (nextInput) nextInput.focus()
+      const nextInput = document.getElementById(`otp-${index + 1}`);
+      if (nextInput) nextInput.focus();
     }
-  }
+  };
 
   const handleKeyDown = (index, e) => {
     if (e.key === "Backspace" && !otp[index] && index > 0) {
-      const prevInput = document.getElementById(`otp-${index - 1}`)
-      if (prevInput) prevInput.focus()
+      const prevInput = document.getElementById(`otp-${index - 1}`);
+      if (prevInput) prevInput.focus();
     }
-  }
+  };
 
   const handleVerify = async () => {
     if (!email) {
-      toast.error("No email found for verification")
-      return
+      toast.error("No email found for verification");
+      return;
     }
 
-    const otpCode = otp.join("")
+    const otpCode = otp.join("");
     if (otpCode.length !== 4) {
-      toast.error("Please enter the complete 4-digit code")
-      return
+      toast.error("Please enter the complete 4-digit code");
+      return;
     }
 
     try {
-      setLoading(true)
-      const result = await authService.verifyEmail(email, otpCode)
+      setLoading(true);
+      const result = await authService.verifyEmail(email, otpCode);
 
       if (result.success) {
-        toast.success("Email verified successfully!")
-        localStorage.removeItem("verificationEmail")
-        navigate("/dashboard")
+        toast.success("Email verified successfully!");
+        localStorage.removeItem("verificationEmail");
+        navigate("/dashboard");
       } else {
-        toast.error(result.message || "Invalid verification code")
+        toast.error(result.message || "Invalid verification code");
       }
     } catch (error) {
-      console.error("Verification error:", error)
-      toast.error(error.message || "Verification failed")
+      console.error("Verification error:", error);
+      toast.error(error.message || "Verification failed");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleResendOtp = async () => {
     if (!email) {
-      toast.error("No email found for resending OTP")
-      return
+      toast.error("No email found for resending OTP");
+      return;
     }
 
     try {
-      setResendLoading(true)
-      const result = await authService.resendOtp(email)
+      setResendLoading(true);
+      const result = await authService.resendOtp(email);
       if (result.success) {
-        toast.success("Verification code sent to your email")
+        toast.success("Verification code sent to your email");
       } else {
-        toast.error(result.message || "Failed to resend code")
+        toast.error(result.message || "Failed to resend code");
       }
     } catch (error) {
-      console.error("Resend error:", error)
-      toast.error("Failed to resend verification code")
+      console.error("Resend error:", error);
+      toast.error("Failed to resend verification code");
     } finally {
-      setResendLoading(false)
+      setResendLoading(false);
     }
-  }
+  };
 
   return (
     <AuthLayout
@@ -133,9 +133,7 @@ const VerifyEmail = () => {
       subtitle={
         <>
           We sent a 4-digit code to{" "}
-          <span className="text-theme-muted font-bold">
-            {email}
-          </span>
+          <span className="text-theme-muted font-bold">{email}</span>
         </>
       }
       backTo="/login"
@@ -196,7 +194,7 @@ const VerifyEmail = () => {
         </p>
       </div>
     </AuthLayout>
-  )
-}
+  );
+};
 
-export default VerifyEmail
+export default VerifyEmail;

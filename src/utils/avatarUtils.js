@@ -4,18 +4,18 @@
  * @param {string} username - Username for fallback avatar
  * @returns {string} - Complete avatar URL
  */
-export const getAvatarUrl = (avatar, username = 'User') => {
+export const getAvatarUrl = (avatar, username = "User") => {
   if (!avatar) {
-    return `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&color=fff&size=128`
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&color=fff&size=128`;
   }
 
-  if (avatar.startsWith('http')) {
-    return avatar
+  if (avatar.startsWith("http")) {
+    return avatar;
   }
 
-  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000'
-  return `${apiUrl}${avatar.startsWith('/') ? '' : '/'}${avatar}`
-}
+  const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
+  return `${apiUrl}${avatar.startsWith("/") ? "" : "/"}${avatar}`;
+};
 
 /**
  * Get avatar URL with error fallback
@@ -23,13 +23,13 @@ export const getAvatarUrl = (avatar, username = 'User') => {
  * @param {string} username - Username for fallback avatar
  * @returns {object} - Object with src and onError handler
  */
-export const getAvatarProps = (avatar, username = 'User') => {
-  const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&color=fff&size=128`
-  
+export const getAvatarProps = (avatar, username = "User") => {
+  const fallbackUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=random&color=fff&size=128`;
+
   return {
     src: getAvatarUrl(avatar, username),
     onError: (e) => {
-      e.target.src = fallbackUrl
-    }
-  }
-}
+      e.target.src = fallbackUrl;
+    },
+  };
+};

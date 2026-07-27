@@ -1,180 +1,189 @@
-import { createContext, useContext, useState, useEffect, useMemo } from 'react'
-import { authService } from '../services/authService'
-import { clearGithubStorage } from '../utils/githubStorage'
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
+import { authService } from "../services/authService";
+import { clearGithubStorage } from "../utils/githubStorage";
 
-const AuthContext = createContext()
+const AuthContext = createContext();
 
 export const useAuth = () => {
-  const context = useContext(AuthContext)
+  const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider')
+    throw new Error("useAuth must be used within an AuthProvider");
   }
-  return context
-}
+  return context;
+};
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [isAuthenticated, setIsAuthenticated] = useState(false)
-  const [token, setToken] = useState(null)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [token, setToken] = useState(null);
 
   useEffect(() => {
-    checkAuthStatus()
-  }, [])
+    checkAuthStatus();
+  }, []);
 
   const checkAuthStatus = async () => {
     try {
-      setLoading(true)
-      const storedToken = localStorage.getItem('authToken')
-      
+      setLoading(true);
+      const storedToken = localStorage.getItem("authToken");
+
       if (storedToken) {
-        setToken(storedToken)
-        setIsAuthenticated(true)
-        const userProfile = await authService.getCurrentUser()
-        setUser(userProfile.user)
+        setToken(storedToken);
+        setIsAuthenticated(true);
+        const userProfile = await authService.getCurrentUser();
+        setUser(userProfile.user);
       } else {
-        clearGithubStorage()
-        setToken(null)
-        setIsAuthenticated(false)
-        setUser(null)
+        clearGithubStorage();
+        setToken(null);
+        setIsAuthenticated(false);
+        setUser(null);
       }
     } catch (error) {
-      localStorage.removeItem('authToken')
-      localStorage.removeItem('userData')
-      clearGithubStorage()
-      setToken(null)
-      setIsAuthenticated(false)
-      setUser(null)
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userData");
+      clearGithubStorage();
+      setToken(null);
+      setIsAuthenticated(false);
+      setUser(null);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const login = async (credentials) => {
     try {
-      setLoading(true)
-      
-      const result = await authService.login(credentials)
+      setLoading(true);
+
+      const result = await authService.login(credentials);
       if (result.success) {
-
         if (result.token) {
-          clearGithubStorage()
-          localStorage.setItem('authToken', result.token)
-          setToken(result.token)
-          setUser(result.user)
-          setIsAuthenticated(true)
+          clearGithubStorage();
+          localStorage.setItem("authToken", result.token);
+          setToken(result.token);
+          setUser(result.user);
+          setIsAuthenticated(true);
         }
-        
-        return { 
-          success: true, 
-          user: result.user, 
+
+        return {
+          success: true,
+          user: result.user,
           emailSent: result.emailSent,
-          message: result.message 
-        }
-
-
+          message: result.message,
+        };
       } else {
-        return { success: false, error: result.message || 'Login failed' }
+        return { success: false, error: result.message || "Login failed" };
       }
-      
     } catch (error) {
-      return { success: false, error: error.message || 'Login failed' }
+      return { success: false, error: error.message || "Login failed" };
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-
+  };
 
   const logout = async () => {
     try {
-      await authService.logout()
+      await authService.logout();
     } catch (error) {
-      console.error('Logout failed, clearing local state anyway:', error)
+      console.error("Logout failed, clearing local state anyway:", error);
     } finally {
-      localStorage.removeItem('authToken')
-      localStorage.removeItem('userData')
-      clearGithubStorage()
-      setToken(null)
-      setUser(null)
-      setIsAuthenticated(false)
-      window.location.href = '/login'
+      localStorage.removeItem("authToken");
+      localStorage.removeItem("userData");
+      clearGithubStorage();
+      setToken(null);
+      setUser(null);
+      setIsAuthenticated(false);
+      window.location.href = "/login";
     }
-  }
+  };
 
   const forgotPassword = async (email) => {
     try {
-      setLoading(true)
+      setLoading(true);
 
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      return { success: true, message: 'Reset code sent to email' }
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      return { success: true, message: "Reset code sent to email" };
     } catch (error) {
-      return { success: false, error: 'Failed to send reset code' }
+      return { success: false, error: "Failed to send reset code" };
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const verifyOTP = async (otp) => {
     try {
-      setLoading(true)
+      setLoading(true);
 
-      await new Promise(resolve => setTimeout(resolve, 1000))
+      await new Promise((resolve) => setTimeout(resolve, 1000));
 
       if (otp.length === 4) {
-        return { success: true, message: 'OTP verified successfully' }
+        return { success: true, message: "OTP verified successfully" };
       } else {
-        return { success: false, error: 'Invalid OTP' }
+        return { success: false, error: "Invalid OTP" };
       }
     } catch (error) {
-      return { success: false, error: 'OTP verification failed' }
+      return { success: false, error: "OTP verification failed" };
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
+
+  const updateUser = (updates) => {
+    setUser((prev) => (prev ? { ...prev, ...updates } : prev));
+  };
 
   const isSuperadmin = useMemo(() => {
-    return user?.role === 'superadmin'
-  }, [user])
+    return user?.role === "superadmin";
+  }, [user]);
 
   const isAdmin = useMemo(() => {
-    return user?.role === 'admin' || user?.role === 'superadmin'
-  }, [user])
+    return user?.role === "admin" || user?.role === "superadmin";
+  }, [user]);
 
   const isUser = useMemo(() => {
-    return user?.role === 'user' || !user?.role
-  }, [user])
+    return user?.role === "user" || !user?.role;
+  }, [user]);
 
   const hasRole = useMemo(() => {
     return (role) => {
-      if (!user) return false
-      if (role === 'superadmin') return user.role === 'superadmin'
-      if (role === 'admin') return user.role === 'admin' || user.role === 'superadmin'
-      if (role === 'user') return true // All authenticated users have user role
-      return false
-    }
-  }, [user])
+      if (!user) return false;
+      if (role === "superadmin") return user.role === "superadmin";
+      if (role === "admin")
+        return user.role === "admin" || user.role === "superadmin";
+      if (role === "user") return true; // All authenticated users have user role
+      return false;
+    };
+  }, [user]);
 
-  const value = useMemo(() => ({
-    user,
-    token,
-    isAuthenticated,
-    loading,
-    login,
-    logout,
-    forgotPassword,
-    verifyOTP,
+  const value = useMemo(
+    () => ({
+      user,
+      token,
+      isAuthenticated,
+      loading,
+      login,
+      logout,
+      forgotPassword,
+      verifyOTP,
+      updateUser,
 
-    isSuperadmin,
-    isAdmin,
-    isUser,
-    hasRole,
-    userRole: user?.role || 'user'
-  }), [user, token, isAuthenticated, loading, isSuperadmin, isAdmin, isUser, hasRole])
+      isSuperadmin,
+      isAdmin,
+      isUser,
+      hasRole,
+      userRole: user?.role || "user",
+    }),
+    [
+      user,
+      token,
+      isAuthenticated,
+      loading,
+      isSuperadmin,
+      isAdmin,
+      isUser,
+      hasRole,
+    ],
+  );
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
-}
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};

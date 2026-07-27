@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react"
-import { Eye, EyeOff, Mail, Lock } from "lucide-react"
-import { Link, useNavigate } from "react-router-dom"
-import { useAuth } from "../contexts/AuthContext"
-import { toast } from "sonner"
+import { useEffect, useState } from "react";
+import { Eye, EyeOff, Mail, Lock } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";
+import { toast } from "sonner";
 import {
   AuthLayout,
   AuthButton,
@@ -10,64 +10,64 @@ import {
   AuthAltLink,
   AuthField,
   AuthInput,
-} from "../components/auth/AuthLayout"
+} from "../components/auth/AuthLayout";
 
 const Login = () => {
-  const [showPassword, setShowPassword] = useState(false)
-  const [formData, setFormData] = useState({ email: "", password: "" })
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({ email: "", password: "" });
 
-  document.title = "Welcome Back! Please Login"
+  document.title = "Welcome Back! Please Login";
 
-  const { login, loading, isAuthenticated } = useAuth()
-  const navigate = useNavigate()
+  const { login, loading, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate("/dashboard")
+      navigate("/dashboard");
     }
-  }, [isAuthenticated, navigate])
+  }, [isAuthenticated, navigate]);
 
   const handleInputChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value })
-  }
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
     try {
-      const result = await login(formData)
+      const result = await login(formData);
 
       if (result && result.success) {
         if (result.user && result.user.emailVerified) {
-          toast.success(`Welcome Back ${result?.user?.username}!`)
-          navigate("/dashboard")
+          toast.success(`Welcome Back ${result?.user?.username}!`);
+          navigate("/dashboard");
         } else {
-          localStorage.setItem("verificationEmail", formData.email)
+          localStorage.setItem("verificationEmail", formData.email);
 
           if (result.emailSent) {
             toast.info("Verification email sent!", {
               description: "Please check your email and verify to continue",
-            })
+            });
           } else {
             toast.info("Email verification required", {
               description: "Please verify your email to continue",
-            })
+            });
           }
 
-          navigate("/verify-email")
+          navigate("/verify-email");
         }
       } else {
         toast.error("Login failed", {
           description: result?.error || "Please check your credentials",
-        })
+        });
       }
     } catch (error) {
-      console.error("Login error caught:", error)
+      console.error("Login error caught:", error);
       toast.error("Login failed", {
         description: error.message || "Please check your credentials",
-      })
+      });
     }
-  }
+  };
 
   return (
     <AuthLayout
@@ -122,9 +122,13 @@ const Login = () => {
       </form>
 
       <AuthDivider />
-      <AuthAltLink text="Don't have an account?" linkText="Register" to="/signup" />
+      <AuthAltLink
+        text="Don't have an account?"
+        linkText="Register"
+        to="/signup"
+      />
     </AuthLayout>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

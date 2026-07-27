@@ -1,14 +1,16 @@
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 
-const HorizontalLoader = ({ 
-  message = "Loading...", 
-  subMessage = "Please wait", 
+const HorizontalLoader = ({
+  message = "Loading...",
+  subMessage = "Please wait",
   progress = 75,
   className = "",
-  showProgress = true 
+  showProgress = true,
 }) => {
   return (
-    <div className={`flex flex-col items-center justify-center min-h-[200px] ${className}`}>
+    <div
+      className={`flex flex-col items-center justify-center min-h-[200px] ${className}`}
+    >
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -23,15 +25,13 @@ const HorizontalLoader = ({
             className="h-full bg-gradient-to-r from-gray-500 to-gray-600 rounded-[15px]"
           />
         </div>
-        
+
         {/* Progress Text */}
-       
-        
+
         {/* Loading Message */}
-      
       </motion.div>
     </div>
-  )
-}
+  );
+};
 
-export default HorizontalLoader
+export default HorizontalLoader;

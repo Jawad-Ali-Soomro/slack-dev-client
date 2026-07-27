@@ -4,7 +4,7 @@ export const toUTCDate = (date, time, timeZone) => {
   const local = new Date(localDateTime);
 
   const utcDate = new Date(
-    local.toLocaleString("en-US", { timeZone: "Asia/Karachi" })
+    local.toLocaleString("en-US", { timeZone: "Asia/Karachi" }),
   );
 
   return utcDate;

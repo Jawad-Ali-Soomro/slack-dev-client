@@ -29,7 +29,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
 
     if (avatar.startsWith("http")) return avatar;
 
-    const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+    const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
     return `${apiUrl}${avatar.startsWith("/") ? "" : "/"}${avatar}`;
   };
   const [searchTerm, setSearchTerm] = useState("");
@@ -62,15 +62,13 @@ const CreateChatModal = ({ isOpen, onClose }) => {
   };
 
   const handleUserSelect = (userId) => {
-    if (chatType === 'direct') {
-
+    if (chatType === "direct") {
       setSelectedUsers([userId]);
     } else {
-
       setSelectedUsers((prev) =>
         prev.includes(userId)
           ? prev.filter((id) => id !== userId)
-          : [...prev, userId]
+          : [...prev, userId],
       );
     }
   };
@@ -94,7 +92,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
         selectedUsers,
         chatType,
         chatType === "group" ? chatName : null,
-        chatType === "group" ? chatDescription : null
+        chatType === "group" ? chatDescription : null,
       );
 
       onClose();
@@ -119,7 +117,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
   const filteredUsers = users.filter(
     (u) =>
       u.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      u.email.toLowerCase().includes(searchTerm.toLowerCase())
+      u.email.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   if (!isOpen) return null;
@@ -230,7 +228,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
                       variant="secondary"
                       className="flex items-center gap-1 py-2"
                     >
-                      <Avatar className="h-4 w-4 icon">
+                      <Avatar className="h-4 w-4">
                         <AvatarImage src={getAvatarUrl(user?.avatar)} />
                         <AvatarFallback className="text-xs">
                           {user?.username?.charAt(0).toUpperCase()}

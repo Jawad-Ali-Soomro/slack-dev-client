@@ -1,4 +1,3 @@
-
 module.exports = {
   theme: {
     screens: {
@@ -10,4 +9,4 @@ module.exports = {
       "2xl": "1536px",
     },
   },
-}
+};

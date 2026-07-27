@@ -1,8 +1,10 @@
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 
 function StatCardSkeleton({ accent = false }) {
   return (
-    <div className={`dashboard-card p-6 ${accent ? "dashboard-card--accent" : ""}`}>
+    <div
+      className={`dashboard-card p-6 ${accent ? "dashboard-card--accent" : ""}`}
+    >
       <div className="flex items-start justify-between mb-6">
         <div className="space-y-2 flex-1">
           <Skeleton className="h-3 w-24 rounded-md" />
@@ -12,7 +14,7 @@ function StatCardSkeleton({ accent = false }) {
       </div>
       <Skeleton className="h-12 w-20 rounded-lg" />
     </div>
-  )
+  );
 }
 
 function ChartPanelSkeleton({ tall = false }) {
@@ -31,14 +33,16 @@ function ChartPanelSkeleton({ tall = false }) {
           <Skeleton className="h-3 w-16 rounded-md ml-auto" />
         </div>
       </div>
-      <Skeleton className={`w-full rounded-xl ${tall ? "h-[300px]" : "h-[220px]"}`} />
+      <Skeleton
+        className={`w-full rounded-xl ${tall ? "h-[300px]" : "h-[220px]"}`}
+      />
       <div className="grid grid-cols-2 gap-3 mt-6">
         {[1, 2, 3, 4].map((i) => (
           <Skeleton key={i} className="h-14 w-full rounded-xl" />
         ))}
       </div>
     </div>
-  )
+  );
 }
 
 function ListPanelSkeleton({ rows = 5 }) {
@@ -53,7 +57,10 @@ function ListPanelSkeleton({ rows = 5 }) {
       </div>
       <div className="space-y-2">
         {Array.from({ length: rows }).map((_, i) => (
-          <div key={i} className="flex items-center gap-3 p-3 rounded-xl border border-black/5 dark:border-white/5">
+          <div
+            key={i}
+            className="flex items-center gap-3 p-3 rounded-xl border border-black/5 dark:border-white/5"
+          >
             <Skeleton className="h-8 w-8 rounded-lg shrink-0" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-3.5 w-3/4 rounded-md" />
@@ -65,7 +72,7 @@ function ListPanelSkeleton({ rows = 5 }) {
       </div>
       <Skeleton className="h-9 w-full rounded-lg mt-4" />
     </div>
-  )
+  );
 }
 
 function CalendarSkeleton() {
@@ -96,7 +103,7 @@ function CalendarSkeleton() {
         <Skeleton className="h-12 flex-1 rounded-xl" />
       </div>
     </div>
-  )
+  );
 }
 
 export function GithubReposSkeleton() {
@@ -129,7 +136,7 @@ export function GithubReposSkeleton() {
       </div>
       <Skeleton className="h-9 w-full rounded-lg mt-4" />
     </div>
-  )
+  );
 }
 
 export default function DashboardSkeleton() {
@@ -184,5 +191,5 @@ export default function DashboardSkeleton() {
         </div>
       </div>
     </div>
-  )
+  );
 }

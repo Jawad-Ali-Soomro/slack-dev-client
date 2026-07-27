@@ -31,12 +31,16 @@ import LearnPoint from "./pages/LearnPoint";
 import Challenges from "./pages/Challenges";
 import ChallengeDetail from "./pages/ChallengeDetail";
 import RepoDetail from "./pages/RepoDetail";
+import Repos from "./pages/Repos";
 import Notes from "./pages/Notes";
+import Automation from "./pages/Automation";
 import KeyboardShortcuts from "./components/Keyboard";
+import FigmaCursor from "./components/FigmaCursor";
 
 function App() {
   return (
     <div className="bg-white dark:bg-[black]">
+      <FigmaCursor />
       <Router>
         <Toaster
           position="top-center"
@@ -53,7 +57,7 @@ function App() {
             className: "toast-custom",
           }}
         />
-        
+
         <AuthProvider>
           <NotificationProvider>
             <ChatProvider>
@@ -143,6 +147,14 @@ function App() {
                         }
                       />
                       <Route
+                        path="/dashboard/automation"
+                        element={
+                          <ProtectedRoute requireAuth={true}>
+                            <Automation />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
                         path="/dashboard/friends"
                         element={
                           <ProtectedRoute requireAuth={true}>
@@ -179,6 +191,14 @@ function App() {
                         element={
                           <ProtectedRoute requireAuth={true}>
                             <ChallengeDetail />
+                          </ProtectedRoute>
+                        }
+                      />
+                      <Route
+                        path="/dashboard/repos"
+                        element={
+                          <ProtectedRoute requireAuth={true}>
+                            <Repos />
                           </ProtectedRoute>
                         }
                       />

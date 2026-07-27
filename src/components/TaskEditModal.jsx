@@ -1,104 +1,127 @@
-import { useState, useEffect } from 'react'
-import { motion } from 'framer-motion'
-import { X, Save, Calendar, User, Flag, FileText, Clock } from 'lucide-react'
-import { Button } from './ui/button'
-import { Input } from './ui/input'
-import { Textarea } from './ui/textarea'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
-import { toast } from 'sonner'
-import enhancedTaskService from '../services/enhancedTaskService'
-import { getAvatarProps } from '../utils/avatarUtils'
-import taskService from '../services/taskService'
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { X, Save, Calendar, User, Flag, FileText, Clock } from "lucide-react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { DatePicker } from "./ui/date-picker";
+import { toast } from "sonner";
+import enhancedTaskService from "../services/enhancedTaskService";
+import { getAvatarProps } from "../utils/avatarUtils";
+import taskService from "../services/taskService";
 
-const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => {
+const TaskEditModal = ({
+  task,
+  isOpen,
+  onClose,
+  onTaskUpdated,
+  users = [],
+}) => {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    priority: 'medium',
-    status: 'pending',
-    assignedTo: '',
-    dueDate: '',
-    tags: []
-  })
-  const [newTag, setNewTag] = useState('')
-  const [loading, setLoading] = useState(false)
+    title: "",
+    description: "",
+    priority: "medium",
+    status: "pending",
+    assignedTo: "",
+    dueDate: "",
+    tags: [],
+  });
+  const [newTag, setNewTag] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (task) {
       setFormData({
-        title: task.title || '',
-        description: task.description || '',
-        priority: task.priority || 'medium',
-        status: task.status || 'pending',
-        assignedTo: task.assignTo?.id || task.assignTo?._id || task.assignTo || 'unassigned',
-        dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
-        tags: task.tags || []
-      })
+        title: task.title || "",
+        description: task.description || "",
+        priority: task.priority || "medium",
+        status: task.status || "pending",
+        assignedTo:
+          task.assignTo?.id ||
+          task.assignTo?._id ||
+          task.assignTo ||
+          "unassigned",
+        dueDate: task.dueDate
+          ? new Date(task.dueDate).toISOString().split("T")[0]
+          : "",
+        tags: task.tags || [],
+      });
     }
-  }, [task])
+  }, [task]);
 
   const handleInputChange = (field, value) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
-    }))
-  }
+      [field]: value,
+    }));
+  };
 
   const handleAddTag = () => {
     if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        tags: [...prev.tags, newTag.trim()]
-      }))
-      setNewTag('')
+        tags: [...prev.tags, newTag.trim()],
+      }));
+      setNewTag("");
     }
-  }
+  };
 
   const handleRemoveTag = (tagToRemove) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      tags: prev.tags.filter(tag => tag !== tagToRemove)
-    }))
-  }
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
+    }));
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!formData.title.trim()) {
-      toast.error('Title is required')
-      return
+      toast.error("Title is required");
+      return;
     }
 
     try {
-      setLoading(true)
-      
+      setLoading(true);
+
       const updateData = {
         ...formData,
-        assignedTo: formData.assignedTo === 'unassigned' ? null : formData.assignedTo,
-        dueDate: formData.dueDate ? new Date(formData.dueDate).toISOString() : null
-      }
+        assignedTo:
+          formData.assignedTo === "unassigned" ? null : formData.assignedTo,
+        dueDate: formData.dueDate
+          ? new Date(formData.dueDate).toISOString()
+          : null,
+      };
 
-      const response = await taskService.updateTask(task.id, updateData)
-      
-      toast.success('Task updated successfully!')
-      onTaskUpdated(response.task)
-      onClose()
+      const response = await taskService.updateTask(task.id, updateData);
+
+      toast.success("Task updated successfully!");
+      onTaskUpdated(response.task);
+      onClose();
     } catch (error) {
-      console.error('Task update error:', error)
-      toast.error(error.message || 'Failed to update task')
+      console.error("Task update error:", error);
+      toast.error(error.message || "Failed to update task");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const getAssignedUser = () => {
-    if (!formData.assignedTo || formData.assignedTo === 'unassigned') return null
-    return users.find(user => (user.id || user._id) === formData.assignedTo)
-  }
+    if (!formData.assignedTo || formData.assignedTo === "unassigned")
+      return null;
+    return users.find((user) => (user.id || user._id) === formData.assignedTo);
+  };
 
-  const assignedUser = getAssignedUser()
+  const assignedUser = getAssignedUser();
 
-  if (!isOpen || !task) return null
+  if (!isOpen || !task) return null;
 
   return (
     <motion.div
@@ -140,7 +163,7 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
             <div>
               <Input
                 value={formData.title}
-                onChange={(e) => handleInputChange('title', e.target.value)}
+                onChange={(e) => handleInputChange("title", e.target.value)}
                 placeholder="Enter task title *"
                 className="w-full"
                 required
@@ -151,7 +174,9 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
             <div>
               <Textarea
                 value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
+                onChange={(e) =>
+                  handleInputChange("description", e.target.value)
+                }
                 placeholder="Enter task description"
                 className="w-full"
                 rows="4"
@@ -161,29 +186,53 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
             {/* Priority and Status */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <Select value={formData.priority} onValueChange={(value) => handleInputChange('priority', value)}>
-                  <SelectTrigger className={'w-full'}>
+                <Select
+                  value={formData.priority}
+                  onValueChange={(value) =>
+                    handleInputChange("priority", value)
+                  }
+                >
+                  <SelectTrigger className={"w-full"}>
                     <SelectValue placeholder="Select priority" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem className={"px-5"} value="low">Low</SelectItem>
-                    <SelectItem className={"px-5"} value="medium">Medium</SelectItem>
-                    <SelectItem className={"px-5"} value="high">High</SelectItem>
-                    <SelectItem className={"px-5"} value="urgent">Urgent</SelectItem>
+                    <SelectItem className={"px-5"} value="low">
+                      Low
+                    </SelectItem>
+                    <SelectItem className={"px-5"} value="medium">
+                      Medium
+                    </SelectItem>
+                    <SelectItem className={"px-5"} value="high">
+                      High
+                    </SelectItem>
+                    <SelectItem className={"px-5"} value="urgent">
+                      Urgent
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)}>
-                  <SelectTrigger className={'w-full'}>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => handleInputChange("status", value)}
+                >
+                  <SelectTrigger className={"w-full"}>
                     <SelectValue placeholder="Select status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem className={"px-5"} value="pending">Pending</SelectItem>
-                    <SelectItem className={"px-5"} value="in_progress">In Progress</SelectItem>
-                    <SelectItem className={"px-5"} value="completed">Completed</SelectItem>
-                    <SelectItem className={"px-5"} value="cancelled">Cancelled</SelectItem>
+                    <SelectItem className={"px-5"} value="pending">
+                      Pending
+                    </SelectItem>
+                    <SelectItem className={"px-5"} value="in_progress">
+                      In Progress
+                    </SelectItem>
+                    <SelectItem className={"px-5"} value="completed">
+                      Completed
+                    </SelectItem>
+                    <SelectItem className={"px-5"} value="cancelled">
+                      Cancelled
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -191,13 +240,21 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
 
             {/* Assigned To */}
             <div>
-              <Select value={formData.assignedTo} onValueChange={(value) => handleInputChange('assignedTo', value)}>
-                <SelectTrigger className='w-full'>
+              <Select
+                value={formData.assignedTo}
+                onValueChange={(value) =>
+                  handleInputChange("assignedTo", value)
+                }
+              >
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select assigned user">
                     {assignedUser && (
                       <div className="flex items-center gap-2">
                         <img
-                          {...getAvatarProps(assignedUser.avatar, assignedUser.username)}
+                          {...getAvatarProps(
+                            assignedUser.avatar,
+                            assignedUser.username,
+                          )}
                           alt={assignedUser.username}
                           className="w-5 h-5 rounded-[15px]"
                         />
@@ -209,31 +266,31 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                 <SelectContent>
                   <SelectItem value="unassigned">Unassigned</SelectItem>
                   {users.map((user) => {
-                    const userId = user.id || user._id
+                    const userId = user.id || user._id;
                     return (
-                    <SelectItem key={userId} value={userId}>
-                      <div className="flex items-center gap-2">
-                        <img
-                          {...getAvatarProps(user.avatar, user.username)}
-                          alt={user.username}
-                          className="w-5 h-5 rounded-[15px]"
-                        />
-                        <span>{user.username}</span>
-                      </div>
-                    </SelectItem>
-                  )})}
+                      <SelectItem key={userId} value={userId}>
+                        <div className="flex items-center gap-2">
+                          <img
+                            {...getAvatarProps(user.avatar, user.username)}
+                            alt={user.username}
+                            className="w-5 h-5 rounded-[15px]"
+                          />
+                          <span>{user.username}</span>
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
                 </SelectContent>
               </Select>
             </div>
 
             {/* Due Date */}
             <div>
-              <Input
-                type="date"
+              <DatePicker
                 value={formData.dueDate}
-                onChange={(e) => handleInputChange('dueDate', e.target.value)}
+                onChange={(value) => handleInputChange("dueDate", value)}
                 placeholder="Select due date"
-                className="w-full"
+                disablePast
               />
             </div>
 
@@ -245,7 +302,9 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
                   onChange={(e) => setNewTag(e.target.value)}
                   placeholder="Add a tag"
                   className="flex-1"
-                  onKeyPress={(e) => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
+                  onKeyPress={(e) =>
+                    e.key === "Enter" && (e.preventDefault(), handleAddTag())
+                  }
                 />
                 <Button type="button" onClick={handleAddTag} variant="outline">
                   Add
@@ -281,20 +340,16 @@ const TaskEditModal = ({ task, isOpen, onClose, onTaskUpdated, users = [] }) => 
               >
                 Cancel
               </Button>
-              <Button
-                type="submit"
-                className="flex-1"
-                disabled={loading}
-              >
+              <Button type="submit" className="flex-1" disabled={loading}>
                 <Save className="w-4 h-4 icon icon mr-2" />
-                {loading ? 'Saving...' : 'Save Changes'}
+                {loading ? "Saving..." : "Save Changes"}
               </Button>
             </div>
           </form>
         </div>
       </motion.div>
     </motion.div>
-  )
-}
+  );
+};
 
-export default TaskEditModal
+export default TaskEditModal;

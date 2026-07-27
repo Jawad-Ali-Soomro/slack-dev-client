@@ -1,57 +1,66 @@
-import { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react'
-import { toast } from 'sonner'
-import notificationService from '../services/notificationService'
-import { useAuth } from './AuthContext'
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useRef,
+} from "react";
+import { toast } from "sonner";
+import notificationService from "../services/notificationService";
+import { useAuth } from "./AuthContext";
 
-const NotificationContext = createContext()
+const NotificationContext = createContext();
 
 export const useNotifications = () => {
-  const context = useContext(NotificationContext)
+  const context = useContext(NotificationContext);
   if (!context) {
-    throw new Error('useNotifications must be used within a NotificationProvider')
+    throw new Error(
+      "useNotifications must be used within a NotificationProvider",
+    );
   }
-  return context
-}
+  return context;
+};
 
 export const NotificationProvider = ({ children }) => {
-  const { user } = useAuth()
-  const [notifications, setNotifications] = useState([])
-  const [unreadCount, setUnreadCount] = useState(0)
-  const [loading, setLoading] = useState(false)
+  const { user } = useAuth();
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [unreadCounts, setUnreadCounts] = useState({
     tasks: 0,
     meetings: 0,
     projects: 0,
     teams: 0,
     messages: 0,
-    code: 0
-  })
+    code: 0,
+  });
 
-  const lastFetchRef = useRef(0)
+  const lastFetchRef = useRef(0);
 
   const loadNotifications = useCallback(async (options = {}) => {
-    const { force = false } = options
-    const now = Date.now()
+    const { force = false } = options;
+    const now = Date.now();
     if (!force && now - lastFetchRef.current < 5000) {
-      return
+      return;
     }
-    lastFetchRef.current = now
+    lastFetchRef.current = now;
 
     try {
-      setLoading(true)
-      const response = await notificationService.getNotifications() 
-      setNotifications(response.notifications || [])
-      updateUnreadCount(response.notifications || [])
+      setLoading(true);
+      const response = await notificationService.getNotifications();
+      setNotifications(response.notifications || []);
+      updateUnreadCount(response.notifications || []);
     } catch (error) {
-      toast.error('Failed to load notifications')
+      toast.error("Failed to load notifications");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }, [])
+  }, []);
 
   const updateUnreadCount = (notificationsList) => {
-    const unread = notificationsList.filter(notif => !notif.isRead).length
-    setUnreadCount(unread)
+    const unread = notificationsList.filter((notif) => !notif.isRead).length;
+    setUnreadCount(unread);
 
     const counts = {
       tasks: 0,
@@ -59,265 +68,336 @@ export const NotificationProvider = ({ children }) => {
       projects: 0,
       teams: 0,
       messages: 0,
-      code: 0
-    }
-    
-    notificationsList.forEach(notif => {
+      code: 0,
+    };
+
+    notificationsList.forEach((notif) => {
       if (!notif.isRead) {
-        const type = notif.type || notif.notificationType || 'general'
+        const type = notif.type || notif.notificationType || "general";
         switch (type) {
-          case 'task':
-          case 'task_assigned':
-          case 'task_updated':
-          case 'task_completed':
-          case 'TASK_ASSIGNED':
-          case 'TASK_UPDATED':
-          case 'TASK_COMPLETED':
-            counts.tasks++
-            break
-          case 'meeting':
-          case 'meeting_invite':
-          case 'meeting_reminder':
-          case 'MEETING_INVITE':
-          case 'MEETING_REMINDER':
-            counts.meetings++
-            break
-          case 'project':
-          case 'project_invite':
-          case 'project_updated':
-          case 'PROJECT_INVITE':
-          case 'PROJECT_UPDATED':
-            counts.projects++
-            break
-          case 'team':
-          case 'team_invite':
-          case 'team_updated':
-          case 'TEAM_INVITE':
-          case 'TEAM_UPDATED':
-            counts.teams++
-            break
-          case 'message':
-          case 'chat':
-          case 'MESSAGE':
-          case 'CHAT':
-            counts.messages++
-            break
-          case 'code':
-          case 'code_invite':
-          case 'code_session':
-          case 'CODE_INVITE':
-          case 'CODE_SESSION':
-            counts.code++
-            break
+          case "task":
+          case "task_assigned":
+          case "task_updated":
+          case "task_completed":
+          case "TASK_ASSIGNED":
+          case "TASK_UPDATED":
+          case "TASK_COMPLETED":
+            counts.tasks++;
+            break;
+          case "meeting":
+          case "meeting_invite":
+          case "meeting_reminder":
+          case "MEETING_INVITE":
+          case "MEETING_REMINDER":
+            counts.meetings++;
+            break;
+          case "project":
+          case "project_invite":
+          case "project_updated":
+          case "PROJECT_INVITE":
+          case "PROJECT_UPDATED":
+            counts.projects++;
+            break;
+          case "team":
+          case "team_invite":
+          case "team_updated":
+          case "TEAM_INVITE":
+          case "TEAM_UPDATED":
+            counts.teams++;
+            break;
+          case "message":
+          case "chat":
+          case "MESSAGE":
+          case "CHAT":
+            counts.messages++;
+            break;
+          case "code":
+          case "code_invite":
+          case "code_session":
+          case "CODE_INVITE":
+          case "CODE_SESSION":
+            counts.code++;
+            break;
         }
       }
-    })
-    
-    setUnreadCounts(counts)
-  }
+    });
+
+    setUnreadCounts(counts);
+  };
 
   const addNotification = (notification) => {
-    setNotifications(prev => {
-
-      const notificationId = notification.id || notification._id
-      const exists = prev.some(notif => (notif.id || notif._id) === notificationId)
+    setNotifications((prev) => {
+      const notificationId = notification.id || notification._id;
+      const exists = prev.some(
+        (notif) => (notif.id || notif._id) === notificationId,
+      );
       if (exists) {
-        return prev
+        return prev;
       }
-      
-      const updated = [notification, ...prev]
-      updateUnreadCount(updated)
-      return updated
-    })
 
-    const notificationType = notification.type || 'info'
-    const message = notification.message || ''
-    const title = notification.title || message || 'New Notification'
-    const description = notification.title ? message : ''
+      const updated = [notification, ...prev];
+      updateUnreadCount(updated);
+      return updated;
+    });
 
-    if (notificationType === 'message') {
+    const notificationType = notification.type || "info";
+    const message = notification.message || "";
+    const title = notification.title || message || "New Notification";
+    const description = notification.title ? message : "";
+
+    if (notificationType === "message") {
       toast.info(`💬 ${title}`, {
         description,
         duration: 5000,
         action: {
-          label: 'View',
+          label: "View",
           onClick: () => {
-
-            window.location.href = '/dashboard/chat'
-          }
-        }
-      })
+            window.location.href = "/dashboard/chat";
+          },
+        },
+      });
     } else {
       toast.info(title, {
         description,
         duration: 5000,
-      })
+      });
     }
-  }
+  };
 
   const markAsRead = async (notificationId) => {
     try {
-      await notificationService.markAsRead(notificationId)
-      setNotifications(prev => {
-        const updated = prev.map(notif => 
-          (notif.id || notif._id) === notificationId 
+      await notificationService.markAsRead(notificationId);
+      setNotifications((prev) => {
+        const updated = prev.map((notif) =>
+          (notif.id || notif._id) === notificationId
             ? { ...notif, isRead: true }
-            : notif
-        )
-        updateUnreadCount(updated)
-        return updated
-      })
+            : notif,
+        );
+        updateUnreadCount(updated);
+        return updated;
+      });
     } catch (error) {
-      toast.error('Failed to mark notification as read')
+      toast.error("Failed to mark notification as read");
     }
-  }
+  };
 
   const markAllAsRead = async () => {
     try {
-      await notificationService.markAllAsRead()
-      setNotifications(prev => {
-        const updated = prev.map(notif => ({ ...notif, isRead: true }))
-        updateUnreadCount(updated)
-        return updated
-      })
-      toast.success('All notifications marked as read')
+      await notificationService.markAllAsRead();
+      setNotifications((prev) => {
+        const updated = prev.map((notif) => ({ ...notif, isRead: true }));
+        updateUnreadCount(updated);
+        return updated;
+      });
+      toast.success("All notifications marked as read");
     } catch (error) {
-      toast.error('Failed to mark all as read')
+      toast.error("Failed to mark all as read");
     }
-  }
+  };
 
   const markAsReadByType = async (type) => {
     try {
+      const unreadNotifications = notifications.filter((notif) => {
+        if (notif.isRead) return false;
 
-      const unreadNotifications = notifications.filter(notif => {
-        if (notif.isRead) return false
-        
-        const notificationType = notif.type || notif.notificationType || 'general'
-        
+        const notificationType =
+          notif.type || notif.notificationType || "general";
+
         switch (type) {
-          case 'tasks':
-            return ['task', 'task_assigned', 'task_updated', 'task_completed', 'TASK_ASSIGNED', 'TASK_UPDATED', 'TASK_COMPLETED'].includes(notificationType)
-          case 'meetings':
-            return ['meeting', 'meeting_invite', 'meeting_reminder', 'MEETING_INVITE', 'MEETING_REMINDER'].includes(notificationType)
-          case 'projects':
-            return ['project', 'project_invite', 'project_updated', 'PROJECT_INVITE', 'PROJECT_UPDATED'].includes(notificationType)
-          case 'teams':
-            return ['team', 'team_invite', 'team_updated', 'TEAM_INVITE', 'TEAM_UPDATED'].includes(notificationType)
-          case 'messages':
-            return ['message', 'chat', 'MESSAGE', 'CHAT'].includes(notificationType)
-          case 'code':
-            return ['code', 'code_invite', 'code_session', 'CODE_INVITE', 'CODE_SESSION'].includes(notificationType)
+          case "tasks":
+            return [
+              "task",
+              "task_assigned",
+              "task_updated",
+              "task_completed",
+              "TASK_ASSIGNED",
+              "TASK_UPDATED",
+              "TASK_COMPLETED",
+            ].includes(notificationType);
+          case "meetings":
+            return [
+              "meeting",
+              "meeting_invite",
+              "meeting_reminder",
+              "MEETING_INVITE",
+              "MEETING_REMINDER",
+            ].includes(notificationType);
+          case "projects":
+            return [
+              "project",
+              "project_invite",
+              "project_updated",
+              "PROJECT_INVITE",
+              "PROJECT_UPDATED",
+            ].includes(notificationType);
+          case "teams":
+            return [
+              "team",
+              "team_invite",
+              "team_updated",
+              "TEAM_INVITE",
+              "TEAM_UPDATED",
+            ].includes(notificationType);
+          case "messages":
+            return ["message", "chat", "MESSAGE", "CHAT"].includes(
+              notificationType,
+            );
+          case "code":
+            return [
+              "code",
+              "code_invite",
+              "code_session",
+              "CODE_INVITE",
+              "CODE_SESSION",
+            ].includes(notificationType);
           default:
-            return false
+            return false;
         }
-      })
+      });
 
-      if (unreadNotifications.length === 0) return
+      if (unreadNotifications.length === 0) return;
 
-      const promises = unreadNotifications.map(notif => 
-        notificationService.markAsRead(notif.id || notif._id)
-      )
-      
-      await Promise.all(promises)
+      const promises = unreadNotifications.map((notif) =>
+        notificationService.markAsRead(notif.id || notif._id),
+      );
 
-      setNotifications(prev => {
-        const updated = prev.map(notif => {
-          const notificationType = notif.type || notif.notificationType || 'general'
-          let shouldMarkAsRead = false
-          
+      await Promise.all(promises);
+
+      setNotifications((prev) => {
+        const updated = prev.map((notif) => {
+          const notificationType =
+            notif.type || notif.notificationType || "general";
+          let shouldMarkAsRead = false;
+
           switch (type) {
-            case 'tasks':
-              shouldMarkAsRead = ['task', 'task_assigned', 'task_updated', 'task_completed', 'TASK_ASSIGNED', 'TASK_UPDATED', 'TASK_COMPLETED'].includes(notificationType)
-              break
-            case 'meetings':
-              shouldMarkAsRead = ['meeting', 'meeting_invite', 'meeting_reminder', 'MEETING_INVITE', 'MEETING_REMINDER'].includes(notificationType)
-              break
-            case 'projects':
-              shouldMarkAsRead = ['project', 'project_invite', 'project_updated', 'PROJECT_INVITE', 'PROJECT_UPDATED'].includes(notificationType)
-              break
-            case 'teams':
-              shouldMarkAsRead = ['team', 'team_invite', 'team_updated', 'TEAM_INVITE', 'TEAM_UPDATED'].includes(notificationType)
-              break
-            case 'messages':
-              shouldMarkAsRead = ['message', 'chat', 'MESSAGE', 'CHAT'].includes(notificationType)
-              break
-            case 'code':
-              shouldMarkAsRead = ['code', 'code_invite', 'code_session', 'CODE_INVITE', 'CODE_SESSION'].includes(notificationType)
-              break
+            case "tasks":
+              shouldMarkAsRead = [
+                "task",
+                "task_assigned",
+                "task_updated",
+                "task_completed",
+                "TASK_ASSIGNED",
+                "TASK_UPDATED",
+                "TASK_COMPLETED",
+              ].includes(notificationType);
+              break;
+            case "meetings":
+              shouldMarkAsRead = [
+                "meeting",
+                "meeting_invite",
+                "meeting_reminder",
+                "MEETING_INVITE",
+                "MEETING_REMINDER",
+              ].includes(notificationType);
+              break;
+            case "projects":
+              shouldMarkAsRead = [
+                "project",
+                "project_invite",
+                "project_updated",
+                "PROJECT_INVITE",
+                "PROJECT_UPDATED",
+              ].includes(notificationType);
+              break;
+            case "teams":
+              shouldMarkAsRead = [
+                "team",
+                "team_invite",
+                "team_updated",
+                "TEAM_INVITE",
+                "TEAM_UPDATED",
+              ].includes(notificationType);
+              break;
+            case "messages":
+              shouldMarkAsRead = [
+                "message",
+                "chat",
+                "MESSAGE",
+                "CHAT",
+              ].includes(notificationType);
+              break;
+            case "code":
+              shouldMarkAsRead = [
+                "code",
+                "code_invite",
+                "code_session",
+                "CODE_INVITE",
+                "CODE_SESSION",
+              ].includes(notificationType);
+              break;
           }
-          
-          return shouldMarkAsRead ? { ...notif, isRead: true } : notif
-        })
-        
-        updateUnreadCount(updated)
-        return updated
-      })
-      
+
+          return shouldMarkAsRead ? { ...notif, isRead: true } : notif;
+        });
+
+        updateUnreadCount(updated);
+        return updated;
+      });
     } catch (error) {
-      console.error(`Failed to mark ${type} notifications as read:`, error)
+      console.error(`Failed to mark ${type} notifications as read:`, error);
     }
-  }
+  };
 
   const deleteNotification = async (notificationId) => {
     try {
-      await notificationService.deleteNotification(notificationId)
-      setNotifications(prev => {
-        const updated = prev.filter(notif => notif.id !== notificationId)
-        updateUnreadCount(updated)
-        return updated
-      })
-      toast.success('Notification deleted')
+      await notificationService.deleteNotification(notificationId);
+      setNotifications((prev) => {
+        const updated = prev.filter((notif) => notif.id !== notificationId);
+        updateUnreadCount(updated);
+        return updated;
+      });
+      toast.success("Notification deleted");
     } catch (error) {
-      toast.error('Failed to delete notification')
+      toast.error("Failed to delete notification");
     }
-  }
+  };
 
   const deleteAllNotifications = async () => {
     try {
-      await notificationService.deleteAllNotifications()
-      setNotifications([])
-      setUnreadCount(0)
-      toast.success('All notifications deleted')
+      await notificationService.deleteAllNotifications();
+      setNotifications([]);
+      setUnreadCount(0);
+      toast.success("All notifications deleted");
     } catch (error) {
-      toast.error('Failed to delete all notifications')
+      toast.error("Failed to delete all notifications");
     }
-  }
+  };
 
   useEffect(() => {
     if (user) {
-      loadNotifications({ force: true })
+      loadNotifications({ force: true });
     } else {
-      setNotifications([])
-      setUnreadCount(0)
+      setNotifications([]);
+      setUnreadCount(0);
       setUnreadCounts({
         tasks: 0,
         meetings: 0,
         projects: 0,
         teams: 0,
         messages: 0,
-        code: 0
-      })
+        code: 0,
+      });
     }
-  }, [user, loadNotifications])
+  }, [user, loadNotifications]);
 
   useEffect(() => {
-    if (!user) return
+    if (!user) return;
 
-    const handleFocus = () => loadNotifications({ force: true })
+    const handleFocus = () => loadNotifications({ force: true });
     const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        loadNotifications({ force: true })
+      if (document.visibilityState === "visible") {
+        loadNotifications({ force: true });
       }
-    }
+    };
 
-    window.addEventListener('focus', handleFocus)
-    document.addEventListener('visibilitychange', handleVisibilityChange)
+    window.addEventListener("focus", handleFocus);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      window.removeEventListener('focus', handleFocus)
-      document.removeEventListener('visibilitychange', handleVisibilityChange)
-    }
-  }, [user, loadNotifications])
+      window.removeEventListener("focus", handleFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [user, loadNotifications]);
 
   const value = {
     notifications,
@@ -331,11 +411,11 @@ export const NotificationProvider = ({ children }) => {
     markAsReadByType,
     deleteNotification,
     deleteAllNotifications,
-  }
+  };
 
   return (
     <NotificationContext.Provider value={value}>
       {children}
     </NotificationContext.Provider>
-  )
-}
+  );
+};
