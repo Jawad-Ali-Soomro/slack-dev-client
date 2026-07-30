@@ -290,7 +290,7 @@ const ChatWindow = ({ isMobile = false }) => {
                 {typingUsers.length > 0
                   ? "typing..."
                   : isOnline
-                    ? "Active now"
+                    ? "Active Now"
                     : "Offline"}
               </span>
             </div>
@@ -560,7 +560,7 @@ const ChatWindow = ({ isMobile = false }) => {
                 onChange={handleTyping}
                 onKeyPress={handleKeyPress}
                 placeholder={
-                  editingMessage ? "Edit message..." : "Type a message..."
+                  editingMessage ? "Edit message..." : "Type A Message..."
                 }
                 className="h-11 flex-1 border-0 bg-transparent px-1 shadow-none focus-visible:ring-0"
                 disabled={messagesLoading}

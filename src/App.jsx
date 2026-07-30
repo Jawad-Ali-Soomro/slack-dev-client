@@ -43,16 +43,17 @@ function App() {
       <FigmaCursor />
       <Router>
         <Toaster
-          position="top-center"
+          position="bottom-right"
           richColors
           closeButton
           toastOptions={{
             style: {
               borderRadius: "12px",
               fontSize: "14px",
-              fontWeight: "500",
+              fontWeight: "600",
               margin: "4px 0",
-              padding: "12px 16px",
+              padding: "20px 20px",
+              textTransform: "capitalize",
             },
             className: "toast-custom",
           }}

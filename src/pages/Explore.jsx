@@ -995,15 +995,20 @@ const Explore = () => {
                 />
               </div>
 
-              <div>
-                <div className="flex items-center gap-2">
-                  <label className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-[15px] cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-3">
+                  <label className="group flex min-h-[170px] w-full cursor-pointer flex-col items-center justify-center rounded-[22px] border-2 border-dashed border-gray-300 bg-gray-50 px-6 py-8 text-center transition-colors hover:border-[#ff914b] hover:bg-orange-50 dark:border-gray-700 dark:bg-gray-900/50 dark:hover:bg-gray-900">
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 transition-transform group-hover:scale-105 dark:border-gray-700 dark:bg-black dark:text-gray-200">
+                      <ImageIcon className="h-5 w-5 icon" />
+                    </div>
                     <div className="flex flex-col items-center justify-center">
-                      <ImageIcon className="w-8 h-8 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                      <span className="text-sm font-semibold text-[#ff914b]">
                         {uploadForm.previewImages.length > 0
                           ? `${uploadForm.previewImages.length} image(s) selected`
-                          : "Click to select images"}
+                          : "Click to upload preview images"}
+                      </span>
+                      <span className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                        Up to 4 screenshots · PNG, JPG or GIF
                       </span>
                     </div>
                     <input
@@ -1014,71 +1019,61 @@ const Explore = () => {
                       className="hidden"
                     />
                   </label>
-                </div>
-                {uploadForm.previewImages.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {uploadForm.previewImages.map((file, idx) => (
-                      <Badge
-                        key={idx}
-                        variant="default"
-                        className="flex px-5 py-2 bg-violet-500 items-center gap-1"
-                      >
-                        {file.name}
-                        <X
-                          className="w-3 h-3 cursor-pointer"
-                          onClick={() => {
-                            const newImages = uploadForm.previewImages.filter(
-                              (_, i) => i !== idx,
-                            );
-                            setUploadForm({
-                              ...uploadForm,
-                              previewImages: newImages,
-                            });
-                          }}
-                        />
-                      </Badge>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div>
-                <div className="flex items-center gap-2">
-                  <label className="flex items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-[15px] cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                    <div className="flex flex-col items-center justify-center">
-                      <FileArchive className="w-8 h-8 text-gray-400 mb-2" />
-                      <span className="text-sm text-gray-500 dark:text-gray-400">
-                        {uploadForm.zipFile
-                          ? uploadForm.zipFile.name
-                          : "Click to select ZIP file"}
-                      </span>
+                  {uploadForm.previewImages.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {uploadForm.previewImages.map((file, idx) => (
+                        <Badge
+                          key={idx}
+                          variant="default"
+                          className="flex px-5 py-2 bg-violet-500 items-center gap-1"
+                        >
+                          {file.name}
+                          <X
+                            className="w-3 h-3 cursor-pointer"
+                            onClick={() => {
+                              const newImages = uploadForm.previewImages.filter(
+                                (_, i) => i !== idx,
+                              );
+                              setUploadForm({
+                                ...uploadForm,
+                                previewImages: newImages,
+                              });
+                            }}
+                          />
+                        </Badge>
+                      ))}
                     </div>
-                    <input
-                      type="file"
-                      accept=".zip,application/zip,application/x-zip-compressed"
-                      onChange={(e) => handleFileChange(e, "zipFile")}
-                      className="hidden"
-                      required
-                    />
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <input
+                    type="file"
+                    accept=".zip,application/zip,application/x-zip-compressed"
+                    onChange={(e) => handleFileChange(e, "zipFile")}
+                    className="hidden"
+                    id="explore-zip-upload"
+                    required
+                  />
+                  <label
+                    htmlFor="explore-zip-upload"
+                    className="group flex min-h-[170px] cursor-pointer flex-col items-center justify-center rounded-[22px] border-2 border-dashed border-gray-300 bg-gray-50 px-6 py-8 text-center transition-colors hover:border-[#ff914b] hover:bg-orange-50 dark:border-gray-700 dark:bg-gray-900/50 dark:hover:bg-gray-900"
+                  >
+                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 transition-transform group-hover:scale-105 dark:border-gray-700 dark:bg-black dark:text-gray-200">
+                      <FileArchive className="h-5 w-5 icon" />
+                    </div>
+                    <p className="text-sm font-semibold text-[#ff914b]">
+                      {uploadForm.zipFile
+                        ? "ZIP file selected"
+                        : "Click to upload project ZIP"}
+                    </p>
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                      ZIP archive only
+                    </p>
                   </label>
                 </div>
-                {uploadForm.zipFile && (
-                  <div className="mt-2">
-                    <Badge
-                      variant="default"
-                      className="flex px-5 py-2 bg-violet-500 items-center gap-1"
-                    >
-                      {uploadForm.zipFile.name}
-                      <X
-                        className="w-3 h-3 cursor-pointer"
-                        onClick={() =>
-                          setUploadForm({ ...uploadForm, zipFile: null })
-                        }
-                      />
-                    </Badge>
-                  </div>
-                )}
               </div>
+
 
               <div className="flex justify-end space-x-3 mt-6">
                 <Button type="submit" disabled={uploading} className="w-full">

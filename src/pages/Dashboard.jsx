@@ -1219,7 +1219,7 @@ const Dashboard = () => {
                             ? "ring-2 ring-[#ff914b] dark:ring-[#ffb07a] ring-offset-1"
                             : "",
                           isSelected
-                            ? "bg-theme-subtle text-black border-[#ff914b] font-bold"
+                            ? "bg-[#ff914b] border-none text-white  border-[#ff914b] font-bold"
                             : "text-gray-800 dark:text-gray-200",
                           hasEvents && !isSelected
                             ? "bg-gray-50 dark:bg-gray-800/50"
@@ -1295,7 +1295,7 @@ const Dashboard = () => {
                       });
                     }}
                     disabled={!permissions.canCreateTask}
-                    className="flex-1 h-14 sm:h-12 font-semibold rounded-xl text-sm bg-gradient-to-r from-orange-300 to-orange-400 text-white hover:from-green-600 hover:to-green-700 transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    className="flex-1 h-14 sm:h-12 font-semibold rounded-xl text-sm bg-gradient-to-r from-orange-300 to-orange-400 text-white transition-all shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                   >
                     <Target className="w-4 h-4" />
                     Schedule Task

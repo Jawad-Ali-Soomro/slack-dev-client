@@ -274,10 +274,14 @@ const Sidebar = () => {
           )}
         </div>
 
-        <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2 py-3 space-y-3">
-          {navGroups.map((group) => (
-            <NavGroup key={group.id} group={group} />
-          ))}
+        <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2 space-y-1 mt-1">
+          {collapsed
+            ? navGroups.flatMap((group) => group.items).map((item) => (
+                <NavItem key={item.path} item={item} />
+              ))
+            : navGroups.map((group) => (
+                <NavGroup key={group.id} group={group} />
+              ))}
         </nav>
 
         <div className="p-2 border-t border-gray-200 dark:border-white/10">

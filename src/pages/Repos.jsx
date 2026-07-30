@@ -282,14 +282,14 @@ const Repos = () => {
             <Button
               variant="outline"
               size="sm"
-              className="rounded-[12px]"
+              className="rounded-[12px] w-[120px]"
               onClick={() => setSelectedRepos([])}
             >
               Clear
             </Button>
             <Button
               size="sm"
-              className="rounded-[12px] bg-theme hover:bg-theme text-white"
+              className="rounded-[12px] bg-theme w-[200px] hover:bg-theme text-white"
               onClick={handleBulkCreateTasks}
             >
               <Plus className="w-4 h-4 mr-1.5" />

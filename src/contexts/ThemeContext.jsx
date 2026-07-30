@@ -11,7 +11,7 @@ export const useTheme = () => {
 };
 
 export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState("light"); // default always dark
+  const [theme, setTheme] = useState("dark"); // default always dark
 
   // Load saved theme once
   useEffect(() => {

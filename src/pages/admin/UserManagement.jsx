@@ -497,7 +497,7 @@ const UserManagement = () => {
                 onValueChange={setRoleFilter}
                 disabled={!isSuperadmin}
               >
-                <SelectTrigger className="md:w-[180px] w-1/2 px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[black] h-13">
+                <SelectTrigger className="md:w-[180px] w-1/2 px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[black] h-12">
                   <SelectValue placeholder="Filter by role" />
                 </SelectTrigger>
                 <SelectContent>
@@ -531,7 +531,7 @@ const UserManagement = () => {
                 value={permissionsFilter}
                 onValueChange={setPermissionsFilter}
               >
-                <SelectTrigger className="md:w-[180px] w-1/2 bg-white px-5 text-gray-600 dark:text-white cursor-pointer dark:bg-[black] h-13">
+                <SelectTrigger className="md:w-[180px] w-1/2 bg-white px-5 text-gray-600 dark:text-white cursor-pointer dark:bg-[black] h-12">
                   <SelectValue placeholder="Filter by permissions" />
                 </SelectTrigger>
                 <SelectContent>
