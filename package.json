@@ -1,0 +1,24 @@
+{
+  "name": "multi-tenants",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "server"
+  ],
+  "scripts": {
+    "dev:admin": "npm run dev -w @multi-tenants/app-admin",
+    "dev:superadmin": "npm run dev -w @multi-tenants/app-superadmin",
+    "dev:tenant": "npm run dev -w @multi-tenants/app-tenant",
+    "dev:server": "npm run start:dev -w @multi-tenants/server",
+    "dev:apps": "npm run dev -w @multi-tenants/app-admin & npm run dev -w @multi-tenants/app-superadmin & npm run dev -w @multi-tenants/app-tenant && npm run start:dev -w @multi-tenant/server",
+    "build:admin": "npm run build -w @multi-tenants/app-admin",
+    "build:superadmin": "npm run build -w @multi-tenants/app-superadmin",
+    "build:tenant": "npm run build -w @multi-tenants/app-tenant",
+    "build:apps": "npm run build -w @multi-tenants/app-admin && npm run build -w @multi-tenants/app-superadmin && npm run build -w @multi-tenants/app-tenant"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

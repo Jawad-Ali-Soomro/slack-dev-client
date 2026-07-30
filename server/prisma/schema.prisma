@@ -1,0 +1,410 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  USER
+  ADMIN
+  SUPERADMIN
+}
+
+enum OrganizationRole {
+  OWNER
+  ADMIN
+  MANAGER
+  MEMBER
+  GUEST
+}
+
+enum TeamRole {
+  LEAD
+  MEMBER
+}
+
+enum ImageType {
+  AVATAR
+  LOGO
+  PRODUCT
+}
+
+model Image {
+  id               String        @id @default(cuid())
+  url              String
+  storageKey       String        @unique
+  mimeType         String
+  size             Int
+  width            Int?
+  height           Int?
+  alt              String?
+  type             ImageType
+  uploadedById     Int?
+  uploadedBy       User?         @relation("UploadedImages", fields: [uploadedById], references: [id], onDelete: SetNull)
+  userAvatar       User?         @relation("UserAvatar")
+  organizationLogo Organization? @relation("OrganizationLogo")
+  teamLogo         Team?         @relation("TeamLogo")
+  productId        String?
+  product          Product?      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  @@index([uploadedById])
+  @@index([type])
+  @@index([productId])
+}
+
+model User {
+  id                 Int                      @id @default(autoincrement())
+  username           String                   @unique
+  email              String                   @unique
+  password           String
+  role               Role                     @default(USER)
+  /// active | suspended
+  status             String                   @default("active")
+  emailVerified      Boolean                  @default(false)
+  emailVerifiedAt    DateTime?
+  avatarId           String?                  @unique
+  avatar             Image?                   @relation("UserAvatar", fields: [avatarId], references: [id], onDelete: SetNull)
+  sessions           Session[]
+  createdAt          DateTime                 @default(now())
+  updatedAt          DateTime                 @updatedAt
+  memberships        Member[]
+  teamMemberships    TeamMember[]
+  ownedOrganizations Organization[]           @relation("OrganizationOwner")
+  verificationTokens EmailVerificationToken[]
+  uploadedImages     Image[]                  @relation("UploadedImages")
+  bookings           Booking[]
+  notifications      Notification[]
+  orders             Order[]
+
+  @@index([status])
+  @@index([role])
+}
+
+model EmailVerificationToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  expiresAt DateTime
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([token])
+}
+
+model Session {
+  id              String   @id @default(cuid())
+  refreshToken    String
+  deviceName      String?
+  deviceType      String?
+  browser         String?
+  operatingSystem String?
+  ipAddress       String?
+  location        String?
+  expiresAt       DateTime
+  lastUsedAt      DateTime @default(now())
+  isRevoked       Boolean  @default(false)
+  userId          Int
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Organization {
+  id           String      @id @default(cuid())
+  name         String
+  slug         String      @unique
+  logoId       String?     @unique
+  logo         Image?      @relation("OrganizationLogo", fields: [logoId], references: [id], onDelete: SetNull)
+  description  String?
+  website      String?
+  email        String?
+  phone        String?
+  timezone     String      @default("UTC")
+  country      String?
+  city         String?
+  address      String?
+  isActive     Boolean     @default(true)
+  ownerId      Int
+  owner        User        @relation("OrganizationOwner", fields: [ownerId], references: [id])
+  members      Member[]
+  teams        Team[]
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  businessType String? //e-commerce, hostel-management, hotel-management, pharmacy
+  products     Product[]
+  inventories  Inventory[]
+  categories   ProductCategory[]
+  floors       Floor[]
+  rooms        Room[]
+  bookings     Booking[]
+  orders       Order[]
+  isVerified   Boolean     @default(false)
+
+  @@index([ownerId])
+  @@index([slug])
+}
+
+model Team {
+  id             String       @id @default(cuid())
+  name           String
+  slug           String
+  description    String?
+  logoId         String?      @unique
+  logo           Image?       @relation("TeamLogo", fields: [logoId], references: [id], onDelete: SetNull)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  members        TeamMember[]
+  products       Product[]
+  inventories    Inventory[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+}
+
+// each organization has team likewise hr-team, sales-team & etc & each team has member
+
+model TeamMember {
+  id        String   @id @default(cuid())
+  teamId    String
+  userId    Int
+  role      TeamRole @default(MEMBER)
+  joinedAt  DateTime @default(now())
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@index([userId])
+}
+
+// This belongs to organization
+
+model Member {
+  id             String           @id @default(cuid())
+  organizationId String
+  userId         Int
+  role           OrganizationRole @default(MEMBER)
+  joinedAt       DateTime         @default(now())
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@unique([organizationId, userId])
+  @@index([organizationId])
+  @@index([userId])
+}
+
+model ProductCategory {
+  id             String       @id @default(cuid())
+  name           String
+  slug           String
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  products       Product[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([organizationId, slug])
+  @@index([organizationId])
+}
+
+model Product {
+  id             String           @id @default(cuid())
+  name           String
+  description    String?
+  sku            String
+  price          Int // stored in smallest currency unit (e.g. cents)
+  isActive       Boolean          @default(true)
+  /// draft | published | deleted — only published listings appear in the marketplace
+  status         String           @default("draft")
+  /// Set when soft-deleted; hard-purged after 7 days if not restored
+  deletedAt      DateTime?
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  categoryId     String?
+  category       ProductCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  teamId         String?
+  team           Team?            @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  /// Lodging / type-specific options (e.g. climate, stayDays, bathroom)
+  attributes     Json?
+  inventory      Inventory?
+  images         Image[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  isFeatured     Boolean          @default(false)
+
+  @@unique([organizationId, sku])
+  @@index([organizationId])
+  @@index([teamId])
+  @@index([categoryId])
+  @@index([status])
+  @@index([deletedAt])
+}
+
+model Inventory {
+  id             String       @id @default(cuid())
+  quantity       Int          @default(0)
+  reservedQty    Int          @default(0)
+  reorderLevel   Int?
+  productId      String       @unique
+  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  teamId         String?
+  team           Team?        @relation(fields: [teamId], references: [id], onDelete: SetNull)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([organizationId])
+  @@index([teamId])
+}
+
+model Floor {
+  id             String       @id @default(cuid())
+  name           String
+  level          Int
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  rooms          Room[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@unique([organizationId, level])
+  @@index([organizationId])
+}
+
+model Room {
+  id             String        @id @default(cuid())
+  number         String
+  label          String?
+  /// e.g. Single Bedroom, Double Bedroom, Suite
+  roomType       String
+  /// Price per night in cents
+  price          Int
+  capacity       Int           @default(2)
+  /// open | closed
+  status         String        @default("open")
+  /// ac | non-ac
+  climate        String        @default("ac")
+  /// private | shared
+  bathroom       String        @default("private")
+  floorId        String
+  floor          Floor         @relation(fields: [floorId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  bookingRooms   BookingRoom[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@unique([organizationId, number])
+  @@index([organizationId])
+  @@index([floorId])
+  @@index([status])
+  @@index([roomType])
+  @@index([climate])
+}
+
+model Booking {
+  id             String        @id @default(cuid())
+  organizationId String
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  checkIn        DateTime      @db.Date
+  checkOut       DateTime      @db.Date
+  guestName      String
+  guestEmail     String
+  guestPhone     String?
+  /// pending | confirmed | cancelled
+  status         String        @default("pending")
+  /// Total in cents for the stay
+  totalPrice     Int
+  userId         Int?
+  user           User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+  rooms          BookingRoom[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  @@index([organizationId])
+  @@index([status])
+  @@index([userId])
+  @@index([checkIn, checkOut])
+}
+
+model BookingRoom {
+  id        String   @id @default(cuid())
+  bookingId String
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  roomId    String
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([bookingId, roomId])
+  @@index([bookingId])
+  @@index([roomId])
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  /// booking_confirmed | booking_cancelled | booking_pending | general
+  type      String   @default("general")
+  link      String?
+  isRead    Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([userId, isRead])
+  @@index([userId, createdAt])
+}
+
+model Order {
+  id             String       @id @default(cuid())
+  userId         Int
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  /// pending | confirmed | cancelled | delivered
+  status         String       @default("pending")
+  /// Total in cents
+  totalPrice     Int
+  items          OrderItem[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([userId])
+  @@index([organizationId])
+  @@index([status])
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId   String
+  productName String
+  quantity    Int
+  /// Unit price in cents at time of purchase
+  unitPrice   Int
+  createdAt   DateTime @default(now())
+
+  @@index([orderId])
+  @@index([productId])
+}

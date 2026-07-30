@@ -1,0 +1,37 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@multi-tenants/config": ["packages/config/src/index.ts"],
+      "@multi-tenants/config/*": ["packages/config/src/*"],
+      "@multi-tenants/api": ["packages/api/src/index.ts"],
+      "@multi-tenants/api/*": ["packages/api/src/*"],
+      "@multi-tenants/auth": ["packages/auth/src/index.ts"],
+      "@multi-tenants/auth/*": ["packages/auth/src/*"],
+      "@multi-tenants/hooks": ["packages/hooks/src/index.ts"],
+      "@multi-tenants/hooks/*": ["packages/hooks/src/*"],
+      "@multi-tenants/utils": ["packages/utils/src/index.ts"],
+      "@multi-tenants/utils/*": ["packages/utils/src/*"],
+      "@multi-tenants/types": ["packages/types/src/index.ts"],
+      "@multi-tenants/types/*": ["packages/types/src/*"],
+      "@multi-tenants/constants": ["packages/constants/src/index.ts"],
+      "@multi-tenants/constants/*": ["packages/constants/src/*"],
+      "@multi-tenants/ui": ["packages/ui/src/index.ts"],
+      "@multi-tenants/ui/*": ["packages/ui/src/*"]
+    }
+  },
+  "include": ["apps", "packages"],
+  "exclude": ["node_modules", "**/dist"]
+}

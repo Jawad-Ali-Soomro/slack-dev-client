@@ -1,0 +1,23 @@
+{
+  "name": "@multi-tenants/auth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.js",
+  "exports": {
+    ".": "./src/index.js"
+  },
+  "dependencies": {
+    "@multi-tenants/api": "*",
+    "@multi-tenants/config": "*",
+    "@multi-tenants/hooks": "*",
+    "@multi-tenants/types": "*",
+    "@multi-tenants/utils": "*"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-icons": "^5.0.0",
+    "react-router-dom": "^7.0.0"
+  }
+}
