@@ -1,0 +1,114 @@
+.brand-logo {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.16) !important;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.brand-logo svg {
+  width: 72%;
+  height: 72%;
+  display: block;
+}
+
+.brand-logo__ring {
+  fill: none;
+  stroke: #111;
+  stroke-width: 1.15;
+  opacity: 0.22;
+}
+
+.brand-logo__ring--mid {
+  opacity: 0.38;
+  stroke-dasharray: 6 7;
+}
+
+.brand-logo__links {
+  fill: none;
+  opacity: 0.7;
+}
+
+.brand-logo--animated .brand-logo__orbit {
+  transform-origin: 32px 32px;
+  animation: brand-orbit 11s linear infinite;
+}
+
+.brand-logo--animated .brand-logo__ring--mid {
+  transform-origin: 32px 32px;
+  animation: brand-spin 16s linear infinite reverse;
+}
+
+.brand-logo--animated .brand-logo__pulse {
+  transform-origin: 32px 32px;
+  animation: brand-pulse 2.2s ease-in-out infinite;
+}
+
+.brand-logo--animated .brand-logo__core {
+  transform-origin: 32px 32px;
+  animation: brand-breathe 3.4s ease-in-out infinite;
+}
+
+.brand-logo--animated .brand-logo__links {
+  stroke-dasharray: 90;
+  animation: brand-draw 3.6s ease-in-out infinite;
+}
+
+@keyframes brand-orbit {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes brand-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes brand-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.28);
+    opacity: 0.55;
+  }
+}
+
+@keyframes brand-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes brand-draw {
+  0%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0.7;
+  }
+  50% {
+    stroke-dashoffset: 40;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-logo--animated .brand-logo__orbit,
+  .brand-logo--animated .brand-logo__ring--mid,
+  .brand-logo--animated .brand-logo__pulse,
+  .brand-logo--animated .brand-logo__core,
+  .brand-logo--animated .brand-logo__links {
+    animation: none;
+  }
+}

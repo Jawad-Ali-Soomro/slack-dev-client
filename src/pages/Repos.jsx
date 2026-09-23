@@ -27,11 +27,11 @@ import {
 } from "../components/ui/select";
 import { Checkbox } from "../components/ui/checkbox";
 import { cn } from "../lib/utils";
-import useGithubRepos, { connectGithub } from "@/hooks/useGithubRepos";
-import { usePermissions } from "../hooks/usePermissions";
-import HorizontalLoader from "../components/HorizontalLoader";
-import LanguageIcon from "@/components/Languages";
-import CreateTaskModal from "../components/CreateTaskModal";
+import useGithubRepos, { connectGithub } from "@/hooks/use-github-repos";
+import { usePermissions } from "../hooks/use-permissions";
+import HorizontalLoader from "../components/horizontal-loader";
+import LanguageIcon from "@/components/languages";
+import CreateTaskModal from "../components/create-task-modal";
 
 const formatNumber = (n) => {
   if (n == null) return "0";

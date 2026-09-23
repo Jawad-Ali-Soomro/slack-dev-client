@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../contexts/AuthContext";
+import { useAuth } from "../contexts/auth-context";
 import { toast } from "sonner";
 import {
   AuthLayout,
@@ -10,7 +10,7 @@ import {
   AuthAltLink,
   AuthField,
   AuthInput,
-} from "../components/auth/AuthLayout";
+} from "../components/auth/auth-layout";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);

@@ -38,13 +38,13 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { Badge } from "../components/ui/badge";
-import { exploreService } from "../services/exploreService";
-import { useAuth } from "../contexts/AuthContext";
-import { getAvatarProps } from "../utils/avatarUtils";
+import { exploreService } from "../services/explore-service";
+import { useAuth } from "../contexts/auth-context";
+import UserAvatar from "../components/user-avatar";
 import { Compass } from "lucide-react";
 import { IoPricetagsSharp } from "react-icons/io5";
 import { PiCheck, PiCheckDuotone, PiX } from "react-icons/pi";
-import HorizontalLoader from "@/components/HorizontalLoader";
+import HorizontalLoader from "@/components/horizontal-loader";
 import { BiCalendar, BiCategory, BiStore } from "react-icons/bi";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -730,21 +730,7 @@ const Explore = () => {
                   <div className="rounded-3xl border border-gray-100 dark:border-gray-800 bg-[#eee] dark:bg-[rgba(255,255,255,.1)] shadow-sm p-3">
                     {/* <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4">Creator</h4> */}
                     <div className="flex items-center gap-3">
-                      {selectedProject.createdBy?.avatar ? (
-                        <img
-                          {...getAvatarProps(
-                            selectedProject.createdBy.avatar,
-                            selectedProject.createdBy.username,
-                          )}
-                          alt={selectedProject.createdBy.username}
-                          className="w-12 h-12 rounded-[15px] border border-gray-200 dark:border-gray-700 p-1"
-                        />
-                      ) : (
-                        <div className="w-12 h-12 rounded-[15px] bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-lg font-semibold text-gray-500">
-                          {selectedProject.createdBy?.username?.[0]?.toUpperCase() ||
-                            "?"}
-                        </div>
-                      )}
+                      <UserAvatar user={selectedProject.createdBy} size="xl" />
                       <div>
                         <p className="font-semibold text-gray-900 dark:text-white">
                           {selectedProject.createdBy?.username ||

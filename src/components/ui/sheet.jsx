@@ -32,7 +32,7 @@ const sheetVariants = {
 };
 
 const SheetContent = React.forwardRef(
-  ({ side = "right", className, children, ...props }, ref) => (
+  ({ side = "right", className, children, onOpenAutoFocus, ...props }, ref) => (
     <SheetPortal>
       <SheetOverlay />
       <SheetPrimitive.Content
@@ -51,6 +51,10 @@ const SheetContent = React.forwardRef(
           className,
         )}
         {...props}
+        onOpenAutoFocus={(event) => {
+          event.preventDefault();
+          onOpenAutoFocus?.(event);
+        }}
       >
         {children}
         <SheetClose className="absolute right-4 top-4 rounded-[15px] opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none">

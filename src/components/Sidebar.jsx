@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   LogOut,
+  Mic,
   ChevronDown,
   Compass,
   Package,
@@ -10,20 +11,21 @@ import {
   Zap,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { useSidebar } from "../contexts/SidebarContext";
-import { useAuth } from "../contexts/AuthContext";
-import { useNotifications } from "../contexts/NotificationContext";
+import { useSidebar } from "../contexts/sidebar-context";
+import { useAuth } from "../contexts/auth-context";
 import { GoCalendar } from "react-icons/go";
 import { IoFolderOpenOutline } from "react-icons/io5";
 import { PiUsersDuotone, PiUserCheck, PiKeyDuotone } from "react-icons/pi";
 import { BiMessageSquareDetail } from "react-icons/bi";
+import { useNotifications } from "@/contexts/notification-context";
 
 const EXPANDED_WIDTH = 240;
 const COLLAPSED_WIDTH = 72;
 
 const Sidebar = () => {
   const { isOpen, isMobile, closeSidebar, openSidebar } = useSidebar();
-  const { isAuthenticated, logout, isSuperadmin } = useAuth();
+  const { isAuthenticated, logout, isSuperadmin, user } = useAuth();
+  const isTeamAdmin = user?.role === "admin";
   const { unreadCounts } = useNotifications();
   const location = useLocation();
 
@@ -67,7 +69,7 @@ const Sidebar = () => {
           badgeCount: unreadCounts.projects,
         },
         {
-          title: "Teams",
+          title: "Workspace",
           icon: PiUsersDuotone,
           path: "/dashboard/teams",
           badgeCount: unreadCounts.teams,
@@ -95,12 +97,12 @@ const Sidebar = () => {
             label: "Admin",
             items: [
               {
-                title: "Members",
+                title: "User Management",
                 icon: PiUsersDuotone,
                 path: "/dashboard/admin/users",
               },
               {
-                title: "Permissions",
+                title: "Permission Manage",
                 icon: PiKeyDuotone,
                 path: "/dashboard/admin/permissions",
               },
@@ -164,7 +166,7 @@ const Sidebar = () => {
         <span
           className={`sidebar-icon-wrap relative ${active ? "sidebar-icon-wrap--active" : ""}`}
         >
-          <Icon className="w-5 h-5 shrink-0" />
+          <Icon className="w-4.5 h-4.5 shrink-0" />
           {badge && collapsed && (
             <span
               className="sidebar-badge sidebar-badge--dot"
@@ -284,7 +286,27 @@ const Sidebar = () => {
               ))}
         </nav>
 
-        <div className="p-2 border-t border-gray-200 dark:border-white/10">
+        <div className="p-2 border-t border-gray-200 dark:border-white/10 space-y-0.5">
+          {isTeamAdmin && (
+            <button
+              type="button"
+              title="Assistant"
+              onClick={() => {
+                window.dispatchEvent(new Event("voice-assistant:open"));
+                if (isMobile) closeSidebar();
+              }}
+              className={`sidebar-nav-item mb-2 w-full cursor-pointer bg-transparent ${collapsed ? "sidebar-nav-item--collapsed" : ""}`}
+            >
+              <span className="sidebar-icon-wrap">
+                <Mic className="w-4.5 h-4.5 shrink-0" />
+              </span>
+              {!collapsed && (
+                <span className="sidebar-label flex-1 truncate text-left">
+                  Assistant
+                </span>
+              )}
+            </button>
+          )}
           <button
             type="button"
             onClick={logout}

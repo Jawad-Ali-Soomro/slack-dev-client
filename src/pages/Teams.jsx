@@ -32,24 +32,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
-import teamService from "../services/teamService";
-import { useAuth } from "../contexts/AuthContext";
-import { useNotifications } from "../contexts/NotificationContext";
-import { getAvatarProps } from "../utils/avatarUtils";
-import StatsCard from "../components/StatsCard";
+import teamService from "../services/team-service";
+import { useAuth } from "../contexts/auth-context";
+import UserAvatar, { AvatarGroup } from "../components/user-avatar";
+import StatsCard from "../components/stats-card";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   getButtonClasses,
   getInputClasses,
   COLOR_THEME,
   ICON_SIZES,
-} from "../utils/uiConstants";
-import UserDetailsModal from "../components/UserDetailsModal";
+} from "../utils/ui-constants";
+import UserDetailsModal from "../components/user-details-modal";
 import { PiUsersDuotone } from "react-icons/pi";
 
 const Teams = () => {
   const { user } = useAuth();
-  const { markAsReadByType } = useNotifications();
   const [searchTerm, setSearchTerm] = useState("");
   const [showNewTeamPopup, setShowNewTeamPopup] = useState(false);
   const [selectedTeams, setSelectedTeams] = useState([]);
@@ -85,7 +83,7 @@ const Teams = () => {
       setPagination(response.pagination || pagination);
     } catch (error) {
       console.error("Failed to load teams:", error);
-      toast.error("Failed to load teams");
+      toast.error("Failed to load workspaces");
     } finally {
       setLoading(false);
     }
@@ -115,16 +113,10 @@ const Teams = () => {
     loadStats();
   }, [loadTeams, loadStats]);
 
-  useEffect(() => {
-    if (user && user.id) {
-      markAsReadByType("teams");
-    }
-  }, [user, markAsReadByType]);
-
   const handleCreateTeam = async (e) => {
     e.preventDefault();
     if (!newTeam.name.trim()) {
-      toast.error("Team name is required");
+      toast.error("Workspace name is required");
       return;
     }
 
@@ -134,27 +126,27 @@ const Teams = () => {
       setTeams((prev) => [response.team, ...prev]);
       setShowNewTeamPopup(false);
       setNewTeam({ name: "", description: "", isPublic: false });
-      toast.success("Team created successfully!");
+      toast.success("Workspace created successfully!");
       loadStats();
     } catch (error) {
       console.error("Error creating team:", error);
-      toast.error(error.message || "Failed to create team");
+      toast.error(error.message || "Failed to create workspace");
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteTeam = async (teamId) => {
-    if (!confirm("Are you sure you want to delete this team?")) return;
+    if (!confirm("Are you sure you want to delete this workspace?")) return;
 
     try {
       await teamService.deleteTeam(teamId);
       setTeams((prev) => prev.filter((team) => team.id !== teamId));
-      toast.success("Team deleted successfully!");
+      toast.success("Workspace deleted successfully!");
       loadStats();
     } catch (error) {
       console.error("Error deleting team:", error);
-      toast.error(error.message || "Failed to delete team");
+      toast.error(error.message || "Failed to delete workspace");
     }
   };
 
@@ -227,10 +219,10 @@ const Teams = () => {
         >
           <div>
             <h1 className="text-3xl  text-gray-900 dark:text-white mb-2">
-              Teams
+              Workspaces
             </h1>
             <p className="text-gray-600 dark:text-gray-400">
-              Manage your teams and collaborate with members
+              Manage your workspaces and collaborate with members
             </p>
           </div>
           <div className="flex items-center gap-4">
@@ -239,7 +231,7 @@ const Teams = () => {
               className={"w-[200px] rounded-[15px] h-12"}
             >
               <Plus className={ICON_SIZES.sm} />
-              New Team
+              New Workspace
             </Button>
           </div>
         </motion.div>
@@ -266,13 +258,13 @@ const Teams = () => {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
           >
             <StatsCard
-              title="Total Teams"
+              title="Total Workspaces"
               value={stats.totalTeams}
               icon={PiUsersDuotone}
               color="gray"
             />
             <StatsCard
-              title="My Teams"
+              title="My Workspaces"
               value={stats.myTeams}
               icon={PiUsersDuotone}
               color="blue"
@@ -302,7 +294,7 @@ const Teams = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon icon" />
               <Input
                 type="text"
-                placeholder="Search teams..."
+                placeholder="Search workspaces..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className={getInputClasses(
@@ -372,17 +364,17 @@ const Teams = () => {
           ) : filteredTeams.length === 0 ? (
             <div className="col-span-full text-center py-12">
               <h3 className="text-xl  text-gray-900 dark:text-white mb-2">
-                No teams found
+                No workspaces found
               </h3>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Get started by creating your first team
+                Get started by creating your first workspace
               </p>
               <Button
                 onClick={() => setShowNewTeamPopup(true)}
                 className={"w-[200px]"}
               >
                 <Plus className="w-4 h-4 icon icon mr-2 icon" />
-                Create Team
+                Create Workspace
               </Button>
             </div>
           ) : (
@@ -391,7 +383,7 @@ const Teams = () => {
                 key={team.id}
                 variants={itemVariants}
                 whileHover={{ y: -4 }}
-                className="group relative flex flex-col overflow-hidden rounded-[20px] border border-gray-200/70 dark:border-white/10 bg-white dark:bg-white/[0.03] p-6 shadow-sm transition-all duration-300 hover:shadow-xl hover:border-[#FF914B]/40"
+                className="group relative flex flex-col overflow-hidden rounded-[20px] border border-gray-200/70 dark:border-white/10 bg-white dark:bg-white/[0.03] p-6 shadow-sm transition-[border-color,box-shadow] duration-300 hover:shadow-xl hover:border-[#FF914B]/40"
               >
                 {/* Accent glow */}
                 <div className="pointer-events-none absolute -right-16 -top-16 h-32 w-32 rounded-full bg-[#FF914B]/10 blur-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -427,14 +419,14 @@ const Teams = () => {
                     >
                       <DropdownMenuItem className="h-10 px-5 cursor-pointer rounded-[15px]">
                         <Settings className="w-4 h-4 icon icon mr-2 icon" />
-                        Manage Team
+                        Manage Workspace
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="h-10 px-5 cursor-pointer rounded-[15px]">
+                      <DropdownMenuItem className="h-11 px-5 pr-8 cursor-pointer rounded-[15px]">
                         <UserPlus className="w-4 h-4 icon icon mr-2 icon" />
                         Add Members
                       </DropdownMenuItem>
                       <DropdownMenuItem
-                        className="h-10 px-5 cursor-pointer text-red-600"
+                        className="h-11 px-5 pr-8 cursor-pointer text-red-600"
                         onClick={() => handleDeleteTeam(team.id)}
                       >
                         <Trash2 className="w-4 h-4 icon icon mr-2" />
@@ -460,39 +452,13 @@ const Teams = () => {
 
                 {/* Team Members */}
                 <div className="relative mt-auto flex items-center justify-between border-t border-gray-100 pt-4 dark:border-white/10">
-                  <div className="flex -space-x-2">
-                    {team.members?.slice(0, 4).map((member, index) => (
-                      <div
-                        key={index}
-                        className="h-9 w-9 cursor-pointer overflow-hidden rounded-[12px] ring-2 ring-white transition-transform hover:z-10 hover:-translate-y-0.5 dark:ring-black"
-                        title={member.user?.username}
-                        onClick={() =>
-                          handleUserAvatarClick(
-                            member.user?._id || member.user?.id,
-                          )
-                        }
-                      >
-                        <img
-                          {...getAvatarProps(
-                            member.user?.avatar,
-                            member.user?.username,
-                          )}
-                          alt={member.user?.username}
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                    ))}
-                    {team.members?.length > 4 && (
-                      <div className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-gray-100 text-xs font-semibold text-gray-600 ring-2 ring-white dark:bg-white/10 dark:text-gray-300 dark:ring-black">
-                        +{team.members.length - 4}
-                      </div>
-                    )}
-                    {(!team.members || team.members.length === 0) && (
-                      <span className="text-xs text-gray-400 dark:text-gray-500">
-                        No members yet
-                      </span>
-                    )}
-                  </div>
+                  <AvatarGroup
+                    users={team.members}
+                    max={3}
+                    size="lg"
+                    emptyLabel="No members yet"
+                    onUserClick={(id) => id && handleUserAvatarClick(id)}
+                  />
                   <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
                     <Calendar className="h-3.5 w-3.5" />
                     {new Date(team.createdAt).toLocaleDateString()}
@@ -521,7 +487,7 @@ const Teams = () => {
             >
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl  text-gray-900 dark:text-white">
-                  Create New Team
+                  Create New Workspace
                 </h2>
                 <button
                   onClick={() => setShowNewTeamPopup(false)}
@@ -538,7 +504,7 @@ const Teams = () => {
                     onChange={(e) =>
                       setNewTeam({ ...newTeam, name: e.target.value })
                     }
-                    placeholder="Team name *"
+                    placeholder="Workspace name *"
                     className="w-full h-12 rounded-[15px]"
                     required
                   />
@@ -550,7 +516,7 @@ const Teams = () => {
                     onChange={(e) =>
                       setNewTeam({ ...newTeam, description: e.target.value })
                     }
-                    placeholder="Team description"
+                    placeholder="Workspace description"
                     className="w-full h-12 rounded-[15px]"
                     rows="3"
                   />
@@ -570,7 +536,7 @@ const Teams = () => {
                     htmlFor="isPublic"
                     className="text-sm text-gray-700 dark:text-gray-300"
                   >
-                    Make this team public
+                    Make this workspace public
                   </label>
                 </div>
 
@@ -592,7 +558,7 @@ const Teams = () => {
                     {loading ? (
                       <span className="loader w-5 h-5 icon"></span>
                     ) : (
-                      "Create Team"
+                      "Create Workspace"
                     )}
                   </Button>
                 </div>

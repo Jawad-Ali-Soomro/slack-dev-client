@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Github, Twitter, Linkedin, Mail, MapPin, Phone } from "lucide-react";
+import { LazyMotion, domAnimation, m } from "framer-motion";
+import { Github, Linkedin, Mail, MapPin, Phone, Twitter } from "lucide-react";
+import BrandLogo from "./brand-logo";
 
 const Footer = () => {
   return (
+    <LazyMotion features={domAnimation}>
     <div
       className="bg-black text-white icon py-16 w-full"
       style={{
@@ -12,42 +14,43 @@ const Footer = () => {
     >
       <div className="max-w-7xl mx-auto px-6 icon bg">
         <div className="grid md:grid-cols-4 gap-8 mb-12">
-          {/* Company Info */}
           <div className="space-y-4">
-            <h3 className="text-xl ">Skack Developers</h3>
+            <div className="flex items-center gap-3">
+              <BrandLogo size={36} title="Slack Dev" />
+              <h3 className="text-xl">Skack Developers</h3>
+            </div>
             <p className="text-gray-300 text-sm leading-relaxed">
               Empowering developers worldwide with cutting-edge tools and
               platforms for modern project management and collaboration.
             </p>
             <div className="flex space-x-4">
-              <motion.a
+              <m.a
                 href="#"
                 className="text-gray-400 hover:text-white transition-colors"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
                 <Github className="w-5 h-5 icon" />
-              </motion.a>
-              <motion.a
+              </m.a>
+              <m.a
                 href="#"
                 className="text-gray-400 hover:text-white transition-colors"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
                 <Twitter className="w-5 h-5 icon" />
-              </motion.a>
-              <motion.a
+              </m.a>
+              <m.a
                 href="#"
                 className="text-gray-400 hover:text-white transition-colors"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
               >
                 <Linkedin className="w-5 h-5 icon" />
-              </motion.a>
+              </m.a>
             </div>
           </div>
 
-          {/* Quick Links */}
           <div className="space-y-4">
             <h4 className="text-lg ">Quick Links</h4>
             <div className="space-y-2">
@@ -78,7 +81,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Products */}
           <div className="space-y-4">
             <h4 className="text-lg ">Products</h4>
             <div className="space-y-2">
@@ -86,7 +88,7 @@ const Footer = () => {
                 to="/teams"
                 className="block text-gray-300 hover:text-white transition-colors text-sm"
               >
-                Teams
+                Workspaces
               </Link>
               <Link
                 to="/dev-hub"
@@ -109,7 +111,6 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Contact Info */}
           <div className="space-y-4">
             <h4 className="text-lg ">Contact</h4>
             <div className="space-y-3">
@@ -131,7 +132,6 @@ const Footer = () => {
           </div>
         </div>
 
-        {/* Bottom Section */}
         <div className="border-t border-gray-800 pt-8 icon">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 icon">
             <div className="text-gray-400 text-sm">
@@ -161,6 +161,7 @@ const Footer = () => {
         </div>
       </div>
     </div>
+    </LazyMotion>
   );
 };
 

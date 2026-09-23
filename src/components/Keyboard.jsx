@@ -8,7 +8,6 @@ const KeyboardShortcuts = () => {
     const handleKeyDown = (e) => {
       const key = e.key.toLowerCase();
 
-      // Ctrl + Shift shortcuts
       if (e.ctrlKey && e.shiftKey) {
         switch (key) {
           case "e":
@@ -46,7 +45,6 @@ const KeyboardShortcuts = () => {
         }
       }
 
-      // Ctrl only shortcuts (optional)
       else if (e.ctrlKey && !e.shiftKey) {
         switch (key) {
           case "e":

@@ -29,7 +29,7 @@ function Checkbox({ className, size = "default", ...props }) {
     >
       <CheckboxPrimitive.Indicator
         data-slot="checkbox-indicator"
-        className="flex items-center justify-center text-current transition-all duration-200"
+        className="flex items-center justify-center text-current transition-colors duration-200"
       >
         <CheckIcon className={cn(iconVariants[size])} />
       </CheckboxPrimitive.Indicator>

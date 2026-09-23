@@ -17,8 +17,6 @@ const DEFAULT_END_MONTH = new Date(2035, 11);
 const triggerClasses =
   "w-full h-12 justify-start rounded-[15px] border border-gray-200 dark:border-gray-700 bg-transparent px-3 font-normal text-left";
 
-/* ---------------------------- helpers ---------------------------- */
-
 function parseYMD(value) {
   if (!value) return undefined;
   const [y, m, d] = value.split("-").map(Number);
@@ -46,8 +44,6 @@ function formatDateTimeLocal(date) {
   if (!date) return "";
   return format(date, "yyyy-MM-dd'T'HH:mm");
 }
-
-/* ---------------------------- DatePicker ---------------------------- */
 
 function startOfToday() {
   const d = new Date();
@@ -107,8 +103,6 @@ function DatePicker({
     </Popover>
   );
 }
-
-/* -------------------------- DateTimePicker -------------------------- */
 
 function DateTimePicker({
   value,
@@ -184,8 +178,6 @@ function DateTimePicker({
     </Popover>
   );
 }
-
-/* ---------------------------- TimePicker ---------------------------- */
 
 function to12Hour(value) {
   if (!value) return { hour: 9, minute: 0, period: "AM" };

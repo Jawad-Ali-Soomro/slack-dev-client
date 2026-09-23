@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { useChat } from "../contexts/ChatContext";
-import { useNotifications } from "../contexts/NotificationContext";
-import ChatList from "../components/ChatList";
-import ChatWindow from "../components/ChatWindow";
-import CreateChatModal from "../components/CreateChatModal";
+import { useChat } from "../contexts/chat-context";
+import { useNotifications } from "../contexts/notification-context";
+import ChatList from "../components/chat-list";
+import ChatWindow from "../components/chat-window";
+import CreateChatModal from "../components/create-chat-modal";
 import { Button } from "../components/ui/button";
 import { Plus, Wifi, WifiOff } from "lucide-react";
 

@@ -22,8 +22,8 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { toast } from "sonner";
-import noteService from "../services/noteService";
-import { useAuth } from "../contexts/AuthContext";
+import noteService from "../services/note-service";
+import { useAuth } from "../contexts/auth-context";
 
 // Import edit-pdf components
 import { PdfEditor } from "edit-pdf";

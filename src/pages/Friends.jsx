@@ -6,8 +6,6 @@ import {
   Clock,
   Trash2,
   Send,
-  UserPlus,
-  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
@@ -18,23 +16,15 @@ import {
   TabsTrigger,
 } from "../components/ui/tabs";
 import { Badge } from "../components/ui/badge";
-import friendService from "../services/friendService";
-import { useAuth } from "../contexts/AuthContext";
-import UserDetailsModal from "../components/UserDetailsModal";
-import FindFriendsModal from "../components/FindFriendsModal";
-import FriendUserCard from "../components/friends/FriendUserCard";
+import friendService from "../services/friend-service";
+import { useAuth } from "../contexts/auth-context";
+import UserDetailsModal from "../components/user-details-modal";
+import FindFriendsModal from "../components/find-friends-modal";
+import FriendUserCard from "../components/friends/friend-user-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  PiUserDuotone,
-  PiUserPlusDuotone,
-  PiUsersDuotone,
-} from "react-icons/pi";
+import { PiUserDuotone, PiUserPlusDuotone, PiUsersDuotone } from "react-icons/pi";
 import { cn } from "@/lib/utils";
-import {
-  getExcludedUserIds,
-  filterRecommendableUsers,
-  getPendingRequestStatus,
-} from "@/utils/friendSuggestions";
+import { getExcludedUserIds } from "@/utils/friend-suggestions";
 
 const Friends = () => {
   const { user } = useAuth();
@@ -44,13 +34,9 @@ const Friends = () => {
   const [showFindFriendsModal, setShowFindFriendsModal] = useState(false);
   const [loading, setLoading] = useState(true);
   const [statsLoading, setStatsLoading] = useState(true);
-  const [suggestionsLoading, setSuggestionsLoading] = useState(true);
   const [friends, setFriends] = useState([]);
   const [friendRequests, setFriendRequests] = useState([]);
-  const [suggestions, setSuggestions] = useState([]);
   const [stats, setStats] = useState(null);
-  const [sendingId, setSendingId] = useState(null);
-  const [sentSuggestionIds, setSentSuggestionIds] = useState(new Set());
   const [actionId, setActionId] = useState(null);
 
   const handleUserAvatarClick = (userId) => {
@@ -73,39 +59,23 @@ const Friends = () => {
     setStats(response.stats);
   }, []);
 
-  const loadSuggestions = useCallback(async () => {
-    const response = await friendService.searchUsersForFriends("", 12);
-    setSuggestions(response.users || []);
-  }, []);
-
   const excludedIds = useMemo(
     () =>
       getExcludedUserIds({
         friends,
         friendRequests,
         currentUserId: user?.id,
-        extraIds: [...sentSuggestionIds],
       }),
-    [friends, friendRequests, user?.id, sentSuggestionIds],
-  );
-
-  const visibleSuggestions = useMemo(
-    () => filterRecommendableUsers(suggestions, excludedIds),
-    [suggestions, excludedIds],
+    [friends, friendRequests, user?.id],
   );
 
   const refreshAll = useCallback(async () => {
     try {
-      await Promise.all([
-        loadFriends(),
-        loadFriendRequests(),
-        loadStats(),
-        loadSuggestions(),
-      ]);
+      await Promise.all([loadFriends(), loadFriendRequests(), loadStats()]);
     } catch (error) {
       console.error("Error refreshing friends data:", error);
     }
-  }, [loadFriends, loadFriendRequests, loadStats, loadSuggestions]);
+  }, [loadFriends, loadFriendRequests, loadStats]);
 
   useEffect(() => {
     let mounted = true;
@@ -114,13 +84,7 @@ const Friends = () => {
       try {
         setLoading(true);
         setStatsLoading(true);
-        setSuggestionsLoading(true);
-        await Promise.all([
-          loadFriends(),
-          loadFriendRequests(),
-          loadStats(),
-          loadSuggestions(),
-        ]);
+        await Promise.all([loadFriends(), loadFriendRequests(), loadStats()]);
       } catch (error) {
         if (mounted) {
           console.error("Error loading friends page:", error);
@@ -130,7 +94,6 @@ const Friends = () => {
         if (mounted) {
           setLoading(false);
           setStatsLoading(false);
-          setSuggestionsLoading(false);
         }
       }
     };
@@ -139,27 +102,7 @@ const Friends = () => {
     return () => {
       mounted = false;
     };
-  }, [loadFriends, loadFriendRequests, loadStats, loadSuggestions]);
-
-  const handleSendFriendRequest = async (userId) => {
-    const status = getPendingRequestStatus(userId, friendRequests, user?.id);
-    if (sendingId || sentSuggestionIds.has(userId) || status === "sent") return;
-
-    try {
-      setSendingId(userId);
-      await friendService.sendFriendRequest(userId);
-      setSentSuggestionIds((prev) => new Set([...prev, String(userId)]));
-      setSuggestions((prev) =>
-        prev.filter((u) => String(u.id) !== String(userId)),
-      );
-      toast.success("Friend request sent!");
-      await Promise.all([loadFriendRequests(), loadStats(), loadSuggestions()]);
-    } catch (error) {
-      toast.error(error.message || "Failed to send friend request");
-    } finally {
-      setSendingId(null);
-    }
-  };
+  }, [loadFriends, loadFriendRequests, loadStats]);
 
   const handleRespondToRequest = async (requestId, action) => {
     try {
@@ -284,54 +227,6 @@ const Friends = () => {
           </div>
         </div>
 
-        {/* Suggested friends */}
-        <div className="dashboard-card p-5 mb-6">
-          <div className="flex items-center gap-2 mb-4">
-            <Sparkles className="h-4 w-4 text-theme" />
-            <h2 className="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-white">
-              Suggested for you
-            </h2>
-          </div>
-
-          {suggestionsLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-              {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="h-[76px] rounded-xl" />
-              ))}
-            </div>
-          ) : visibleSuggestions.length === 0 ? (
-            <p className="text-sm text-gray-500 dark:text-gray-400 py-4 text-center">
-              No new suggestions. Everyone you know may already be connected or
-              pending.
-            </p>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {visibleSuggestions.map((person, index) => {
-                const requestStatus = getPendingRequestStatus(
-                  person.id,
-                  friendRequests,
-                  user?.id,
-                );
-                const isSent =
-                  sentSuggestionIds.has(String(person.id)) ||
-                  requestStatus === "sent";
-
-                return (
-                  <FriendUserCard
-                    key={person.id}
-                    person={person}
-                    index={index}
-                    onAvatarClick={handleUserAvatarClick}
-                    onAdd={handleSendFriendRequest}
-                    isSending={sendingId === person.id}
-                    requestStatus={isSent ? "sent" : requestStatus}
-                  />
-                );
-              })}
-            </div>
-          )}
-        </div>
-
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="flex flex-wrap w-full h-auto gap-2 bg-transparent p-0 mb-5">
@@ -376,7 +271,7 @@ const Friends = () => {
                   <PiUsersDuotone className="h-10 w-10 mx-auto mb-3 opacity-40" />
                   <p className="font-medium">No friends yet</p>
                   <p className="text-sm mt-1">
-                    Send a request from suggestions above
+                    Use Find Friends to send a request
                   </p>
                 </div>
               ) : (

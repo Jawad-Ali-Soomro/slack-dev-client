@@ -1,59 +1,56 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import "./App.css";
-import { ThemeToggle } from "./components/ThemeToggle";
-import { AuthProvider } from "./contexts/AuthContext";
-import { SidebarProvider } from "./contexts/SidebarContext";
-import { NotificationProvider } from "./contexts/NotificationContext";
-import { ChatProvider } from "./contexts/ChatContext";
-import { SearchProvider } from "./contexts/SearchContext";
-import ProtectedRoute from "./components/ProtectedRoute";
-import Indexing from "./pages/Indexing";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import TeamsManage from "./components/TeamsManage";
-import Friends from "./pages/Friends";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import ForgotPassword from "./pages/ForgotPassword";
-import VerifyEmail from "./pages/VerifyEmail";
-import Dashboard from "./pages/Dashboard";
-import Tasks from "./pages/Tasks";
-import Meetings from "./pages/Meetings";
-import Projects from "./pages/Projects";
-import Chat from "./pages/Chat";
-import NotFound from "./pages/NotFound";
+import "./app.css";
+import { AuthProvider } from "./contexts/auth-context";
+import { SidebarProvider } from "./contexts/sidebar-context";
+import { NotificationProvider } from "./contexts/notification-context";
+import { ChatProvider } from "./contexts/chat-context";
+import { SearchProvider } from "./contexts/search-context";
+import ProtectedRoute from "./components/protected-route";
+import Indexing from "./pages/indexing";
+import About from "./pages/about";
+import Contact from "./pages/contact";
+import TeamsManage from "./components/teams-manage";
+import Friends from "./pages/friends";
+import Login from "./pages/login";
+import Signup from "./pages/signup";
+import ForgotPassword from "./pages/forgot-password";
+import VerifyEmail from "./pages/verify-email";
+import Dashboard from "./pages/dashboard";
+import Tasks from "./pages/tasks";
+import Meetings from "./pages/meetings";
+import Projects from "./pages/projects";
+import Chat from "./pages/chat";
+import NotFound from "./pages/not-found";
 import { Toaster } from "sonner";
-import UserManagement from "./pages/admin/UserManagement";
-import PermissionsManagement from "./pages/admin/PermissionsManagement";
-import MyBoughtProjects from "./pages/MyBoughtProjects";
-import Explore from "./pages/Explore";
-import LearnPoint from "./pages/LearnPoint";
-import Challenges from "./pages/Challenges";
-import ChallengeDetail from "./pages/ChallengeDetail";
-import RepoDetail from "./pages/RepoDetail";
-import Repos from "./pages/Repos";
-import Notes from "./pages/Notes";
-import Automation from "./pages/Automation";
-import KeyboardShortcuts from "./components/Keyboard";
-import FigmaCursor from "./components/FigmaCursor";
+import UserManagement from "./pages/admin/user-management";
+import PermissionsManagement from "./pages/admin/permissions-management";
+import MyBoughtProjects from "./pages/my-bought-projects";
+import Explore from "./pages/explore";
+import LearnPoint from "./pages/learn-point";
+import RepoDetail from "./pages/repo-detail";
+import Repos from "./pages/repos";
+import Automation from "./pages/automation";
+import FigmaCursor from "./components/figma-cursor";
+import { GlobalRipple } from "./components/ui/ripple";
 
 function App() {
   return (
     <div className="bg-white dark:bg-[black]">
       <FigmaCursor />
+      <GlobalRipple />
       <Router>
         <Toaster
-          position="bottom-right"
+          position="top-center"
           richColors
           closeButton
           toastOptions={{
             style: {
               borderRadius: "12px",
-              fontSize: "14px",
+              fontSize: "11px",
               fontWeight: "600",
               margin: "4px 0",
               padding: "20px 20px",
-              textTransform: "capitalize",
+              textTransform: "uppercase",
             },
             className: "toast-custom",
           }}
@@ -66,12 +63,10 @@ function App() {
                 <SidebarProvider>
                   <div className="relative">
                     <Routes>
-                      {/* Public Routes */}
                       <Route path="/" element={<Indexing />} />
                       <Route path="/about" element={<About />} />
                       <Route path="/contact" element={<Contact />} />
 
-                      {/* Auth Routes - Redirect to dashboard if already logged in */}
                       <Route path="/login" element={<Login />} />
                       <Route path="/signup" element={<Signup />} />
                       <Route
@@ -80,7 +75,6 @@ function App() {
                       />
                       <Route path="/verify-email" element={<VerifyEmail />} />
 
-                      {/* Protected Routes - Require authentication */}
                       <Route
                         path="/dashboard"
                         element={
@@ -113,14 +107,7 @@ function App() {
                           </ProtectedRoute>
                         }
                       />
-                      {/* <Route
-                        path="/learn-point/notes"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <Notes />
-                          </ProtectedRoute>
-                        }
-                      /> */}
+
                       <Route
                         path="/dashboard/my-bought-projects"
                         element={
@@ -147,6 +134,7 @@ function App() {
                           </ProtectedRoute>
                         }
                       />
+                      
                       <Route
                         path="/dashboard/automation"
                         element={
@@ -179,22 +167,8 @@ function App() {
                           </ProtectedRoute>
                         }
                       />
-                      <Route
-                        path="/dashboard/challenges"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <Challenges />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/dashboard/challenges/:id"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <ChallengeDetail />
-                          </ProtectedRoute>
-                        }
-                      />
+                   
+                   
                       <Route
                         path="/dashboard/repos"
                         element={
@@ -212,7 +186,6 @@ function App() {
                         }
                       />
 
-                      {/* Admin Routes - Require admin role */}
                       <Route
                         path="/dashboard/admin/users"
                         element={
@@ -230,7 +203,6 @@ function App() {
                         }
                       />
 
-                      {/* 404 Route - Must be last */}
                       <Route path="*" element={<NotFound />} />
                     </Routes>
                   </div>

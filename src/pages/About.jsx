@@ -1,5 +1,5 @@
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+
+import Footer from "../components/footer";
 import { motion } from "framer-motion";
 import { Users, Target, Award, Globe } from "lucide-react";
 
@@ -25,9 +25,6 @@ const About = () => {
 
   return (
     <>
-      <div className="landing-header w-full">
-        <Header />
-      </div>
       <div className="flex flex-col items-center justify-center pt-50 relative overflow-hidden bg-gray-50 dark:bg-black min-h-screen">
       <motion.main
         className="container mx-auto px-6 py-20"

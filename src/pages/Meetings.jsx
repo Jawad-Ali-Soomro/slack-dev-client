@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import HorizontalLoader from "../components/HorizontalLoader";
-import { usePermissions } from "../hooks/usePermissions";
+import HorizontalLoader from "../components/horizontal-loader";
+import { usePermissions } from "../hooks/use-permissions";
 import {
   Search,
   Plus,
@@ -43,21 +43,21 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { Badge } from "../components/ui/badge";
-import { userService } from "../services/userService";
-import meetingService from "../services/meetingService";
-import projectService from "../services/projectService";
-import teamService from "../services/teamService";
-import friendService from "../services/friendService";
-import { useAuth } from "../contexts/AuthContext";
-import { useNotifications } from "../contexts/NotificationContext";
-import { getAvatarProps } from "../utils/avatarUtils";
-import UserDetailsModal from "../components/UserDetailsModal";
+import { userService } from "../services/user-service";
+import meetingService from "../services/meeting-service";
+import projectService from "../services/project-service";
+import teamService from "../services/team-service";
+import friendService from "../services/friend-service";
+import { useAuth } from "../contexts/auth-context";
+import { useNotifications } from "../contexts/notification-context";
+import UserAvatar, { AvatarGroup } from "../components/user-avatar";
+import UserDetailsModal from "../components/user-details-modal";
 import {
   getButtonClasses,
   getInputClasses,
   COLOR_THEME,
   ICON_SIZES,
-} from "../utils/uiConstants";
+} from "../utils/ui-constants";
 import { cn } from "../lib/utils";
 import {
   Sheet,
@@ -75,6 +75,7 @@ const Meetings = () => {
   const { markAsReadByType } = useNotifications();
   const { permissions, loading: permissionsLoading } = usePermissions();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [showNewMeetingPopup, setShowNewMeetingPopup] = useState(false);
   const [editingMeeting, setEditingMeeting] = useState(null);
@@ -168,12 +169,20 @@ const Meetings = () => {
       const response = await meetingService.getMeetings(filters);
       const allMeetings = response.meetings || [];
 
+      const matchesUser = (party) => {
+        if (!party || !user?.id) return false;
+        const partyId =
+          typeof party === "object" ? party.id || party._id : party;
+        return String(partyId) === String(user.id);
+      };
+
       const authorizedMeetings = allMeetings.filter((meeting) => {
         if (!user || !user.id) return false;
-
         return (
-          meeting.assignedTo?.id === user.id ||
-          meeting.assignedBy?.id === user.id
+          matchesUser(meeting.assignedTo) ||
+          matchesUser(meeting.assignedBy) ||
+          (Array.isArray(meeting.attendees) &&
+            meeting.attendees.some((attendee) => matchesUser(attendee)))
         );
       });
 
@@ -212,6 +221,15 @@ const Meetings = () => {
       setShowNewMeetingPopup(true);
     }
   }, [location.state]);
+
+  // Chrome extension → open create-meeting modal
+  useEffect(() => {
+    if (searchParams.get("create") !== "1") return;
+    setShowNewMeetingPopup(true);
+    const next = new URLSearchParams(searchParams);
+    next.delete("create");
+    setSearchParams(next, { replace: true });
+  }, [searchParams, setSearchParams]);
 
   const loadUsers = async () => {
     try {
@@ -396,13 +414,13 @@ const Meetings = () => {
   const getTypeColor = (type) => {
     switch (type) {
       case "online":
-        return "text-black w-[120px] flex items-center justify-center font-bold bg-gray-100 text-gray-600 dark:border-none border border-gray-400/40 px-4 py-2";
+        return "text-dark dark:border-transparent dark:text-black bg-gray-100 border border-gray-500 px-4 py-2 min-w-[100px] pt-2.5";
       case "in-person":
-        return "text-black w-[120px] flex items-center justify-center font-bold  bg-green-100 text-green-600 dark:border-none border border-green-400/40 px-4 py-2";
+        return "text-dark dark:border-transparent dark:text-black bg-green-100 border border-green-500 px-4 py-2 min-w-[100px] pt-2.5";
       case "hybrid":
-        return "text-white w-[120px] flex items-center justify-center font-bold bg-yellow-100 text-yellow-600 dark:border-none border border-yellow-400/40 px-4 py-2";
+        return "text-dark dark:border-transparent dark:text-black bg-yellow-100 border border-yellow-500 px-4 py-2 min-w-[100px] pt-2.5";
       default:
-        return "text-black w-[120px] flex items-center justify-center font-bold bg-gray-100 text-gray-600 dark:border-none border border-gray-400/40 px-4 py-2";
+        return "text-dark dark:border-transparent dark:text-black bg-gray-100 border border-gray-500 px-4 py-2 min-w-[100px] pt-2.5";
     }
   };
 
@@ -426,19 +444,20 @@ const Meetings = () => {
 
   const getStatusColor = (status, isOverdue = false) => {
     if (isOverdue) {
-      return "text-black font-bold dark:text-white bg-red-500/15 text-red-600 border border-red-400/40 px-4 py-2 min-w-[100px]";
+      return "text-black dark:text-black font-bold dark:text-white bg-red-100/50 text-red-600 border border-red-400 px-4 py-2 pt-2.5 min-w-[100px]";
     }
     switch (status) {
       case "completed":
-        return "text-black font-bold dark:text-white bg-green-500/15 text-green-600 border border-green-400/40 px-4 py-2 min-w-[100px]";
+        return "text-black dark:text-black font-bold dark:text-white bg-green-100/50 text-black dark:text-black border border-green-400 px-4 py-2 pt-2.5 min-w-[100px]";
       case "pregress":
-        return "text-black font-bold dark:text-white bg-gray-500/15 text-gray-600 border border-gray-400/40 px-4 py-2 min-w-[100px]";
+      case "in_progress":
+        return "text-black dark:text-black font-bold dark:text-white bg-gray-100/50 text-gray-600 border border-gray-400 px-4 py-2 pt-2.5 min-w-[100px]";
       case "scheduled":
-        return "text-black font-bold dark:text-white bg-yellow-500/15 text-yellow-600 border border-yellow-400/40 px-4 py-2 min-w-[100px]";
+        return "text-black dark:text-black font-bold dark:text-white bg-yellow-100/50 text-yellow-600 border border-yellow-400 px-4 py-2 pt-2.5 min-w-[100px]";
       case "cancelled":
-        return "text-black font-bold dark:text-white bg-red-500/15 text-red-600 border border-red-400/40 px-4 py-2 min-w-[100px]";
+        return "text-black dark:text-black font-bold dark:text-white bg-red-100/50 text-red-600 border border-red-400 px-4 py-2 pt-2.5 min-w-[100px]";
       default:
-        return "text-black font-bold dark:text-white bg-yellow-500/15 text-yellow-600 border border-yellow-400/40 px-4 py-2 min-w-[100px]";
+        return "text-black dark:text-black font-bold dark:text-white bg-yellow-100/50 text-yellow-600 border border-yellow-400 px-4 py-2 pt-2.5 min-w-[100px]";
     }
   };
 
@@ -470,35 +489,35 @@ const Meetings = () => {
 
   const getMeetingStatusBadgeStyles = (status, isOverdue = false) => {
     if (isOverdue) {
-      return "bg-red-500/15 text-white dark:text-white border border-red-400/40";
+      return "bg-red-500/15 text-red-600 border border-red-400/40";
     }
     switch (status) {
       case "completed":
-        return "bg-emerald-500/15 text-white dark:text-white border border-emerald-400/40";
+        return "bg-emerald-500/15 text-black dark:text-black border border-emerald-400/40";
       case "scheduled":
-        return "bg-amber-500/15 text-amber-600 dark:text-amber-400 border border-amber-400/40";
+        return "bg-amber-500/15 text-amber-600 border border-amber-400/40";
       case "pregress":
       case "in_progress":
-        return "bg-gray-500/15 text-gray-600 dark:text-gray-400 border border-gray-400/40";
+        return "bg-gray-500/15 text-black dark:text-black border border-gray-400/40";
       case "cancelled":
-        return "bg-red-500/15 text-white dark:text-white border border-red-400/40";
+        return "bg-red-500/15 text-red-600 border border-red-400/40";
       case "overdue":
-        return "bg-red-500/15 text-white dark:text-white border border-red-400/40";
+        return "bg-red-500/15 text-red-600 border border-red-400/40";
       default:
-        return "bg-gray-500/15 text-gray-600 dark:text-gray-400 border border-gray-400/40";
+        return "bg-gray-500/15 text-gray-600 border border-gray-400/40";
     }
   };
 
   const getMeetingTypeBadgeStyles = (type) => {
     switch (type) {
       case "online":
-        return "bg-blue-500/12 text-blue-600 border border-blue-400/40";
+        return "bg-gray-500/15 text-gray-600 border border-gray-400/40";
       case "in-person":
-        return "bg-green-500/12 text-green-600 border border-green-400/40";
+        return "bg-green-500/15 text-green-600 border border-green-400/40";
       case "hybrid":
-        return "bg-purple-500/12 text-purple-600 border border-purple-400/40";
+        return "bg-orange-500/15 text-orange-600 border border-orange-400/40";
       default:
-        return "bg-gray-500/12 text-gray-600 border border-gray-400/40";
+        return "bg-green-500/15 text-green-600 border border-green-400/40";
     }
   };
 
@@ -759,7 +778,7 @@ const Meetings = () => {
   };
 
   const handleJoinMeeting = (meetingLink) => {
-    window.open(meetingLink, "_blank");
+    window.open(meetingLink, "_blank", "noopener,noreferrer");
   };
 
   const handleScheduleZoomMeeting = async () => {
@@ -893,7 +912,7 @@ const Meetings = () => {
                       </SelectContent>
                     </Select>
                     <Select value={filterType} onValueChange={setFilterType}>
-                      <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 bg-white cursor-pointer ">
+                      <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 cursor-pointer bg-white dark:bg-[black] dark:text-white">
                         <SelectValue placeholder="All Types" />
                       </SelectTrigger>
                       <SelectContent className="bg-white dark:bg-[black]  border-gray-200 dark:border-gray-700">
@@ -1079,25 +1098,24 @@ const Meetings = () => {
                         )} */}
                         </div>
                       </td>
-                      <td className="px-4 py-2">
+                      <td className="px-2 py-2">
                         <div
-                          className={`inline-flex items-center rounded-[15px] uppercase text-xs ${getTypeColor(meeting.type)}`}
+                          className={`inline-flex items-center justify-center uppercase px-2.5 py-0.5 rounded-[15px] text-[9px] ${getTypeColor(meeting.type)}`}
                         >
                           {meeting.type === "online" && (
-                            <div className="flex items-center gap-2">
-                              <Video className="w-4 h-4 icon icon icon" />{" "}
+                            <div className="flex items-center gap-2 font-semibold">
                               Online
                             </div>
                           )}
                           {meeting.type === "in-person" && (
-                            <div className="flex items-center gap-2">
-                              <MapPin className="w-4 h-4 icon icon icon" /> In
-                              Person
+                            <div className="flex items-center gap-2 font-semibold">
+                              {/* <MapPin className="w-4 h-4 icon icon icon" /> In */}
+                              In Person
                             </div>
                           )}
                           {meeting.type === "hybrid" && (
-                            <div className="flex items-center gap-2">
-                              <Calendar className="w-4 h-4 icon icon icon" />{" "}
+                            <div className="flex items-center gap-2 font-semibold">
+                              {/* <Calendar className="w-4 h-4 icon icon icon" />{" "} */}
                               Hybrid
                             </div>
                           )}
@@ -1111,9 +1129,9 @@ const Meetings = () => {
                             const displayStatus = getDisplayStatus(meeting);
                             return (
                               <span
-                                className={`inline-flex items-center gap-1 rounded-[15px] text-xs  truncate uppercase ${getStatusColor(meeting.status, overdue)}`}
+                                className={`inline-flex items-center gap-1 justify-center font-bold rounded-[15px] text-[9px] uppercase truncate ${getStatusColor(meeting.status, overdue)}`}
                               >
-                                {getStatusIcon(meeting.status, overdue)}
+                                {/* {getStatusIcon(meeting.status, overdue)} */}
                                 {displayStatus}
                               </span>
                             );
@@ -1189,46 +1207,13 @@ const Meetings = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 w-[180px]">
-                        <div className="flex flex-wrap">
-                          {meeting.attendees && meeting.attendees.length > 0 ? (
-                            meeting.attendees.map((attendee, index) => (
-                              <div
-                                key={index}
-                                className="flex items-center gap-1"
-                              >
-                                <img
-                                  {...getAvatarProps(
-                                    attendee.avatar,
-                                    attendee.username,
-                                  )}
-                                  alt={attendee.username || "User"}
-                                  className="w-8 h-8 rounded-[15px] object-cover border border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
-                                  onClick={() =>
-                                    attendee.id &&
-                                    handleUserAvatarClick(attendee.id)
-                                  }
-                                  title={
-                                    attendee.username
-                                      ? `View ${attendee.username}'s profile`
-                                      : ""
-                                  }
-                                />
-                              </div>
-                            ))
-                          ) : (
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                              No attendees
-                            </span>
-                          )}
-                          {meeting.attendees &&
-                            meeting.attendees.length > 3 && (
-                              <div className="w-6 h-6 rounded-[15px] bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                                <span className="text-xs text-gray-600 dark:text-gray-300">
-                                  +{meeting.attendees.length - 3}
-                                </span>
-                              </div>
-                            )}
-                        </div>
+                        <AvatarGroup
+                          users={meeting.attendees}
+                          max={3}
+                          size="md"
+                          emptyLabel="No attendees"
+                          onUserClick={(id) => id && handleUserAvatarClick(id)}
+                        />
                       </td>
                       <td className="px-6 py-4 w-[200px]">
                         {meeting.project ? (
@@ -1443,7 +1428,7 @@ const Meetings = () => {
                   <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
                     {editingMeeting
                       ? "Update meeting details, attendees, and schedule"
-                      : "Let's schedule a meeting for your team"}
+                      : "Let's schedule a meeting for your workspace"}
                   </p>
                 </div>
                 <button
@@ -1571,22 +1556,10 @@ const Meetings = () => {
                               className="px-4 py-3 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
                             >
                               <div className="flex items-center gap-3">
-                                <img
-                                  {...getAvatarProps(
-                                    user.avatar,
-                                    user.username || user.name,
-                                  )}
-                                  alt={user.name}
-                                  className="w-8 h-8 rounded-[15px] object-cover  border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleUserAvatarClick(user.id);
-                                  }}
-                                  title={
-                                    user.username || user.name
-                                      ? `View ${user.username || user.name}'s profile`
-                                      : ""
-                                  }
+                                <UserAvatar
+                                  user={user}
+                                  size="md"
+                                  onClick={(id) => id && handleUserAvatarClick(id)}
                                 />
                                 <div>
                                   <div className="font-medium text-gray-900 dark:text-white">
@@ -1697,22 +1670,10 @@ const Meetings = () => {
                               className="px-4 py-3 bg-white dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
                             >
                               <div className="flex items-center gap-3">
-                                <img
-                                  {...getAvatarProps(
-                                    user.avatar,
-                                    user.username || user.name,
-                                  )}
-                                  alt={user.name}
-                                  className="w-8 h-8 rounded-[15px] object-cover  border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleUserAvatarClick(user.id);
-                                  }}
-                                  title={
-                                    user.username || user.name
-                                      ? `View ${user.username || user.name}'s profile`
-                                      : ""
-                                  }
+                                <UserAvatar
+                                  user={user}
+                                  size="md"
+                                  onClick={(id) => id && handleUserAvatarClick(id)}
                                 />
                                 <div>
                                   <div className="font-medium text-gray-900 dark:text-white">
@@ -1738,22 +1699,10 @@ const Meetings = () => {
                             key={attendee.id}
                             className="flex items-center gap-2 bg-gray-100 dark:bg-black px-3 py-2 rounded-[15px]"
                           >
-                            <img
-                              {...getAvatarProps(
-                                attendee.avatar,
-                                attendee.username || attendee.name,
-                              )}
-                              alt={attendee.name}
-                              className="w-6 h-6 rounded-[15px] object-cover cursor-pointer hover:scale-110 transition-transform"
-                              onClick={() =>
-                                attendee.id &&
-                                handleUserAvatarClick(attendee.id)
-                              }
-                              title={
-                                attendee.username || attendee.name
-                                  ? `View ${attendee.username || attendee.name}'s profile`
-                                  : ""
-                              }
+                            <UserAvatar
+                              user={attendee}
+                              size="sm"
+                              onClick={(id) => id && handleUserAvatarClick(id)}
                             />
                             <span className="text-sm text-gray-900 dark:text-white">
                               {attendee.name}
@@ -1979,16 +1928,10 @@ const Meetings = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm truncate overflow-hidden">
-                      <img
-                        {...getAvatarProps(
-                          selectedMeetingDetails.assignedTo?.avatar,
-                          selectedMeetingDetails.assignedTo?.username || "User",
-                        )}
-                        alt={
-                          selectedMeetingDetails.assignedTo?.username ||
-                          "User Avatar"
-                        }
-                        className="w-12 h-12 rounded-[15px] border border-gray-200 dark:border-gray-700"
+                      <UserAvatar
+                        user={selectedMeetingDetails.assignedTo}
+                        size="xl"
+                        onClick={(id) => id && handleUserAvatarClick(id)}
                       />
                       <div className="truncate">
                         <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">
@@ -2006,16 +1949,10 @@ const Meetings = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
-                      <img
-                        {...getAvatarProps(
-                          selectedMeetingDetails.assignedBy?.avatar,
-                          selectedMeetingDetails.assignedBy?.username || "User",
-                        )}
-                        alt={
-                          selectedMeetingDetails.assignedBy?.username ||
-                          "Assigned By"
-                        }
-                        className="w-12 h-12 rounded-[15px] border border-gray-200 dark:border-gray-700"
+                      <UserAvatar
+                        user={selectedMeetingDetails.assignedBy}
+                        size="xl"
+                        onClick={(id) => id && handleUserAvatarClick(id)}
                       />
                       <div>
                         <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">
@@ -2045,17 +1982,10 @@ const Meetings = () => {
                               key={index}
                               className="flex items-center gap-3 p-3 bg-gray-100 dark:bg-gray-800 rounded-[15px]"
                             >
-                              <img
-                                {...getAvatarProps(
-                                  attendee.avatar,
-                                  attendee.username || attendee.name,
-                                )}
-                                alt={
-                                  attendee.username ||
-                                  attendee.name ||
-                                  "Attendee"
-                                }
-                                className="w-8 h-8 rounded-[15px] border border-gray-200 dark:border-gray-700"
+                              <UserAvatar
+                                user={attendee}
+                                size="md"
+                                onClick={(id) => id && handleUserAvatarClick(id)}
                               />
                               <div className="w-full justify-between items-center flex">
                                 <p className="text-sm font-medium text-gray-900 dark:text-white truncate">

@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
-import HorizontalLoader from "../components/HorizontalLoader";
-import { usePermissions } from "../hooks/usePermissions";
+import HorizontalLoader from "../components/horizontal-loader";
+import { usePermissions } from "../hooks/use-permissions";
 import {
   Search,
   Edit,
@@ -18,8 +18,9 @@ import {
   ArrowRight,
   ListTodo,
   Target,
+  Kanban,
 } from "lucide-react";
-import { connectGithub } from "@/hooks/useGithubRepos";
+import { connectGithub } from "@/hooks/use-github-repos";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -38,23 +39,27 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { Badge } from "../components/ui/badge";
-import taskService from "../services/taskService";
-import { userService } from "../services/userService";
-import projectService from "../services/projectService";
-import teamService from "../services/teamService";
-import friendService from "../services/friendService";
-import { useAuth } from "../contexts/AuthContext";
-import { useNotifications } from "../contexts/NotificationContext";
-import { getAvatarProps } from "../utils/avatarUtils";
-import TaskEditModal from "../components/TaskEditModal";
-import CreateTaskModal from "../components/CreateTaskModal";
-import UserDetailsModal from "../components/UserDetailsModal";
+import taskService from "../services/task-service";
+import { userService } from "../services/user-service";
+import projectService from "../services/project-service";
+import teamService from "../services/team-service";
+import friendService from "../services/friend-service";
+import { useAuth } from "../contexts/auth-context";
+import { useNotifications } from "../contexts/notification-context";
+import UserAvatar from "../components/user-avatar";
+import TaskEditModal from "../components/task-edit-modal";
+import CreateTaskModal from "../components/create-task-modal";
+import TaskCaptureDetails from "../components/task-capture-details";
+import TaskStatChips from "../components/task-stat-chips";
+import AssignedTaskDrawer from "../components/assigned-task-drawer";
+import ReassignTaskButton from "../components/reassign-task-button";
+import UserDetailsModal from "../components/user-details-modal";
 import {
   getButtonClasses,
   getInputClasses,
   COLOR_THEME,
   ICON_SIZES,
-} from "../utils/uiConstants";
+} from "../utils/ui-constants";
 import {
   Sheet,
   SheetContent,
@@ -63,16 +68,22 @@ import {
 } from "../components/ui/sheet";
 import { cn } from "../lib/utils";
 import { PiPlus } from "react-icons/pi";
+import {
+  decodeExtensionMeta,
+  hasCaptureMetadata,
+} from "../utils/extension-meta";
 
 const Tasks = () => {
   const { user } = useAuth();
   const { markAsReadByType } = useNotifications();
   const { permissions, loading: permissionsLoading } = usePermissions();
   const location = useLocation();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState("");
   const [showNewTaskPopup, setShowNewTaskPopup] = useState(false);
   const [modalRepository, setModalRepository] = useState(null);
   const [modalDueDate, setModalDueDate] = useState("");
+  const [modalCaptureMetadata, setModalCaptureMetadata] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
   const [selectedUserId, setSelectedUserId] = useState(null);
@@ -82,8 +93,16 @@ const Tasks = () => {
   const [filterPriority, setFilterPriority] = useState("all");
   const [selectedTaskDetails, setSelectedTaskDetails] = useState(null);
   const [isTaskSheetOpen, setIsTaskSheetOpen] = useState(false);
+  const [isBoardOpen, setIsBoardOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [tasks, setTasks] = useState([]);
+  const [taskStats, setTaskStats] = useState({
+    totalTasks: 0,
+    pendingTasks: 0,
+    completedTasks: 0,
+    cancelledTasks: 0,
+    completionRate: 0,
+  });
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
   const [teams, setTeams] = useState([]);
@@ -110,6 +129,12 @@ const Tasks = () => {
       .slice(0, 6);
   }, [selectedTaskDetails, tasks]);
 
+  const userIdOf = (person) => person?.id || person?._id || "";
+  const isMine = (task, userId) =>
+    userIdOf(task?.assignTo) === userId || userIdOf(task?.assignedBy) === userId;
+  const canReassignTask = (task) =>
+    !!user?.id && userIdOf(task?.assignedBy) === user.id;
+
   const handleUserAvatarClick = (userId) => {
     setSelectedUserId(userId);
     setShowUserDetails(true);
@@ -129,6 +154,81 @@ const Tasks = () => {
     if (!task) return;
     handleViewTaskDetails(task);
   };
+
+  const loadTaskStats = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      const stats = await taskService.getTaskStats();
+      setTaskStats({
+        totalTasks: Number(stats?.totalTasks) || 0,
+        pendingTasks: Number(stats?.pendingTasks) || 0,
+        completedTasks: Number(stats?.completedTasks) || 0,
+        cancelledTasks: Number(stats?.cancelledTasks) || 0,
+        completionRate: Number(stats?.completionRate) || 0,
+      });
+    } catch (error) {
+      console.error("Error loading task stats:", error);
+    }
+  }, [user?.id]);
+
+  const isTaskOverdue = useCallback((task) => {
+    if (!task?.dueDate) return false;
+    if (task.status === "completed" || task.status === "cancelled") return false;
+    return new Date(task.dueDate) < new Date();
+  }, []);
+
+  // Always derive live chip numbers from the tasks currently shown
+  const liveStats = useMemo(() => {
+    const pending = tasks.filter((t) => t.status === "pending").length;
+    const completed = tasks.filter((t) => t.status === "completed").length;
+    const cancelled = tasks.filter((t) => t.status === "cancelled").length;
+    const inProgress = tasks.filter((t) => t.status === "in_progress").length;
+    const total = tasks.length;
+    return {
+      totalTasks: total,
+      pendingTasks: pending,
+      completedTasks: completed,
+      cancelledTasks: cancelled,
+      inProgressTasks: inProgress,
+      completionRate:
+        total > 0 ? Number(((completed / total) * 100).toFixed(2)) : 0,
+    };
+  }, [tasks]);
+
+  // Prefer live table counts when viewing unfiltered list; otherwise API
+  const chipStats = useMemo(() => {
+    const viewingAll = filterStatus === "all" && filterPriority === "all";
+    if (viewingAll && tasks.length > 0) return liveStats;
+
+    const apiHasData =
+      taskStats.totalTasks > 0 ||
+      taskStats.pendingTasks > 0 ||
+      taskStats.completedTasks > 0 ||
+      taskStats.cancelledTasks > 0;
+
+    return apiHasData ? taskStats : liveStats;
+  }, [filterStatus, filterPriority, tasks.length, liveStats, taskStats]);
+
+  // Daily activity for barcode + streak (last 56 days)
+  const activitySeries = useMemo(() => {
+    const days = 56;
+    const counts = Array.from({ length: days }, () => 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    for (const task of tasks) {
+      const raw = task.updatedAt || task.createdAt || task.dueDate;
+      if (!raw) continue;
+      const d = new Date(raw);
+      if (Number.isNaN(d.getTime())) continue;
+      d.setHours(0, 0, 0, 0);
+      const diff = Math.floor((today.getTime() - d.getTime()) / 86400000);
+      if (diff >= 0 && diff < days) {
+        counts[days - 1 - diff] += 1;
+      }
+    }
+    return counts;
+  }, [tasks]);
 
   const loadTasks = useCallback(async () => {
     try {
@@ -164,8 +264,41 @@ const Tasks = () => {
   useEffect(() => {
     if (user && user.id) {
       loadTasks();
+      loadTaskStats();
     }
   }, [filterStatus, filterPriority, user]);
+
+  useEffect(() => {
+    const onTasksChanged = (event) => {
+      const updated = event?.detail;
+      const updatedId = updated?.id || updated?._id;
+      if (updatedId) {
+        setTasks((prev) => {
+          const idx = prev.findIndex(
+            (task) => (task.id || task._id) === updatedId,
+          );
+          const merged =
+            idx === -1 ? updated : { ...prev[idx], ...updated };
+          if (!isMine(merged, user?.id)) {
+            if (idx === -1) return prev;
+            return prev.filter((task) => (task.id || task._id) !== updatedId);
+          }
+          if (idx === -1) return [merged, ...prev];
+          const next = [...prev];
+          next[idx] = merged;
+          return next;
+        });
+        setSelectedTaskDetails((prev) => {
+          if (!prev) return prev;
+          const selectedId = prev.id || prev._id;
+          return selectedId === updatedId ? { ...prev, ...updated } : prev;
+        });
+      }
+      void loadTaskStats();
+    };
+    window.addEventListener("tasks:changed", onTasksChanged);
+    return () => window.removeEventListener("tasks:changed", onTasksChanged);
+  }, [loadTaskStats, user?.id]);
 
   useEffect(() => {
     if (user && user.id) {
@@ -195,6 +328,110 @@ const Tasks = () => {
     setShowNewTaskPopup(true);
   }, [location.state]);
 
+  // Chrome extension → open create-task modal with hidden capture metadata
+  useEffect(() => {
+    const encoded = searchParams.get("meta");
+    if (!encoded) return;
+
+    const decoded = decodeExtensionMeta(encoded);
+    if (!hasCaptureMetadata(decoded)) return;
+
+    const readShot = () => {
+      try {
+        const fromWindow = window.__TM_EXT_SCREENSHOT;
+        if (typeof fromWindow === "string" && fromWindow.startsWith("data:")) {
+          return fromWindow;
+        }
+      } catch {
+        // ignore
+      }
+      try {
+        return sessionStorage.getItem("tm-ext-screenshot");
+      } catch {
+        return null;
+      }
+    };
+
+    let nextMeta = { ...decoded };
+    const shot = readShot();
+    if (shot) {
+      nextMeta = { ...nextMeta, screenshot: shot, screenshotPending: false };
+    }
+
+    if (decoded.screenshotPending && !nextMeta.screenshot) {
+      window.postMessage({ type: "TM_EXT_REQUEST_SCREENSHOT" }, "*");
+    }
+
+    setModalCaptureMetadata(nextMeta);
+    setModalRepository(null);
+    setModalDueDate("");
+    setShowNewTaskPopup(true);
+  }, [searchParams]);
+
+  // Attach screenshot delivered by the extension (event + short poll)
+  useEffect(() => {
+    const applyShot = (dataUrl) => {
+      if (!dataUrl || typeof dataUrl !== "string") return;
+      if (!dataUrl.startsWith("data:")) return;
+
+      setModalCaptureMetadata((prev) =>
+        prev
+          ? { ...prev, screenshot: dataUrl, screenshotPending: false }
+          : { screenshot: dataUrl },
+      );
+
+      try {
+        sessionStorage.removeItem("tm-ext-screenshot");
+      } catch {
+        // ignore
+      }
+      try {
+        delete window.__TM_EXT_SCREENSHOT;
+      } catch {
+        // ignore
+      }
+
+      window.postMessage({ type: "TM_EXT_CLEAR_SCREENSHOT" }, "*");
+    };
+
+    const onScreenshot = (event) => {
+      applyShot(event?.detail?.dataUrl);
+    };
+
+    window.addEventListener("tm-ext-screenshot", onScreenshot);
+
+    let tries = 0;
+    const poll = window.setInterval(() => {
+      tries += 1;
+      try {
+        const fromWindow = window.__TM_EXT_SCREENSHOT;
+        if (typeof fromWindow === "string") {
+          applyShot(fromWindow);
+          window.clearInterval(poll);
+          return;
+        }
+      } catch {
+        // ignore
+      }
+      try {
+        const fromSession = sessionStorage.getItem("tm-ext-screenshot");
+        if (fromSession) {
+          applyShot(fromSession);
+          window.clearInterval(poll);
+          return;
+        }
+      } catch {
+        // ignore
+      }
+      if (tries >= 25) window.clearInterval(poll);
+    }, 300);
+
+    return () => {
+      window.removeEventListener("tm-ext-screenshot", onScreenshot);
+      window.clearInterval(poll);
+    };
+  }, []);
+
   const loadUsers = async () => {
     try {
       const response = await friendService.getFriends();
@@ -206,9 +443,8 @@ const Tasks = () => {
           name: friendship.friend.username,
           username: friendship.friend.username,
           email: friendship.friend.email,
-          avatar:
-            friendship.friend.avatar ||
-            `https://ui-avatars.com/api/?name=${encodeURIComponent(friendship.friend.username)}&background=random&color=fff&size=128`,
+          avatar: friendship.friend.avatar,
+          availability: friendship.friend.availability || "available",
         }))
         .filter((friend) => friend.id !== user?.id); // Exclude current user
 
@@ -300,6 +536,7 @@ const Tasks = () => {
 
       setSelectedTasks([]);
       await loadTasks();
+      await loadTaskStats();
       window.dispatchEvent(new CustomEvent("tasks:changed"));
 
       if (deleted > 0)
@@ -399,6 +636,7 @@ const Tasks = () => {
       setLoading(true);
       await taskService.deleteTask(id);
       await loadTasks();
+      await loadTaskStats();
       window.dispatchEvent(new CustomEvent("tasks:changed"));
       toast.success("Task deleted successfully!");
     } catch (error) {
@@ -413,7 +651,8 @@ const Tasks = () => {
     try {
       setLoading(true);
       await taskService.updateTaskStatus(taskId, newStatus);
-      await loadTasks(); // Reload tasks after status change
+      await loadTasks();
+      await loadTaskStats();
       toast.success("Task status updated successfully!");
     } catch (error) {
       console.error("Error updating task status:", error);
@@ -429,11 +668,18 @@ const Tasks = () => {
   };
 
   const handleTaskUpdated = (updatedTask) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === updatedTask.id ? updatedTask : task,
-      ),
-    );
+    setTasks((prevTasks) => {
+      if (!isMine(updatedTask, user?.id)) {
+        return prevTasks.filter(
+          (task) => (task.id || task._id) !== (updatedTask.id || updatedTask._id),
+        );
+      }
+      return prevTasks.map((task) =>
+        (task.id || task._id) === (updatedTask.id || updatedTask._id)
+          ? { ...task, ...updatedTask }
+          : task,
+      );
+    });
     setShowEditModal(false);
     setEditingTask(null);
   };
@@ -463,17 +709,6 @@ const Tasks = () => {
   };
 
   document.title = "Tasks - Schedule & Manage";
-
-  const isTaskOverdue = (task) => {
-    if (!task.dueDate) return false; // No due date
-    if (task.status === "in_progress" || task.status === "cancelled")
-      return false;
-
-    const now = new Date();
-    const dueDate = new Date(task.dueDate);
-
-    return dueDate < now;
-  };
 
   return (
     <div className="overflow-hidden pt-10">
@@ -603,6 +838,15 @@ const Tasks = () => {
                   Delete ({selectedTasks.length})
                 </motion.button>
               )}
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsBoardOpen(true)}
+                className="rounded-[15px] w-[200px] h-12 font-bold border-gray-200 dark:border-white/10"
+              >
+                <Kanban className="h-4 w-4" />
+                My board
+              </Button>
               {permissions.canCreateTask && (
                 <Button
                   onClick={() => {
@@ -628,14 +872,27 @@ const Tasks = () => {
           </div>
         </motion.div>
 
-        {/* Search and Filters */}
+        <motion.div variants={itemVariants} className="mb-6">
+          <TaskStatChips
+            total={chipStats.totalTasks}
+            pending={chipStats.pendingTasks}
+            ended={chipStats.completedTasks}
+            cancelled={chipStats.cancelledTasks}
+            completionRate={chipStats.completionRate}
+            activitySeries={activitySeries}
+            onSelectTotal={() => setFilterStatus("all")}
+            onSelectPending={() => setFilterStatus("pending")}
+            onSelectEnded={() => setFilterStatus("completed")}
+            onSelectCancelled={() => setFilterStatus("cancelled")}
+          />
+        </motion.div>
 
         {/* Tasks Table */}
         <motion.div
           variants={itemVariants}
           className="bg-white dark:bg-transparent rounded-[15px] shadow-xl overflow-hidden"
         >
-          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 rounded-[15px]">
+          <div className="overflow-x-auto max-h-[550px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 rounded-[15px]">
             <table className="w-full">
               <thead className="bg-white dark:bg-white dark:text-black text-black border-b dark:border-gray-700 sticky top-0 z-10">
                 <tr className="bg-white">
@@ -769,8 +1026,7 @@ const Tasks = () => {
                                   : formatLabel(task.status)}
                             </button>
                           </DropdownMenuTrigger>
-                          {!isTaskOverdue(task) && (
-                            <DropdownMenuContent
+                          <DropdownMenuContent
                               align="start"
                               className="border-gray-200 dark:border-gray-700"
                             >
@@ -811,30 +1067,17 @@ const Tasks = () => {
                                 Cancelled
                               </DropdownMenuItem>
                             </DropdownMenuContent>
-                          )}
                         </DropdownMenu>
                       </td>
                       <td className="px-6 py-4 w-[150px]">
                         <div className="flex items-center gap-3 w-[150px]">
-                          <img
-                            {...getAvatarProps(
-                              task.assignTo?.avatar,
-                              task.assignTo?.username,
-                            )}
-                            alt={task.assignTo?.username || "User"}
-                            className="w-8 h-8 rounded-[15px] object-cover border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
-                            onClick={() =>
-                              task.assignTo?.id &&
-                              handleUserAvatarClick(task.assignTo.id)
-                            }
-                            title={
-                              task.assignTo?.username
-                                ? `View ${task.assignTo.username}'s profile`
-                                : ""
-                            }
+                          <UserAvatar
+                            user={task.assignTo}
+                            size="md"
+                            onClick={(id) => id && handleUserAvatarClick(id)}
                           />
                           <div>
-                            <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                            <div className="text-sm text-gray-900 dark:text-white truncate">
                               {task.assignTo?.username || "Unknown User"}
                             </div>
                           </div>
@@ -842,25 +1085,13 @@ const Tasks = () => {
                       </td>
                       <td className="px-6 py-4 w-[200px]">
                         <div className="flex items-center gap-3">
-                          <img
-                            {...getAvatarProps(
-                              task.assignedBy?.avatar,
-                              task.assignedBy?.username,
-                            )}
-                            alt={task.assignedBy?.username || "User"}
-                            className="w-8 h-8 rounded-[15px] object-cover border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
-                            onClick={() =>
-                              task.assignedBy?.id &&
-                              handleUserAvatarClick(task.assignedBy.id)
-                            }
-                            title={
-                              task.assignedBy?.username
-                                ? `View ${task.assignedBy.username}'s profile`
-                                : ""
-                            }
+                          <UserAvatar
+                            user={task.assignedBy}
+                            size="md"
+                            onClick={(id) => id && handleUserAvatarClick(id)}
                           />
                           <div>
-                            <div className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                            <div className="text-sm text-gray-900 dark:text-white truncate">
                               {task.assignedBy?.username || "Unknown User"}
                             </div>
                           </div>
@@ -921,6 +1152,14 @@ const Tasks = () => {
                           >
                             <Eye className="w-4 h-4 icon icon" />
                           </Button>
+                          {canReassignTask(task) && (
+                            <ReassignTaskButton
+                              task={task}
+                              users={users}
+                              currentUserId={user.id}
+                              onReassigned={handleTaskUpdated}
+                            />
+                          )}
                           {user &&
                             user.id &&
                             task.assignedBy?.id === user.id && (
@@ -962,11 +1201,21 @@ const Tasks = () => {
             if (!open) {
               setModalRepository(null);
               setModalDueDate("");
+              setModalCaptureMetadata(null);
+              if (searchParams.has("meta")) {
+                const next = new URLSearchParams(searchParams);
+                next.delete("meta");
+                setSearchParams(next, { replace: true });
+              }
             }
           }}
           repository={modalRepository}
           defaultDueDate={modalDueDate}
-          onCreated={loadTasks}
+          captureMetadata={modalCaptureMetadata}
+          onCreated={async () => {
+            await loadTasks();
+            await loadTaskStats();
+          }}
         />
 
         <Sheet
@@ -1080,16 +1329,10 @@ const Tasks = () => {
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
-                      <img
-                        {...getAvatarProps(
-                          selectedTaskDetails.assignTo?.avatar,
-                          selectedTaskDetails.assignTo?.username || "User",
-                        )}
-                        alt={
-                          selectedTaskDetails.assignTo?.username ||
-                          "User Avatar"
-                        }
-                        className="w-12 h-12 rounded-[15px] border border-gray-200 dark:border-gray-700"
+                      <UserAvatar
+                        user={selectedTaskDetails.assignTo}
+                        size="xl"
+                        onClick={(id) => id && handleUserAvatarClick(id)}
                       />
                       <div className="truncate">
                         <p className="text-[10px] font-bold uppercase tracking-wide text-gray-500 dark:text-gray-400">
@@ -1107,16 +1350,10 @@ const Tasks = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-3 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 shadow-sm">
-                      <img
-                        {...getAvatarProps(
-                          selectedTaskDetails.assignedBy?.avatar,
-                          selectedTaskDetails.assignedBy?.username || "User",
-                        )}
-                        alt={
-                          selectedTaskDetails.assignedBy?.username ||
-                          "Assigned By"
-                        }
-                        className="w-12 h-12 rounded-[15px] border border-gray-200 dark:border-gray-700"
+                      <UserAvatar
+                        user={selectedTaskDetails.assignedBy}
+                        size="xl"
+                        onClick={(id) => id && handleUserAvatarClick(id)}
                       />
                       <div>
                         <p className="text-[10px] font-bold  uppercase tracking-wide text-gray-500 dark:text-gray-400">
@@ -1134,6 +1371,10 @@ const Tasks = () => {
                       </div>
                     </div>
                   </div>
+
+                  <TaskCaptureDetails
+                    captureMetadata={selectedTaskDetails.captureMetadata}
+                  />
 
                   {relatedTasks.length > 0 && (
                     <div className="shadow-sm">
@@ -1199,6 +1440,15 @@ const Tasks = () => {
             )}
           </SheetContent>
         </Sheet>
+
+        <AssignedTaskDrawer
+          open={isBoardOpen}
+          onOpenChange={setIsBoardOpen}
+          onOpenTask={(task) => {
+            setIsBoardOpen(false);
+            handleViewTaskDetails(task);
+          }}
+        />
 
         {/* Task Edit Modal */}
         <TaskEditModal

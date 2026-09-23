@@ -1,0 +1,344 @@
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { X, Save, Calendar, User, Flag, FileText, Clock } from "lucide-react";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { DatePicker } from "./ui/date-picker";
+import { toast } from "sonner";
+import enhancedTaskService from "../services/enhanced-task-service";
+import UserAvatar from "./user-avatar";
+import taskService from "../services/task-service";
+
+const TaskEditModal = ({
+  task,
+  isOpen,
+  onClose,
+  onTaskUpdated,
+  users = [],
+}) => {
+  const [formData, setFormData] = useState({
+    title: "",
+    description: "",
+    priority: "medium",
+    status: "pending",
+    assignedTo: "",
+    dueDate: "",
+    tags: [],
+  });
+  const [newTag, setNewTag] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (task) {
+      setFormData({
+        title: task.title || "",
+        description: task.description || "",
+        priority: task.priority || "medium",
+        status: task.status || "pending",
+        assignedTo:
+          task.assignTo?.id ||
+          task.assignTo?._id ||
+          task.assignTo ||
+          "unassigned",
+        dueDate: task.dueDate
+          ? new Date(task.dueDate).toISOString().split("T")[0]
+          : "",
+        tags: task.tags || [],
+      });
+    }
+  }, [task]);
+
+  const handleInputChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
+  };
+
+  const handleAddTag = () => {
+    if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
+      setFormData((prev) => ({
+        ...prev,
+        tags: [...prev.tags, newTag.trim()],
+      }));
+      setNewTag("");
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setFormData((prev) => ({
+      ...prev,
+      tags: prev.tags.filter((tag) => tag !== tagToRemove),
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!formData.title.trim()) {
+      toast.error("Title is required");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const updateData = {
+        ...formData,
+        assignedTo:
+          formData.assignedTo === "unassigned" ? null : formData.assignedTo,
+        dueDate: formData.dueDate
+          ? new Date(formData.dueDate).toISOString()
+          : null,
+      };
+
+      const response = await taskService.updateTask(task.id, updateData);
+
+      toast.success("Task updated successfully!");
+      onTaskUpdated(response.task);
+      onClose();
+    } catch (error) {
+      console.error("Task update error:", error);
+      toast.error(error.message || "Failed to update task");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getAssignedUser = () => {
+    if (!formData.assignedTo || formData.assignedTo === "unassigned")
+      return null;
+    return users.find((user) => (user.id || user._id) === formData.assignedTo);
+  };
+
+  const assignedUser = getAssignedUser();
+
+  if (!isOpen || !task) return null;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+      onClick={onClose}
+    >
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="bg-white dark:bg-black rounded-[15px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="p-6">
+          {/* Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <h2 className="text-2xl  text-black dark:text-white font-bold">
+                Edit Task
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                Update task details and assignments
+              </p>
+            </div>
+            <button
+              onClick={onClose}
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+            >
+              <X className="w-6 h-6" />
+            </button>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Title */}
+            <div>
+              <Input
+                value={formData.title}
+                onChange={(e) => handleInputChange("title", e.target.value)}
+                placeholder="Enter task title *"
+                className="w-full"
+                required
+              />
+            </div>
+
+            {/* Description */}
+            <div>
+              <Textarea
+                value={formData.description}
+                onChange={(e) =>
+                  handleInputChange("description", e.target.value)
+                }
+                placeholder="Enter task description"
+                className="w-full"
+                rows="4"
+              />
+            </div>
+
+            {/* Priority and Status */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <Select
+                  value={formData.priority}
+                  onValueChange={(value) =>
+                    handleInputChange("priority", value)
+                  }
+                >
+                  <SelectTrigger className={"w-full"}>
+                    <SelectValue placeholder="Select priority" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem className={"px-5"} value="low">
+                      Low
+                    </SelectItem>
+                    <SelectItem className={"px-5"} value="medium">
+                      Medium
+                    </SelectItem>
+                    <SelectItem className={"px-5"} value="high">
+                      High
+                    </SelectItem>
+                    <SelectItem className={"px-5"} value="urgent">
+                      Urgent
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Select
+                  value={formData.status}
+                  onValueChange={(value) => handleInputChange("status", value)}
+                >
+                  <SelectTrigger className={"w-full"}>
+                    <SelectValue placeholder="Select status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem className={"px-5"} value="pending">
+                      Pending
+                    </SelectItem>
+                    <SelectItem className={"px-5"} value="in_progress">
+                      In Progress
+                    </SelectItem>
+                    <SelectItem className={"px-5"} value="completed">
+                      Completed
+                    </SelectItem>
+                    <SelectItem className={"px-5"} value="cancelled">
+                      Cancelled
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Assigned To */}
+            <div>
+              <Select
+                value={formData.assignedTo}
+                onValueChange={(value) =>
+                  handleInputChange("assignedTo", value)
+                }
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select assigned user">
+                    {assignedUser && (
+                      <div className="flex items-center gap-2">
+                        <UserAvatar user={assignedUser} size="sm" />
+                        <span>{assignedUser.username}</span>
+                      </div>
+                    )}
+                  </SelectValue>
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="unassigned">Unassigned</SelectItem>
+                  {users.map((user) => {
+                    const userId = user.id || user._id;
+                    return (
+                      <SelectItem key={userId} value={userId}>
+                        <div className="flex items-center gap-2">
+                          <UserAvatar user={user} size="sm" />
+                          <span>{user.username}</span>
+                        </div>
+                      </SelectItem>
+                    );
+                  })}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Due Date */}
+            <div>
+              <DatePicker
+                value={formData.dueDate}
+                onChange={(value) => handleInputChange("dueDate", value)}
+                placeholder="Select due date"
+                disablePast
+              />
+            </div>
+
+            {/* Tags */}
+            <div>
+              <div className="flex gap-2 mb-2">
+                <Input
+                  value={newTag}
+                  onChange={(e) => setNewTag(e.target.value)}
+                  placeholder="Add a tag"
+                  className="flex-1"
+                  onKeyPress={(e) =>
+                    e.key === "Enter" && (e.preventDefault(), handleAddTag())
+                  }
+                />
+                <Button type="button" onClick={handleAddTag} variant="outline">
+                  Add
+                </Button>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {formData.tags.map((tag, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-black text-blue-800 dark:text-blue-200 rounded-[15px] text-sm"
+                  >
+                    {tag}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveTag(tag)}
+                      className="ml-1 hover:text-blue-600 dark:hover:text-blue-300"
+                    >
+                      <X className="w-3 h-3 icon" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                className="flex-1"
+                disabled={loading}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" className="flex-1" disabled={loading}>
+                <Save className="w-4 h-4 icon icon mr-2" />
+                {loading ? "Saving..." : "Save Changes"}
+              </Button>
+            </div>
+          </form>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
+export default TaskEditModal;

@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { authService } from "../services/authService";
+import { authService } from "../services/auth-service";
 import { PiUserDuotone } from "react-icons/pi";
 import {
   AuthLayout,
@@ -11,7 +11,7 @@ import {
   AuthAltLink,
   AuthField,
   AuthInput,
-} from "../components/auth/AuthLayout";
+} from "../components/auth/auth-layout";
 
 const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);

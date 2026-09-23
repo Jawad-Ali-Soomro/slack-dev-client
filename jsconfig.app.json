@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "allowJs": true,
     // "checkJs": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "moduleResolution": "node",
+    "moduleResolution": "node10",
     "paths": {
       "@/*": ["./src/*"]
     }

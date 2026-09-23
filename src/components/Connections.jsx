@@ -1,4 +1,4 @@
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, LazyMotion, domAnimation, m } from "framer-motion";
 import {
   PiGithubLogo,
   PiGithubLogoDuotone,
@@ -6,7 +6,7 @@ import {
   PiLinkedinLogo,
 } from "react-icons/pi";
 import { Button } from "./ui/button";
-import { connectGithub } from "@/hooks/useGithubRepos";
+import { connectGithub } from "@/hooks/use-github-repos";
 
 const backdropVariants = {
   hidden: { opacity: 0 },
@@ -36,16 +36,17 @@ const modalVariants = {
 
 const Connections = ({ onClose, isOpen }) => {
   return (
+    <LazyMotion features={domAnimation}>
     <AnimatePresence>
       {isOpen && (
-        <motion.div
+        <m.div
           variants={backdropVariants}
           initial="hidden"
           animate="visible"
           exit="exit"
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm"
         >
-          <motion.div
+          <m.div
             variants={modalVariants}
             initial="hidden"
             animate="visible"
@@ -66,20 +67,20 @@ const Connections = ({ onClose, isOpen }) => {
               <button
                 type="button"
                 onClick={connectGithub}
-                className="w-full h-14 rounded-[15px] gap-5 flex items-center cursor-pointer justify-center bg-black text-white font-semibold hover:opacity-90 transition-all"
+                className="w-full h-13 rounded-[15px] gap-5 flex items-center cursor-pointer justify-center bg-black text-white font-semibold hover:opacity-90 transition-opacity"
                 title="Connect GitHub"
               >
-                <PiGithubLogoDuotone size={30} />
                 Let's Connect
               </button>
             </div>
             <Button variant="outline" className="w-full mt-5 font-bold" onClick={onClose}>
-              Maybe later
+              Maybe Later!
             </Button>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
+    </LazyMotion>
   );
 };
 

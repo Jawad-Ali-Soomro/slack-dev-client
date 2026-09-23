@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
-import HorizontalLoader from "../components/HorizontalLoader";
+import HorizontalLoader from "../components/horizontal-loader";
 import {
   Search,
   Plus,
@@ -45,25 +45,25 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
-import projectService from "../services/projectService";
-import friendService from "../services/friendService";
-import teamService from "../services/teamService";
-import invitationService from "../services/invitationService";
-import { useAuth } from "../contexts/AuthContext";
-import { useNotifications } from "../contexts/NotificationContext";
-import { getAvatarProps } from "../utils/avatarUtils";
+import projectService from "../services/project-service";
+import friendService from "../services/friend-service";
+import teamService from "../services/team-service";
+import invitationService from "../services/invitation-service";
+import { useAuth } from "../contexts/auth-context";
+import { useNotifications } from "../contexts/notification-context";
+import UserAvatar, { AvatarGroup } from "../components/user-avatar";
 
 import {
   getButtonClasses,
   getInputClasses,
   COLOR_THEME,
   ICON_SIZES,
-} from "../utils/uiConstants";
-import UserDetailsModal from "../components/UserDetailsModal";
+} from "../utils/ui-constants";
+import UserDetailsModal from "../components/user-details-modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DatePicker } from "@/components/ui/date-picker";
-import { PiFolderDuotone, PiUsersDuotone } from "react-icons/pi";
-import { usePermissions } from "@/hooks/usePermissions";
+import { PiFolderDuotone, PiLinkSimpleDuotone, PiUsersDuotone } from "react-icons/pi";
+import { usePermissions } from "@/hooks/use-permissions";
 import { Link } from "react-router-dom";
 
 const Projects = () => {
@@ -325,9 +325,7 @@ const Projects = () => {
           `${apiUrl}/api/projects/upload/projects`,
           {
             method: "POST",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("authToken")}`,
-            },
+            credentials: "include",
             body: formData,
           },
         );
@@ -903,7 +901,7 @@ const Projects = () => {
                 key={project.id}
                 variants={itemVariants}
                 whileHover={{ y: -4 }}
-                className="group relative flex flex-col overflow-hidden rounded-[20px] border border-gray-200/70 bg-white p-6 shadow-sm transition-all duration-300 hover:border-[#FF914B]/40 hover:shadow-xl dark:border-white/10 dark:bg-white/[0.03]"
+                className="group relative flex flex-col overflow-hidden rounded-[20px] border border-gray-200/70 bg-white p-6 shadow-sm transition-[border-color,box-shadow] duration-300 hover:border-[#FF914B]/40 hover:shadow-xl dark:border-white/10 dark:bg-white/[0.03]"
               >
                 {/* Accent glow */}
                 <div className="pointer-events-none absolute -right-16 -top-16 h-32 w-32 rounded-full bg-[#FF914B]/10 blur-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
@@ -935,7 +933,7 @@ const Projects = () => {
                       variant="ghost"
                       size="sm"
                       onClick={() => handleViewProject(project)}
-                      className="w-10 p-2 text-gray-400 hover:text-[#FF914B] dark:hover:text-[#FF914B]"
+                      className="w-12 p-2 text-gray-400 hover:text-[#FF914B] dark:hover:text-[#FF914B]"
                     >
                       <Eye className="w-4 h-4 icon icon icon" />
                     </Button>
@@ -947,19 +945,19 @@ const Projects = () => {
                         setProjectProgress(project.progress || 0);
                         setShowProgressModal(true);
                       }}
-                      className="w-10 p-2 text-gray-400 hover:text-[#FF914B] dark:hover:text-[#FF914B]"
+                      className="w-12 p-2 text-gray-400 hover:text-[#FF914B] dark:hover:text-[#FF914B]"
                     >
                       <TrendingUp className="w-4 h-4 icon icon icon" />
                     </Button>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="w-10 p-2">
+                        <Button variant="ghost" size="sm" className="w-12 p-2">
                           <MoreVertical className="w-4 h-4 icon icon icon" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem
-                          className="h-10 px-5 cursor-pointer"
+                          className="h-11 px-5 pr-8 cursor-pointer"
                           onClick={() => handleViewProject(project)}
                         >
                           <Eye className="w-4 h-4 icon icon mr-2 icon" />
@@ -967,12 +965,12 @@ const Projects = () => {
                         </DropdownMenuItem>
                         {isProjectOwner(project) && (
                           <>
-                            <DropdownMenuItem className="h-10 px-5 cursor-pointer">
+                            <DropdownMenuItem className="h-11 px-5 pr-8 cursor-pointer">
                               <Edit className="w-4 h-4 icon icon mr-2 icon" />
                               Edit Project
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              className="h-10 px-5 cursor-pointer"
+                              className="h-11 px-5 pr-8 cursor-pointer"
                               onClick={() => {
                                 setSelectedProject(project);
                                 setShowMembersModal(true);
@@ -982,11 +980,11 @@ const Projects = () => {
                               Edit Members
                             </DropdownMenuItem>
                             <DropdownMenuItem
-                              className="h-10 px-5 cursor-pointer text-red-600"
+                              className="h-11 px-5 pr-8 cursor-pointer"
                               onClick={() => handleDeleteProject(project.id)}
                             >
-                              <Trash2 className="w-4 h-4 icon icon mr-2" />
-                              Delete
+                              <Trash2 className="w-4 h-4 text-red-600 icon icon mr-2" />
+                              <span className="text-red-600 hover:text-red-600">Delete</span>
                             </DropdownMenuItem>
                           </>
                         )}
@@ -1020,7 +1018,7 @@ const Projects = () => {
                   </div>
                   <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-[#FF914B] to-[#ff6a3d] transition-all duration-500"
+                      className="h-full rounded-full bg-gradient-to-r from-[#FF914B] to-[#ff6a3d] transition-[width] duration-500"
                       style={{ width: `${project.progress}%` }}
                     ></div>
                   </div>
@@ -1073,35 +1071,13 @@ const Projects = () => {
 
                 {/* Project Footer */}
                 <div className="relative mt-auto flex items-center justify-between border-t border-gray-100 pt-4 dark:border-white/10">
-                  <div className="flex -space-x-2">
-                    {project.members?.slice(0, 4).map((member, index) => (
-                      <div
-                        key={index}
-                        className="h-9 w-9 cursor-pointer overflow-hidden rounded-[12px] ring-2 ring-white transition-transform hover:z-10 hover:-translate-y-0.5 dark:ring-black"
-                        onClick={() => handleUserAvatarClick(member.user._id)}
-                        title={member.user.username}
-                      >
-                        <img
-                          {...getAvatarProps(
-                            member.user.avatar,
-                            member.user.username,
-                          )}
-                          alt={member.user.username}
-                          className="h-full w-full object-cover rounded-[12px]"
-                        />
-                      </div>
-                    ))}
-                    {project.members?.length > 4 && (
-                      <div className="flex h-9 w-9 items-center justify-center rounded-[12px] bg-gray-100 text-xs font-semibold text-gray-600 ring-2 ring-white dark:bg-white/10 dark:text-gray-300 dark:ring-black">
-                        +{project.members.length - 4}
-                      </div>
-                    )}
-                    {(!project.members || project.members.length === 0) && (
-                      <span className="text-xs text-gray-400 dark:text-gray-500">
-                        No members yet
-                      </span>
-                    )}
-                  </div>
+                  <AvatarGroup
+                    users={project.members}
+                    max={3}
+                    size="lg"
+                    emptyLabel="No members yet"
+                    onUserClick={(id) => id && handleUserAvatarClick(id)}
+                  />
                   <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
                     <Calendar className="h-3.5 w-3.5" />
                     {new Date(project.createdAt).toLocaleDateString()}
@@ -1238,14 +1214,14 @@ const Projects = () => {
                       }
                     >
                       <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-                        <SelectValue placeholder="Select Team (Optional)" />
+                        <SelectValue placeholder="Select Workspace (Optional)" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem
                           className={"px-5 h-10 cursor-pointer"}
                           value="none"
                         >
-                          No Team
+                          No Workspace
                         </SelectItem>
                         {teams.map((team) => (
                           <SelectItem
@@ -1449,7 +1425,7 @@ const Projects = () => {
                     <Input
                       value={memberSearch}
                       onChange={(e) => handleMemberSearch(e.target.value)}
-                      placeholder="Add team members"
+                      placeholder="Add workspace members"
                       className="w-full h-12 rounded-[15px] border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-black dark:text-white"
                     />
                     {showMemberSuggestions && memberSuggestions.length > 0 && (
@@ -1461,11 +1437,7 @@ const Projects = () => {
                             className="px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
                           >
                             <div className="flex items-center gap-3">
-                              <img
-                                {...getAvatarProps(user.avatar, user.username)}
-                                alt={user.username}
-                                className="w-8 h-8 rounded-[12px] object-cover  border-gray-200 dark:border-gray-700"
-                              />
+                              <UserAvatar user={user} size="md" />
                               <div>
                                 <div className="font-medium text-gray-900 dark:text-white">
                                   {user.username}
@@ -1488,11 +1460,7 @@ const Projects = () => {
                           key={member.id}
                           className="inline-flex items-center gap-1 px-3 py-1 bg-gray-100 dark:bg-black text-gray-800 dark:text-gray-200 rounded-[15px] text-sm"
                         >
-                          <img
-                            {...getAvatarProps(member.avatar, member.username)}
-                            alt={member.username}
-                            className="w-4 h-4 rounded-[15px]"
-                          />
+                          <UserAvatar user={member} size="sm" />
                           {member.username}
                           <button
                             type="button"
@@ -1768,7 +1736,7 @@ const Projects = () => {
                       </h4>
                       <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-[15px] h-2">
                         <div
-                          className="bg-green-500 h-2 rounded-[15px] transition-all duration-300"
+                          className="bg-green-500 h-2 rounded-[15px] transition-[width] duration-300"
                           style={{ width: `${selectedProject.progress || 0}%` }}
                         ></div>
                       </div>
@@ -1794,17 +1762,10 @@ const Projects = () => {
                               className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-[15px]"
                             >
                               <div className="flex items-center gap-2">
-                                <img
-                                  {...getAvatarProps(
-                                    member.user?.avatar,
-                                    member.user?.username,
-                                  )}
-                                  alt={member.user?.username}
-                                  className="w-8 h-8 rounded-[15px] cursor-pointer hover:scale-110 transition-transform"
-                                  onClick={() =>
-                                    handleUserAvatarClick(member.user?._id)
-                                  }
-                                  title={`View ${member.user?.username}'s profile`}
+                                <UserAvatar
+                                  user={member}
+                                  size="md"
+                                  onClick={(id) => id && handleUserAvatarClick(id)}
                                 />
                                 <div>
                                   <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -2233,11 +2194,7 @@ const Projects = () => {
                               }}
                               className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                             >
-                              <img
-                                {...getAvatarProps(user.avatar, user.username)}
-                                alt={user.username}
-                                className="w-10 h-10 rounded-[15px]"
-                              />
+                              <UserAvatar user={user} size="lg" />
                               <div className="flex flex-col">
                                 <span className="text-sm text-gray-900 dark:text-white ">
                                   {user.username}
@@ -2267,17 +2224,10 @@ const Projects = () => {
                           className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[15px]"
                         >
                           <div className="flex items-center gap-3">
-                            <img
-                              {...getAvatarProps(
-                                member.user?.avatar,
-                                member.user?.username,
-                              )}
-                              alt={member.user?.username}
-                              className="w-8 h-8 rounded-[15px] cursor-pointer hover:scale-110 transition-transform"
-                              onClick={() =>
-                                handleUserAvatarClick(member.user?.id)
-                              }
-                              title={`View ${member.user?.username}'s profile`}
+                            <UserAvatar
+                              user={member}
+                              size="md"
+                              onClick={(id) => id && handleUserAvatarClick(id)}
                             />
                             <div>
                               <p className="text-sm font-medium text-gray-900 dark:text-white">

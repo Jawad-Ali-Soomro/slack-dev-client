@@ -52,34 +52,18 @@ function DropdownMenuItem({ className, inset, variant = "default", ...props }) {
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        "h-12 relative flex px-5 w-full cursor-default items-center gap-2 rounded-[15px] py-5 pr-5 text-sm font-semibold outline-hidden select-none",
-
-        // Default
+        "h-10 relative flex px-5 w-full cursor-default items-center gap-2 rounded-[15px] py-5 pr-5 text-sm font-semibold outline-hidden select-none",
         "bg-transparent text-foreground",
-
-        // Hover
         "hover:bg-gray-100 hover:text-black dark:hover:bg-gray-100",
-
-        // Active state
         "data-[state=active]:bg-gray-100 data-[state=active]:text-black",
-
-        // Focus
         "focus:bg-gray-100 focus:text-black",
-
-        // Destructive variant
         "data-[variant=destructive]:text-destructive",
         "data-[variant=destructive]:focus:bg-destructive/10",
         "dark:data-[variant=destructive]:focus:bg-destructive/20",
         "data-[variant=destructive]:focus:text-destructive",
         "data-[variant=destructive]:*:[svg]:!text-destructive",
-
-        // Disabled
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-
-        // Inset
         "data-[inset]:pl-8",
-
-        // SVG handling
         "[&_svg]:pointer-events-none [&_svg]:shrink-0",
         "[&_svg:not([class*='size-'])]:size-4",
         "[&_svg:not([class*='text-'])]:text-muted-foreground",

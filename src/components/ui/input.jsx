@@ -4,10 +4,10 @@ import { cn } from "@/lib/utils";
 
 function Input({ className, type, size = "default", ...props }) {
   const sizeVariants = {
-    sm: "h-12 px-2.5 text-sm rounded-[15px]",
-    default: "h-12 px-3 text-sm rounded-[15px]",
-    lg: "h-12 px-4 text-base rounded-[15px]",
-    xl: "h-12 px-4 text-base rounded-[15px]",
+    sm: "h-12 px-2.5 text-sm rounded-[20px]",
+    default: "h-12 px-3 text-sm rounded-[20px]",
+    lg: "h-12 px-4 text-base rounded-[20px]",
+    xl: "h-12 px-4 text-base rounded-[20px]",
   };
 
   return (
