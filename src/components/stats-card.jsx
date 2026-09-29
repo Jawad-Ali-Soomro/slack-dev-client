@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
 const StatsCard = ({
   title,
@@ -56,7 +56,7 @@ const StatsCard = ({
   const config = colorConfig[color] || colorConfig.neutral;
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay, duration: 0.5 }}
@@ -84,7 +84,7 @@ const StatsCard = ({
               )}
             </div>
             {Icon && (
-              <motion.div
+              <m.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{
@@ -101,24 +101,24 @@ const StatsCard = ({
     `}
               >
                 <Icon className="w-5 h-5 icon" />
-              </motion.div>
+              </m.div>
             )}
           </div>
 
         </div>
 
         <div className="flex justify-between items-center">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: delay + 0.1 }}
             className={`text-6xl ${config.text} mb-2 font-black`}
           >
             {value}
-          </motion.div>
+          </m.div>
 
           {trend && trendValue && (
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: delay + 0.3 }}
@@ -131,7 +131,7 @@ const StatsCard = ({
               <span className="text-xs font-medium">
                 {trend === "up" ? "↗" : "↘"} {trendValue}%
               </span>
-            </motion.div>
+            </m.div>
           )}
         </div>
 
@@ -141,7 +141,7 @@ const StatsCard = ({
           />
         </div>
       </div>
-    </motion.div>
+    </m.div>
   );
 };
 

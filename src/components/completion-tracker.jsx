@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { CheckCircle, Clock } from "lucide-react";
 import { Button } from "./ui/button";
 import { toast } from "sonner";
@@ -87,14 +87,14 @@ const CompletionTracker = ({
 
     if (isCompleted) {
       return (
-        <motion.div
+        <m.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           className="inline-flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-[15px] text-xs font-medium"
         >
           <CheckCircle className="w-3 h-3 icon" />
           Completed
-        </motion.div>
+        </m.div>
       );
     }
 

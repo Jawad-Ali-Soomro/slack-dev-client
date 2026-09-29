@@ -1,7 +1,7 @@
 * {
   /* font-family: "Amarna", sans-serif !important; */
   /* font-family: "Syne", sans-serif; */
-  font-family: "Sansation", sans-serif !important;
+  font-family: "Asap Sharp", sans-serif !important;
   /* font-family: "Saira"; */
   /* border-radius: 20px !important; */
 }
@@ -442,13 +442,13 @@ html {
   color: var(--theme-accent);
 }
 .dark .text-theme-muted {
-  color: var(--theme-accent-light);
+  color: var(--theme-accent);
 }
 .hover-text-theme:hover {
   color: var(--theme-accent);
 }
 .dark .hover-text-theme:hover {
-  color: var(--theme-accent-light);
+  color: var(--theme-accent);
 }
 .bg-theme {
   background-color: var(--theme-accent);
@@ -812,23 +812,65 @@ html {
   box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
 }
 
-.auth-input {
+.auth-input,
+.auth-input:hover,
+.auth-input:focus,
+.auth-input:focus-visible,
+.auth-input:active,
+.auth-input:not(:placeholder-shown) {
   background: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.8);
   border: 1px solid rgba(0, 0, 0, 0.08);
   outline: none;
+  box-shadow: none;
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
 }
 
-.dark .auth-input {
+.dark .auth-input,
+.dark .auth-input:hover,
+.dark .auth-input:active,
+.dark .auth-input:not(:placeholder-shown) {
   background: rgba(255, 255, 255, 0.04);
+  background-color: rgba(255, 255, 255, 0.04);
   border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
 }
 
-.auth-input:focus {
-  border-color: var(--landing-accent);
-  /* box-shadow: 0 0 0 3px rgba(var(--theme-accent-rgb), 0.12); */
+.auth-input:focus,
+.auth-input:focus-visible,
+.dark .auth-input:focus,
+.dark .auth-input:focus-visible {
+  background: rgba(255, 255, 255, 0.8);
+  background-color: rgba(255, 255, 255, 0.8);
+  border-color: var(--theme-accent);
+  box-shadow: 0 0 0 3px rgba(var(--theme-accent-rgb), 0.16);
+}
+
+.dark .auth-input:focus,
+.dark .auth-input:focus-visible {
+  background: rgba(255, 255, 255, 0.04);
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.auth-input:-webkit-autofill,
+.auth-input:-webkit-autofill:hover,
+.auth-input:-webkit-autofill:focus,
+.auth-input:-webkit-autofill:active {
+  -webkit-text-fill-color: #111111;
+  caret-color: #111111;
+  box-shadow: 0 0 0 1000px rgba(255, 255, 255, 0.8) inset;
+  transition: background-color 9999s ease-out;
+}
+
+.dark .auth-input:-webkit-autofill,
+.dark .auth-input:-webkit-autofill:hover,
+.dark .auth-input:-webkit-autofill:focus,
+.dark .auth-input:-webkit-autofill:active {
+  -webkit-text-fill-color: #ffffff;
+  caret-color: #ffffff;
+  box-shadow: 0 0 0 1000px #0a0a0a inset;
 }
 
 .auth-otp {
@@ -857,10 +899,6 @@ html {
   overflow: hidden;
 }
 
-.dark .auth-btn-primary {
-  background: #fff;
-  color: #000;
-}
 
 .auth-btn-primary:not(:disabled):hover {
   opacity: 0.9;
@@ -986,7 +1024,7 @@ html {
 }
 
 .dark .dashboard-section-icon {
-  color: var(--theme-accent-light);
+  color: var(--theme-accent);
 }
 
 .dashboard-page-header {
@@ -1090,7 +1128,7 @@ html {
 }
 
 .dark .sidebar-group-header--active {
-  color: var(--theme-accent-light);
+  color: var(--theme-accent);
 }
 
 .sidebar-group-header--collapsed {
@@ -1187,11 +1225,11 @@ html {
 .dark .sidebar-nav-item--active {
   background: rgba(var(--theme-accent-rgb), 0.14);
   border-color: rgba(var(--theme-accent-rgb), 0.28);
-  color: var(--theme-accent-light);
+  color: var(--theme-accent);
 }
 
 .dark .sidebar-nav-item--active .sidebar-label {
-  color: var(--theme-accent-light);
+  color: var(--theme-accent);
 }
 
 .app-sidebar--collapsed .sidebar-nav-item--active {
@@ -1485,14 +1523,14 @@ button {
 }
 
 .find-friends-modal {
-  background: rgba(255, 255, 255, 0.98);
-  border: 1px solid rgba(var(--theme-accent-rgb), 0.15);
-  box-shadow: 0 24px 64px rgba(var(--theme-accent-rgb), 0.12);
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.12);
 }
 
 .dark .find-friends-modal {
-  background: rgba(10, 10, 10, 0.96);
-  border-color: rgba(var(--theme-accent-rgb), 0.2);
+  background: #18181b;
+  border-color: rgba(255, 255, 255, 0.1);
   box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
 }
 

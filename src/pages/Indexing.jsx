@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { m, useScroll, useTransform } from "framer-motion";
 import {
   ArrowRight,
   Bell,
@@ -10,7 +10,6 @@ import {
   FolderOpen,
   GitBranch,
   LayoutDashboard,
-  MessageSquare,
   MoreHorizontal,
   Search,
   Sparkles,
@@ -18,159 +17,27 @@ import {
   Users,
   Zap,
 } from "lucide-react";
-import { IoLogInOutline } from "react-icons/io5";
+import { TbLogin } from "react-icons/tb";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { RxDashboard } from "react-icons/rx";
 import { useAuth } from "../contexts/auth-context";
 import BrandLogo from "../components/brand-logo";
 import UserAvatar from "../components/user-avatar";
+import {
+  DASH_METRICS,
+  FEATURES,
+  FLOATS,
+  HEADLINE_WORDS,
+  LINE_DAYS,
+  LINE_VALUES,
+  LIVE_COPY,
+  MARQUEE,
+  PIE_SLICES,
+  STATS,
+  STEPS,
+  TRUST_TEAM,
+} from "@/constants/indexing-constants";
 import "./indexing.css";
-
-const TRUST_TEAM = [
-  {
-    username: "Maya Chen",
-    email: "maya_chen@slackdev.seed",
-    avatar:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=96&h=96&q=80",
-  },
-  {
-    username: "Liam Okonkwo",
-    email: "liam_okonkwo@slackdev.seed",
-    avatar:
-      "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=96&h=96&q=80",
-  },
-  {
-    username: "Sofia Rossi",
-    email: "sofia_rossi@slackdev.seed",
-    avatar:
-      "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=96&h=96&q=80",
-  },
-];
-
-const NAV = [
-  { id: "home", label: "Home" },
-  { id: "features", label: "Product" },
-  { id: "workspace", label: "Workspace" },
-  { to: "/contact", label: "Contact" },
-];
-
-const HEADLINE_WORDS = ["ships", "assigns", "aligns", "scales"];
-
-const LIVE_COPY = [
-  "Auto-assign matching frontend & backend roles",
-  "8 members online across Atlas and Nova",
-  "Sprint review in 12 minutes · Conference A",
-  "Least-busy developer picked in realtime",
-];
-
-const STATS = [
-  { target: 12, suffix: "k+", decimals: 0, label: "Tasks coordinated" },
-  { target: 98, suffix: "%", decimals: 0, label: "On-time delivery" },
-  { target: 24, suffix: "/7", decimals: 0, label: "Workspace availability" },
-  { target: 99.9, suffix: "%", decimals: 1, label: "Workspace uptime" },
-];
-
-const FEATURES = [
-  {
-    icon: Users,
-    title: "Workspaces",
-    body: "Invite, role, and organize people into the squads that actually ship. Owners, admins, and members stay in their lane.",
-  },
-  {
-    icon: CheckCircle2,
-    title: "Tasks",
-    body: "Assign work by hand or let Auto assign pick the least-busy developer from frontend or backend in the description.",
-  },
-  {
-    icon: FolderOpen,
-    title: "Projects",
-    body: "Keep repos, tasks, and people on one board so progress is visible without chasing status in chat.",
-  },
-  {
-    icon: Calendar,
-    title: "Meetings",
-    body: "Schedule standups and reviews, assign an owner, and keep the calendar next to the work it is about.",
-  },
-  {
-    icon: MessageSquare,
-    title: "Chat",
-    body: "Talk in context with the same members you assign. No extra tool just to ask who owns a ticket.",
-  },
-  {
-    icon: Zap,
-    title: "Automation",
-    body: "Admins switch on workspace rules. Auto-assign is live — more triggers for overdue work and follow-ups are ready.",
-  },
-];
-
-const STEPS = [
-  {
-    step: "01",
-    title: "Stand up the workspace",
-    body: "Create a workspace, invite friends, and set job roles — frontend, backend, fullstack — plus busy or available status.",
-  },
-  {
-    step: "02",
-    title: "Capture the work",
-    body: "Spin up a task, link a GitHub repo, and describe it. Mention frontend or backend and the workspace already knows who fits.",
-  },
-  {
-    step: "03",
-    title: "Let the system assign",
-    body: "One click Auto assign skips busy people and gives the ticket to the member with the lightest active load.",
-  },
-];
-
-const MARQUEE = [
-  "Workspaces",
-  "Tasks",
-  "Projects",
-  "Meetings",
-  "Chat",
-  "Automation",
-  "GitHub",
-  "Availability",
-  "Auto assign",
-  "Roles",
-];
-
-const FLOATS = [
-  {
-    title: "Auto-assigned",
-    body: "Maya · frontend · 2 open",
-    x: "-8%",
-    y: "18%",
-    depth: 28,
-  },
-  {
-    title: "Sprint review",
-    body: "Today · 10:00 · Atlas",
-    x: "72%",
-    y: "14%",
-    depth: 18,
-  },
-  {
-    title: "Workspace Atlas",
-    body: "8 online · 3 busy",
-    x: "80%",
-    y: "62%",
-    depth: 22,
-  },
-];
-
-const DASH_METRICS = [
-  { label: "System Status", value: "All Systems Active" },
-  { label: "Tasks This Week", value: "12" },
-  { label: "Completion Rate", value: "86%" },
-  { label: "Active Projects", value: "4" },
-];
-
-const LINE_DAYS = ["Sat", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri"];
-const LINE_VALUES = [8, 12, 10, 22, 18, 30, 26];
-
-const PIE_SLICES = [
-  { label: "Done", value: 46, color: "#ff914b" },
-  { label: "Progress", value: 32, color: "#75fc96" },
-  { label: "Pending", value: 22, color: "#d4d4d8" },
-];
 
 function polarToCartesian(cx, cy, r, angle) {
   const rad = ((angle - 90) * Math.PI) / 180;
@@ -234,7 +101,7 @@ function LpLineChart() {
             x2={w - padX}
             y1={padY + t * (h - padY * 2)}
             y2={padY + t * (h - padY * 2)}
-            stroke="rgba(0,0,0,0.06)"
+            className="lp-grid-line"
           />
         ))}
         <line
@@ -262,7 +129,7 @@ function LpLineChart() {
             cx={p.x}
             cy={p.y}
             r={i === peak ? 4.4 : 3.2}
-            fill="#fff"
+            className="lp-point"
             stroke="#ff914b"
             strokeWidth="2"
           />
@@ -310,16 +177,16 @@ function LpPieChart() {
       </div>
       <div className="lp-pie-wrap">
         <svg viewBox="0 0 96 96" className="lp-pie-svg" aria-hidden="true">
-          <circle cx={cx} cy={cy} r={r} fill="#f7f7f8" />
+          <circle className="lp-pie-track" cx={cx} cy={cy} r={r} />
           {slices.map((slice) => (
             <path key={slice.label} d={slice.d} fill={slice.color} />
           ))}
-          <circle cx={cx} cy={cy} r={rInner - 1} fill="#fff" />
+          <circle className="lp-pie-hole" cx={cx} cy={cy} r={rInner - 1} />
           <text
+            className="lp-pie-value"
             x={cx}
             y={cy - 1}
             textAnchor="middle"
-            fill="#111"
             fontSize="14"
             fontWeight="800"
           >
@@ -329,7 +196,7 @@ function LpPieChart() {
             x={cx}
             y={cy + 12}
             textAnchor="middle"
-            fill="#9ca3af"
+            className="lp-pie-caption"
             fontSize="7"
             fontWeight="700"
           >
@@ -558,16 +425,16 @@ const Indexing = () => {
   return (
     <div className="lp landing-page" onMouseMove={onPointerMove}>
       <div className="lp-bg" aria-hidden="true">
-        <motion.div className="landing-grid lp-grid" style={{ y: gridY }} />
-        <motion.div
+        <m.div className="landing-grid lp-grid" style={{ y: gridY }} />
+        <m.div
           className="landing-orb landing-orb-1 lp-orb"
           style={{ y: orb1Y, x: mouse.x * 36 }}
         />
-        <motion.div
+        <m.div
           className="landing-orb landing-orb-2 lp-orb"
           style={{ y: orb2Y, x: mouse.x * -28 }}
         />
-        <motion.div
+        <m.div
           className="landing-orb landing-orb-3 lp-orb"
           style={{ y: orb3Y, x: mouse.y * 22 }}
         />
@@ -582,7 +449,7 @@ const Indexing = () => {
         />
         
 
-        <header className={`flex justify-between items-center w-[calc(100%-35%)] fixed top-5 left-1/2 -translate-x-1/2 z-10 `}>
+        <header className={`flex justify-between backdrop-blur-sm items-center w-[calc(100%-35%)] fixed top-0 py-5 left-1/2 -translate-x-1/2 z-10 `}>
          <div className="flex gap-2 items-center">
          <button
             type="button"
@@ -597,17 +464,19 @@ const Indexing = () => {
 
          
 
-         <div className="flex bg-black h-[50px] px-1 pr-8 rounded-full text-white items-center gap-2"  onClick={goAuth}>
+         <div className="flex items-center gap-3">
+         <ThemeToggle className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white text-black shadow-sm dark:border-white/15 dark:bg-zinc-900 dark:text-white" />
+         <div className="flex bg-black h-[50px] px-1 pr-8 rounded-full text-white items-center gap-2 dark:bg-white dark:text-black"  onClick={goAuth}>
          <button
             type="button"
-            className="rounded-full p-2 bg-white text-black flex items-center justify-center"
+            className="rounded-full p-2 bg-white text-black flex items-center justify-center dark:bg-black dark:text-white"
            
             aria-label={isAuthenticated ? "Dashboard" : "Sign in"}
           >
             {isAuthenticated ? (
-              <LayoutDashboard size={20} />
+              <RxDashboard size={20} />
             ) : (
-              <IoLogInOutline size={22} />
+              <TbLogin size={22} />
             )}
           </button>
           <span>
@@ -626,27 +495,13 @@ const Indexing = () => {
             <span />
             <span />
           </button>
+         </div>
         </header>
 
         <section className="lp-hero" id="home">
-          {FLOATS.map((card) => (
-            <motion.aside
-              key={card.title}
-              className="lp-float text-center"
-              style={{
-                left: card.x,
-                top: card.y,
-                x: mouse.x * card.depth,
-                y: mouse.y * (card.depth * 0.7),
-              }}
-              aria-hidden="true"
-            >
-              <span className="lp-float-kicker">{card.title}</span>
-              <span className="lp-float-body">{card.body}</span>
-            </motion.aside>
-          ))}
+          
 
-          <motion.div className="lp-hero-inner" style={{ y: heroShift }}>
+          <m.div className="lp-hero-inner" style={{ y: heroShift }}>
             <div className="lp-badge anim" style={{ "--d": "0.02s" }}>
               <Sparkles size={11} />
               Developer Platform
@@ -713,7 +568,7 @@ const Indexing = () => {
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>
-          </motion.div>
+          </m.div>
         </section>
 
         <div className="lp-marquee" aria-hidden="true">
@@ -728,7 +583,7 @@ const Indexing = () => {
         </div>
 
         <section className="lp-section" id="features">
-          <motion.div
+          <m.div
             className="lp-section-head"
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -742,13 +597,13 @@ const Indexing = () => {
               automation in the same place — so assigning work is a decision,
               not a scavenger hunt.
             </p>
-          </motion.div>
+          </m.div>
 
           <div className="lp-feature-grid">
             {FEATURES.map((feature, i) => {
               const Icon = feature.icon;
               return (
-                <motion.article
+                <m.article
                   key={feature.title}
                   className="lp-feature"
                   initial={{ opacity: 0, y: 32 }}
@@ -766,14 +621,14 @@ const Indexing = () => {
                   </span>
                   <h3>{feature.title}</h3>
                   <p>{feature.body}</p>
-                </motion.article>
+                </m.article>
               );
             })}
           </div>
         </section>
 
         <section className="lp-section lp-section--steps">
-          <motion.div
+          <m.div
             className="lp-section-head"
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -782,11 +637,11 @@ const Indexing = () => {
           >
             <p className="lp-kicker">How it runs</p>
             <h2>From invite to auto-assign in three moves.</h2>
-          </motion.div>
+          </m.div>
 
           <div className="lp-steps">
             {STEPS.map((item, i) => (
-              <motion.article
+              <m.article
                 key={item.step}
                 className="lp-step"
                 initial={{ opacity: 0, x: i % 2 ? 40 : -40 }}
@@ -799,13 +654,13 @@ const Indexing = () => {
                   <h3>{item.title}</h3>
                   <p>{item.body}</p>
                 </div>
-              </motion.article>
+              </m.article>
             ))}
           </div>
         </section>
 
         <section className="lp-section" id="workspace">
-          <motion.div
+          <m.div
             className="lp-section-head"
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -814,9 +669,9 @@ const Indexing = () => {
           >
             <p className="lp-kicker">Inside the workspace</p>
             <h2>See load, role, and status before you hand off a task.</h2>
-          </motion.div>
+          </m.div>
 
-          <motion.div
+          <m.div
             className="lp-mac"
             initial={{ opacity: 0, y: 48 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -909,11 +764,11 @@ const Indexing = () => {
               </div>
             </div>
             <div className="lp-mac-base" aria-hidden="true" />
-          </motion.div>
+          </m.div>
         </section>
 
         <section className="lp-section lp-auto">
-          <motion.div
+          <m.div
             className="lp-auto-card"
             initial={{ opacity: 0, y: 36 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -936,7 +791,7 @@ const Indexing = () => {
               <li>Busy status respected</li>
               <li>Least active load wins</li>
             </ul>
-          </motion.div>
+          </m.div>
         </section>
 
         <div className="lp-stats" ref={statsRef}>

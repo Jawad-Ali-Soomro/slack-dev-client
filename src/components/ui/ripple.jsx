@@ -57,9 +57,10 @@ function shouldSkip(el) {
 function spawnRipple(host, clientX, clientY) {
   const rect = host.getBoundingClientRect();
   const styles = getComputedStyle(host);
-  const size = Math.hypot(rect.width, rect.height) * 2;
-  const x = (Number.isFinite(clientX) ? clientX : rect.left + rect.width / 2) - rect.left - size / 2;
-  const y = (Number.isFinite(clientY) ? clientY : rect.top + rect.height / 2) - rect.top - size / 2;
+  const originX =
+    (Number.isFinite(clientX) ? clientX : rect.left + rect.width / 2) - rect.left;
+  const originY =
+    (Number.isFinite(clientY) ? clientY : rect.top + rect.height / 2) - rect.top;
 
   const overlay = document.createElement("span");
   overlay.className = "mui-ripple-overlay";
@@ -68,17 +69,19 @@ function spawnRipple(host, clientX, clientY) {
     `top:${rect.top}px`,
     `width:${rect.width}px`,
     `height:${rect.height}px`,
-    `border-radius:${styles.borderRadius}`,
+    "border-radius:15px",
   ].join(";");
 
   const wave = document.createElement("span");
   wave.className = "mui-ripple-wave";
   wave.style.cssText = [
-    `width:${size}px`,
-    `height:${size}px`,
-    `left:${x}px`,
-    `top:${y}px`,
+    "width:100%",
+    "height:100%",
+    "left:0",
+    "top:0",
     `background-color:${styles.color}`,
+    "border-radius:15px",
+    `transform-origin:${originX}px ${originY}px`,
   ].join(";");
 
   overlay.appendChild(wave);

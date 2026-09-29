@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   Search,
   Plus,
@@ -206,14 +206,14 @@ const Teams = () => {
 
   return (
     <div className="overflow-hidden pt-6 pl-6 pb-10">
-      <motion.div
+      <m.div
         className="mx-auto"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         {/* Header */}
-        <motion.div
+        <m.div
           variants={itemVariants}
           className="flex items-center justify-between mb-8"
         >
@@ -234,7 +234,7 @@ const Teams = () => {
               New Workspace
             </Button>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Stats Cards - skeleton until stats loaded */}
         {statsLoading ? (
@@ -253,7 +253,7 @@ const Teams = () => {
             ))}
           </div>
         ) : stats ? (
-          <motion.div
+          <m.div
             variants={itemVariants}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
           >
@@ -281,11 +281,11 @@ const Teams = () => {
               icon={PiUsersDuotone}
               color="purple"
             />
-          </motion.div>
+          </m.div>
         ) : null}
 
         {/* Filters */}
-        <motion.div
+        <m.div
           variants={itemVariants}
           className="flex flex-wrap justify-start items-center gap-4 mb-6"
         >
@@ -325,10 +325,10 @@ const Teams = () => {
               </SelectItem>
             </SelectContent>
           </Select>
-        </motion.div>
+        </m.div>
 
         {/* Teams Grid - skeleton until loading finished */}
-        <motion.div
+        <m.div
           variants={itemVariants}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
         >
@@ -379,7 +379,7 @@ const Teams = () => {
             </div>
           ) : (
             filteredTeams.map((team) => (
-              <motion.div
+              <m.div
                 key={team.id}
                 variants={itemVariants}
                 whileHover={{ y: -4 }}
@@ -464,25 +464,25 @@ const Teams = () => {
                     {new Date(team.createdAt).toLocaleDateString()}
                   </div>
                 </div>
-              </motion.div>
+              </m.div>
             ))
           )}
-        </motion.div>
+        </m.div>
 
         {/* New Team Popup */}
         {showNewTeamPopup && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm bg-opacity-50 flex items-center justify-center p-4 z-50"
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
             onClick={() => setShowNewTeamPopup(false)}
           >
-            <motion.div
+            <m.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-black rounded-[15px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+              className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-md w-full p-6"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="flex items-center justify-between mb-6">
@@ -491,7 +491,7 @@ const Teams = () => {
                 </h2>
                 <button
                   onClick={() => setShowNewTeamPopup(false)}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500"
                 >
                   <X className="w-6 h-6 icon" />
                 </button>
@@ -534,7 +534,7 @@ const Teams = () => {
                   />
                   <label
                     htmlFor="isPublic"
-                    className="text-sm text-gray-700 dark:text-gray-300"
+                    className="text-sm text-muted-foreground"
                   >
                     Make this workspace public
                   </label>
@@ -563,10 +563,10 @@ const Teams = () => {
                   </Button>
                 </div>
               </form>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
-      </motion.div>
+      </m.div>
 
       {/* User Details Modal */}
       <UserDetailsModal

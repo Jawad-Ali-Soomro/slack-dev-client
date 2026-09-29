@@ -1,12 +1,12 @@
 import { Moon, Sun } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { useTheme } from "../contexts/theme-context";
 
 export const ThemeToggle = ({ className = "" }) => {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <motion.button
+    <m.button
       onClick={toggleTheme}
       className={`border rounded-[15px] cursor-pointer hover:shadow-lg border-gray-300 dark:border-gray-700 ${className}`}
       whileHover={{ scale: 1.1 }}
@@ -16,7 +16,7 @@ export const ThemeToggle = ({ className = "" }) => {
     >
       <AnimatePresence mode="wait" initial={false}>
         {theme === "light" ? (
-          <motion.div
+          <m.div
             key="moon"
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -24,9 +24,9 @@ export const ThemeToggle = ({ className = "" }) => {
             transition={{ duration: 0.2 }}
           >
             <Moon className="w-4 h-4 icon" />
-          </motion.div>
+          </m.div>
         ) : (
-          <motion.div
+          <m.div
             key="sun"
             initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -34,9 +34,9 @@ export const ThemeToggle = ({ className = "" }) => {
             transition={{ duration: 0.2 }}
           >
             <Sun className="w-4 h-4 icon" />
-          </motion.div>
+          </m.div>
         )}
       </AnimatePresence>
-    </motion.button>
+    </m.button>
   );
 };

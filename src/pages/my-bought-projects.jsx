@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   Download,
   Search,
@@ -24,6 +24,143 @@ import UserAvatar from "../components/user-avatar";
 import { BiCalendar, BiCategory, BiStore } from "react-icons/bi";
 import { IoPricetagsSharp } from "react-icons/io5";
 import { Skeleton } from "@/components/ui/skeleton";
+
+function BoughtProjectDetailModal({
+  project,
+  onClose,
+  onDownload,
+  onDelete,
+  renderPreviewImages,
+}) {
+  return (
+    <div
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm icon flex items-center justify-center p-4 z-50"
+      onClick={onClose}
+    >
+      <m.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-white/10 p-6 md:p-8 max-w-7xl w-full flex flex-col shadow-2xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between gap-4 border-b border-gray-100 dark:border-gray-800 pb-5">
+          <div className="flex gap-4 md:flex-row flex-col items-center">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
+                {project.title}
+              </h2>
+            </div>
+            <div className="flex items-center gap-2 flex-wrap justify-center">
+              <Badge className="bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200 px-3 py-1 rounded-[15px] text-xs font-semibold capitalize">
+                {project.category || "General"}
+              </Badge>
+              {project.type === "created" ? (
+                <Badge className="bg-blue-500 text-white px-3 py-1 rounded-[15px] text-xs font-semibold">
+                  Your project
+                </Badge>
+              ) : (
+                <Badge className="bg-green-500 text-white px-3 py-1 rounded-[15px] text-xs font-semibold">
+                  Purchased
+                </Badge>
+              )}
+            </div>
+          </div>
+        </div>
+        <div className="flex text-justify max-w-[70%] line-clamp-2 icon">
+          <p className="line-clamp-2 icon max-w-5xl">{project.description}...</p>
+        </div>
+        <div className="flex-1 overflow-hidden mt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+            <div className="lg:col-span-2 flex flex-col gap-6 h-full overflow-hidden">
+              {renderPreviewImages(project.previewImages)}
+            </div>
+            <div className="space-y-5 h-full overflow-auto pr-1">
+              <div className="rounded-3xl border border-gray-100 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] dark:border-gray-800 shadow-sm p-3 px-5">
+                <div className="flex items-baseline gap-2 mt-2">
+                  <span className="text-5xl font-black text-gray-900 dark:text-white">
+                    ${project.price}
+                  </span>
+                </div>
+                <div className="mt-4 space-y-3 text-sm text-gray-600 dark:text-white">
+                  <div className="flex items-center justify-between p-2 pr-5 bg-white dark:bg-[rgba(255,255,255,.05)] rounded-[15px]">
+                    <div className="flex p-3 bg-white dark:text-black border dark:border-none text-lg rounded-[15px]">
+                      <BiCategory />
+                    </div>
+                    <span className="font-semibold text-gray-900 dark:text-white capitalize">
+                      {project.category || "General"}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 pr-5 bg-white dark:bg-[rgba(255,255,255,.05)] rounded-[15px]">
+                    <div className="flex p-3 bg-white dark:text-black border dark:border-none text-lg rounded-[15px]">
+                      <BiStore />
+                    </div>
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      {project.purchaseCount || 0}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 pr-5 bg-white dark:bg-[rgba(255,255,255,.05)] rounded-[15px]">
+                    <div className="flex p-3 bg-white dark:text-black border dark:border-none text-lg rounded-[15px]">
+                      <BiCalendar />
+                    </div>
+                    <span className="font-semibold text-gray-900 dark:text-white">
+                      {new Date(project.createdAt || Date.now()).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className="rounded-3xl border border-gray-100 dark:border-gray-800 bg-[#eee] dark:bg-[rgba(255,255,255,.1)] shadow-sm p-3">
+                <div className="flex items-center gap-3">
+                  <UserAvatar user={project.createdBy} size="xl" />
+                  <div>
+                    <p className="font-semibold text-gray-900 dark:text-white">
+                      {project.createdBy?.username || "Unknown creator"}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {project.createdBy?.email || "Private email"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="flex">
+                {project.tags && project.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {project.tags.map((tag, idx) => (
+                      <Badge key={idx} className="rounded-[15px] px-3 py-1 text-xs">
+                        {tag}
+                      </Badge>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="space-y-3">
+                <Button
+                  onClick={() => onDownload(project._id || project.id)}
+                  className="w-full h-12 text-base font-semibold"
+                >
+                  <Download className="w-5 h-5 mr-2" />
+                  Download project
+                </Button>
+                {project.type === "created" && (
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      onDelete({ project, type: "created" });
+                      onClose();
+                    }}
+                    className="w-full h-12 text-base font-semibold text-red-600 hover:text-red-700 hover:border-red-600"
+                  >
+                    <Trash2 className="w-5 h-5 mr-2" />
+                    Delete project
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </m.div>
+    </div>
+  );
+}
 
 const getImageUrl = (path) => {
   if (!path) return "";
@@ -198,7 +335,7 @@ const MyBoughtProjects = () => {
 
   return (
     <div className="pt-10">
-      <motion.div className="mx-auto relative">
+      <m.div className="mx-auto relative">
         {/* Header */}
         <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
           <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
@@ -210,7 +347,7 @@ const MyBoughtProjects = () => {
         </div>
 
         {/* Search */}
-        <motion.div variants={itemVariants} className="mb-8">
+        <m.div variants={itemVariants} className="mb-8">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
             <Input
@@ -221,7 +358,7 @@ const MyBoughtProjects = () => {
               className="md:w-[500px] w-full pl-10 pr-4 py-3 border border-gray-200 h-13 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
             />
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Projects Grid */}
         {loading ? (
@@ -246,7 +383,7 @@ const MyBoughtProjects = () => {
             </Button>
           </div>
         ) : (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, ease: "easeOut" }}
@@ -258,7 +395,7 @@ const MyBoughtProjects = () => {
               if (!project) return null;
 
               return (
-                <motion.div
+                <m.div
                   key={project._id || project.id}
                   variants={itemVariants}
                   initial="hidden"
@@ -268,7 +405,7 @@ const MyBoughtProjects = () => {
                   onClick={() => handleViewProject(item)}
                 >
                   {project.previewImages && project.previewImages.length > 0 ? (
-                    <div className="relative w-full border border-gray-300 dark:border-gray-700 rounded-[15px] h-[315px] bg-gray-100 dark:bg-gray-800 overflow-hidden">
+                    <div className="relative w-full border border-gray-300 dark:border-gray-700 rounded-[15px] h-[310px] bg-gray-100 dark:bg-gray-800 overflow-hidden">
                       <img
                         src={getImageUrl(project.previewImages[0])}
                         alt={project.title}
@@ -330,14 +467,14 @@ const MyBoughtProjects = () => {
                       </div>
                     </div>
                   )}
-                </motion.div>
+                </m.div>
               );
             })}
-          </motion.div>
+          </m.div>
         )}
 
         {/* Pagination */}
-      </motion.div>
+      </m.div>
       {pagination.pages > 1 && (
         <div className="flex items-center absolute right-5 -bottom-0 justify-end w-full col-span-3 gap-2 mt-8 mb-10">
           <Button
@@ -396,163 +533,14 @@ const MyBoughtProjects = () => {
         </div>
       )}
 
-      {/* Project Detail Modal */}
       {showProjectModal && selectedProject && (
-        <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm icon flex items-center justify-center p-4 z-50"
-          onClick={() => setShowProjectModal(false)}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-gray-900 rounded-[15px] p-6 md:p-8 max-w-7xl w-full flex flex-col shadow-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="flex items-center justify-between gap-4 border-b border-gray-100 dark:border-gray-800 pb-5">
-              <div className="flex gap-4 md:flex-row flex-col items-center">
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">
-                    {selectedProject.title}
-                  </h2>
-                </div>
-                <div className="flex items-center gap-2 flex-wrap justify-center">
-                  <Badge className="bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-200 px-3 py-1 rounded-[15px] text-xs font-semibold capitalize">
-                    {selectedProject.category || "General"}
-                  </Badge>
-                  {selectedProject.type === "created" ? (
-                    <Badge className="bg-blue-500 text-white px-3 py-1 rounded-[15px] text-xs font-semibold">
-                      Your project
-                    </Badge>
-                  ) : (
-                    <Badge className="bg-green-500 text-white px-3 py-1 rounded-[15px] text-xs font-semibold">
-                      Purchased
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            </div>
-            <div className="flex text-justify max-w-[70%] line-clamp-2 icon">
-              <p className="line-clamp-2 icon max-w-5xl">
-                {selectedProject.description}...
-              </p>
-            </div>
-            {/* Content */}
-            <div className="flex-1 overflow-hidden mt-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-                <div className="lg:col-span-2 flex flex-col gap-6 h-full overflow-hidden">
-                  {/* Gallery */}
-                  {renderPreviewImages(selectedProject.previewImages)}
-
-                  {/* Description & Tags */}
-                </div>
-
-                {/* Sidebar */}
-                <div className="space-y-5 h-full overflow-auto pr-1">
-                  <div className="rounded-3xl border border-gray-100 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] dark:border-gray-800 shadow-sm p-3 px-5">
-                    {/* <p className="text-sm text-gray-500 dark:text-gray-400">Price</p> */}
-                    <div className="flex items-baseline gap-2 mt-2">
-                      <span className="text-5xl font-black text-gray-900 dark:text-white">
-                        ${selectedProject.price}
-                      </span>
-                    </div>
-                    <div className="mt-4 space-y-3 text-sm text-gray-600 dark:text-white">
-                      <div className="flex items-center justify-between p-2 pr-5 bg-white dark:bg-[rgba(255,255,255,.05)] rounded-[15px]">
-                        <div className="flex p-3 bg-white dark:text-black border dark:border-none text-lg rounded-[15px]">
-                          <BiCategory />
-                        </div>
-                        <span className="font-semibold text-gray-900 dark:text-white capitalize">
-                          {selectedProject.category || "General"}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between p-2 pr-5 bg-white dark:bg-[rgba(255,255,255,.05)] rounded-[15px]">
-                        <div className="flex p-3 bg-white dark:text-black border dark:border-none text-lg rounded-[15px]">
-                          <BiStore />
-                        </div>
-                        <span className="font-semibold text-gray-900 dark:text-white">
-                          {selectedProject.purchaseCount || 0}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between p-2 pr-5 bg-white dark:bg-[rgba(255,255,255,.05)] rounded-[15px]">
-                        <div className="flex p-3 bg-white dark:text-black border dark:border-none text-lg rounded-[15px]">
-                          <BiCalendar />
-                        </div>
-                        <span className="font-semibold text-gray-900 dark:text-white">
-                          {new Date(
-                            selectedProject.createdAt || Date.now(),
-                          ).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="rounded-3xl border border-gray-100 dark:border-gray-800 bg-[#eee] dark:bg-[rgba(255,255,255,.1)] shadow-sm p-3">
-                    {/* <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4">Creator</h4> */}
-                    <div className="flex items-center gap-3">
-                      <UserAvatar user={selectedProject.createdBy} size="xl" />
-                      <div>
-                        <p className="font-semibold text-gray-900 dark:text-white">
-                          {selectedProject.createdBy?.username ||
-                            "Unknown creator"}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {selectedProject.createdBy?.email || "Private email"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex">
-                    {selectedProject.tags &&
-                      selectedProject.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {selectedProject.tags.map((tag, idx) => (
-                            <Badge
-                              key={idx}
-                              className="rounded-[15px] px-3 py-1 text-xs"
-                            >
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                  </div>
-
-                  <div className="space-y-3">
-                    <Button
-                      onClick={() =>
-                        handleDownload(
-                          selectedProject._id || selectedProject.id,
-                        )
-                      }
-                      className="w-full h-12 text-base font-semibold"
-                    >
-                      <Download className="w-5 h-5 mr-2" />
-                      Download project
-                    </Button>
-
-                    {selectedProject.type === "created" && (
-                      <Button
-                        variant="outline"
-                        onClick={() => {
-                          handleDelete({
-                            project: selectedProject,
-                            type: "created",
-                          });
-                          setShowProjectModal(false);
-                        }}
-                        className="w-full h-12 text-base font-semibold text-red-600 hover:text-red-700 hover:border-red-600"
-                      >
-                        <Trash2 className="w-5 h-5 mr-2" />
-                        Delete project
-                      </Button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+        <BoughtProjectDetailModal
+          project={selectedProject}
+          onClose={() => setShowProjectModal(false)}
+          onDownload={handleDownload}
+          onDelete={handleDelete}
+          renderPreviewImages={renderPreviewImages}
+        />
       )}
     </div>
   );

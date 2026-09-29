@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   Camera,
   X,
@@ -87,23 +87,6 @@ const DashboardHeader = () => {
       setAvatarPreview(user.avatar || "");
     }
   }, [user]);
-
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchHeaderAwards = async () => {
-      if (user) {
-        try {
-          const awardsResponse = await awardService.getMyAwards();
-          setHeaderAwards(awardsResponse.awards || []);
-          setTotalPoints(awardsResponse.totalPoints || 0);
-        } catch (error) {
-          console.error("Failed to fetch header awards:", error);
-        }
-      }
-    };
-    fetchHeaderAwards();
-  }, [user?.id]);
 
   const fetchProfileData = async () => {
     try {
@@ -234,7 +217,7 @@ const DashboardHeader = () => {
               </div>
 
               <div className="flex flex-col items-center gap-1">
-                <button
+                <div
                   onClick={handleOpenProfileModal}
                   className="relative group"
                 >
@@ -246,7 +229,7 @@ const DashboardHeader = () => {
                     size="xl"
                     onClick={handleOpenProfileModal}
                   />
-                </button>
+                </div>
               </div>
             </div>
           </div>
@@ -254,18 +237,18 @@ const DashboardHeader = () => {
       </header>
 
       {showProfileModal && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed bg-black/20 inset-0 backdrop-blur-sm flex items-center justify-center p-4 z-60 icon"
+          className="fixed bg-black/50 inset-0 backdrop-blur-sm flex items-center justify-center p-4 z-60 icon"
           onClick={() => setShowProfileModal(false)}
         >
-          <motion.div
+          <m.div
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-white dark:bg-black rounded-[15px] shadow-2xl  border-gray-200 dark:border-gray-700 max-w-md w-full p-6"
+            className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-md w-full p-6"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
@@ -273,7 +256,7 @@ const DashboardHeader = () => {
                 <h2 className="text-2xl font-bold text-black dark:text-white">
                   Profile Settings
                 </h2>
-                <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <p className="text-sm text-muted-foreground mt-1">
                   {user?.email} • {user?.role}
                 </p>
               </div>
@@ -290,7 +273,7 @@ const DashboardHeader = () => {
                 </button>
                 <button
                   onClick={() => setShowProfileModal(false)}
-                  className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500"
                 >
                   <X className="w-6 h-6" />
                 </button>
@@ -329,14 +312,14 @@ const DashboardHeader = () => {
                     </div>
                   ))}
                   {awards.length > 5 && (
-                    <div className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                    <div className="text-xs text-muted-foreground font-medium">
                       +{awards.length - 5}
                     </div>
                   )}
                 </div>
               )}
 
-              <p className="text-sm text-gray-500 dark:text-gray-400 text-center">
+              <p className="text-sm text-muted-foreground text-center">
                 {uploadingAvatar
                   ? "Uploading..."
                   : "Click the camera icon to upload a new avatar"}
@@ -480,8 +463,8 @@ const DashboardHeader = () => {
                 </>
               )}
             </div>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
 
       {showConnectionModal && (

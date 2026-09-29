@@ -10,16 +10,18 @@ export const useTheme = () => {
   return context;
 };
 
-export const ThemeProvider = ({ children }) => {
-  const [theme, setTheme] = useState("light"); // default always light
-
-  // Load saved theme once
-  useEffect(() => {
+const readTheme = () => {
+  try {
     const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) {
-      setTheme(savedTheme);
-    }
-  }, []);
+    if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
+  } catch {
+    /* storage can be unavailable */
+  }
+  return "dark";
+};
+
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState(readTheme);
 
   // Apply theme
   useEffect(() => {

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { Loader2, Mic, MicOff, Volume2, X } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "../contexts/auth-context";
@@ -205,6 +205,108 @@ const VoiceLoop = ({ mode, energy }) => {
     </span>
   );
 };
+
+function voiceCaption(status, heard, reply) {
+  const captionLabel =
+    status === "listening" || (heard && !reply)
+      ? "You"
+      : status === "thinking" || status === "speaking" || reply
+        ? "Assistant"
+        : "Assistant";
+
+  const captionText =
+    status === "listening"
+      ? heard || "Speak a command…"
+      : status === "thinking"
+        ? "Working on it…"
+        : reply || "Tap the mic and ask about your team.";
+
+  return { captionLabel, captionText };
+}
+
+function VoiceStatusIcon({ status }) {
+  if (status === "listening") return <Mic className="h-3.5 w-3.5" />;
+  if (status === "speaking") return <Volume2 className="h-3.5 w-3.5" />;
+  if (status === "thinking") return <Loader2 className="h-3.5 w-3.5 animate-spin" />;
+  return <MicOff className="h-3.5 w-3.5" />;
+}
+
+function VoiceHud({
+  open,
+  onClose,
+  status,
+  energy,
+  meta,
+  captionLabel,
+  captionText,
+  onOrbClick,
+  people,
+}) {
+  return (
+    <AnimatePresence>
+      {open ? (
+        <m.div
+          key="voice-hud"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[2147483000] flex flex-col overflow-y-auto bg-white"
+        >
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(255,145,75,0.16),transparent_42%),radial-gradient(circle_at_80%_90%,rgba(255,184,140,0.2),transparent_36%)]" />
+
+          <div className="relative flex items-center justify-between px-5 py-4 md:px-8">
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#FF914B]">
+                Slack Dev
+              </p>
+              <p className="mt-0.5 text-xs font-semibold text-gray-900 uppercase">
+                V o i c e &nbsp; A s s i s t a n t
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="flex h-11 w-11 items-center justify-center rounded-full border border-orange-100 bg-white text-[#FF914B] shadow-sm transition hover:bg-orange-50"
+              aria-label="Close assistant"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+
+          <div className="relative flex flex-1 flex-col items-center justify-center px-6">
+            <span className="mb-8 inline-flex items-center gap-2 rounded-full border border-orange-100 bg-orange-50 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.22em] text-[#FF914B]">
+              <VoiceStatusIcon status={status} />
+              {meta.label}
+            </span>
+
+            <button
+              type="button"
+              onClick={onOrbClick}
+              className="relative flex items-center justify-center rounded-full"
+              aria-label="Toggle listening"
+            >
+              <VoiceLoop mode={status} energy={energy} />
+            </button>
+
+            <p className="mt-6 text-sm font-medium text-gray-400">{meta.hint}</p>
+            <PeopleRail people={people} />
+          </div>
+
+          <div className="relative px-5 pb-8 md:px-8">
+            <div className="mx-auto max-w-2xl flex items-center justify-center flex-col rounded-[28px] text-center">
+              <p className="text-[10px] font-bold uppercase mb-5 px-5 py-3 bg-orange-50 rounded-full tracking-[0.28em] text-[#FF914B]">
+                {captionLabel}
+              </p>
+              <p className="mt-2 min-h-[48px] text-lg font-medium leading-7 text-gray-900 md:text-xl">
+                {captionText}
+              </p>
+            </div>
+          </div>
+        </m.div>
+      ) : null}
+    </AnimatePresence>
+  );
+}
 
 const VoiceAssistantFab = () => {
   const { user, isAuthenticated } = useAuth();
@@ -527,91 +629,20 @@ const VoiceAssistantFab = () => {
     levels.reduce((sum, value) => sum + value, 0) / Math.max(levels.length, 1);
 
   const meta = STATUS[status] || STATUS.idle;
-  const captionLabel =
-    status === "listening" || (heard && !reply)
-      ? "You"
-      : status === "thinking" || status === "speaking" || reply
-        ? "Assistant"
-        : "Assistant";
-
-  const captionText =
-    status === "listening"
-      ? heard || "Speak a command…"
-      : status === "thinking"
-        ? "Working on it…"
-        : reply || "Tap the mic and ask about your team.";
+  const { captionLabel, captionText } = voiceCaption(status, heard, reply);
 
   const overlay = (
-    <AnimatePresence>
-      {open ? (
-        <motion.div
-          key="voice-hud"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[2147483000] flex flex-col overflow-y-auto bg-white"
-        >
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_28%,rgba(255,145,75,0.16),transparent_42%),radial-gradient(circle_at_80%_90%,rgba(255,184,140,0.2),transparent_36%)]" />
-
-          <div className="relative flex items-center justify-between px-5 py-4 md:px-8">
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-[0.28em] text-[#FF914B]">
-                Slack Dev
-              </p>
-              <p className="mt-0.5 text-xs font-semibold text-gray-900 uppercase">
-                V o i c e &nbsp; A s s i s t a n t
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={closeOverlay}
-              className="flex h-11 w-11 items-center justify-center rounded-full border border-orange-100 bg-white text-[#FF914B] shadow-sm transition hover:bg-orange-50"
-              aria-label="Close assistant"
-            >
-              <X className="h-4 w-4" />
-            </button>
-          </div>
-
-          <div className="relative flex flex-1 flex-col items-center justify-center px-6">
-            <span className="mb-8 inline-flex items-center gap-2 rounded-full border border-orange-100 bg-orange-50 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.22em] text-[#FF914B]">
-              {status === "listening" ? (
-                <Mic className="h-3.5 w-3.5" />
-              ) : status === "speaking" ? (
-                <Volume2 className="h-3.5 w-3.5" />
-              ) : status === "thinking" ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <MicOff className="h-3.5 w-3.5" />
-              )}
-              {meta.label}
-            </span>
-
-            <button
-              type="button"
-              onClick={onOrbClick}
-              className="relative flex items-center justify-center rounded-full"
-              aria-label="Toggle listening"
-            >
-              <VoiceLoop mode={status} energy={energy} />
-            </button>
-
-            <p className="mt-6 text-sm font-medium text-gray-400">{meta.hint}</p>
-            <PeopleRail people={people} />
-          </div>
-
-          <div className="relative px-5 pb-8 md:px-8">
-            <div className="mx-auto max-w-2xl flex items-center justify-center flex-col rounded-[28px] text-center">
-              <p className="text-[10px] font-bold uppercase mb-5 px-5 py-3 bg-orange-50 rounded-full tracking-[0.28em] text-[#FF914B]">
-                {captionLabel}
-              </p>
-              <p className="mt-2 min-h-[48px] text-lg font-medium leading-7 text-gray-900 md:text-xl">
-                {captionText}
-              </p>
-            </div>
-          </div>
-        </motion.div>
-      ) : null}
-    </AnimatePresence>
+    <VoiceHud
+      open={open}
+      onClose={closeOverlay}
+      status={status}
+      energy={energy}
+      meta={meta}
+      captionLabel={captionLabel}
+      captionText={captionText}
+      onOrbClick={onOrbClick}
+      people={people}
+    />
   );
 
   return typeof document !== "undefined"

@@ -1,5 +1,5 @@
   import Footer from "../components/footer";
-  import { motion } from "framer-motion";
+  import { m } from "framer-motion";
   import { Mail, Phone, MapPin, Send } from "lucide-react";
 
   const Contact = () => {
@@ -27,30 +27,30 @@
         <div className="landing-header w-full">
         </div>
         <div className="flex flex-col items-center justify-center relative pt-30 overflow-hidden bg-gray-50 dark:bg-black min-h-screen">
-        <motion.main
+        <m.main
           className="container mx-auto px-6 py-20"
           variants={containerVariants}
           initial="hidden"
           animate="visible"
         >
           <div className="text-center mb-20">
-            <motion.h1
+            <m.h1
               variants={itemVariants}
               className="text-6xl  text-gray-900 dark:text-white  mb-6"
               style={{ fontWeight: 900 }}
             >
               Contact Us
-            </motion.h1>
-            <motion.p
+            </m.h1>
+            <m.p
               variants={itemVariants}
               className="text-xl max-w-3xl mx-auto "
             >
               Get in touch with our team for support, partnerships, or questions
-            </motion.p>
+            </m.p>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12">
-            <motion.div variants={itemVariants}>
+            <m.div variants={itemVariants}>
               <h2
                 className="text-3xl text-gray-900 dark:text-white  mb-8"
                 style={{ fontWeight: 600 }}
@@ -75,7 +75,7 @@
                     info: "123 Tech Street, San Francisco, CA 94105",
                   },
                 ].map((contact, index) => (
-                  <motion.div
+                  <m.div
                     key={index}
                     className="glass-card p-6 rounded-[15px] flex items-center space-x-4"
                     whileHover={{ y: -5 }}
@@ -96,12 +96,12 @@
                         {contact.info}
                       </p>
                     </div>
-                  </motion.div>
+                  </m.div>
                 ))}
               </div>
-            </motion.div>
+            </m.div>
 
-            <motion.div variants={itemVariants}>
+            <m.div variants={itemVariants}>
               <h2
                 className="text-3xl text-gray-900 dark:text-white  mb-8"
                 style={{ fontWeight: 600 }}
@@ -137,7 +137,7 @@
                     className="w-full p-4 glass-card rounded-[15px] border-0 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400   text-sm resize-none"
                   ></textarea>
                 </div>
-                <motion.button
+                <m.button
                   type="submit"
                   className="w-full p-4 bg-black text-white rounded-[15px]  text-sm  hover:bg-black transition-colors flex items-center justify-center space-x-2 dark:bg-white dark:text-black dark:hover:bg-gray-200"
                   whileHover={{ scale: 1.02 }}
@@ -145,11 +145,11 @@
                 >
                   <Send className="w-5 h-5 icon" />
                   <span>Send Message</span>
-                </motion.button>
+                </m.button>
               </form>
-            </motion.div>
+            </m.div>
           </div>
-        </motion.main>
+        </m.main>
 
         <Footer />
         </div>

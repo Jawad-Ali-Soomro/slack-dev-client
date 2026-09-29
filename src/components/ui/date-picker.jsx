@@ -15,7 +15,7 @@ const DEFAULT_START_MONTH = new Date(2000, 0);
 const DEFAULT_END_MONTH = new Date(2035, 11);
 
 const triggerClasses =
-  "w-full h-12 justify-start rounded-[15px] border border-gray-200 dark:border-gray-700 bg-transparent px-3 font-normal text-left";
+  "w-full h-12 justify-start rounded-[15px] bg-white dark:bg-transparent dark:hover:bg-gray-800 border border-gray-200 dark:border-gray-700 px-3 font-normal text-left";
 
 function parseYMD(value) {
   if (!value) return undefined;
@@ -75,7 +75,9 @@ function DatePicker({
           disabled={disabled}
           className={cn(
             triggerClasses,
-            !selected && "text-gray-500 dark:text-gray-400",
+            selected
+              ? "text-gray-900 dark:text-white"
+              : "text-muted-foreground",
             className,
           )}
         >
@@ -140,11 +142,13 @@ function DateTimePicker({
         <Button
           id={id}
           type="button"
-          variant="outline"
+          variant="ghost"
           disabled={disabled}
           className={cn(
             triggerClasses,
-            !selected && "text-gray-500 dark:text-gray-400",
+            selected
+              ? "text-gray-900 dark:text-white"
+              : "text-muted-foreground",
             className,
           )}
         >
@@ -197,23 +201,8 @@ function to24Hour(hour, minute, period) {
 const HOURS = Array.from({ length: 12 }, (_, i) => i + 1);
 const MINUTES = Array.from({ length: 12 }, (_, i) => i * 5);
 
-function TimePicker({
-  value,
-  onChange,
-  placeholder = "Pick a time",
-  className,
-  disabled,
-  id,
-}) {
-  const [open, setOpen] = React.useState(false);
-  const { hour, minute, period } = to12Hour(value);
-
-  const update = (next) => {
-    const merged = { hour, minute, period, ...next };
-    onChange?.(to24Hour(merged.hour, merged.minute, merged.period));
-  };
-
-  const Column = ({ items, active, render, onPick }) => (
+function TimeColumn({ items, active, render, onPick }) {
+  return (
     <div className="flex max-h-48 flex-col gap-1 overflow-y-auto px-1">
       {items.map((item) => (
         <button
@@ -232,6 +221,23 @@ function TimePicker({
       ))}
     </div>
   );
+}
+
+function TimePicker({
+  value,
+  onChange,
+  placeholder = "Pick a time",
+  className,
+  disabled,
+  id,
+}) {
+  const [open, setOpen] = React.useState(false);
+  const { hour, minute, period } = to12Hour(value);
+
+  const update = (next) => {
+    const merged = { hour, minute, period, ...next };
+    onChange?.(to24Hour(merged.hour, merged.minute, merged.period));
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -243,7 +249,9 @@ function TimePicker({
           disabled={disabled}
           className={cn(
             triggerClasses,
-            !value && "text-gray-500 dark:text-gray-400",
+            value
+              ? "text-gray-900 dark:text-white"
+              : "text-muted-foreground",
             className,
           )}
         >
@@ -257,18 +265,18 @@ function TimePicker({
       </PopoverTrigger>
       <PopoverContent className="w-auto p-2" align="start">
         <div className="flex gap-2">
-          <Column
+          <TimeColumn
             items={HOURS}
             active={hour}
             onPick={(h) => update({ hour: h })}
           />
-          <Column
+          <TimeColumn
             items={MINUTES}
             active={minute}
             render={(m) => String(m).padStart(2, "0")}
             onPick={(m) => update({ minute: m })}
           />
-          <Column
+          <TimeColumn
             items={["AM", "PM"]}
             active={period}
             onPick={(p) => update({ period: p })}

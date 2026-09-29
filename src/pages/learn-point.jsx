@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import HorizontalLoader from "../components/horizontal-loader";
 import {
   Search,
@@ -581,6 +581,586 @@ const PREDEFINED_SUBJECTS = {
   ],
 };
 
+function textOr(value, fallback) {
+  return value || fallback;
+}
+
+function isNoteOwnedByUser(note, user) {
+  if (!user || !note.createdBy) return false;
+  const creator = note.createdBy;
+  const uid = user.id?.toString();
+  if (creator._id?.toString() === uid) return true;
+  if (creator.id?.toString() === uid) return true;
+  if (typeof creator === "string" && creator === user.id) return true;
+  return false;
+}
+
+function LearnPointFilters({
+  activeTab,
+  onTabChange,
+  user,
+  searchTerm,
+  onSearchChange,
+  selectedDepartment,
+  onDepartmentChange,
+  departments,
+  selectedSubject,
+  onSubjectChange,
+  subjects,
+  onCreateClick,
+}) {
+  return (
+    <m.div className="mb-8">
+      <div className="flex gap-2 mb-6">
+        <button
+          onClick={() => onTabChange("public")}
+          className={`px-6 py-3 font-semibold text-sm uppercase transition-colors border-2 rounded-[15px] ${
+            activeTab === "public"
+              ? "bg-white text-black"
+              : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+          }`}
+        >
+          All Notes
+        </button>
+        {user && (
+          <button
+            onClick={() => onTabChange("mine")}
+            className={`px-6 py-3 font-semibold text-sm uppercase transition-colors border-2 rounded-[15px] ${
+              activeTab === "mine"
+                ? "bg-white text-black"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+            }`}
+          >
+            My notes
+          </button>
+        )}
+      </div>
+
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row gap-4 flex-1">
+          <div className="flex gap-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+              <Input
+                type="text"
+                placeholder="Search notes..."
+                value={searchTerm}
+                onChange={(e) => onSearchChange(e.target.value)}
+                className="md:w-[500px] w-full pl-10 pr-4 py-3 border border-gray-200 h-13 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
+              />
+            </div>
+            <Select
+              value={selectedDepartment || "all"}
+              onValueChange={(value) =>
+                onDepartmentChange(value === "all" ? "" : value)
+              }
+            >
+              <SelectTrigger className="md:w-[200px] w-full px-5 h-13 bg-white cursor-pointer dark:bg-[black] dark:text-white">
+                <SelectValue placeholder="Select Department" />
+              </SelectTrigger>
+              <SelectContent className="bg-white dark:bg-[black] border-gray-200 dark:border-gray-700">
+                <SelectItem className="cursor-pointer h-10 px-5" value="all">
+                  All Departments
+                </SelectItem>
+                {departments.map((dept) => (
+                  <SelectItem
+                    key={dept}
+                    className="cursor-pointer h-10 px-5"
+                    value={dept}
+                  >
+                    {dept}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          {selectedDepartment && (
+            <Select
+              value={selectedSubject || "all"}
+              onValueChange={(value) =>
+                onSubjectChange(value === "all" ? "" : value)
+              }
+            >
+              <SelectTrigger className="md:w-[200px] w-full px-5 h-13 bg-white cursor-pointer dark:bg-[black] dark:text-white">
+                <SelectValue placeholder="Select Subject" />
+              </SelectTrigger>
+              <SelectContent className="bg-white dark:bg-[black] border-gray-200 dark:border-gray-700">
+                <SelectItem className="cursor-pointer h-10 px-5" value="all">
+                  All Subjects
+                </SelectItem>
+                {subjects.map((subject) => (
+                  <SelectItem
+                    key={subject}
+                    className="cursor-pointer h-10 px-5"
+                    value={subject}
+                  >
+                    {subject}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          )}
+        </div>
+        <Button
+          onClick={onCreateClick}
+          className="md:w-[200px] w-full rounded-[15px] h-12 font-bold"
+        >
+          <Plus className="w-4 h-4 icon mr-2" />
+          Create Note
+        </Button>
+      </div>
+    </m.div>
+  );
+}
+
+function LearnPointNoteCreator({ createdBy }) {
+  if (!createdBy) return null;
+
+  const displayName = textOr(createdBy.username, "User");
+
+  return (
+    <div className="flex items-center gap-2 mb-3">
+      <div className="w-10 h-10 rounded-[15px] overflow-hidden border border-gray-200 dark:border-gray-700">
+        <img
+          {...getAvatarProps(createdBy.avatar, displayName)}
+          alt={displayName}
+          className="w-full h-full object-cover rounded-[15px] p-1"
+        />
+      </div>
+      <div className="flex flex-col">
+        <span className="text-sm font-bold text-gray-700 dark:text-gray-300">
+          {textOr(createdBy.username, "Unknown")}
+        </span>
+        <span className="text-xs text-gray-500 dark:text-gray-400">
+          {textOr(createdBy.email, "Unknown")}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function LearnPointNoteTags({ tags }) {
+  if (!tags || tags.length === 0) return null;
+
+  return (
+    <div className="flex flex-wrap gap-1 mb-3">
+      {tags.map((tag, idx) => (
+        <span
+          key={idx}
+          className="text-xs px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-[15px] text-gray-600 dark:text-gray-400"
+        >
+          #{tag}
+        </span>
+      ))}
+    </div>
+  );
+}
+
+function LearnPointNoteActions({
+  note,
+  owned,
+  onViewPdf,
+  onEditNote,
+  onDeleteNote,
+}) {
+  const noteId = note._id || note.id;
+
+  return (
+    <div className="mt-auto flex justify-between gap-2">
+      <div className="flex gap-2">
+        {note.fileUrl && (
+          <Button
+            variant="ghost"
+            onClick={() => onViewPdf(note.fileUrl)}
+            className="text-blue-600 hover:text-blue-800 bg-blue-100 dark:bg-white dark:text-black dark:hover:bg-white w-[150px] dark:hover:text-black"
+          >
+            <Download className="w-4 h-4 icon mr-1" />
+            Download
+          </Button>
+        )}
+      </div>
+      <div className="flex gap-2">
+        {owned && (
+          <>
+            <Button
+              variant="ghost"
+              className={"w-[50px]"}
+              size="sm"
+              onClick={() => onEditNote(note)}
+            >
+              <Edit className="w-4 h-4 icon icon" />
+            </Button>
+            <Button
+              variant="ghost"
+              className={"w-[50px]"}
+              size="sm"
+              onClick={() => onDeleteNote(noteId)}
+            >
+              <Trash2 className="w-4 h-4 icon text-red-600" />
+            </Button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function LearnPointNoteCard({
+  note,
+  user,
+  onViewPdf,
+  onEditNote,
+  onDeleteNote,
+}) {
+  const owned = isNoteOwnedByUser(note, user);
+  const noteKey = note._id || note.id;
+
+  return (
+    <m.div
+      key={noteKey}
+      className="bg-white dark:bg-[rgba(255,255,255,.1)] 
+             border-gray-200 dark:border-gray-700 
+             rounded-[15px] p-6 
+             hover:shadow-lg transition-shadow
+             flex flex-col h-full"
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.2 }}
+    >
+      <div className="flex items-start justify-between mb-3">
+        <div className="flex-1">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            {note.title}
+          </h3>
+
+          <LearnPointNoteCreator createdBy={note.createdBy} />
+
+          <div className="flex flex-wrap gap-2 mb-2">
+            <Badge className="bg-blue-100 text-blue-800 text-[10px] px-4 py-2 font-bold dark:bg-blue-900 dark:text-blue-200">
+              <GraduationCap className="w-3 h-3 mr-1" />
+              {note.department}
+            </Badge>
+            <Badge className="bg-green-100 text-green-800 text-[10px] px-4 py-2 font-bold  dark:bg-green-900 dark:text-green-200">
+              <BookOpen className="w-3 h-3 mr-1" />
+              {note.subject}
+            </Badge>
+          </div>
+        </div>
+      </div>
+      {note.description && (
+        <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
+          {note.description}
+        </p>
+      )}
+      <LearnPointNoteTags tags={note.tags} />
+      <LearnPointNoteActions
+        note={note}
+        owned={owned}
+        onViewPdf={onViewPdf}
+        onEditNote={onEditNote}
+        onDeleteNote={onDeleteNote}
+      />
+    </m.div>
+  );
+}
+
+function LearnPointNotesGrid({
+  loading,
+  filteredNotes,
+  user,
+  onViewPdf,
+  onEditNote,
+  onDeleteNote,
+}) {
+  if (loading) {
+    return (
+      <div className="p-8 text-center">
+        <HorizontalLoader
+          message="Loading notes..."
+          subMessage="Fetching your study materials"
+          progress={70}
+        />
+      </div>
+    );
+  }
+
+  if (filteredNotes.length === 0) {
+    return (
+      <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+        <BookOpen className="w-16 h-16 mx-auto mb-4 opacity-50" />
+        <p className="text-lg">No notes found</p>
+        <p className="text-sm mt-2">Create your first note to get started!</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+      {filteredNotes.map((note) => (
+        <LearnPointNoteCard
+          key={note._id || note.id}
+          note={note}
+          user={user}
+          onViewPdf={onViewPdf}
+          onEditNote={onEditNote}
+          onDeleteNote={onDeleteNote}
+        />
+      ))}
+    </div>
+  );
+}
+
+function LearnPointModalSubjectField({
+  newNote,
+  setNewNote,
+  modalSubjects,
+}) {
+  if (!newNote.department) {
+    return (
+      <>
+        <Input
+          type="text"
+          value={newNote.subject}
+          onChange={(e) =>
+            setNewNote({ ...newNote, subject: e.target.value })
+          }
+          className="w-full"
+          placeholder="Subject * (Select department first)"
+          disabled
+        />
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Select
+        value={newNote.subject || undefined}
+        onValueChange={(value) =>
+          setNewNote({ ...newNote, subject: value })
+        }
+      >
+        <SelectTrigger className="w-full">
+          <SelectValue placeholder="Select Subject *" />
+        </SelectTrigger>
+        <SelectContent className="max-h-[300px]">
+          {modalSubjects.length > 0 ? (
+            modalSubjects.map((subject) => (
+              <SelectItem
+                key={subject}
+                className="cursor-pointer h-10 px-5"
+                value={subject}
+              >
+                {subject}
+              </SelectItem>
+            ))
+          ) : (
+            <SelectItem value="loading" disabled>
+              Loading subjects...
+            </SelectItem>
+          )}
+        </SelectContent>
+      </Select>
+      {modalSubjects.length === 0 && (
+        <p className="text-xs text-muted-foreground mt-1">
+          No subjects available for this department
+        </p>
+      )}
+    </>
+  );
+}
+
+function LearnPointModalFileSection({
+  pdfFile,
+  editingNote,
+  onFileChange,
+  onViewPdf,
+}) {
+  const showExisting = Boolean(editingNote?.fileUrl) && !pdfFile;
+
+  return (
+    <div>
+      <div className="flex items-center justify-center gap-2">
+        <Input
+          type="file"
+          accept=".pdf"
+          onChange={onFileChange}
+          className="w-full"
+        />
+        {pdfFile && (
+          <span className="text-sm text-muted-foreground">
+            {pdfFile.name}
+          </span>
+        )}
+      </div>
+      {showExisting && (
+        <div className="flex p-3 border-2 border-dashed rounded-[15px] mt-5 flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">
+            {textOr(editingNote.fileName, "PDF file")}
+          </p>
+          <div
+            className="flex p-2 border rounded-[15px] cursor-pointer"
+            onClick={() => onViewPdf(editingNote.fileUrl)}
+          >
+            <Eye className="w-4 h-4 icon icon" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function LearnPointModalSubmitLabel({ loading, editingNote }) {
+  if (loading) {
+    return <span className="loader w-5 h-5"></span>;
+  }
+  if (editingNote) {
+    return "Update Note";
+  }
+  return "Create Note";
+}
+
+function LearnPointNoteModal({
+  showCreateModal,
+  onClose,
+  newNote,
+  setNewNote,
+  departments,
+  modalSubjects,
+  pdfFile,
+  editingNote,
+  loading,
+  onFileChange,
+  onViewPdf,
+  onSubmit,
+}) {
+  if (!showCreateModal) return null;
+
+  const isNewDepartment = Boolean(
+    newNote.department && !departments.includes(newNote.department),
+  );
+
+  return (
+    <m.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 backdrop-blur-sm bg-opacity-50 bg-black/50 flex items-center justify-center p-4 z-50"
+      onClick={onClose}
+    >
+      <m.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="space-y-4">
+          <div>
+            <Input
+              type="text"
+              value={newNote.title}
+              onChange={(e) =>
+                setNewNote({ ...newNote, title: e.target.value })
+              }
+              className="w-full"
+              placeholder="Note Title *"
+            />
+          </div>
+
+          <div>
+            <Textarea
+              value={newNote.description}
+              onChange={(e) =>
+                setNewNote({ ...newNote, description: e.target.value })
+              }
+              className="w-full"
+              placeholder="Description (optional)"
+              rows="3"
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <div className="flex gap-2">
+                <Select
+                  value={newNote.department || undefined}
+                  onValueChange={(value) =>
+                    setNewNote({ ...newNote, department: value })
+                  }
+                >
+                  <SelectTrigger className="flex-1">
+                    <SelectValue placeholder="Department *" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-[300px]">
+                    {departments.map((dept) => (
+                      <SelectItem
+                        key={dept}
+                        className="cursor-pointer h-10 px-5"
+                        value={dept}
+                      >
+                        {dept}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              {isNewDepartment && (
+                <p className="text-xs text-blue-500 mt-1">
+                  New department will be created
+                </p>
+              )}
+            </div>
+
+            <div>
+              <LearnPointModalSubjectField
+                newNote={newNote}
+                setNewNote={setNewNote}
+                modalSubjects={modalSubjects}
+              />
+            </div>
+          </div>
+
+          <div>
+            <Input
+              type="text"
+              value={newNote.tags}
+              onChange={(e) =>
+                setNewNote({ ...newNote, tags: e.target.value })
+              }
+              className="w-full"
+              placeholder="Tags (comma separated)"
+            />
+          </div>
+
+          <LearnPointModalFileSection
+            pdfFile={pdfFile}
+            editingNote={editingNote}
+            onFileChange={onFileChange}
+            onViewPdf={onViewPdf}
+          />
+        </div>
+
+        <div className="flex gap-3 mt-6">
+          <Button
+            onClick={onClose}
+            className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200"
+          >
+            Cancel
+          </Button>
+          <Button onClick={onSubmit} disabled={loading} className="flex-1">
+            <LearnPointModalSubmitLabel
+              loading={loading}
+              editingNote={editingNote}
+            />
+          </Button>
+        </div>
+      </m.div>
+    </m.div>
+  );
+}
+
 const LearnPoint = () => {
   document.title = "Learn Point - Notes & Study Materials";
 
@@ -829,7 +1409,7 @@ const LearnPoint = () => {
 
   return (
     <div className="overflow-hidden pt-10">
-      <motion.div
+      <m.div
         className="mx-auto"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
@@ -845,464 +1425,64 @@ const LearnPoint = () => {
           </div>
         </div>
 
-        <motion.div className="mb-8">
-          {/* Tabs */}
-          <div className="flex gap-2 mb-6">
-            <button
-              onClick={() => setActiveTab("public")}
-              className={`px-6 py-3 font-semibold text-sm uppercase transition-colors border-2 rounded-[15px] ${
-                activeTab === "public"
-                  ? "bg-white text-black"
-                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-              }`}
-            >
-              All Notes
-            </button>
-            {user && (
-              <button
-                onClick={() => setActiveTab("mine")}
-                className={`px-6 py-3 font-semibold text-sm uppercase transition-colors border-2 rounded-[15px] ${
-                  activeTab === "mine"
-                    ? "bg-white text-black"
-                    : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                }`}
-              >
-                My notes
-              </button>
-            )}
-          </div>
-
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex flex-col sm:flex-row gap-4 flex-1">
-              <div className="flex gap-2">
-                <div className="relative flex-1">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                  <Input
-                    type="text"
-                    placeholder="Search notes..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="md:w-[500px] w-full pl-10 pr-4 py-3 border border-gray-200 h-13 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
-                  />
-                </div>
-                <Select
-                  value={selectedDepartment || "all"}
-                  onValueChange={(value) =>
-                    handleDepartmentChange(value === "all" ? "" : value)
-                  }
-                >
-                  <SelectTrigger className="md:w-[200px] w-full px-5 h-13 bg-white cursor-pointer dark:bg-[black] dark:text-white">
-                    <SelectValue placeholder="Select Department" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[black] border-gray-200 dark:border-gray-700">
-                    <SelectItem
-                      className="cursor-pointer h-10 px-5"
-                      value="all"
-                    >
-                      All Departments
-                    </SelectItem>
-                    {departments.map((dept) => (
-                      <SelectItem
-                        key={dept}
-                        className="cursor-pointer h-10 px-5"
-                        value={dept}
-                      >
-                        {dept}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {selectedDepartment && (
-                <Select
-                  value={selectedSubject || "all"}
-                  onValueChange={(value) =>
-                    setSelectedSubject(value === "all" ? "" : value)
-                  }
-                >
-                  <SelectTrigger className="md:w-[200px] w-full px-5 h-13 bg-white cursor-pointer dark:bg-[black] dark:text-white">
-                    <SelectValue placeholder="Select Subject" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-white dark:bg-[black] border-gray-200 dark:border-gray-700">
-                    <SelectItem
-                      className="cursor-pointer h-10 px-5"
-                      value="all"
-                    >
-                      All Subjects
-                    </SelectItem>
-                    {subjects.map((subject) => (
-                      <SelectItem
-                        key={subject}
-                        className="cursor-pointer h-10 px-5"
-                        value={subject}
-                      >
-                        {subject}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            </div>
-            <Button
-              onClick={() => {
-                setEditingNote(null);
-                setNewNote({
-                  title: "",
-                  description: "",
-                  department: "",
-                  subject: "",
-                  tags: "",
-                });
-                setPdfFile(null);
-                setShowCreateModal(true);
-              }}
-              className="md:w-[200px] w-full rounded-[15px] h-12 font-bold"
-            >
-              <Plus className="w-4 h-4 icon mr-2" />
-              Create Note
-            </Button>
-          </div>
-        </motion.div>
+        <LearnPointFilters
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          user={user}
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          selectedDepartment={selectedDepartment}
+          onDepartmentChange={handleDepartmentChange}
+          departments={departments}
+          selectedSubject={selectedSubject}
+          onSubjectChange={setSelectedSubject}
+          subjects={subjects}
+          onCreateClick={() => {
+            setEditingNote(null);
+            setNewNote({
+              title: "",
+              description: "",
+              department: "",
+              subject: "",
+              tags: "",
+            });
+            setPdfFile(null);
+            setShowCreateModal(true);
+          }}
+        />
 
         {/* Notes Grid */}
-        <motion.div
+        <m.div
           className="rounded-[15px] shadow-xl overflow-hidden"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          {loading ? (
-            <div className="p-8 text-center">
-              <HorizontalLoader
-                message="Loading notes..."
-                subMessage="Fetching your study materials"
-                progress={70}
-              />
-            </div>
-          ) : filteredNotes.length === 0 ? (
-            <div className="p-8 text-center text-gray-500 dark:text-gray-400">
-              <BookOpen className="w-16 h-16 mx-auto mb-4 opacity-50" />
-              <p className="text-lg">No notes found</p>
-              <p className="text-sm mt-2">
-                Create your first note to get started!
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredNotes.map((note) => (
-                <motion.div
-                  key={note._id || note.id}
-                  className="bg-white dark:bg-[rgba(255,255,255,.1)] 
-             border-gray-200 dark:border-gray-700 
-             rounded-[15px] p-6 
-             hover:shadow-lg transition-shadow
-             flex flex-col h-full"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-                        {note.title}
-                      </h3>
+          <LearnPointNotesGrid
+            loading={loading}
+            filteredNotes={filteredNotes}
+            user={user}
+            onViewPdf={handleViewPdf}
+            onEditNote={handleEditNote}
+            onDeleteNote={handleDeleteNote}
+          />
+        </m.div>
 
-                      {/* Username with Avatar */}
-                      {note.createdBy && (
-                        <div className="flex items-center gap-2 mb-3">
-                          <div className="w-10 h-10 rounded-[15px] overflow-hidden border border-gray-200 dark:border-gray-700">
-                            <img
-                              {...getAvatarProps(
-                                note.createdBy?.avatar,
-                                note.createdBy?.username || "User",
-                              )}
-                              alt={note.createdBy?.username || "User"}
-                              className="w-full h-full object-cover rounded-[15px] p-1"
-                            />
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                              {note.createdBy?.username || "Unknown"}
-                            </span>
-                            <span className="text-xs text-gray-500 dark:text-gray-400">
-                              {note.createdBy?.email || "Unknown"}
-                            </span>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Department and Subject */}
-                      <div className="flex flex-wrap gap-2 mb-2">
-                        <Badge className="bg-blue-100 text-blue-800 text-[10px] px-4 py-2 font-bold dark:bg-blue-900 dark:text-blue-200">
-                          <GraduationCap className="w-3 h-3 mr-1" />
-                          {note.department}
-                        </Badge>
-                        <Badge className="bg-green-100 text-green-800 text-[10px] px-4 py-2 font-bold  dark:bg-green-900 dark:text-green-200">
-                          <BookOpen className="w-3 h-3 mr-1" />
-                          {note.subject}
-                        </Badge>
-                      </div>
-                    </div>
-                  </div>
-                  {note.description && (
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">
-                      {note.description}
-                    </p>
-                  )}
-                  {note.tags && note.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-3">
-                      {note.tags.map((tag, idx) => (
-                        <span
-                          key={idx}
-                          className="text-xs px-4 py-2 bg-gray-100 dark:bg-gray-800 rounded-[15px] text-gray-600 dark:text-gray-400"
-                        >
-                          #{tag}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                  <div className="mt-auto flex justify-between gap-2">
-                    <div className="flex gap-2">
-                      {note.fileUrl && (
-                        <Button
-                          variant="ghost"
-                          onClick={() => handleViewPdf(note.fileUrl)}
-                          className="text-blue-600 hover:text-blue-800 bg-blue-100 dark:bg-white dark:text-black dark:hover:bg-white w-[150px] dark:hover:text-black"
-                        >
-                          <Download className="w-4 h-4 icon mr-1" />
-                          Download
-                        </Button>
-                      )}
-                    </div>
-                    <div className="flex gap-2">
-                      {user &&
-                        note.createdBy &&
-                        (note.createdBy._id?.toString() ===
-                          user.id?.toString() ||
-                          note.createdBy.id?.toString() ===
-                            user.id?.toString() ||
-                          (typeof note.createdBy === "string" &&
-                            note.createdBy === user.id)) && (
-                          <>
-                            <Button
-                              variant="ghost"
-                              className={"w-[50px]"}
-                              size="sm"
-                              onClick={() => handleEditNote(note)}
-                            >
-                              <Edit className="w-4 h-4 icon icon" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              className={"w-[50px]"}
-                              size="sm"
-                              onClick={() =>
-                                handleDeleteNote(note._id || note.id)
-                              }
-                            >
-                              <Trash2 className="w-4 h-4 icon text-red-600" />
-                            </Button>
-                          </>
-                        )}
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </motion.div>
-
-        {/* Create/Edit Note Modal */}
-        {showCreateModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm bg-opacity-50 bg-black/50 flex items-center justify-center p-4 z-50"
-            onClick={() => setShowCreateModal(false)}
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-[black] rounded-[15px] shadow-2xl border-gray-200 dark:border-gray-700 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="space-y-4">
-                <div>
-                  <Input
-                    type="text"
-                    value={newNote.title}
-                    onChange={(e) =>
-                      setNewNote({ ...newNote, title: e.target.value })
-                    }
-                    className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
-                    placeholder="Note Title *"
-                  />
-                </div>
-
-                <div>
-                  <Textarea
-                    value={newNote.description}
-                    onChange={(e) =>
-                      setNewNote({ ...newNote, description: e.target.value })
-                    }
-                    className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
-                    placeholder="Description (optional)"
-                    rows="3"
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <div className="flex gap-2">
-                      <Select
-                        value={newNote.department}
-                        onValueChange={(value) =>
-                          setNewNote({ ...newNote, department: value })
-                        }
-                      >
-                        <SelectTrigger className="flex-1 border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white">
-                          <SelectValue placeholder="Department *" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-[black] border-gray-200 dark:border-gray-700 max-h-[300px]">
-                          {departments.map((dept) => (
-                            <SelectItem
-                              key={dept}
-                              className="cursor-pointer h-10 px-5"
-                              value={dept}
-                            >
-                              {dept}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    {newNote.department &&
-                      !departments.includes(newNote.department) && (
-                        <p className="text-xs text-blue-500 mt-1">
-                          New department will be created
-                        </p>
-                      )}
-                  </div>
-
-                  <div>
-                    {newNote.department ? (
-                      <Select
-                        value={newNote.subject}
-                        onValueChange={(value) =>
-                          setNewNote({ ...newNote, subject: value })
-                        }
-                      >
-                        <SelectTrigger className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white">
-                          <SelectValue placeholder="Select Subject *" />
-                        </SelectTrigger>
-                        <SelectContent className="bg-white dark:bg-[black] border-gray-200 dark:border-gray-700 max-h-[300px]">
-                          {modalSubjects.length > 0 ? (
-                            modalSubjects.map((subject) => (
-                              <SelectItem
-                                key={subject}
-                                className="cursor-pointer h-10 px-5"
-                                value={subject}
-                              >
-                                {subject}
-                              </SelectItem>
-                            ))
-                          ) : (
-                            <SelectItem value="loading" disabled>
-                              Loading subjects...
-                            </SelectItem>
-                          )}
-                        </SelectContent>
-                      </Select>
-                    ) : (
-                      <Input
-                        type="text"
-                        value={newNote.subject}
-                        onChange={(e) =>
-                          setNewNote({ ...newNote, subject: e.target.value })
-                        }
-                        className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
-                        placeholder="Subject * (Select department first)"
-                        disabled
-                      />
-                    )}
-                    {newNote.department && modalSubjects.length === 0 && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        No subjects available for this department
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <Input
-                    type="text"
-                    value={newNote.tags}
-                    onChange={(e) =>
-                      setNewNote({ ...newNote, tags: e.target.value })
-                    }
-                    className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
-                    placeholder="Tags (comma separated)"
-                  />
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-center gap-2">
-                    <Input
-                      type="file"
-                      accept=".pdf"
-                      onChange={handleFileChange}
-                      className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
-                    />
-                    {pdfFile && (
-                      <span className="text-sm text-gray-600 dark:text-gray-400">
-                        {pdfFile.name}
-                      </span>
-                    )}
-                  </div>
-                  {editingNote?.fileUrl && !pdfFile && (
-                    <div className="flex p-3 border-2 border-dashed rounded-[15px] mt-5 flex items-center justify-between">
-                      <p className="text-xs text-gray-500">
-                        {editingNote.fileName || "PDF file"}
-                      </p>
-                      <div
-                        className="flex p-2 border rounded-[15px] cursor-pointer"
-                        onClick={() => handleViewPdf(editingNote.fileUrl)}
-                      >
-                        <Eye className="w-4 h-4 icon icon" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex gap-3 mt-6">
-                <Button
-                  onClick={() => setShowCreateModal(false)}
-                  className="flex-1 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-gray-200"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={handleCreateNote}
-                  disabled={loading}
-                  className="flex-1"
-                >
-                  {loading ? (
-                    <span className="loader w-5 h-5"></span>
-                  ) : editingNote ? (
-                    "Update Note"
-                  ) : (
-                    "Create Note"
-                  )}
-                </Button>
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </motion.div>
+        <LearnPointNoteModal
+          showCreateModal={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          newNote={newNote}
+          setNewNote={setNewNote}
+          departments={departments}
+          modalSubjects={modalSubjects}
+          pdfFile={pdfFile}
+          editingNote={editingNote}
+          loading={loading}
+          onFileChange={handleFileChange}
+          onViewPdf={handleViewPdf}
+          onSubmit={handleCreateNote}
+        />
+      </m.div>
     </div>
   );
 };

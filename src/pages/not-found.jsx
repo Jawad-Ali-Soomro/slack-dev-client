@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { Home, ArrowLeft, Search } from "lucide-react";
 
@@ -31,7 +31,7 @@ const NotFound = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-black flex items-center justify-center px-4">
-      <motion.div
+      <m.div
         className="text-center max-w-2xl mx-auto"
         variants={containerVariants}
         initial="hidden"
@@ -41,16 +41,16 @@ const NotFound = () => {
         {/* 404 Number */}
 
         {/* Error Message */}
-        <motion.div variants={itemVariants} className="mb-8 mt-10">
+        <m.div variants={itemVariants} className="mb-8 mt-10">
           <p className="text-base sm:text-lg font-bold text-gray-600 dark:text-gray-400 mb-6 px-4">
             Oops! the page you're looking for doesn't exist or has been moved.
           </p>
-        </motion.div>
+        </m.div>
 
         {/* Loader animation */}
 
         {/* Action Buttons */}
-        <motion.div
+        <m.div
           variants={itemVariants}
           className="flex flex-col  gap-3 sm:gap-4 justify-center items-center px-4 w-full"
         >
@@ -61,10 +61,10 @@ const NotFound = () => {
           >
             <ArrowLeft />
           </Button>
-        </motion.div>
+        </m.div>
 
         {/* Additional Help */}
-        <motion.div variants={itemVariants} className="mt-8 sm:mt-12 px-4">
+        <m.div variants={itemVariants} className="mt-8 sm:mt-12 px-4">
           <p className="text-sm text-gray-500 dark:text-gray-400 font-bold">
             Need help? Try searching for what you're looking for or{" "}
             <button
@@ -74,8 +74,8 @@ const NotFound = () => {
               Contact Support
             </button>
           </p>
-        </motion.div>
-      </motion.div>
+        </m.div>
+      </m.div>
     </div>
   );
 };

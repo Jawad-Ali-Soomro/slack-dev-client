@@ -125,7 +125,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <Card
-        className="w-full max-w-md mx-4 bg-white drak:bg-black"
+        className="w-full max-w-md mx-4 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10"
         onClick={(e) => e.stopPropagation()}
       >
         <CardHeader>

@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import { Bell, Check, CheckCircle, Loader2, X } from "lucide-react";
 import { Button } from "./ui/button";
 import {
@@ -114,7 +114,7 @@ const TeamInviteBell = ({ onResponded }) => {
                 const isResponding =
                   respondingId === (notification.id || notification._id);
                 return (
-                  <motion.div
+                  <m.div
                     key={notification.id || notification._id}
                     initial={{ opacity: 0, y: -8 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -175,7 +175,7 @@ const TeamInviteBell = ({ onResponded }) => {
                         ) : null}
                       </div>
                     </div>
-                  </motion.div>
+                  </m.div>
                 );
               })}
             </AnimatePresence>

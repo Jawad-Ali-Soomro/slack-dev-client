@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   Search,
   Filter,
@@ -61,6 +61,858 @@ const formatAmountForDisplay = (amountInMinorUnits, currency = "usd") => {
   }).format(amountInMinorUnits / 100);
 };
 
+function textOr(value, fallback) {
+  return value || fallback;
+}
+
+function getApiBase() {
+  return import.meta.env.VITE_API_URL || "http://localhost:4000";
+}
+
+function getCurrentUserId(user) {
+  return user?.id || user?._id;
+}
+
+function isProjectCreatedByUser(project, user) {
+  if (!project || !project.createdBy) return false;
+  const creatorId = project.createdBy.id || project.createdBy._id;
+  const currentUserId = getCurrentUserId(user);
+  return Boolean(creatorId && currentUserId && creatorId === currentUserId);
+}
+
+function getIsSelectedProjectCreator(selectedProject, user) {
+  if (!selectedProject) return false;
+  return isProjectCreatedByUser(selectedProject, user);
+}
+
+function getCanSelectedProjectDownload(
+  selectedProject,
+  isSelectedProjectCreator,
+  isPrivileged,
+) {
+  if (!selectedProject) return false;
+  if (selectedProject.hasPurchased) return true;
+  if (isSelectedProjectCreator) return true;
+  if (isPrivileged && !selectedProject.isActive) return true;
+  return false;
+}
+
+function ExplorePreviewGallery({ images = [], title }) {
+  if (!images.length) {
+    return (
+      <div className="rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 h-48 flex items-center justify-center text-gray-500 dark:text-gray-400">
+        No preview images provided
+      </div>
+    );
+  }
+
+  const base = getApiBase();
+
+  if (images.length === 1) {
+    return (
+      <div className="rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm">
+        <img
+          src={`${base}${images[0]}`}
+          alt={`${title} preview`}
+          className="w-full object-cover"
+        />
+      </div>
+    );
+  }
+
+  if (images.length === 2) {
+    return (
+      <div className="flex flex-col gap-4">
+        {images.map((img, idx) => (
+          <div
+            key={idx}
+            className="rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm"
+          >
+            <img
+              src={`${base}${img}`}
+              alt={`${title} preview ${idx + 1}`}
+              className="w-full h-55 object-cover"
+            />
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      {images.map((img, idx) => (
+        <div
+          key={idx}
+          className="relative group rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm"
+        >
+          <img
+            src={`${base}${img}`}
+            alt={`${title} preview ${idx + 1}`}
+            className="w-full h-55 object-cover group-hover:scale-105 transition-transform duration-300"
+          />
+          <span className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-[15px]">
+            #{idx + 1}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ExploreAdminStatusTabs({ isAdmin, statusTab, onStatusTabChange }) {
+  if (!isAdmin) return null;
+
+  return (
+    <div className="grid grid-cols-2 gap-3 mb-4 md:w-[400px]">
+      <Button
+        variant={statusTab === "active" ? "default" : "outline"}
+        onClick={() => onStatusTabChange("active")}
+      >
+        Active
+      </Button>
+      <Button
+        variant={statusTab === "inactive" ? "default" : "outline"}
+        onClick={() => onStatusTabChange("inactive")}
+      >
+        Inactive
+      </Button>
+    </div>
+  );
+}
+
+function getProjectPreviewSrc(project) {
+  const images = project.previewImages;
+  if (!images || images.length === 0) return "";
+  const base = getApiBase().replace(/\/$/, "");
+  const imgPath = images[0];
+  if (!imgPath) return "";
+  return `${base}${imgPath.startsWith("/") ? imgPath : `/${imgPath}`}`;
+}
+
+function ExploreProjectCardMedia({ project, isCreator }) {
+  const previewSrc = getProjectPreviewSrc(project);
+  const hasPreview = Boolean(previewSrc);
+
+  if (!hasPreview) {
+    return (
+      <div className="relative w-full aspect-square bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+        <span className="text-gray-400 dark:text-gray-500">No Image</span>
+        <div className="absolute top-2 right-2">
+          <Badge className="bg-black/70 text-white border-none backdrop-blur-sm">
+            <IoPricetagsSharp className="w-3 h-3 mr-1" />$
+            {project.price}
+          </Badge>
+        </div>
+        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+          <h3 className="text-lg font-bold text-white line-clamp-1">
+            {project.title}
+          </h3>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-full border border-gray-300 dark:border-gray-700 rounded-[15px] h-[310px] bg-gray-100 dark:bg-gray-800 overflow-hidden">
+      <img
+        src={previewSrc}
+        alt={project.title}
+        className="w-full h-full group-hover:scale-105 transition-transform duration-300"
+      />
+      <div className="absolute top-2 right-2">
+        <Badge className="bg-black/70 text-white border-none backdrop-blur-sm text-xs">
+          <IoPricetagsSharp className="w-3 h-3 mr-1" />$
+          {project.price}
+        </Badge>
+      </div>
+      <div className="absolute bottom-0 left-0 right-0 h-full flex items-end bg-gradient-to-t from-black/80 via-black/60 to-transparent p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+        <h3 className="text-lg font-bold text-white line-clamp-1">
+          {project.title}
+        </h3>
+      </div>
+      {isCreator && (
+        <div className="absolute top-2 left-2">
+          <Badge className="bg-blue-500/80 text-white border-none backdrop-blur-sm">
+            Your Project
+          </Badge>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ExploreProjectCard({
+  project,
+  index,
+  itemVariants,
+  isCreator,
+  onView,
+}) {
+  return (
+    <m.div
+      variants={itemVariants}
+      initial="hidden"
+      animate="visible"
+      transition={{ delay: index * 0.15 }}
+      className="group relative bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] overflow-hidden border dark:border-none shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+      onClick={() => onView(project)}
+    >
+      <ExploreProjectCardMedia project={project} isCreator={isCreator} />
+    </m.div>
+  );
+}
+
+function ExploreProjectsGrid({
+  loading,
+  projects,
+  itemVariants,
+  user,
+  onViewProject,
+}) {
+  if (loading) {
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[67vh] overflow-scroll pb-20">
+        {[1, 2, 3, 4, 5, 6].map(() => {
+          return <Skeleton className={"w-full h-[310px]"} />;
+        })}
+      </div>
+    );
+  }
+
+  if (projects.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <h3 className="text-xl text-gray-900 dark:text-white mb-2">
+          No projects found
+        </h3>
+        <p className="text-gray-600 dark:text-gray-400">
+          Try adjusting your search or filters
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <m.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+      className="grid grid-cols- md:grid-cols-2 lg:grid-cols-3 gap-5 max-h-[68vh] overflow-scroll"
+    >
+      {projects.map((project, index) => (
+        <ExploreProjectCard
+          key={project._id || project.id}
+          project={project}
+          index={index}
+          itemVariants={itemVariants}
+          isCreator={isProjectCreatedByUser(project, user)}
+          onView={onViewProject}
+        />
+      ))}
+    </m.div>
+  );
+}
+
+function ExplorePagination({ pagination, setPagination }) {
+  if (pagination.pages <= 1) return null;
+
+  return (
+    <div className="flex items-center absolute right-5 -bottom-0 justify-end w-full col-span-3 gap-2 mt-8 mb-10">
+      <Button
+        className={"w-10 h-10 bg-white hover:bg-white text-black"}
+        onClick={() =>
+          setPagination((prev) => ({ ...prev, page: prev.page - 1 }))
+        }
+        disabled={pagination.page === 1}
+      >
+        <ChevronLeft className="w-4 h-4" />
+      </Button>
+
+      <div className="flex items-center gap-1">
+        {Array.from({ length: pagination.pages }, (_, i) => i + 1)
+          .filter((page) => {
+            if (pagination.pages <= 9) return true;
+
+            return (
+              page === 1 ||
+              page === pagination.pages ||
+              Math.abs(page - pagination.page) <= 1
+            );
+          })
+          .map((page, index, arr) => {
+            const prevPage = arr[index - 1];
+
+            return (
+              <div key={page} className="flex items-center gap-1">
+                {prevPage && page - prevPage > 1 && (
+                  <span className="px-2 text-muted-foreground">...</span>
+                )}
+
+                <Button
+                  size="sm"
+                  className={`w-10 h-10 font-bold bg-[#ff914b] hover:bg-[#ff914b] ${pagination.page === page ? "bg-[#ff914b] dark:text-white hover:bg-[#ff914b]" : "bg-white text-black hover:bg-gray-100"}`}
+                  onClick={() =>
+                    setPagination((prev) => ({ ...prev, page }))
+                  }
+                >
+                  {page < 10 ? `0${page}` : page}
+                </Button>
+              </div>
+            );
+          })}
+      </div>
+
+      <Button
+        className={"w-10 h-10 bg-white hover:bg-white text-black"}
+        onClick={() =>
+          setPagination((prev) => ({ ...prev, page: prev.page + 1 }))
+        }
+        disabled={pagination.page === pagination.pages}
+      >
+        <ChevronRight className="w-4 h-4" />
+      </Button>
+    </div>
+  );
+}
+
+function ExploreProjectBadges({ project, isSelectedProjectCreator }) {
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      <Badge className="bg-gray-50 border border-grary-300 text-gray-700 dark:bg-gray-800 dark:text-gray-200 px-3 py-1.5 rounded-[15px] text-xs font-semibold">
+        {textOr(project.category, "General")}
+      </Badge>
+      {isSelectedProjectCreator && (
+        <Badge className="bg-blue-500 text-white px-3 py-1 rounded-[15px] text-xs font-semibold">
+          Your project
+        </Badge>
+      )}
+      {project.hasPurchased && !isSelectedProjectCreator && (
+        <Badge className="bg-green-500 text-white px-3 py-1 rounded-[15px] text-xs font-semibold">
+          Purchased
+        </Badge>
+      )}
+    </div>
+  );
+}
+
+function ExploreProjectSidebarStats({ project }) {
+  return (
+    <div className="rounded-3xl border border-gray-100 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] dark:border-gray-800 shadow-sm p-3 px-5">
+      <div className="flex items-baseline gap-2 mt-2">
+        <span className="text-5xl font-black text-gray-900 dark:text-white">
+          ${project.price}
+        </span>
+      </div>
+      <div className="mt-4 space-y-3 text-sm text-gray-600 dark:text-white">
+        <div className="flex items-center justify-between p-2 pr-5 bg-white dark:bg-[rgba(255,255,255,.05)] rounded-[15px]">
+          <div className="flex p-3 bg-white dark:text-black border dark:border-none text-lg rounded-[15px]">
+            <BiCategory />
+          </div>
+          <span className="font-semibold text-gray-900 dark:text-white capitalize">
+            {textOr(project.category, "General")}
+          </span>
+        </div>
+        <div className="flex items-center justify-between p-2 pr-5 bg-white dark:bg-[rgba(255,255,255,.05)] rounded-[15px]">
+          <div className="flex p-3 bg-white dark:text-black border dark:border-none text-lg rounded-[15px]">
+            <BiStore />
+          </div>
+          <span className="font-semibold text-gray-900 dark:text-white">
+            {textOr(project.purchaseCount, 0)}
+          </span>
+        </div>
+        <div className="flex items-center justify-between p-2 pr-5 bg-white dark:bg-[rgba(255,255,255,.05)] rounded-[15px]">
+          <div className="flex p-3 bg-white dark:text-black border dark:border-none text-lg rounded-[15px]">
+            <BiCalendar />
+          </div>
+          <span className="font-semibold text-gray-900 dark:text-white">
+            {new Date(project.createdAt || Date.now()).toLocaleDateString()}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ExploreProjectCreatorCard({ project }) {
+  return (
+    <div className="rounded-3xl border border-gray-100 dark:border-gray-800 bg-[#eee] dark:bg-[rgba(255,255,255,.1)] shadow-sm p-3">
+      <div className="flex items-center gap-3">
+        <UserAvatar user={project.createdBy} size="xl" />
+        <div>
+          <p className="font-semibold text-gray-900 dark:text-white">
+            {textOr(project.createdBy?.username, "Unknown creator")}
+          </p>
+          <p className="text-xs text-gray-500 dark:text-gray-400">
+            {textOr(project.createdBy?.email, "Private email")}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ExploreProjectTags({ tags }) {
+  if (!tags || tags.length === 0) return null;
+
+  return (
+    <div className="flex">
+      <div className="flex flex-wrap gap-2">
+        {tags.map((tag, idx) => (
+          <Badge key={idx} className="rounded-[15px] px-3 py-1 text-xs">
+            {tag}
+          </Badge>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ExploreProjectActions({
+  project,
+  canDownload,
+  isPrivileged,
+  isPreparingCheckout,
+  onDownload,
+  onCheckout,
+  onApprove,
+  onReject,
+}) {
+  const showModeration = isPrivileged && !project.isActive;
+
+  return (
+    <div className="space-y-3">
+      {canDownload ? (
+        <Button
+          onClick={onDownload}
+          className="w-full h-12 text-base font-semibold syne"
+        >
+          <Download className="w-5 h-5 mr-2" />
+          Download project
+        </Button>
+      ) : (
+        <Button
+          onClick={onCheckout}
+          className="w-full h-12 text-base font-semibold syne"
+          disabled={isPreparingCheckout}
+        >
+          <ShoppingCart className="w-5 h-5 mr-2" />
+          {isPreparingCheckout
+            ? "Preparing checkout..."
+            : `Purchase $${project.price}`}
+        </Button>
+      )}
+      <div className="grid grid-cols-2 gap-2">
+        {showModeration && (
+          <Button
+            onClick={onApprove}
+            className="h-12 text-base font-semibold bg-green-600 hover:bg-green-600"
+          >
+            <PiCheck />
+          </Button>
+        )}
+
+        {showModeration && (
+          <Button
+            onClick={onReject}
+            className="h-12 text-base font-semibold bg-red-600 text-white hover:bg-red-600 text-[20px]"
+          >
+            <PiX />
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ExploreProjectDetailModal({
+  open,
+  project,
+  isSelectedProjectCreator,
+  canSelectedProjectDownload,
+  isPrivileged,
+  isPreparingCheckout,
+  onClose,
+  onDownload,
+  onCheckout,
+  onApprove,
+  onReject,
+}) {
+  if (!open || !project) return null;
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm icon flex items-center justify-center p-4 z-50"
+      onClick={onClose}
+    >
+      <m.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-2xl p-6 md:p-8 max-w-6xl w-full flex flex-col shadow-2xl overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex-shrink-0 flex  gap-4  pb-2">
+          <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white line-clamp-1">
+                {project.title}
+              </h2>
+            </div>
+          </div>
+          <ExploreProjectBadges
+            project={project}
+            isSelectedProjectCreator={isSelectedProjectCreator}
+          />
+        </div>
+        <div className="flex text-justify max-w-[70%] line-clamp-2 icon">
+          <p className="line-clamp-2 text-sm icon max-w-5xl">
+            {project.description}
+          </p>
+        </div>
+        <div className="flex-1 overflow-hidden mt-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
+            <div className="lg:col-span-2 flex flex-col gap-6 h-full overflow-hidden">
+              <ExplorePreviewGallery
+                images={project.previewImages}
+                title={project.title}
+              />
+            </div>
+
+            <div className="space-y-5 h-full overflow-auto">
+              <ExploreProjectSidebarStats project={project} />
+              <ExploreProjectCreatorCard project={project} />
+              <ExploreProjectTags tags={project.tags} />
+              <ExploreProjectActions
+                project={project}
+                canDownload={canSelectedProjectDownload}
+                isPrivileged={isPrivileged}
+                isPreparingCheckout={isPreparingCheckout}
+                onDownload={onDownload}
+                onCheckout={onCheckout}
+                onApprove={onApprove}
+                onReject={onReject}
+              />
+            </div>
+          </div>
+        </div>
+      </m.div>
+    </div>
+  );
+}
+
+function shouldShowCheckoutModal(
+  open,
+  checkoutClientSecret,
+  checkoutProject,
+  stripe,
+) {
+  if (!open) return false;
+  if (!checkoutClientSecret) return false;
+  if (!checkoutProject) return false;
+  if (!stripe) return false;
+  return true;
+}
+
+function ExploreCheckoutModal({
+  open,
+  checkoutClientSecret,
+  checkoutProject,
+  checkoutAmount,
+  checkoutCurrency,
+  onClose,
+  onSuccess,
+}) {
+  if (
+    !shouldShowCheckoutModal(
+      open,
+      checkoutClientSecret,
+      checkoutProject,
+      stripePromise,
+    )
+  ) {
+    return null;
+  }
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/60 backdrop-blur-sm icon flex items-center justify-center p-4 z-50"
+      onClick={onClose}
+    >
+      <m.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-200 dark:border-white/10 p-6 md:p-8 max-w-md w-full shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between mb-4">
+          <div>
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">
+              Secure Checkout
+            </p>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-white mt-1">
+              {checkoutProject?.title}
+            </h3>
+            <p className="text-sm text-muted-foreground">
+              {formatAmountForDisplay(
+                textOr(checkoutAmount, 0),
+                checkoutCurrency,
+              )}
+            </p>
+          </div>
+          <Button variant="ghost" size="sm" onClick={onClose}>
+            <X className="w-4 h-4 icon" />
+          </Button>
+        </div>
+        <Elements
+          stripe={stripePromise}
+          options={{ clientSecret: checkoutClientSecret }}
+        >
+          <CheckoutForm
+            amount={checkoutAmount}
+            currency={checkoutCurrency}
+            onSuccess={onSuccess}
+            onCancel={onClose}
+          />
+        </Elements>
+      </m.div>
+    </div>
+  );
+}
+
+function ExploreUploadPreviewField({ uploadForm, setUploadForm, onFileChange }) {
+  const count = uploadForm.previewImages.length;
+  const label =
+    count > 0
+      ? `${count} image(s) selected`
+      : "Click to upload preview images";
+
+  return (
+    <div className="space-y-3">
+      <label className="group flex min-h-[170px] w-full cursor-pointer flex-col items-center justify-center rounded-[22px] border-2 border-dashed border-gray-300 bg-gray-50 px-6 py-8 text-center transition-colors hover:border-[#ff914b] hover:bg-orange-50 dark:border-gray-700 dark:bg-gray-900/50 dark:hover:bg-gray-900">
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 transition-transform group-hover:scale-105 dark:border-gray-700 dark:bg-black dark:text-gray-200">
+          <ImageIcon className="h-5 w-5 icon" />
+        </div>
+        <div className="flex flex-col items-center justify-center">
+          <span className="text-sm font-semibold text-[#ff914b]">{label}</span>
+          <span className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+            Up to 4 screenshots · PNG, JPG or GIF
+          </span>
+        </div>
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={(e) => onFileChange(e, "previewImages")}
+          className="hidden"
+        />
+      </label>
+      {count > 0 && (
+        <div className="flex flex-wrap gap-2">
+          {uploadForm.previewImages.map((file, idx) => (
+            <Badge
+              key={idx}
+              variant="default"
+              className="flex px-5 py-2 bg-violet-500 items-center gap-1"
+            >
+              {file.name}
+              <X
+                className="w-3 h-3 cursor-pointer"
+                onClick={() => {
+                  const newImages = uploadForm.previewImages.filter(
+                    (_, i) => i !== idx,
+                  );
+                  setUploadForm({
+                    ...uploadForm,
+                    previewImages: newImages,
+                  });
+                }}
+              />
+            </Badge>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ExploreUploadZipField({ uploadForm, onFileChange }) {
+  const label = uploadForm.zipFile
+    ? "ZIP file selected"
+    : "Click to upload project ZIP";
+
+  return (
+    <div className="space-y-3">
+      <input
+        type="file"
+        accept=".zip,application/zip,application/x-zip-compressed"
+        onChange={(e) => onFileChange(e, "zipFile")}
+        className="hidden"
+        id="explore-zip-upload"
+        required
+      />
+      <label
+        htmlFor="explore-zip-upload"
+        className="group flex min-h-[170px] cursor-pointer flex-col items-center justify-center rounded-[22px] border-2 border-dashed border-gray-300 bg-gray-50 px-6 py-8 text-center transition-colors hover:border-[#ff914b] hover:bg-orange-50 dark:border-gray-700 dark:bg-gray-900/50 dark:hover:bg-gray-900"
+      >
+        <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 transition-transform group-hover:scale-105 dark:border-gray-700 dark:bg-black dark:text-gray-200">
+          <FileArchive className="h-5 w-5 icon" />
+        </div>
+        <p className="text-sm font-semibold text-[#ff914b]">{label}</p>
+        <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+          ZIP archive only
+        </p>
+      </label>
+    </div>
+  );
+}
+
+function ExploreUploadSubmitLabel({ uploading }) {
+  if (uploading) {
+    return (
+      <>
+        <Upload className="w-4 h-4 icon mr-2 animate-spin" />
+        Uploading...
+      </>
+    );
+  }
+  return (
+    <>
+      <Upload className="w-4 h-4 icon mr-2" />
+      Upload Project
+    </>
+  );
+}
+
+function ExploreUploadModal({
+  open,
+  uploadForm,
+  setUploadForm,
+  uploading,
+  onClose,
+  onSubmit,
+  onFileChange,
+}) {
+  if (!open) return null;
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
+      onClick={onClose}
+    >
+      <m.div
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-2xl p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <form onSubmit={onSubmit} className="space-y-4">
+          <div>
+            <Input
+              value={uploadForm.title}
+              onChange={(e) =>
+                setUploadForm({ ...uploadForm, title: e.target.value })
+              }
+              placeholder="Enter project title"
+              required
+            />
+          </div>
+
+          <div>
+            <Textarea
+              value={uploadForm.description}
+              onChange={(e) =>
+                setUploadForm({
+                  ...uploadForm,
+                  description: e.target.value,
+                })
+              }
+              placeholder="Describe your project..."
+              required
+              rows={4}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Input
+                type="number"
+                step="0.01"
+                min="0"
+                value={uploadForm.price}
+                onChange={(e) =>
+                  setUploadForm({ ...uploadForm, price: e.target.value })
+                }
+                placeholder="0.00"
+                required
+              />
+            </div>
+
+            <div>
+              <Select
+                value={uploadForm.category || undefined}
+                onValueChange={(value) =>
+                  setUploadForm({ ...uploadForm, category: value })
+                }
+                required
+              >
+                <SelectTrigger className="capitalize">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem className={"px-5"} value="web development">
+                    Web Development
+                  </SelectItem>
+                  <SelectItem className={"px-5"} value="mobile development">
+                    Mobile App
+                  </SelectItem>
+                  <SelectItem className={"px-5"} value="web design">
+                    UI/UX Design
+                  </SelectItem>
+                  <SelectItem className={"px-5"} value="game development">
+                    Game Development
+                  </SelectItem>
+                  <SelectItem className={"px-5"} value="other">
+                    Other
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div>
+            <Input
+              value={uploadForm.tags}
+              onChange={(e) =>
+                setUploadForm({ ...uploadForm, tags: e.target.value })
+              }
+              placeholder="react, javascript, ui"
+            />
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <ExploreUploadPreviewField
+              uploadForm={uploadForm}
+              setUploadForm={setUploadForm}
+              onFileChange={onFileChange}
+            />
+            <ExploreUploadZipField
+              uploadForm={uploadForm}
+              onFileChange={onFileChange}
+            />
+          </div>
+
+          <div className="flex justify-end space-x-3 mt-6">
+            <Button type="submit" disabled={uploading} className="w-full">
+              <ExploreUploadSubmitLabel uploading={uploading} />
+            </Button>
+          </div>
+        </form>
+      </m.div>
+    </div>
+  );
+}
+
+
 const Explore = () => {
   document.title = "Explore - Discover Projects";
 
@@ -100,86 +952,16 @@ const Explore = () => {
   const [statusTab, setStatusTab] = useState("active");
   const [isPreparingCheckout, setIsPreparingCheckout] = useState(false);
 
-  const getCurrentUserId = () => user?.id || user?._id;
-
-  const isProjectCreatedByUser = (project) => {
-    if (!project || !project.createdBy) return false;
-    const creatorId = project.createdBy.id || project.createdBy._id;
-    const currentUserId = getCurrentUserId();
-    return creatorId && currentUserId && creatorId === currentUserId;
-  };
-
-  const isSelectedProjectCreator = selectedProject
-    ? isProjectCreatedByUser(selectedProject)
-    : false;
   const isPrivileged = user?.role === "superadmin";
-
-  const canSelectedProjectDownload = selectedProject
-    ? selectedProject.hasPurchased ||
-      isSelectedProjectCreator ||
-      (isPrivileged && !selectedProject.isActive) // 👈 key
-    : false;
-
-  const renderPreviewGallery = (images = []) => {
-    if (!images.length) {
-      return (
-        <div className="rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-700 h-48 flex items-center justify-center text-gray-500 dark:text-gray-400">
-          No preview images provided
-        </div>
-      );
-    }
-
-    if (images.length === 1) {
-      return (
-        <div className="rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm">
-          <img
-            src={`${import.meta.env.VITE_API_URL || "http://localhost:4000"}${images[0]}`}
-            alt={`${selectedProject.title} preview`}
-            className="w-full object-cover"
-          />
-        </div>
-      );
-    }
-
-    if (images.length === 2) {
-      return (
-        <div className="flex flex-col gap-4">
-          {images.map((img, idx) => (
-            <div
-              key={idx}
-              className="rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm"
-            >
-              <img
-                src={`${import.meta.env.VITE_API_URL || "http://localhost:4000"}${img}`}
-                alt={`${selectedProject.title} preview ${idx + 1}`}
-                className="w-full h-55 object-cover"
-              />
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    return (
-      <div className="grid grid-cols-2 gap-4">
-        {images.map((img, idx) => (
-          <div
-            key={idx}
-            className="relative group rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-800 shadow-sm"
-          >
-            <img
-              src={`${import.meta.env.VITE_API_URL || "http://localhost:4000"}${img}`}
-              alt={`${selectedProject.title} preview ${idx + 1}`}
-              className="w-full h-55 object-cover group-hover:scale-105 transition-transform duration-300"
-            />
-            <span className="absolute top-3 left-3 bg-black/60 text-white text-xs px-2 py-1 rounded-[15px]">
-              #{idx + 1}
-            </span>
-          </div>
-        ))}
-      </div>
-    );
-  };
+  const isSelectedProjectCreator = getIsSelectedProjectCreator(
+    selectedProject,
+    user,
+  );
+  const canSelectedProjectDownload = getCanSelectedProjectDownload(
+    selectedProject,
+    isSelectedProjectCreator,
+    isPrivileged,
+  );
 
   const loadProjects = async () => {
     try {
@@ -379,7 +1161,7 @@ const Explore = () => {
 
   return (
     <div className="pt-10">
-      <motion.div className="mx-auto relative">
+      <m.div className="mx-auto relative">
         {/* Header */}
         <div className="flex py-6 gap-3 items-center justify-between fixed z-10 md:-top-3 -top-30 z-10">
           <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
@@ -389,7 +1171,18 @@ const Explore = () => {
             <h1 className="text-2xl font-bold">Explore Projects</h1>
           </div>
           <Button
-            onClick={() => setShowUploadModal(true)}
+            onClick={() => {
+              setUploadForm({
+                title: "",
+                description: "",
+                price: "",
+                category: "",
+                tags: "",
+                zipFile: null,
+                previewImages: [],
+              });
+              setShowUploadModal(true);
+            }}
             className="h-14 text-white font-bold dark:text-black md:w-[200px] w-full"
           >
             <Plus className="w-4 h-4 icon mr-2" />
@@ -398,7 +1191,7 @@ const Explore = () => {
         </div>
 
         {/* Filters */}
-        <motion.div variants={itemVariants} className="mb-8">
+        <m.div variants={itemVariants} className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex flex-col sm:flex-row gap-4 flex-1">
               <div className="relative">
@@ -456,630 +1249,93 @@ const Explore = () => {
                 </SelectContent>
               </Select>
             </div>
-            {isAdmin && (
-              <div className="grid grid-cols-2 gap-3 mb-4 md:w-[400px]">
-                <Button
-                  variant={statusTab === "active" ? "default" : "outline"}
-                  onClick={() => setStatusTab("active")}
-                >
-                  Active
-                </Button>
-                <Button
-                  variant={statusTab === "inactive" ? "default" : "outline"}
-                  onClick={() => setStatusTab("inactive")}
-                >
-                  Inactive
-                </Button>
-              </div>
-            )}
+            <ExploreAdminStatusTabs
+              isAdmin={isAdmin}
+              statusTab={statusTab}
+              onStatusTabChange={setStatusTab}
+            />
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Projects Grid */}
-        {loading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[67vh] overflow-scroll pb-20">
-            {[1, 2, 3, 4, 5, 6].map(() => {
-              return <Skeleton className={"w-full h-[310px]"} />;
-            })}
-          </div>
-        ) : projects.length === 0 ? (
-          <div className="text-center py-12">
-            <h3 className="text-xl text-gray-900 dark:text-white mb-2">
-              No projects found
-            </h3>
-            <p className="text-gray-600 dark:text-gray-400">
-              Try adjusting your search or filters
-            </p>
-          </div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            className="grid grid-cols- md:grid-cols-2 lg:grid-cols-3 gap-5 max-h-[68vh] overflow-scroll"
-          >
-            {projects.map((project, index) => {
-              const isCreator = isProjectCreatedByUser(project);
-              return (
-                <motion.div
-                  key={project._id || project.id}
-                  variants={itemVariants}
-                  initial="hidden"
-                  animate="visible"
-                  transition={{ delay: index * 0.15 }}
-                  className="group relative bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] overflow-hidden border dark:border-none shadow-sm hover:shadow-lg transition-shadow duration-300 cursor-pointer"
-                  onClick={() => handleViewProject(project)}
-                >
-                  {/* Preview Image */}
-                  {project.previewImages && project.previewImages.length > 0 ? (
-                    <div className="relative w-full border border-gray-300 dark:border-gray-700 rounded-[15px] h-[315px] bg-gray-100 dark:bg-gray-800 overflow-hidden">
-                      <img
-                        src={(() => {
-                          const base = (
-                            import.meta.env.VITE_API_URL ||
-                            "http://localhost:4000"
-                          ).replace(/\/$/, "");
-                          const path = project.previewImages[0];
-                          return path
-                            ? `${base}${path.startsWith("/") ? path : `/${path}`}`
-                            : "";
-                        })()}
-                        alt={project.title}
-                        className="w-full h-full group-hover:scale-105 transition-transform duration-300"
-                      />
-                      {/* Price Badge - Top Right */}
-                      <div className="absolute top-2 right-2">
-                        <Badge className="bg-black/70 text-white border-none backdrop-blur-sm text-xs">
-                          <IoPricetagsSharp className="w-3 h-3 mr-1" />$
-                          {project.price}
-                        </Badge>
-                      </div>
-                      {/* Title - Bottom Left (shown on hover) */}
-                      <div className="absolute bottom-0 left-0 right-0 h-full flex items-end bg-gradient-to-t from-black/80 via-black/60 to-transparent p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                        <h3 className="text-lg font-bold text-white line-clamp-1">
-                          {project.title}
-                        </h3>
-                      </div>
-                      {/* Creator Badge - Top Left (if creator) */}
-                      {isCreator && (
-                        <div className="absolute top-2 left-2">
-                          <Badge className="bg-blue-500/80 text-white border-none backdrop-blur-sm">
-                            Your Project
-                          </Badge>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="relative w-full aspect-square bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                      <span className="text-gray-400 dark:text-gray-500">
-                        No Image
-                      </span>
-                      {/* Price Badge - Top Right */}
-                      <div className="absolute top-2 right-2">
-                        <Badge className="bg-black/70 text-white border-none backdrop-blur-sm">
-                          <IoPricetagsSharp className="w-3 h-3 mr-1" />$
-                          {project.price}
-                        </Badge>
-                      </div>
-                      {/* Title - Bottom Left (shown on hover) */}
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/60 to-transparent p-4 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-                        <h3 className="text-lg font-bold text-white line-clamp-1">
-                          {project.title}
-                        </h3>
-                      </div>
-                    </div>
-                  )}
-                </motion.div>
-              );
-            })}
-          </motion.div>
-        )}
+        <ExploreProjectsGrid
+          loading={loading}
+          projects={projects}
+          itemVariants={itemVariants}
+          user={user}
+          onViewProject={handleViewProject}
+        />
 
         {/* Pagination */}
-      </motion.div>
-      {pagination.pages > 1 && (
-        <div className="flex items-center absolute right-5 -bottom-0 justify-end w-full col-span-3 gap-2 mt-8 mb-10">
-          {/* Previous */}
-          <Button
-            className={"w-10 h-10 bg-white hover:bg-white text-black"}
-            onClick={() =>
-              setPagination((prev) => ({ ...prev, page: prev.page - 1 }))
-            }
-            disabled={pagination.page === 1}
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </Button>
+      </m.div>
+      <ExplorePagination
+        pagination={pagination}
+        setPagination={setPagination}
+      />
+      <ExploreProjectDetailModal
+        open={showProjectModal}
+        project={selectedProject}
+        isSelectedProjectCreator={isSelectedProjectCreator}
+        canSelectedProjectDownload={canSelectedProjectDownload}
+        isPrivileged={isPrivileged}
+        isPreparingCheckout={isPreparingCheckout}
+        onClose={() => setShowProjectModal(false)}
+        onDownload={async () => {
+          try {
+            await exploreService.downloadProject(
+              selectedProject._id || selectedProject.id,
+            );
+            toast.success("Download started!");
+          } catch (error) {
+            toast.error("Failed to download project");
+          }
+        }}
+        onCheckout={() => handleStartCheckout(selectedProject)}
+        onApprove={async () => {
+          try {
+            await exploreService.approveProject(
+              selectedProject._id || selectedProject.id,
+            );
+            toast.success("Project approved");
+            setShowProjectModal(false);
+            loadProjects();
+          } catch (error) {
+            toast.error("Failed to approve project");
+          }
+        }}
+        onReject={async () => {
+          try {
+            await exploreService.rejectProject(
+              selectedProject._id || selectedProject.id,
+            );
+            toast.success("Project Rejected");
+            setShowProjectModal(false);
+            loadProjects();
+          } catch (error) {
+            toast.error("Failed to approve project");
+          }
+        }}
+      />
 
-          {/* Page Numbers */}
-          <div className="flex items-center gap-1">
-            {Array.from({ length: pagination.pages }, (_, i) => i + 1)
-              .filter((page) => {
-                if (pagination.pages <= 9) return true;
+      <ExploreCheckoutModal
+        open={showCheckoutModal}
+        checkoutClientSecret={checkoutClientSecret}
+        checkoutProject={checkoutProject}
+        checkoutAmount={checkoutAmount}
+        checkoutCurrency={checkoutCurrency}
+        onClose={handleCloseCheckout}
+        onSuccess={handlePaymentSuccess}
+      />
 
-                return (
-                  page === 1 ||
-                  page === pagination.pages ||
-                  Math.abs(page - pagination.page) <= 1
-                );
-              })
-              .map((page, index, arr) => {
-                const prevPage = arr[index - 1];
-
-                return (
-                  <div key={page} className="flex items-center gap-1">
-                    {prevPage && page - prevPage > 1 && (
-                      <span className="px-2 text-muted-foreground">...</span>
-                    )}
-
-                    <Button
-                      size="sm"
-                      className={`w-10 h-10 font-bold bg-[#ff914b] hover:bg-[#ff914b] ${pagination.page === page ? "bg-[#ff914b] dark:text-white hover:bg-[#ff914b]" : "bg-white text-black hover:bg-gray-100"}`}
-                      onClick={() =>
-                        setPagination((prev) => ({ ...prev, page }))
-                      }
-                    >
-                      {page < 10 ? `0${page}` : page}
-                    </Button>
-                  </div>
-                );
-              })}
-          </div>
-
-          {/* Next */}
-          <Button
-            className={"w-10 h-10 bg-white hover:bg-white text-black"}
-            onClick={() =>
-              setPagination((prev) => ({ ...prev, page: prev.page + 1 }))
-            }
-            disabled={pagination.page === pagination.pages}
-          >
-            <ChevronRight className="w-4 h-4" />
-          </Button>
-        </div>
-      )}
-      {/* Project Detail Modal */}
-      {showProjectModal && selectedProject && (
-        <div
-          className="fixed inset-0 bg-black/60 backdrop-blur-sm icon flex items-center justify-center p-4 z-50"
-          onClick={() => setShowProjectModal(false)}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-black border border-gray-200 dark:border-gray-700 rounded-[15px] p-6 md:p-8 max-w-6xl w-full flex flex-col shadow-2xl overflow-hidden"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex-shrink-0 flex  gap-4  pb-2">
-              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white line-clamp-1">
-                    {selectedProject.title}
-                  </h2>
-                  {/* <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Added {new Date(selectedProject.createdAt || selectedProject.updatedAt || Date.now()).toLocaleDateString()}</p> */}
-                </div>
-              </div>
-              <div className="flex items-center gap-2 flex-wrap">
-                <Badge className="bg-gray-50 border border-grary-300 text-gray-700 dark:bg-gray-800 dark:text-gray-200 px-3 py-1.5 rounded-[15px] text-xs font-semibold">
-                  {selectedProject.category || "General"}
-                </Badge>
-                {isSelectedProjectCreator && (
-                  <Badge className="bg-blue-500 text-white px-3 py-1 rounded-[15px] text-xs font-semibold">
-                    Your project
-                  </Badge>
-                )}
-                {selectedProject.hasPurchased && !isSelectedProjectCreator && (
-                  <Badge className="bg-green-500 text-white px-3 py-1 rounded-[15px] text-xs font-semibold">
-                    Purchased
-                  </Badge>
-                )}
-              </div>
-            </div>
-            <div className="flex text-justify max-w-[70%] line-clamp-2 icon">
-              <p className="line-clamp-2 text-sm icon max-w-5xl">
-                {selectedProject.description}
-              </p>
-            </div>
-            <div className="flex-1 overflow-hidden mt-6">
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-full">
-                <div className="lg:col-span-2 flex flex-col gap-6 h-full overflow-hidden">
-                  {/* Gallery */}
-                  {renderPreviewGallery(selectedProject.previewImages)}
-
-                  {/* Tags */}
-                </div>
-
-                {/* Sidebar */}
-                <div className="space-y-5 h-full overflow-auto">
-                  <div className="rounded-3xl border border-gray-100 bg-gray-100 dark:bg-[rgba(255,255,255,.1)] dark:border-gray-800 shadow-sm p-3 px-5">
-                    {/* <p className="text-sm text-gray-500 dark:text-gray-400">Price</p> */}
-                    <div className="flex items-baseline gap-2 mt-2">
-                      <span className="text-5xl font-black text-gray-900 dark:text-white">
-                        ${selectedProject.price}
-                      </span>
-                    </div>
-                    <div className="mt-4 space-y-3 text-sm text-gray-600 dark:text-white">
-                      <div className="flex items-center justify-between p-2 pr-5 bg-white dark:bg-[rgba(255,255,255,.05)] rounded-[15px]">
-                        <div className="flex p-3 bg-white dark:text-black border dark:border-none text-lg rounded-[15px]">
-                          <BiCategory />
-                        </div>
-                        <span className="font-semibold text-gray-900 dark:text-white capitalize">
-                          {selectedProject.category || "General"}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between p-2 pr-5 bg-white dark:bg-[rgba(255,255,255,.05)] rounded-[15px]">
-                        <div className="flex p-3 bg-white dark:text-black border dark:border-none text-lg rounded-[15px]">
-                          <BiStore />
-                        </div>
-                        <span className="font-semibold text-gray-900 dark:text-white">
-                          {selectedProject.purchaseCount || 0}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between p-2 pr-5 bg-white dark:bg-[rgba(255,255,255,.05)] rounded-[15px]">
-                        <div className="flex p-3 bg-white dark:text-black border dark:border-none text-lg rounded-[15px]">
-                          <BiCalendar />
-                        </div>
-                        <span className="font-semibold text-gray-900 dark:text-white">
-                          {new Date(
-                            selectedProject.createdAt || Date.now(),
-                          ).toLocaleDateString()}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="rounded-3xl border border-gray-100 dark:border-gray-800 bg-[#eee] dark:bg-[rgba(255,255,255,.1)] shadow-sm p-3">
-                    {/* <h4 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-4">Creator</h4> */}
-                    <div className="flex items-center gap-3">
-                      <UserAvatar user={selectedProject.createdBy} size="xl" />
-                      <div>
-                        <p className="font-semibold text-gray-900 dark:text-white">
-                          {selectedProject.createdBy?.username ||
-                            "Unknown creator"}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {selectedProject.createdBy?.email || "Private email"}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="flex">
-                    {selectedProject.tags &&
-                      selectedProject.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2">
-                          {selectedProject.tags.map((tag, idx) => (
-                            <Badge
-                              key={idx}
-                              className="rounded-[15px] px-3 py-1 text-xs"
-                            >
-                              {tag}
-                            </Badge>
-                          ))}
-                        </div>
-                      )}
-                  </div>
-
-                  <div className="space-y-3">
-                    {canSelectedProjectDownload ? (
-                      <Button
-                        onClick={async () => {
-                          try {
-                            await exploreService.downloadProject(
-                              selectedProject._id || selectedProject.id,
-                            );
-                            toast.success("Download started!");
-                          } catch (error) {
-                            toast.error("Failed to download project");
-                          }
-                        }}
-                        className="w-full h-12 text-base font-semibold syne"
-                      >
-                        <Download className="w-5 h-5 mr-2" />
-                        Download project
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => handleStartCheckout(selectedProject)}
-                        className="w-full h-12 text-base font-semibold syne"
-                        disabled={isPreparingCheckout}
-                      >
-                        <ShoppingCart className="w-5 h-5 mr-2" />
-                        {isPreparingCheckout
-                          ? "Preparing checkout..."
-                          : `Purchase $${selectedProject.price}`}
-                      </Button>
-                    )}
-                    <div className="grid grid-cols-2 gap-2">
-                      {isPrivileged && !selectedProject.isActive && (
-                        <Button
-                          onClick={async () => {
-                            try {
-                              await exploreService.approveProject(
-                                selectedProject._id || selectedProject.id,
-                              );
-                              toast.success("Project approved");
-                              setShowProjectModal(false);
-                              loadProjects();
-                            } catch (error) {
-                              toast.error("Failed to approve project");
-                            }
-                          }}
-                          className="h-12 text-base font-semibold bg-green-600 hover:bg-green-600"
-                        >
-                          <PiCheck />
-                        </Button>
-                      )}
-
-                      {isPrivileged && !selectedProject.isActive && (
-                        <Button
-                          onClick={async () => {
-                            try {
-                              await exploreService.rejectProject(
-                                selectedProject._id || selectedProject.id,
-                              );
-                              toast.success("Project Rejected");
-                              setShowProjectModal(false);
-                              loadProjects();
-                            } catch (error) {
-                              toast.error("Failed to approve project");
-                            }
-                          }}
-                          className="h-12 text-base font-semibold bg-red-600 text-white hover:bg-red-600 text-[20px]"
-                        >
-                          <PiX />
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      )}
-
-      {showCheckoutModal &&
-        checkoutClientSecret &&
-        checkoutProject &&
-        stripePromise && (
-          <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm icon flex items-center justify-center p-4 z-50"
-            onClick={handleCloseCheckout}
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-white dark:bg-gray-900 rounded-[28px] p-6 md:p-8 max-w-md w-full shadow-2xl"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">
-                    Secure Checkout
-                  </p>
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mt-1">
-                    {checkoutProject?.title}
-                  </h3>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
-                    {formatAmountForDisplay(
-                      checkoutAmount || 0,
-                      checkoutCurrency,
-                    )}
-                  </p>
-                </div>
-                <Button variant="ghost" size="sm" onClick={handleCloseCheckout}>
-                  <X className="w-4 h-4 icon" />
-                </Button>
-              </div>
-              <Elements
-                stripe={stripePromise}
-                options={{ clientSecret: checkoutClientSecret }}
-              >
-                <CheckoutForm
-                  amount={checkoutAmount}
-                  currency={checkoutCurrency}
-                  onSuccess={handlePaymentSuccess}
-                  onCancel={handleCloseCheckout}
-                />
-              </Elements>
-            </motion.div>
-          </div>
-        )}
-
-      {/* Upload Project Modal */}
-      {showUploadModal && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50"
-          onClick={() => setShowUploadModal(false)}
-        >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="bg-white dark:bg-black border rounded-[15px] p-6 max-w-2xl w-full max-h-[85vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <form onSubmit={handleUploadProject} className="space-y-4">
-              <div>
-                <Input
-                  value={uploadForm.title}
-                  onChange={(e) =>
-                    setUploadForm({ ...uploadForm, title: e.target.value })
-                  }
-                  placeholder="Enter project title"
-                  required
-                />
-              </div>
-
-              <div>
-                <Textarea
-                  value={uploadForm.description}
-                  onChange={(e) =>
-                    setUploadForm({
-                      ...uploadForm,
-                      description: e.target.value,
-                    })
-                  }
-                  placeholder="Describe your project..."
-                  required
-                  rows={4}
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Input
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    value={uploadForm.price}
-                    onChange={(e) =>
-                      setUploadForm({ ...uploadForm, price: e.target.value })
-                    }
-                    placeholder="0.00"
-                    required
-                  />
-                </div>
-
-                <div>
-                  <Select
-                    value={uploadForm.category}
-                    onValueChange={(value) =>
-                      setUploadForm({ ...uploadForm, category: value })
-                    }
-                    required
-                  >
-                    <SelectTrigger className="capitalize">
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem className={"px-5"} value="web development">
-                        Web Development
-                      </SelectItem>
-                      <SelectItem className={"px-5"} value="mobile development">
-                        Mobile App
-                      </SelectItem>
-                      <SelectItem className={"px-5"} value="web design">
-                        UI/UX Design
-                      </SelectItem>
-                      <SelectItem className={"px-5"} value="game development">
-                        Game Development
-                      </SelectItem>
-                      <SelectItem className={"px-5"} value="other">
-                        Other
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <Input
-                  value={uploadForm.tags}
-                  onChange={(e) =>
-                    setUploadForm({ ...uploadForm, tags: e.target.value })
-                  }
-                  placeholder="react, javascript, ui"
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-3">
-                  <label className="group flex min-h-[170px] w-full cursor-pointer flex-col items-center justify-center rounded-[22px] border-2 border-dashed border-gray-300 bg-gray-50 px-6 py-8 text-center transition-colors hover:border-[#ff914b] hover:bg-orange-50 dark:border-gray-700 dark:bg-gray-900/50 dark:hover:bg-gray-900">
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 transition-transform group-hover:scale-105 dark:border-gray-700 dark:bg-black dark:text-gray-200">
-                      <ImageIcon className="h-5 w-5 icon" />
-                    </div>
-                    <div className="flex flex-col items-center justify-center">
-                      <span className="text-sm font-semibold text-[#ff914b]">
-                        {uploadForm.previewImages.length > 0
-                          ? `${uploadForm.previewImages.length} image(s) selected`
-                          : "Click to upload preview images"}
-                      </span>
-                      <span className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                        Up to 4 screenshots · PNG, JPG or GIF
-                      </span>
-                    </div>
-                    <input
-                      type="file"
-                      multiple
-                      accept="image/*"
-                      onChange={(e) => handleFileChange(e, "previewImages")}
-                      className="hidden"
-                    />
-                  </label>
-                  {uploadForm.previewImages.length > 0 && (
-                    <div className="flex flex-wrap gap-2">
-                      {uploadForm.previewImages.map((file, idx) => (
-                        <Badge
-                          key={idx}
-                          variant="default"
-                          className="flex px-5 py-2 bg-violet-500 items-center gap-1"
-                        >
-                          {file.name}
-                          <X
-                            className="w-3 h-3 cursor-pointer"
-                            onClick={() => {
-                              const newImages = uploadForm.previewImages.filter(
-                                (_, i) => i !== idx,
-                              );
-                              setUploadForm({
-                                ...uploadForm,
-                                previewImages: newImages,
-                              });
-                            }}
-                          />
-                        </Badge>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                <div className="space-y-3">
-                  <input
-                    type="file"
-                    accept=".zip,application/zip,application/x-zip-compressed"
-                    onChange={(e) => handleFileChange(e, "zipFile")}
-                    className="hidden"
-                    id="explore-zip-upload"
-                    required
-                  />
-                  <label
-                    htmlFor="explore-zip-upload"
-                    className="group flex min-h-[170px] cursor-pointer flex-col items-center justify-center rounded-[22px] border-2 border-dashed border-gray-300 bg-gray-50 px-6 py-8 text-center transition-colors hover:border-[#ff914b] hover:bg-orange-50 dark:border-gray-700 dark:bg-gray-900/50 dark:hover:bg-gray-900"
-                  >
-                    <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-700 transition-transform group-hover:scale-105 dark:border-gray-700 dark:bg-black dark:text-gray-200">
-                      <FileArchive className="h-5 w-5 icon" />
-                    </div>
-                    <p className="text-sm font-semibold text-[#ff914b]">
-                      {uploadForm.zipFile
-                        ? "ZIP file selected"
-                        : "Click to upload project ZIP"}
-                    </p>
-                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
-                      ZIP archive only
-                    </p>
-                  </label>
-                </div>
-              </div>
-
-
-              <div className="flex justify-end space-x-3 mt-6">
-                <Button type="submit" disabled={uploading} className="w-full">
-                  {uploading ? (
-                    <>
-                      <Upload className="w-4 h-4 icon mr-2 animate-spin" />
-                      Uploading...
-                    </>
-                  ) : (
-                    <>
-                      <Upload className="w-4 h-4 icon mr-2" />
-                      Upload Project
-                    </>
-                  )}
-                </Button>
-              </div>
-            </form>
-          </motion.div>
-        </div>
-      )}
+      <ExploreUploadModal
+        open={showUploadModal}
+        uploadForm={uploadForm}
+        setUploadForm={setUploadForm}
+        uploading={uploading}
+        onClose={() => setShowUploadModal(false)}
+        onSubmit={handleUploadProject}
+        onFileChange={handleFileChange}
+      />
     </div>
   );
 };

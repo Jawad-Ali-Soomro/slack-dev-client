@@ -1747,3 +1747,212 @@ body.menu-open .lp-sheet {
     stroke-dashoffset: 0;
   }
 }
+
+.lp-grid-line {
+  stroke: rgba(0, 0, 0, 0.06);
+}
+
+.lp-point {
+  fill: #fff;
+}
+
+.lp-pie-track {
+  fill: #f7f7f8;
+}
+
+.lp-pie-hole {
+  fill: #fff;
+}
+
+.lp-pie-value {
+  fill: #111;
+}
+
+.lp-pie-caption {
+  fill: #9ca3af;
+}
+
+html.dark.lp-lock,
+html.dark.lp-lock body {
+  background: #000;
+}
+
+.dark .lp {
+  --bg: #000;
+  --text: #ffffff;
+  --muted: #a1a1aa;
+  --nav-text: #ffffff;
+  --pill-dark: #ffffff;
+  --sign-in-text: #111111;
+  --trust-bg: #18181b;
+  --trust-border: rgba(255, 255, 255, 0.1);
+  --trust-text: #a1a1aa;
+  color: #ffffff;
+}
+
+.dark .lp-bg .landing-grid,
+.dark .lp-grid,
+.dark .lp .landing-grid {
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(255, 145, 75, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 80% 60%, rgba(232, 119, 46, 0.08) 0%, transparent 50%),
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+}
+
+.dark .lp-nav,
+.dark .lp-sheet {
+  background: #18181b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark .lp-nav a.is-active::after,
+.dark .lp-nav button.is-active::after,
+.dark .lp-sheet a.is-active::after,
+.dark .lp-sheet button.is-active::after {
+  background: #fff;
+  box-shadow:
+    -5px 0 0 #fff,
+    5px 0 0 #fff;
+}
+
+.dark .lp-signin,
+.dark .lp-sheet-signin {
+  background: #fff;
+  color: #111;
+}
+
+.dark .lp-signin:hover {
+  background: #e5e5e5;
+  color: #111;
+}
+
+.dark .lp-float {
+  background: rgba(24, 24, 27, 0.88);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .lp-float-body,
+.dark .lp-headline,
+.dark .lp-line,
+.dark .lp-stat-icon,
+.dark .lp-stat-value,
+.dark .lp-feature h3,
+.dark .lp-step h3,
+.dark .lp-section-head h2,
+.dark .lp-auto-card h2,
+.dark .lp-band h2,
+.dark .lp-dash-top h3,
+.dark .lp-dash-metrics strong,
+.dark .lp-foot-brand {
+  color: #fff;
+}
+
+.dark .lp-avatar-inner,
+.dark .lp-avatar-face {
+  background: #27272a;
+  color: #fff;
+}
+
+.dark .lp-cta-ghost {
+  background: transparent;
+  border-color: rgba(255, 255, 255, 0.16);
+  color: #fff;
+}
+
+.dark .lp-stats,
+.dark .lp-foot {
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .lp-marquee-track span {
+  color: rgba(255, 255, 255, 0.38);
+}
+
+.dark .lp-foot-links a:hover,
+.dark .lp-foot-links button:hover {
+  color: #fff;
+}
+
+.dark .lp-feature,
+.dark .lp-step {
+  background: rgba(24, 24, 27, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+}
+
+.dark .lp-mac-window {
+  background: #18181b;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .lp-mac-title,
+.dark .lp-dash-tools,
+.dark .lp-dash-rail span {
+  color: #a1a1aa;
+}
+
+.dark .lp-mock {
+  background: #09090b;
+}
+
+.dark .lp-dash-rail,
+.dark .lp-dash-metrics div,
+.dark .lp-chart-card,
+.dark .lp-pie-card {
+  background: #18181b;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .lp-chart-card {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(255, 145, 75, 0.14), transparent 46%),
+    #18181b;
+}
+
+.dark .lp-pie-card li {
+  background: rgba(255, 255, 255, 0.06);
+  color: #e4e4e7;
+}
+
+.dark .lp-pie-card li em {
+  color: #fff;
+}
+
+.dark .lp-auto-card {
+  background:
+    radial-gradient(circle at 100% 0%, rgba(255, 145, 75, 0.18), transparent 42%),
+    rgba(24, 24, 27, 0.92);
+}
+
+.dark .lp-auto-card li {
+  color: #fff;
+}
+
+.dark .lp-grid-line {
+  stroke: rgba(255, 255, 255, 0.08);
+}
+
+.dark .lp-point,
+.dark .lp-pie-hole {
+  fill: #18181b;
+}
+
+.dark .lp-pie-track {
+  fill: #09090b;
+}
+
+.dark .lp-pie-value {
+  fill: #fff;
+}
+
+.dark .lp-pie-caption {
+  fill: #a1a1aa;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dark .lp-headline,
+  .dark .lp-line {
+    color: #fff;
+  }
+}

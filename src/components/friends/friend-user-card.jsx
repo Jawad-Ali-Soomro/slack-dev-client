@@ -1,5 +1,5 @@
 import { Loader2, Clock, UserCheck } from "lucide-react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import UserAvatar from "@/components/user-avatar";
 import { cn } from "@/lib/utils";
@@ -19,7 +19,7 @@ export default function FriendUserCard({
   const isReceived = requestStatus === "received";
 
   return (
-    <motion.div
+    <m.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.04 }}
@@ -78,6 +78,6 @@ export default function FriendUserCard({
             </Button>
           ))}
       </div>
-    </motion.div>
+    </m.div>
   );
 }

@@ -52,13 +52,13 @@ const Connections = ({ onClose, isOpen }) => {
             animate="visible"
             exit="exit"
             onClick={(e) => e.stopPropagation()}
-            className="rounded-2xl p-8 bg-white dark:bg-gray-800 border border-gray-700 shadow-2xl max-w-md w-full mx-4"
+            className="rounded-2xl p-8 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-2xl max-w-md w-full mx-4"
           >
             <h2 className="text-2xl font-bold mb-2 text-center text-gray-900 dark:text-white">
               Connect GitHub
             </h2>
 
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 text-center">
+            <p className="text-muted-foreground text-sm mb-6 text-center">
               Link your GitHub account to view repositories and create tasks
               from your repos.
             </p>

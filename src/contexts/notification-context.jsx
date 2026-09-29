@@ -7,6 +7,7 @@ import {
   useRef,
 } from "react";
 import { toast } from "sonner";
+import { Eye } from "lucide-react";
 import notificationService from "../services/notification-service";
 import { useAuth } from "./auth-context";
 
@@ -137,6 +138,7 @@ export const NotificationProvider = ({ children }) => {
           limit: 100,
         });
         const list = (response.notifications || []).map(normalizeNotification);
+        notificationsRef.current = list;
         setNotifications(list);
         updateUnreadCount(list);
       } catch (error) {
@@ -161,15 +163,10 @@ export const NotificationProvider = ({ children }) => {
         return;
       }
 
-      setNotifications((prev) => {
-        if (prev.some((notif) => notificationIdOf(notif) === incomingId)) {
-          return prev;
-        }
-        const updated = [incoming, ...prev];
-        notificationsRef.current = updated;
-        updateUnreadCount(updated);
-        return updated;
-      });
+      const updated = [incoming, ...notificationsRef.current];
+      notificationsRef.current = updated;
+      updateUnreadCount(updated);
+      setNotifications(updated);
 
       const notificationType = incoming.type || "info";
       const message = incoming.message || "";
@@ -177,14 +174,25 @@ export const NotificationProvider = ({ children }) => {
       const description = incoming.title ? message : "";
 
       if (notificationType === "message") {
-        toast.info(`💬 ${title}`, {
-          description,
+        const senderName =
+          incoming.sender?.username ||
+          incoming.sender?.name ||
+          "Someone";
+        toast(`${senderName} just messaged you`, {
+          icon: null,
           duration: 5000,
           action: {
-            label: "View",
+            label: <Eye className="h-4 w-4" aria-label="Open chat" />,
             onClick: () => {
               window.location.href = "/dashboard/chat";
             },
+          },
+          actionButtonStyle: {
+            background: "transparent",
+            border: "none",
+            padding: "4px",
+            height: "28px",
+            width: "28px",
           },
         });
       } else {
@@ -203,16 +211,16 @@ export const NotificationProvider = ({ children }) => {
       const incomingId = notificationIdOf(incoming);
       if (!incomingId) return;
 
-      setNotifications((prev) => {
-        const idx = prev.findIndex(
-          (notif) => notificationIdOf(notif) === incomingId,
-        );
-        if (idx === -1) return prev;
-        const updated = [...prev];
-        updated[idx] = { ...prev[idx], ...incoming };
-        updateUnreadCount(updated);
-        return updated;
-      });
+      const prev = notificationsRef.current;
+      const idx = prev.findIndex(
+        (notif) => notificationIdOf(notif) === incomingId,
+      );
+      if (idx === -1) return;
+      const updated = [...prev];
+      updated[idx] = { ...prev[idx], ...incoming };
+      notificationsRef.current = updated;
+      updateUnreadCount(updated);
+      setNotifications(updated);
     },
     [updateUnreadCount],
   );
@@ -221,12 +229,12 @@ export const NotificationProvider = ({ children }) => {
     (notificationId) => {
       const id = String(notificationId || "");
       if (!id) return;
-      setNotifications((prev) => {
-        const updated = prev.filter((notif) => notificationIdOf(notif) !== id);
-        if (updated.length === prev.length) return prev;
-        updateUnreadCount(updated);
-        return updated;
-      });
+      const prev = notificationsRef.current;
+      const updated = prev.filter((notif) => notificationIdOf(notif) !== id);
+      if (updated.length === prev.length) return;
+      notificationsRef.current = updated;
+      updateUnreadCount(updated);
+      setNotifications(updated);
     },
     [updateUnreadCount],
   );
@@ -234,14 +242,13 @@ export const NotificationProvider = ({ children }) => {
   const markAsRead = async (notificationId) => {
     try {
       await notificationService.markAsRead(notificationId);
-      setNotifications((prev) => {
-        const id = String(notificationId);
-        const updated = prev.map((notif) =>
-          notificationIdOf(notif) === id ? { ...notif, isRead: true } : notif,
-        );
-        updateUnreadCount(updated);
-        return updated;
-      });
+      const id = String(notificationId);
+      const updated = notificationsRef.current.map((notif) =>
+        notificationIdOf(notif) === id ? { ...notif, isRead: true } : notif,
+      );
+      notificationsRef.current = updated;
+      updateUnreadCount(updated);
+      setNotifications(updated);
     } catch (error) {
       toast.error("Failed to mark notification as read");
     }
@@ -250,11 +257,13 @@ export const NotificationProvider = ({ children }) => {
   const markAllAsRead = async () => {
     try {
       await notificationService.markAllAsRead();
-      setNotifications((prev) => {
-        const updated = prev.map((notif) => ({ ...notif, isRead: true }));
-        updateUnreadCount(updated);
-        return updated;
-      });
+      const updated = notificationsRef.current.map((notif) => ({
+        ...notif,
+        isRead: true,
+      }));
+      notificationsRef.current = updated;
+      updateUnreadCount(updated);
+      setNotifications(updated);
       toast.success("All notifications marked as read");
     } catch (error) {
       toast.error("Failed to mark all as read");
@@ -331,8 +340,7 @@ export const NotificationProvider = ({ children }) => {
 
       await Promise.all(promises);
 
-      setNotifications((prev) => {
-        const updated = prev.map((notif) => {
+      const updated = notificationsRef.current.map((notif) => {
           const notificationType =
             notif.type || notif.notificationType || "general";
           let shouldMarkAsRead = false;
@@ -400,9 +408,9 @@ export const NotificationProvider = ({ children }) => {
           return shouldMarkAsRead ? { ...notif, isRead: true } : notif;
         });
 
-        updateUnreadCount(updated);
-        return updated;
-      });
+      notificationsRef.current = updated;
+      updateUnreadCount(updated);
+      setNotifications(updated);
     } catch (error) {
       console.error(`Failed to mark ${type} notifications as read:`, error);
     }
@@ -411,12 +419,13 @@ export const NotificationProvider = ({ children }) => {
   const deleteNotification = async (notificationId) => {
     try {
       await notificationService.deleteNotification(notificationId);
-      setNotifications((prev) => {
-        const id = String(notificationId);
-        const updated = prev.filter((notif) => notificationIdOf(notif) !== id);
-        updateUnreadCount(updated);
-        return updated;
-      });
+      const id = String(notificationId);
+      const updated = notificationsRef.current.filter(
+        (notif) => notificationIdOf(notif) !== id,
+      );
+      notificationsRef.current = updated;
+      updateUnreadCount(updated);
+      setNotifications(updated);
       toast.success("Notification deleted");
     } catch (error) {
       toast.error("Failed to delete notification");
@@ -426,6 +435,7 @@ export const NotificationProvider = ({ children }) => {
   const deleteAllNotifications = async () => {
     try {
       await notificationService.deleteAllNotifications();
+      notificationsRef.current = [];
       setNotifications([]);
       setUnreadCount(0);
       toast.success("All notifications deleted");
@@ -438,6 +448,7 @@ export const NotificationProvider = ({ children }) => {
     if (user) {
       loadNotifications();
     } else {
+      notificationsRef.current = [];
       setNotifications([]);
       setUnreadCount(0);
       setUnreadCounts({

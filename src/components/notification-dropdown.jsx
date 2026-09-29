@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import {
   Bell,
   X,
@@ -23,6 +23,7 @@ import { useNotifications } from "../contexts/notification-context";
 import invitationService from "../services/invitation-service";
 import {
   PiBellDuotone,
+  PiChatCircleDuotone,
   PiCheckCircleDuotone,
   PiClockDuotone,
   PiFolderDuotone,
@@ -107,6 +108,11 @@ const NotificationDropdown = () => {
         return <PiInfoDuotone className="w-4 h-4 icon icon text-purple-500" />;
       case "alert":
         return <AlertCircle className="w-4 h-4 icon icon text-red-500" />;
+      case "message":
+      case "chat":
+      case "MESSAGE":
+      case "CHAT":
+        return <PiChatCircleDuotone className="w-4 h-4 icon icon text-theme" />;
       case "project_invite":
       case "PROJECT_INVITE":
       case "project_invite_accepted":
@@ -161,6 +167,11 @@ const NotificationDropdown = () => {
       case "meeting_status_updated":
       case "meeting_rescheduled":
         return "Meeting updated";
+      case "message":
+      case "chat":
+      case "MESSAGE":
+      case "CHAT":
+        return "New message";
       case "user_followed":
         return "New follower";
       case "user_unfollowed":
@@ -249,7 +260,7 @@ const NotificationDropdown = () => {
           ) : (
             <AnimatePresence>
               {notifications.map((notification, index) => (
-                <motion.div
+                <m.div
                   key={`${notification.id || notification._id || index}`}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -410,7 +421,7 @@ const NotificationDropdown = () => {
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </m.div>
               ))}
             </AnimatePresence>
           )}

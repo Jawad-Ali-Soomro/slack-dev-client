@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, m } from "framer-motion";
 import UserAvatar from "./user-avatar";
 
 const statusClass = (status) => {
@@ -70,7 +70,7 @@ export function PersonChip({ person }) {
       </span>
       <AnimatePresence>
         {hover ? (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 8 }}
@@ -113,7 +113,7 @@ export function PersonChip({ person }) {
               </p>
               <TaskPills tasks={tasks} limit={3} />
             </div>
-          </motion.div>
+          </m.div>
         ) : null}
       </AnimatePresence>
     </div>

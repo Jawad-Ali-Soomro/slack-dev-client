@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import {
   AlertCircle,
@@ -18,8 +18,29 @@ import { useAuth } from "../contexts/auth-context";
 import taskService from "../services/task-service";
 import UserAvatar from "./user-avatar";
 import { STATUS_TABS } from "@/constants/assingned-tasks-constants";
+import { applyTaskToList, taskIdOf } from "../utils/apply-task-event";
 
-const taskIdOf = (task) => task?.id || task?._id;
+const isOverdueTask = (task) =>
+  Boolean(
+    task?.dueDate &&
+      task.status !== "completed" &&
+      task.status !== "cancelled" &&
+      new Date(task.dueDate) < new Date(),
+  );
+
+const priorityBadgeClass = (priority) => {
+  switch (priority) {
+    case "urgent":
+    case "high":
+      return "border-transparent bg-red-500 text-white";
+    case "medium":
+      return "border-transparent bg-orange-500 text-black";
+    case "low":
+      return "border-transparent bg-green-500 text-white";
+    default:
+      return "border-transparent bg-zinc-600 text-white";
+  }
+};
 
 export default function AssignedTaskDrawer({
   open,
@@ -31,6 +52,7 @@ export default function AssignedTaskDrawer({
   const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState("pending");
   const [draggingId, setDraggingId] = useState(null);
+  const draggingIdRef = useRef(null);
   const [overStatus, setOverStatus] = useState(null);
   const [savingId, setSavingId] = useState(null);
 
@@ -62,19 +84,12 @@ export default function AssignedTaskDrawer({
         if (open) loadAssigned();
         return;
       }
-      setTasks((prev) => {
-        const idx = prev.findIndex((task) => taskIdOf(task) === id);
-        const assignedToMe =
-          (updated.assignTo?.id || updated.assignTo?._id) === user?.id;
-        if (!assignedToMe) {
-          if (idx === -1) return prev;
-          return prev.filter((task) => taskIdOf(task) !== id);
-        }
-        if (idx === -1) return [updated, ...prev];
-        const next = [...prev];
-        next[idx] = { ...next[idx], ...updated };
-        return next;
-      });
+      setTasks((prev) =>
+        applyTaskToList(prev, updated, {
+          include: (task) =>
+            (task.assignTo?.id || task.assignTo?._id) === user?.id,
+        }),
+      );
     };
     window.addEventListener("tasks:changed", onChanged);
     return () => window.removeEventListener("tasks:changed", onChanged);
@@ -96,7 +111,7 @@ export default function AssignedTaskDrawer({
 
   const moveTask = async (task, nextStatus) => {
     const id = taskIdOf(task);
-    if (!id || task.status === nextStatus) return;
+    if (!id || task.status === nextStatus || isOverdueTask(task)) return;
 
     const previous = task.status;
     setSavingId(id);
@@ -128,25 +143,44 @@ export default function AssignedTaskDrawer({
     }
   };
 
+  const beginDrag = (event, id) => {
+    if (
+      event.target instanceof Element &&
+      event.target.closest("[data-no-drag]")
+    ) {
+      event.preventDefault();
+      return;
+    }
+    event.dataTransfer.setData("text/plain", id);
+    event.dataTransfer.effectAllowed = "move";
+    draggingIdRef.current = id;
+    setDraggingId(id);
+  };
+
+  const endDrag = () => {
+    draggingIdRef.current = null;
+    setDraggingId(null);
+    setOverStatus(null);
+  };
+
   const handleDropOn = (status) => async (event) => {
     event.preventDefault();
     event.stopPropagation();
-    setOverStatus(null);
     const id =
-      event.dataTransfer.getData("text/task-id") ||
+      draggingIdRef.current ||
       event.dataTransfer.getData("text/plain");
+    endDrag();
     const task = tasks.find((item) => taskIdOf(item) === id);
-    setDraggingId(null);
-    if (task) await moveTask(task, status);
+    if (task && !isOverdueTask(task)) await moveTask(task, status);
   };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
-        className="w-full sm:max-w-md md:max-w-lg p-0 border-none"
+        className="w-full sm:max-w-md md:max-w-lg p-0"
       >
-        <div className="flex h-full flex-col bg-white dark:bg-gray-900">
+        <div className="flex h-full flex-col bg-white dark:bg-zinc-900">
           <div className="px-6 pt-7 pb-4">
             <SheetHeader className="space-y-1">
               <div className="flex items-center gap-2 text-[#FF914B]">
@@ -158,7 +192,7 @@ export default function AssignedTaskDrawer({
               <SheetTitle className="text-xl font-semibold text-black dark:text-white">
                 My board
               </SheetTitle>
-              <p className="text-xs font-medium text-gray-500 dark:text-gray-400">
+              <p className="text-xs font-medium text-muted-foreground">
                 Drag a task onto to-do, pending, completed, or canceled. Status
                 updates live for everyone on the ticket.
               </p>
@@ -184,11 +218,12 @@ export default function AssignedTaskDrawer({
                       event.dataTransfer.dropEffect = "move";
                       setOverStatus(tab.id);
                     }}
-                    onDragLeave={() =>
+                    onDragLeave={(event) => {
+                      if (event.currentTarget.contains(event.relatedTarget)) return;
                       setOverStatus((current) =>
                         current === tab.id ? null : current,
-                      )
-                    }
+                      );
+                    }}
                     onDrop={handleDropOn(tab.id)}
                     className={cn(
                       "flex h-11 flex-col rounded-[12px] px-2 py-1.5 text-[11px] font-bold uppercase tracking-wide",
@@ -217,7 +252,7 @@ export default function AssignedTaskDrawer({
                 className="mt-4 min-h-0 flex-1 overflow-y-auto"
               >
                 {loading ? (
-                  <p className="px-2 py-10 text-center text-sm text-gray-500">
+                  <p className="px-2 py-10 text-center text-sm text-muted-foreground">
                     Loading your tasks…
                   </p>
                 ) : grouped[tab.id].length === 0 ? (
@@ -228,10 +263,10 @@ export default function AssignedTaskDrawer({
                     )}
                   >
                     <tab.icon className={cn("mb-3 h-8 w-8", tab.accent)} />
-                    <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white">
                       {tab.empty}
                     </p>
-                    <p className="mt-1 text-xs text-gray-400">
+                    <p className="mt-1 text-xs text-muted-foreground">
                       Drop a task here to move it to {tab.label.toLowerCase()}.
                     </p>
                   </div>
@@ -239,37 +274,35 @@ export default function AssignedTaskDrawer({
                   <div className="space-y-3 pb-8">
                     {grouped[tab.id].map((task) => {
                       const id = taskIdOf(task);
-                      const overdue =
-                        task.dueDate &&
-                        task.status !== "completed" &&
-                        task.status !== "cancelled" &&
-                        new Date(task.dueDate) < new Date();
+                      const overdue = isOverdueTask(task);
                       return (
                         <article
                           key={id}
-                          draggable
+                          draggable={!overdue}
                           onDragStart={(event) => {
-                            event.dataTransfer.setData("text/plain", id);
-                            event.dataTransfer.setData("text/task-id", id);
-                            event.dataTransfer.effectAllowed = "move";
-                            setDraggingId(id);
+                            if (overdue) {
+                              event.preventDefault();
+                              return;
+                            }
+                            beginDrag(event, id);
                           }}
-                          onDragEnd={() => {
-                            setDraggingId(null);
-                            setOverStatus(null);
-                          }}
+                          onDragEnd={endDrag}
                           className={cn(
                             "rounded-[18px] border border-gray-200 bg-white p-4 shadow-sm transition dark:border-white/10 dark:bg-white/[0.04]",
+                            overdue ? "cursor-default" : "cursor-grab active:cursor-grabbing",
                             draggingId === id && "opacity-50",
                             savingId === id && "pointer-events-none opacity-70",
                           )}
                         >
                           <div className="flex items-start gap-3">
-                            <GripVertical className="mt-0.5 h-4 w-4 shrink-0 cursor-grab text-gray-300" />
+                            {!overdue && (
+                            <GripVertical className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                            )}
                             <div className="min-w-0 flex-1">
                               <button
                                 type="button"
-                                className="w-full text-left"
+                                data-no-drag
+                                className="w-full cursor-pointer text-left"
                                 onClick={() => onOpenTask?.(task)}
                               >
                                 <p className="line-clamp-2 text-sm font-semibold text-gray-900 dark:text-white">
@@ -278,18 +311,18 @@ export default function AssignedTaskDrawer({
                               </button>
                               <div className="mt-2 flex flex-wrap items-center gap-2">
                                 {overdue && (
-                                  <Badge className="rounded-[12px] border border-red-400/40 bg-red-500/15 text-[10px] font-bold uppercase text-red-600">
+                                  <Badge className="rounded-[12px] border-transparent bg-red-500 text-[10px] font-bold uppercase text-white">
                                     <AlertCircle className="mr-1 h-3 w-3" />
                                     Overdue
                                   </Badge>
                                 )}
                                 {task.priority && (
-                                  <Badge className="rounded-[12px] border border-gray-200 bg-gray-50 text-[10px] font-bold uppercase text-gray-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-300">
+                                  <Badge className={cn("rounded-[12px] text-[10px] font-bold uppercase", priorityBadgeClass(task.priority))}>
                                     {task.priority}
                                   </Badge>
                                 )}
                                 {task.dueDate && (
-                                  <span className="text-[11px] font-medium text-gray-400">
+                                  <span className="text-[11px] font-medium text-muted-foreground">
                                     {new Date(task.dueDate).toLocaleDateString()}
                                   </span>
                                 )}
@@ -297,26 +330,29 @@ export default function AssignedTaskDrawer({
                               {task.assignedBy?.username && (
                                 <div className="mt-3 flex items-center gap-2">
                                   <UserAvatar user={task.assignedBy} size="sm" />
-                                  <span className="text-[11px] text-gray-500">
+                                  <span className="text-[11px] text-muted-foreground">
                                     From {task.assignedBy.username}
                                   </span>
                                 </div>
                               )}
+                              {!overdue && (
                               <div className="mt-3 flex flex-wrap gap-1.5">
                                 {STATUS_TABS.filter((tab) => tab.id !== task.status).map(
                                   (tab) => (
                                     <button
                                       key={tab.id}
                                       type="button"
+                                      data-no-drag
                                       disabled={savingId === id}
                                       onClick={() => moveTask(task, tab.id)}
-                                      className="rounded-[10px] border border-gray-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-gray-500 transition hover:border-[#FF914B]/40 hover:text-[#FF914B] disabled:opacity-50 dark:border-white/10 dark:text-gray-400"
+                                      className="cursor-pointer rounded-[10px] border border-gray-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground transition hover:border-[#FF914B]/40 hover:text-[#FF914B] disabled:opacity-50 dark:border-white/10"
                                     >
                                       {tab.label}
                                     </button>
                                   ),
                                 )}
                               </div>
+                              )}
                             </div>
                           </div>
                         </article>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   Shield,
   Search,
@@ -38,23 +38,23 @@ import { useAuth } from "../../contexts/auth-context";
 import UserAvatar from "../../components/user-avatar";
 import { toast } from "sonner";
 import UserDetailsModal from "../../components/user-details-modal";
-import { PiUserDuotone, PiUsersDuotone } from "react-icons/pi";
+import { PiPencil, PiTrashDuotone, PiUserDuotone, PiUsersDuotone } from "react-icons/pi";
 
 const ROLE_CONFIG = {
   superadmin: {
-    label: "Super Admin",
+    label: "Super Admininistrator",
     icon: Crown,
     chip: "bg-gradient-to-br from-violet-500 to-fuchsia-500",
     pill: "bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20",
   },
   admin: {
-    label: "Admin",
+    label: "Team Administrator",
     icon: Shield,
     chip: "bg-gradient-to-br from-rose-500 to-red-500",
     pill: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20",
   },
   user: {
-    label: "User",
+    label: "Developer",
     icon: PiUserDuotone,
     chip: "bg-gradient-to-br from-slate-400 to-slate-500",
     pill: "bg-slate-500/10 text-slate-600 dark:text-slate-300 border-slate-500/20",
@@ -67,17 +67,17 @@ const RoleBadge = ({ role }) => {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 py-1 pl-1 pr-3 rounded-full text-xs font-semibold border",
+        "inline-flex items-center gap-1.5 px-1 pr-6 py-1 rounded-full text-xs font-semibold border",
         cfg.pill,
       )}
     >
       <span
         className={cn(
-          "flex items-center justify-center w-5 h-5 rounded-full text-white shadow-sm",
+          "flex items-center justify-center w-8 h-8 rounded-full text-white shadow-sm",
           cfg.chip,
         )}
       >
-        <Icon className="w-3 h-3" />
+        <Icon className="w-4 h-4" />
       </span>
       {cfg.label}
     </span>
@@ -140,7 +140,7 @@ const PermissionBadge = ({ config }) => {
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 py-1 pl-1 pr-3 rounded-full text-xs font-semibold border",
+        "inline-flex items-center gap-1.5 p-2 rounded-full text-xs font-semibold border",
         config.pill,
       )}
     >
@@ -152,7 +152,6 @@ const PermissionBadge = ({ config }) => {
       >
         <Icon className="w-3 h-3" />
       </span>
-      {config.label}
     </span>
   );
 };
@@ -385,7 +384,7 @@ const PermissionsManagement = () => {
 
         {/* Filters */}
         {/* Filters - no padding/cards */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -445,14 +444,14 @@ const PermissionsManagement = () => {
               </Select>
             </div>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Bulk actions bar */}
         {selectedUsers.length > 0 && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="flex items-center justify-between gap-3 mb-3 px-4 py-3 rounded-[15px] border border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/10"
+            className="flex items-center justify-between gap-3 mb-3 px-4 py-3"
           >
             <span className="text-sm font-medium text-red-700 dark:text-red-300">
               {selectedUsers.length} user{selectedUsers.length > 1 ? "s" : ""}{" "}
@@ -461,26 +460,24 @@ const PermissionsManagement = () => {
             <div className="flex items-center gap-2">
               <Button
                 variant="outline"
-                size="sm"
-                className="rounded-[12px]"
+                className="rounded-[15px] w-[150px] font-bold"
                 onClick={() => setSelectedUsers([])}
               >
                 Clear
               </Button>
               <Button
-                size="sm"
-                className="rounded-[12px] bg-red-600 hover:bg-red-700 text-white"
+                className="rounded-[15px] w-[250px] bg-red-600 font-bold hover:bg-red-700 text-white"
                 onClick={handleBulkDelete}
               >
-                <X className="w-4 h-4 mr-1.5" />
+                <PiTrashDuotone className="w-4 h-4 mr-1.5" />
                 Remove Permissions ({selectedUsers.length})
               </Button>
             </div>
-          </motion.div>
+          </m.div>
         )}
 
         {/* Users Table */}
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
@@ -507,6 +504,9 @@ const PermissionsManagement = () => {
                   </th>
                   <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider">
                     User
+                  </th>
+                  <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider">
+                    Email
                   </th>
                   <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider">
                     Role
@@ -568,10 +568,13 @@ const PermissionsManagement = () => {
                             <div className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                               {userItem.username}
                             </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
-                              {userItem.email}
-                            </div>
+                           
                           </div>
+                        </div>
+                      </td>
+                      <td className="px-5 py-3">
+                        <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                          {userItem.email}
                         </div>
                       </td>
                       <td className="px-5 py-3">
@@ -602,12 +605,12 @@ const PermissionsManagement = () => {
                         <div className="flex items-center justify-end gap-2">
                           <Button
                             size="sm"
-                            variant={"outline"}
+                            variant={"ghost"}
                             className="w-10 h-10 justify-center rounded-[12px]"
                             onClick={() => handleEditPermissions(userItem)}
                             title="Edit permissions"
                           >
-                            <Edit className="w-4 h-4" />
+                            <PiPencil className="w-4 h-4" />
                           </Button>
                           {userItem.permissions && (
                             <Button
@@ -630,15 +633,15 @@ const PermissionsManagement = () => {
               </tbody>
             </table>
           </div>
-        </motion.div>
+        </m.div>
 
         {/* Edit Permissions Modal */}
         {editingUser && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-white dark:bg-[#0a0a0a] border border-gray-200 dark:border-white/10 rounded-[18px] p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+              className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 rounded-2xl p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
             >
               <div
                 className="flex items-center justify-between mb-6"
@@ -716,7 +719,7 @@ const PermissionsManagement = () => {
                   Save Permissions
                 </Button>
               </div>
-            </motion.div>
+            </m.div>
           </div>
         )}
       </div>

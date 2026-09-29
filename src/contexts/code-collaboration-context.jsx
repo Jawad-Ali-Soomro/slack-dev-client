@@ -1,4 +1,4 @@
-import React, {
+import {
   createContext,
   useContext,
   useState,
@@ -37,7 +37,7 @@ export const CodeCollaborationProvider = ({ children }) => {
 
   useEffect(() => {
     if (isAuthenticated && user) {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:4000";
+      const apiUrl = import.meta.env.VITE_API_URL;
       const newSocket = io(apiUrl, {
         withCredentials: true,
         transports: ["websocket", "polling"],

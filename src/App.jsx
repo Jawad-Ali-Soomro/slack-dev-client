@@ -32,6 +32,7 @@ import Repos from "./pages/repos";
 import Automation from "./pages/automation";
 import FigmaCursor from "./components/figma-cursor";
 import { GlobalRipple } from "./components/ui/ripple";
+import { routes } from "./lib/routes";
 
 function App() {
   return (
@@ -63,147 +64,21 @@ function App() {
                 <SidebarProvider>
                   <div className="relative">
                     <Routes>
-                      <Route path="/" element={<Indexing />} />
-                      <Route path="/about" element={<About />} />
-                      <Route path="/contact" element={<Contact />} />
-
-                      <Route path="/login" element={<Login />} />
-                      <Route path="/signup" element={<Signup />} />
-                      <Route
-                        path="/forgot-password"
-                        element={<ForgotPassword />}
-                      />
-                      <Route path="/verify-email" element={<VerifyEmail />} />
-
-                      <Route
-                        path="/dashboard"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <Dashboard />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/dashboard/tasks"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <Tasks />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/dashboard/meetings"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <Meetings />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/dashboard/projects"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <Projects />
-                          </ProtectedRoute>
-                        }
-                      />
-
-                      <Route
-                        path="/dashboard/my-bought-projects"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <MyBoughtProjects />
-                          </ProtectedRoute>
-                        }
-                      />
-
-                      <Route
-                        path="/dashboard/explore"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <Explore />
-                          </ProtectedRoute>
-                        }
-                      />
-
-                      <Route
-                        path="/dashboard/teams"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <TeamsManage />
-                          </ProtectedRoute>
-                        }
-                      />
-                      
-                      <Route
-                        path="/dashboard/automation"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <Automation />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/dashboard/friends"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <Friends />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/dashboard/chat"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <Chat />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/learn-point"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <LearnPoint />
-                          </ProtectedRoute>
-                        }
-                      />
-                   
-                   
-                      <Route
-                        path="/dashboard/repos"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <Repos />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/dashboard/repos/:id"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <RepoDetail />
-                          </ProtectedRoute>
-                        }
-                      />
-
-                      <Route
-                        path="/dashboard/admin/users"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <UserManagement />
-                          </ProtectedRoute>
-                        }
-                      />
-                      <Route
-                        path="/dashboard/admin/permissions"
-                        element={
-                          <ProtectedRoute requireAuth={true}>
-                            <PermissionsManagement />
-                          </ProtectedRoute>
-                        }
-                      />
-
-                      <Route path="*" element={<NotFound />} />
+                      {routes.map((route) => (
+                        <Route
+                          key={route.path}
+                          path={route.path}
+                          element={
+                            route.isProtected ? (
+                              <ProtectedRoute requireAuth>
+                                <route.element />
+                              </ProtectedRoute>
+                            ) : (
+                              <route.element />
+                            )
+                          }
+                        />
+                      ))}
                     </Routes>
                   </div>
                 </SidebarProvider>

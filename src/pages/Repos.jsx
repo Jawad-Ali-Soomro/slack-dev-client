@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   ArrowLeft,
   Search,
@@ -32,6 +32,8 @@ import { usePermissions } from "../hooks/use-permissions";
 import HorizontalLoader from "../components/horizontal-loader";
 import LanguageIcon from "@/components/languages";
 import CreateTaskModal from "../components/create-task-modal";
+import { TbStarFilled } from "react-icons/tb";
+import { PiGitForkFill } from "react-icons/pi";
 
 const formatNumber = (n) => {
   if (n == null) return "0";
@@ -53,7 +55,7 @@ const formatDate = (value) => {
 const VisibilityBadge = ({ isPrivate }) => (
   <span
     className={cn(
-      "inline-flex items-center gap-1.5 py-1 pl-1 pr-3 rounded-full text-xs font-semibold border",
+      "inline-flex items-center gap-1.5 p-1 rounded-full pr-6 text-xs font-semibold border",
       isPrivate
         ? "bg-slate-500/10 text-slate-600 dark:text-slate-300 border-slate-500/20"
         : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20",
@@ -61,13 +63,13 @@ const VisibilityBadge = ({ isPrivate }) => (
   >
     <span
       className={cn(
-        "flex items-center justify-center w-5 h-5 rounded-full text-white shadow-sm",
+        "flex items-center justify-center w-8 h-8 rounded-full text-white shadow-sm",
         isPrivate
           ? "bg-gradient-to-br from-slate-500 to-gray-600"
           : "bg-gradient-to-br from-emerald-500 to-green-500",
       )}
     >
-      {isPrivate ? <Lock className="w-3 h-3" /> : <Globe className="w-3 h-3" />}
+      {isPrivate ? <Lock className="w-4 h-4" /> : <Globe className="w-4 h-4" />}
     </span>
     {isPrivate ? "Private" : "Public"}
   </span>
@@ -159,15 +161,14 @@ const Repos = () => {
 
   // Called after a task is successfully created; advances to the next queued repo.
   const advanceQueue = () => {
-    setQueue((prev) => {
-      if (prev.length === 0) {
-        setSelectedRepos([]);
-        return [];
-      }
-      const [next, ...rest] = prev;
-      setTaskRepo({ repoId: String(next.id), repoName: next.name });
-      return rest;
-    });
+    if (queue.length === 0) {
+      setSelectedRepos([]);
+      setQueue([]);
+      return;
+    }
+    const [next, ...rest] = queue;
+    setTaskRepo({ repoId: String(next.id), repoName: next.name });
+    setQueue(rest);
   };
 
   if (loading && repos.length === 0) {
@@ -207,15 +208,6 @@ const Repos = () => {
       {/* Header */}
       <div className="flex items-center justify-between gap-3 py-6">
         <div className="flex items-center gap-3">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => navigate("/dashboard")}
-            className="rounded-[12px] w-[150px]"
-          >
-            <ArrowLeft className="w-4 h-4 mr-1.5" />
-            Back
-          </Button>
           <div className="flex p-2 border-2 items-center gap-2 pr-5 rounded-[15px] fixed z-10 md:top-3 -top-10">
             <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
               <FolderGit2 size={15} />
@@ -232,7 +224,7 @@ const Repos = () => {
       </div>
 
       {/* Filters */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
@@ -265,11 +257,11 @@ const Repos = () => {
             </SelectContent>
           </Select>
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Bulk actions bar */}
       {selectedRepos.length > 0 && (
-        <motion.div
+        <m.div
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center justify-between gap-3 mb-3 px-4 py-3 rounded-[15px] border border-theme-subtle bg-theme-subtle"
@@ -288,7 +280,7 @@ const Repos = () => {
               Clear
             </Button>
             <Button
-              size="sm"
+            variant={'ghost'}
               className="rounded-[12px] bg-theme w-[200px] hover:bg-theme text-white"
               onClick={handleBulkCreateTasks}
             >
@@ -296,11 +288,11 @@ const Repos = () => {
               Create Tasks ({selectedRepos.length})
             </Button>
           </div>
-        </motion.div>
+        </m.div>
       )}
 
       {/* Table */}
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
@@ -403,14 +395,14 @@ const Repos = () => {
                             className="inline-flex items-center gap-1"
                             title="Stars"
                           >
-                            <Star className="w-3.5 h-3.5" />
+                            <TbStarFilled className="w-3.5 h-3.5" />
                             {formatNumber(repo.stargazers_count)}
                           </span>
                           <span
                             className="inline-flex items-center gap-1"
                             title="Forks"
                           >
-                            <GitFork className="w-3.5 h-3.5" />
+                            <PiGitForkFill className="w-3.5 h-3.5" />
                             {formatNumber(repo.forks_count)}
                           </span>
                           <span
@@ -434,7 +426,7 @@ const Repos = () => {
                         <div className="flex items-center justify-end gap-1.5">
                           <Button
                             size="sm"
-                            variant="outline"
+                            variant="ghost"
                             className="w-9 h-9 justify-center rounded-[12px]"
                             title={`Create task for ${repo.name}`}
                             onClick={() => openTaskForRepo(repo)}
@@ -462,7 +454,7 @@ const Repos = () => {
             </tbody>
           </table>
         </div>
-      </motion.div>
+      </m.div>
 
       <CreateTaskModal
         open={!!taskRepo}

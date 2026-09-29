@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { m, AnimatePresence } from "framer-motion";
 import { Search, X } from "lucide-react";
 import { toast } from "sonner";
 import { Input } from "./ui/input";
@@ -109,14 +109,14 @@ const FindFriendsModal = ({
     <>
       <AnimatePresence>
         {isOpen && (
-          <motion.div
+          <m.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[200] flex items-center justify-center p-4"
             onClick={onClose}
           >
-            <motion.div
+            <m.div
               initial={{ opacity: 0, scale: 0.95, y: 12 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 12 }}
@@ -132,7 +132,7 @@ const FindFriendsModal = ({
                     <h2 className="text-lg font-black text-gray-900 dark:text-white">
                       Find Friends
                     </h2>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-muted-foreground">
                       Search by username or email
                     </p>
                   </div>
@@ -164,20 +164,20 @@ const FindFriendsModal = ({
                     ))}
                   </div>
                 ) : !searchTerm.trim() ? (
-                  <div className="text-center py-10 text-gray-500 dark:text-gray-400">
+                  <div className="text-center py-10 text-muted-foreground">
                     <div className="w-14 h-14 rounded-2xl bg-theme-subtle mx-auto mb-3 flex items-center justify-center">
                       <Search className="h-6 w-6 text-theme opacity-70" />
                     </div>
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <p className="text-sm font-medium text-muted-foreground">
                       Type a username or email to search
                     </p>
                   </div>
                 ) : searchResults.length === 0 ? (
-                  <div className="text-center py-10 text-gray-500 dark:text-gray-400">
+                  <div className="text-center py-10 text-muted-foreground">
                     <div className="w-14 h-14 rounded-2xl bg-theme-subtle mx-auto mb-3 flex items-center justify-center">
                       <PiUserPlusDuotone className="h-7 w-7 text-theme opacity-70" />
                     </div>
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <p className="text-sm font-medium text-muted-foreground">
                       No users found for "{searchTerm}"
                     </p>
                   </div>
@@ -208,8 +208,8 @@ const FindFriendsModal = ({
                   </div>
                 )}
               </div>
-            </motion.div>
-          </motion.div>
+            </m.div>
+          </m.div>
         )}
       </AnimatePresence>
 

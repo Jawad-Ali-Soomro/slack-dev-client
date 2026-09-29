@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, memo } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { toast } from "sonner";
 import { userService } from "../../services/user-service";
 import friendService from "../../services/friend-service";
@@ -63,6 +63,41 @@ const TeamStatus = memo(function TeamStatus({
   const currentUserId = String(currentUser?.id || currentUser?._id || "");
   const myAvailability = currentUser?.availability || "available";
   const activeStatus = getStatus(myAvailability);
+
+  useEffect(() => {
+    const onWorkspaceStatus = (event) => {
+      const status = event?.detail;
+      const statusUserId = String(status?.id || status?.userId || "");
+      if (!statusUserId) return;
+
+      if (statusUserId === currentUserId) {
+        updateUser({
+          availability: status.availability,
+          jobRole: status.jobRole,
+          statusMessage: status.statusMessage,
+        });
+        return;
+      }
+
+      setMembers((prev) =>
+        prev.map((member) => {
+          const memberId = String(member.id || member._id || "");
+          if (memberId !== statusUserId) return member;
+          return {
+            ...member,
+            username: status.username || member.username,
+            avatar: status.avatar ?? member.avatar,
+            availability: status.availability ?? member.availability,
+            statusMessage: status.statusMessage ?? member.statusMessage,
+          };
+        }),
+      );
+    };
+
+    window.addEventListener("workspace:status", onWorkspaceStatus);
+    return () =>
+      window.removeEventListener("workspace:status", onWorkspaceStatus);
+  }, [currentUserId, updateUser]);
 
   useEffect(() => {
     let active = true;
@@ -143,7 +178,7 @@ const TeamStatus = memo(function TeamStatus({
   };
 
   return (
-    <motion.div
+    <m.div
       className="dashboard-card p-5 overflow-hidden"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
@@ -269,9 +304,11 @@ const TeamStatus = memo(function TeamStatus({
                       {member.username || member.name || "Member"}
                     </p>
                     <p className="truncate text-[11px] text-[#ADADAD]">
-                      {member.availability === "busy"
-                        ? "Busy · cannot take new tasks"
-                        : status.label}
+                      {member.statusMessage
+                        ? member.statusMessage
+                        : member.availability === "busy"
+                          ? "Busy · cannot take new tasks"
+                          : status.label}
                     </p>
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
@@ -288,7 +325,7 @@ const TeamStatus = memo(function TeamStatus({
           </ul>
         )}
       </div>
-    </motion.div>
+    </m.div>
   );
 });
 

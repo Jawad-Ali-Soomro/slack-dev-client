@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { DEFAULT_DATA, SERIES } from "@/constants/weekly-bar";
 
 const shortDay = (day) => {
@@ -57,7 +57,7 @@ const WeeklyBarChart = ({
                       className="weekly-bar-chart__bar-wrap"
                       title={`${series.label}: ${value}`}
                     >
-                      <motion.div
+                      <m.div
                         className="weekly-bar-chart__bar"
                         initial={animate ? { scaleY: 0, opacity: 0 } : false}
                         whileInView={
@@ -98,7 +98,7 @@ const WeeklyBarChart = ({
 
       <div className="weekly-bar-chart__legend">
         {SERIES.map((series, i) => (
-          <motion.span
+          <m.span
             key={series.key}
             className="weekly-bar-chart__chip"
             initial={animate ? { opacity: 0, y: 8 } : false}
@@ -115,7 +115,7 @@ const WeeklyBarChart = ({
               style={{ backgroundColor: series.color }}
             />
             {series.label}
-          </motion.span>
+          </m.span>
         ))}
       </div>
     </div>

@@ -71,6 +71,10 @@ export const ChatProvider = ({ children }) => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
 
+  useEffect(() => {
+    messageIdsRef.current = new Set(messages.keys());
+  }, [messages]);
+
   const addMessage = useCallback(
     (message) => {
       const messageId = normalizeId(message._id);
@@ -322,6 +326,12 @@ export const ChatProvider = ({ children }) => {
       window.dispatchEvent(new CustomEvent("tasks:changed", { detail: task }));
     });
 
+    newSocket.on("workspace_status", (status) => {
+      window.dispatchEvent(
+        new CustomEvent("workspace:status", { detail: status }),
+      );
+    });
+
     socketRef.current = newSocket;
     setSocket(newSocket);
     socketInitialized.current = true;
@@ -333,6 +343,7 @@ export const ChatProvider = ({ children }) => {
         newSocket.off("notification_updated");
         newSocket.off("notification_deleted");
         newSocket.off("task_updated");
+        newSocket.off("workspace_status");
         newSocket.close();
       }
       socketRef.current = null;
@@ -414,7 +425,6 @@ export const ChatProvider = ({ children }) => {
           }
         });
 
-        messageIdsRef.current = new Set(merged.keys());
         return merged;
       });
 

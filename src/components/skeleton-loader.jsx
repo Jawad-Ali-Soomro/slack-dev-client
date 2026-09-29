@@ -1,27 +1,7 @@
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 
-const SkeletonLoader = ({ type = "card", count = 1, className = "" }) => {
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-      },
-    },
-  };
-
-  const itemVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        duration: 0.3,
-      },
-    },
-  };
-
-  const CardSkeleton = () => (
+function CardSkeleton() {
+  return (
     <div className="bg-white dark:bg-black rounded-[15px]  border-gray-200 dark:border-gray-700 p-6 animate-pulse">
       <div className="flex items-center justify-between mb-4">
         <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-24"></div>
@@ -31,8 +11,10 @@ const SkeletonLoader = ({ type = "card", count = 1, className = "" }) => {
       <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16"></div>
     </div>
   );
+}
 
-  const TableSkeleton = () => (
+function TableSkeleton({ count }) {
+  return (
     <div className="bg-white dark:bg-black rounded-[15px] shadow-xl  border-gray-200 dark:border-gray-700 overflow-hidden animate-pulse">
       <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
         <table className="w-full">
@@ -120,8 +102,10 @@ const SkeletonLoader = ({ type = "card", count = 1, className = "" }) => {
       </div>
     </div>
   );
+}
 
-  const GridSkeleton = () => (
+function GridSkeleton({ count }) {
+  return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {Array.from({ length: count }).map((_, index) => (
         <div
@@ -147,8 +131,10 @@ const SkeletonLoader = ({ type = "card", count = 1, className = "" }) => {
       ))}
     </div>
   );
+}
 
-  const ListSkeleton = () => (
+function ListSkeleton({ count }) {
+  return (
     <div className="space-y-4">
       {Array.from({ length: count }).map((_, index) => (
         <div
@@ -167,35 +153,57 @@ const SkeletonLoader = ({ type = "card", count = 1, className = "" }) => {
       ))}
     </div>
   );
+}
+
+const SkeletonLoader = ({ type = "card", count = 1, className = "" }) => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        duration: 0.3,
+      },
+    },
+  };
 
   const renderSkeleton = () => {
     switch (type) {
       case "card":
         return <CardSkeleton />;
       case "table":
-        return <TableSkeleton />;
+        return <TableSkeleton count={count} />;
       case "grid":
-        return <GridSkeleton />;
+        return <GridSkeleton count={count} />;
       case "list":
-        return <ListSkeleton />;
+        return <ListSkeleton count={count} />;
       default:
         return <CardSkeleton />;
     }
   };
 
   return (
-    <motion.div
+    <m.div
       variants={containerVariants}
       initial="hidden"
       animate="visible"
       className={className}
     >
       {Array.from({ length: count }).map((_, index) => (
-        <motion.div key={index} variants={itemVariants}>
+        <m.div key={index} variants={itemVariants}>
           {renderSkeleton()}
-        </motion.div>
+        </m.div>
       ))}
-    </motion.div>
+    </m.div>
   );
 };
 

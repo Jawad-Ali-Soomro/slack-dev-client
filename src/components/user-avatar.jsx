@@ -221,8 +221,9 @@ function ExtraCountHover({ extra, extraCount, size, zIndex }) {
           type="button"
           className={cn(
             "relative inline-flex items-center justify-center rounded-full",
-            "ring-2 ring-white dark:ring-black bg-black text-white font-semibold leading-none",
+            "ring-white dark:ring-black bg-gray-100 text-black font-semibold leading-none",
             SIZE[size] || SIZE.md,
+            "mb-1.5"
           )}
           style={{ marginLeft: -10, zIndex }}
           aria-label={`${extraCount} more`}
@@ -230,15 +231,15 @@ function ExtraCountHover({ extra, extraCount, size, zIndex }) {
           +{extraCount > 99 ? 99 : extraCount}
         </button>
       </HoverCardTrigger>
-      <HoverCardContent side="top" className="w-auto max-w-[240px] px-3 py-2">
-        <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
+      <HoverCardContent side="top" className="w-auto max-w-[240px] p-2">
+        {/* <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
           {extraCount} more
-        </p>
-        <ul className="space-y-1.5">
+        </p> */}
+        <ul className="">
           {extra.slice(0, 8).map((person, index) => (
             <li
               key={person.id || `${person.name}-extra-${index}`}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-zinc-800"
             >
               <AvatarCircle src={person.avatar} name={person.name} size="sm" ring={false} />
               <NameCard name={person.name} email={person.email} />

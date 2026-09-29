@@ -75,16 +75,7 @@ function SpotlightCard({
   );
 }
 
-export default function FeaturedCardsSwiper({
-  task,
-  meeting,
-  project,
-  onOpenTasks,
-  onOpenMeetings,
-  onOpenProjects,
-  onJoinMeeting,
-  className = "",
-}) {
+function featuredCardCopy({ task, meeting, project }) {
   const taskTitle = task?.title || task?.name || "No tasks yet";
   const taskStatus = (task?.status || "todo").replace(/_/g, " ");
   const meetingTitle = meeting?.title || meeting?.name || "No meetings yet";
@@ -95,6 +86,36 @@ export default function FeaturedCardsSwiper({
     Math.max(0, Number(project?.progress) || 0),
   );
   const projectStatus = (project?.status || "planning").replace(/_/g, " ");
+  return {
+    taskTitle,
+    taskStatus,
+    meetingTitle,
+    hasMeetingLink,
+    projectTitle,
+    projectProgress,
+    projectStatus,
+  };
+}
+
+export default function FeaturedCardsSwiper({
+  task,
+  meeting,
+  project,
+  onOpenTasks,
+  onOpenMeetings,
+  onOpenProjects,
+  onJoinMeeting,
+  className = "",
+}) {
+  const {
+    taskTitle,
+    taskStatus,
+    meetingTitle,
+    hasMeetingLink,
+    projectTitle,
+    projectProgress,
+    projectStatus,
+  } = featuredCardCopy({ task, meeting, project });
 
   return (
     <div

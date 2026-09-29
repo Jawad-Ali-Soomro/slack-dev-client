@@ -12,7 +12,7 @@ const Textarea = React.forwardRef(
     return (
       <textarea
         className={cn(
-          "flex w-full rounded-[15px] border border-input dark:border-gray-600 shadow-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus:border-gray-400 dark:focus:border-gray-600 focus-visible:shadow-md transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50",
+          "flex w-full rounded-[15px] border border-input focus:border(var(--theme-accent)) dark:focus:border-[var(--theme-accent)] bg-white dark:bg-transparent text-gray-900 dark:text-white dark:border-gray-600 shadow-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/20 focus:border-[var(--theme-accent)] dark:focus:border-[var(--theme-accent)] focus-visible:shadow-md transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-50",
           sizeVariants[size],
           className,
         )}

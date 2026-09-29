@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   Zap,
   Plus,
@@ -201,7 +201,7 @@ const Automation = () => {
             const isOn = tpl.enabled;
             const busy = savingKey === tpl.key || loading;
             return (
-              <motion.div
+              <m.div
                 key={tpl.key}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -258,7 +258,7 @@ const Automation = () => {
                     {tpl.action}
                   </span>
                 </div>
-              </motion.div>
+              </m.div>
             );
           })}
         </div>

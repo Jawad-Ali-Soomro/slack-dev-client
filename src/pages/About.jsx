@@ -1,6 +1,6 @@
 
 import Footer from "../components/footer";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { Users, Target, Award, Globe } from "lucide-react";
 
 const About = () => {
@@ -26,7 +26,7 @@ const About = () => {
   return (
     <>
       <div className="flex flex-col items-center justify-center pt-50 relative overflow-hidden bg-gray-50 dark:bg-black min-h-screen">
-      <motion.main
+      <m.main
         className="container mx-auto px-6 py-20"
         variants={containerVariants}
         initial="hidden"
@@ -34,33 +34,33 @@ const About = () => {
       >
         {/* Hero Section */}
         <div className="text-center mb-20">
-          <motion.h1
+          <m.h1
             variants={itemVariants}
             className="text-6xl  text-gray-900 dark:text-white  mb-6"
             style={{ fontWeight: 900 }}
           >
             Know Us!
-          </motion.h1>
-          <motion.p
+          </m.h1>
+          <m.p
             variants={itemVariants}
             className="text-xl  max-w-3xl mx-auto "
           >
             Yes we are passionate developers building tools for the developer
             community!
-          </motion.p>
+          </m.p>
 
           {/* Team Hero Image */}
-          <motion.div variants={itemVariants} className="mt-12 relative">
+          <m.div variants={itemVariants} className="mt-12 relative">
             <img
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1800&h=900&fit=crop"
               alt="Our team working together"
               className="rounded-[15px] shadow-lg mx-auto max-w-4xl w-full h-64 object-cover"
             />
-          </motion.div>
+          </m.div>
         </div>
 
         {/* Stats Section */}
-        <motion.section
+        <m.section
           variants={itemVariants}
           className="grid md:grid-cols-4 gap-8 mb-20"
         >
@@ -70,7 +70,7 @@ const About = () => {
             { number: "100+", label: "Countries Included" },
             { number: "99.9%", label: "Uptime Guaranteed" },
           ].map((stat, index) => (
-            <motion.div
+            <m.div
               key={index}
               className="text-center glass-card p-8 rounded-[15px]"
               whileHover={{ y: -5 }}
@@ -91,12 +91,12 @@ const About = () => {
               >
                 {stat.label}
               </div>
-            </motion.div>
+            </m.div>
           ))}
-        </motion.section>
+        </m.section>
 
         {/* Mission Section */}
-        <motion.section variants={itemVariants} className="text-center mb-20">
+        <m.section variants={itemVariants} className="text-center mb-20">
           <h2
             className="text-4xl text-gray-900 dark:text-white  mb-8"
             style={{ fontWeight: 900 }}
@@ -108,10 +108,10 @@ const About = () => {
             platforms that streamline the development process, enhance
             collaboration, and accelerate innovation in the tech industry.
           </p>
-        </motion.section>
+        </m.section>
 
         {/* Values Section */}
-        <motion.section variants={itemVariants}>
+        <m.section variants={itemVariants}>
           {/* <h2 className="text-4xl text-gray-900 dark:text-white  text-center mb-16" style={{ fontWeight: 900 }}>
             Our Values
           </h2> */}
@@ -150,7 +150,7 @@ const About = () => {
                   "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1800&h=900&fit=crop",
               },
             ].map((value, index) => (
-              <motion.div
+              <m.div
                 key={index}
                 className="glass-card p-8 rounded-[15px] overflow-hidden"
                 whileHover={{ y: -5 }}
@@ -173,11 +173,11 @@ const About = () => {
                 <p className="text-[15px]   leading-relaxed">
                   {value.description}
                 </p>
-              </motion.div>
+              </m.div>
             ))}
           </div>
-        </motion.section>
-      </motion.main>
+        </m.section>
+      </m.main>
 
       <Footer />
       </div>

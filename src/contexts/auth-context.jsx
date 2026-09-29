@@ -114,16 +114,14 @@ export const AuthProvider = ({ children }) => {
   };
 
   const updateUser = (updates) => {
-    setUser((prev) => {
-      if (!prev) return prev;
-      const next = { ...prev, ...updates };
-      try {
-        localStorage.setItem("userData", JSON.stringify(next));
-      } catch {
-        /* ignore */
-      }
-      return next;
-    });
+    if (!user) return;
+    const next = { ...user, ...updates };
+    try {
+      localStorage.setItem("userData", JSON.stringify(next));
+    } catch {
+      /* ignore */
+    }
+    setUser(next);
   };
 
   const isSuperadmin = useMemo(() => {
