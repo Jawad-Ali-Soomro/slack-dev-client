@@ -83,6 +83,22 @@ export const ChatProvider = ({ children }) => {
 
       setMessages((prev) => {
         const next = new Map(prev);
+        const senderId = normalizeId(
+          message.sender?._id || message.sender?.id || message.sender,
+        );
+        const incomingChat = normalizeId(message.chat);
+        for (const [id, existing] of next) {
+          if (!existing?.pending) continue;
+          if (normalizeId(existing.chat) !== incomingChat) continue;
+          const existingSender = normalizeId(
+            existing.sender?._id || existing.sender?.id || existing.sender,
+          );
+          if (existingSender !== senderId) continue;
+          if ((existing.content || "") !== (message.content || "")) continue;
+          next.delete(id);
+          messageIdsRef.current.delete(normalizeId(id));
+          break;
+        }
         if (!next.has(messageId)) {
           next.set(messageId, message);
         }
@@ -451,6 +467,7 @@ export const ChatProvider = ({ children }) => {
     type = "direct",
     name = null,
     description = null,
+    logo = null,
   ) => {
     try {
       setLoading(true);
@@ -479,6 +496,8 @@ export const ChatProvider = ({ children }) => {
         type,
         name,
         description,
+        logo: logo?.logo,
+        logoPublicId: logo?.logoPublicId,
       });
 
       const existingChatInList = chats.find(
@@ -500,6 +519,20 @@ export const ChatProvider = ({ children }) => {
     }
   };
 
+  const updateGroup = async (chatId, updates) => {
+    const response = await chatService.updateGroup(chatId, updates);
+    const updated = response.data;
+    setChats((prev) =>
+      prev.map((chat) =>
+        chat._id === updated._id ? { ...chat, ...updated } : chat,
+      ),
+    );
+    setCurrentChat((prev) =>
+      prev && prev._id === updated._id ? { ...prev, ...updated } : prev,
+    );
+    return updated;
+  };
+
   const sendMessage = async (
     content,
     type = "text",
@@ -509,23 +542,75 @@ export const ChatProvider = ({ children }) => {
     const trimmed = (content || "").trim();
     if (!currentChat || (!trimmed && attachments.length === 0)) return;
 
+    const clientId = `pending:${Date.now()}:${Math.random().toString(36).slice(2)}`;
+    const senderId = user?.id || user?._id;
+    const replyId = replyTo?._id || replyTo || null;
+    const replyPreview =
+      replyTo && typeof replyTo === "object"
+        ? {
+            _id: replyTo._id,
+            content: replyTo.content,
+            sender: replyTo.sender,
+          }
+        : undefined;
+
+    const previewContent =
+      trimmed ||
+      (attachments.length === 1
+        ? attachments[0]?.name || "Sent a file"
+        : attachments.length > 1
+          ? `Sent ${attachments.length} files`
+          : "");
+
+    addMessage({
+      _id: clientId,
+      chat: currentChat._id,
+      sender: {
+        _id: senderId,
+        username: user?.username,
+        name: user?.username,
+        email: user?.email,
+        avatar: user?.avatar,
+      },
+      content: previewContent,
+      type,
+      attachments,
+      replyTo: replyPreview,
+      createdAt: new Date().toISOString(),
+      pending: true,
+      readBy: [],
+    });
+
     try {
       const response = await chatService.sendMessage({
         chatId: currentChat._id,
         content: trimmed,
         type,
         attachments,
-        replyTo,
+        replyTo: replyId || undefined,
       });
 
       const message = response.data;
-      if (message) {
-        addMessage(message);
-        socketRef.current?.emit("join_chat", currentChat._id);
+      if (message?._id) {
+        const messageId = normalizeId(message._id);
+        messageIdsRef.current.delete(clientId);
+        messageIdsRef.current.add(messageId);
+        setMessages((prev) => {
+          const next = new Map(prev);
+          next.delete(clientId);
+          next.set(messageId, message);
+          return next;
+        });
       }
 
       return message;
     } catch (err) {
+      messageIdsRef.current.delete(clientId);
+      setMessages((prev) => {
+        const next = new Map(prev);
+        next.delete(clientId);
+        return next;
+      });
       setError("Failed to send message");
       console.error("Error sending message:", err);
       throw err;
@@ -628,7 +713,7 @@ export const ChatProvider = ({ children }) => {
 
   const getChatAvatar = (chat) => {
     if (chat.type === "group") {
-      return chat.avatar || null;
+      return chat.logo || chat.avatar || null;
     }
 
     if (!chat.participants || chat.participants.length === 0) {
@@ -680,6 +765,7 @@ export const ChatProvider = ({ children }) => {
     messagesEndRef,
     messagesLoading,
     createChat,
+    updateGroup,
     setCurrentChat,
     sendMessage,
     updateMessage,

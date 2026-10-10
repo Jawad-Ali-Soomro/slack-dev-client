@@ -39,8 +39,8 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
         </div>
 
         <div
-          className={`transition-all duration-300 flex-1 pr-5 md:pr-5 md:pt-20 pt-25 pl-5 overflow-hidden ${
-            isOpen ? "md:pl-[260px]" : "md:pl-[92px]"
+          className={`transition-all duration-300 flex-1 pr-5 md:pr-10 md:pt-20 pt-25 pl-5 overflow-hidden ${
+            isOpen ? "md:pl-[270px]" : "md:pl-[100px]"
           }`}
         >
           {children}

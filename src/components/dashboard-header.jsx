@@ -18,8 +18,7 @@ import { useSidebar } from "../contexts/sidebar-context";
 import { RiMenu3Fill } from "react-icons/ri";
 import { ThemeToggle } from "./theme-toggle";
 import { PiUserDuotone } from "react-icons/pi";
-import { Link, useNavigate } from "react-router-dom";
-import Connections from "./connections";
+import { Link } from "react-router-dom";
 import { Skeleton } from "./ui/skeleton";
 import {
   isUserGithubConnected,

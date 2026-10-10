@@ -3,16 +3,12 @@ import { useChat } from "../contexts/chat-context";
 import { useNotifications } from "../contexts/notification-context";
 import ChatList from "../components/chat-list";
 import ChatWindow from "../components/chat-window";
-import CreateChatModal from "../components/create-chat-modal";
-import { Button } from "../components/ui/button";
-import { Plus, Wifi, WifiOff } from "lucide-react";
 
 const Chat = () => {
   document.title = "Chat - Message Your Friends";
 
-  const { isConnected, unreadCount, error, currentChat } = useChat();
+  const { currentChat } = useChat();
   const { markAsReadByType } = useNotifications();
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   React.useEffect(() => {
@@ -30,50 +26,8 @@ const Chat = () => {
 
   return (
     <div
-      className={`h-[calc(100vh-7rem)] flex flex-col ${isMobile ? "m-0" : ""}`}
+      className={`h-[calc(100vh-5rem)] flex flex-col ${isMobile ? "m-0" : ""}`}
     >
-      {/* Header */}
-      <div className="flex-shrink-0 border-b backdrop-blur icon pt-2">
-        <div className={`flex h-14 items-center ${isMobile ? "px-2" : "px-4"}`}>
-          <div className="ml-auto flex items-center gap-2">
-            <div className="flex items-center gap-1 text-sm">
-              {isConnected ? (
-                <>
-                  <Wifi className="h-4 w-4 text-green-500" />
-                  <span className="text-green-600 dark:text-green-400">
-                    Connected
-                  </span>
-                </>
-              ) : (
-                <>
-                  <WifiOff className="h-4 w-4 icon text-red-500" />
-                  <span className="text-red-600 dark:text-red-400">
-                    Disconnected
-                  </span>
-                </>
-              )}
-            </div>
-
-            {error && (
-              <div
-                className="text-xs text-red-500 max-w-32 truncate"
-                title={error}
-              >
-                {error}
-              </div>
-            )}
-
-            <Button
-              size="sm"
-              onClick={() => setShowCreateModal(true)}
-              className="h-8 w-8 p-0"
-            >
-              <Plus className="h-4 w-4 icon" />
-            </Button>
-          </div>
-        </div>
-      </div>
-
       {/* Chat Interface */}
       <div className={`flex flex-1 min-h-0 ${isMobile ? "m-0" : ""}`}>
         {isMobile ? (
@@ -92,11 +46,6 @@ const Chat = () => {
         )}
       </div>
 
-      {/* Create Chat Modal */}
-      <CreateChatModal
-        isOpen={showCreateModal}
-        onClose={() => setShowCreateModal(false)}
-      />
     </div>
   );
 };

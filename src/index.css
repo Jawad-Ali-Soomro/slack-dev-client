@@ -188,7 +188,7 @@ html.figma-cursor-active * {
 }
 
 :root {
-  --radius: 0.625rem;
+  --radius: 12px;
   --background: #eee;
   --foreground: oklch(0.13 0.028 261.692);
   --card: oklch(1 0 0);
@@ -305,4 +305,34 @@ html.figma-cursor-active * {
     animation: none;
     display: none;
   }
+}
+
+button,
+[role='button'],
+input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='file']),
+textarea,
+select,
+.brand-logo,
+.lp-logo-btn,
+.auth-card,
+.auth-input,
+.auth-btn-primary,
+.auth-btn-secondary,
+.lp-nav,
+.lp-badge,
+.lp-trust-pill,
+.lp-float,
+.lp-feature,
+.lp-feature-icon,
+.lp-step,
+.lp-mac-window,
+.lp-dash-metrics div,
+.lp-chart-card,
+.lp-pie-card li,
+.lp-spotlight,
+.lp-spotlight-head span,
+.lp-auto-card,
+.lp-auto-card li,
+.lp-sheet {
+  border-radius: 12px !important;
 }

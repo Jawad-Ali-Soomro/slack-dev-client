@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
@@ -18,6 +18,7 @@ import { IoFolderOpenOutline } from "react-icons/io5";
 import { PiUsersDuotone, PiUserCheck, PiKeyDuotone } from "react-icons/pi";
 import { BiMessageSquareDetail } from "react-icons/bi";
 import { useNotifications } from "@/contexts/notification-context";
+import BrandLogo from "./brand-logo";
 
 const EXPANDED_WIDTH = 240;
 const COLLAPSED_WIDTH = 72;
@@ -43,6 +44,8 @@ function NavItem({ item, pathname, collapsed, isMobile, onNavigate }) {
       to={item.path}
       title={item.title}
       onClick={() => isMobile && onNavigate()}
+      data-nav-item
+      data-active={active ? "true" : "false"}
       className={`sidebar-nav-item ${collapsed ? "sidebar-nav-item--collapsed" : ""} ${
         active ? "sidebar-nav-item--active" : ""
       }`}
@@ -50,19 +53,19 @@ function NavItem({ item, pathname, collapsed, isMobile, onNavigate }) {
       <span
         className={`sidebar-icon-wrap relative ${active ? "sidebar-icon-wrap--active" : ""}`}
       >
-        <Icon className="w-4.5 h-4.5 shrink-0" />
+        <Icon className={`${collapsed ? "w-5 h-5" : "w-4 h-4"} shrink-0`} />
         {badge && collapsed && (
           <span
-            className="sidebar-badge sidebar-badge--dot"
+            className="sidebar-badge uppercase sidebar-badge--dot"
             aria-label={`${badge} unread`}
           />
         )}
       </span>
       {!collapsed && (
-        <span className="sidebar-label flex-1 truncate">{item.title}</span>
+        <span className="sidebar-label flex-1 truncate uppercase text-[10px]">{item.title}</span>
       )}
       {!collapsed && badge && (
-        <span className="sidebar-badge sidebar-badge--inline">
+        <span className="sidebar-badge sidebar-badge--inline uppercase">
           {badge > 99 ? "99+" : badge}
         </span>
       )}
@@ -84,6 +87,42 @@ function SidebarPanel({
   isTeamAdmin,
   logout,
 }) {
+  const navRef = useRef(null);
+  const [pill, setPill] = useState({
+    top: 0,
+    height: 44,
+    visible: false,
+  });
+
+  const placeOn = useCallback((item) => {
+    const nav = navRef.current;
+    if (!nav || !item) return;
+    const navBox = nav.getBoundingClientRect();
+    const box = item.getBoundingClientRect();
+    setPill({
+      top: box.top - navBox.top + nav.scrollTop,
+      height: box.height,
+      visible: true,
+    });
+  }, []);
+
+  const hidePill = useCallback(() => {
+    setPill((current) => ({ ...current, visible: false }));
+  }, []);
+
+  function onAsideMove(event) {
+    const aside = event.currentTarget;
+    const box = aside.getBoundingClientRect();
+    aside.style.setProperty("--ink-x", `${event.clientX - box.left}px`);
+    aside.style.setProperty("--ink-y", `${event.clientY - box.top}px`);
+    const item = event.target.closest?.("[data-nav-item]");
+    if (!item || !navRef.current?.contains(item) || item.dataset.active === "true") {
+      hidePill();
+      return;
+    }
+    placeOn(item);
+  }
+
   return (
     <>
       {isMobile && isOpen && (
@@ -102,14 +141,16 @@ function SidebarPanel({
           x: showOnScreen ? 0 : -EXPANDED_WIDTH,
         }}
         transition={{ type: "spring", stiffness: 380, damping: 38 }}
-        className={`app-sidebar fixed left-0 top-0 h-[91.5vh] mt-[8.5vh] z-50 flex flex-col border-r border-gray-200 dark:border-white/10 bg-[#eee] dark:bg-black ${
+        onMouseMove={onAsideMove}
+        onMouseLeave={hidePill}
+        className={`ink-aside app-sidebar fixed left-0 top-0 h-[91.5vh] mt-[8.5vh] z-50 flex flex-col border-r border-[var(--sidebar-border)] ${
           collapsed ? "app-sidebar--collapsed" : ""
         }`}
       >
         <div
           className={`sidebar-brand ${collapsed ? "sidebar-brand--collapsed" : ""}`}
         >
-          <img src="/logo.png" alt="logo" className="w-8 h-8 shrink-0" />
+          <BrandLogo />
           {!collapsed && (
             <span className="text-[10px] font-black uppercase tracking-widest truncate">
               Slack Dev
@@ -117,7 +158,18 @@ function SidebarPanel({
           )}
         </div>
 
-        <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2 space-y-1 mt-1">
+        <nav
+          ref={navRef}
+          className="ink-nav flex-1 overflow-y-auto overflow-x-hidden px-2 space-y-1 mt-1"
+        >
+          <span
+            aria-hidden
+            className={`ink-nav-pill ${pill.visible ? "is-on" : ""}`}
+            style={{
+              transform: `translateY(${pill.top}px)`,
+              height: pill.height,
+            }}
+          />
           {collapsed
             ? navGroups.flatMap((group) => group.items).map((item) => (
                 <NavItem
@@ -144,7 +196,7 @@ function SidebarPanel({
         </nav>
 
         <div className="p-2 border-t border-gray-200 dark:border-white/10 space-y-0.5">
-          {isTeamAdmin && (
+          {/* {isTeamAdmin && (
             <button
               type="button"
               title="Assistant"
@@ -163,7 +215,7 @@ function SidebarPanel({
                 </span>
               )}
             </button>
-          )}
+          )} */}
           <button
             type="button"
             onClick={logout}

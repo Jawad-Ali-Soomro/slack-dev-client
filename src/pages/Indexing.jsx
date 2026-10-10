@@ -466,7 +466,7 @@ const Indexing = () => {
 
          <div className="flex items-center gap-3">
          <ThemeToggle className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-black/10 bg-white text-black shadow-sm dark:border-white/15 dark:bg-zinc-900 dark:text-white" />
-         <div className="flex bg-black h-[50px] px-1 pr-8 rounded-full text-white items-center gap-2 dark:bg-white dark:text-black"  onClick={goAuth}>
+         <div className="flex bg-black h-[50px] px-1 pr-8 rounded-[12px] text-white items-center gap-2 dark:bg-white dark:text-black"  onClick={goAuth}>
          <button
             type="button"
             className="rounded-full p-2 bg-white text-black flex items-center justify-center dark:bg-black dark:text-white"

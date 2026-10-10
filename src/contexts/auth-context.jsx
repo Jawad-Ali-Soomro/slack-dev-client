@@ -1,4 +1,11 @@
-import { createContext, useContext, useState, useEffect, useMemo } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useMemo,
+  useRef,
+} from "react";
 import { authService } from "../services/auth-service";
 import { clearGithubStorage } from "../utils/github-storage";
 
@@ -16,28 +23,33 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const authEpoch = useRef(0);
 
   useEffect(() => {
     checkAuthStatus();
   }, []);
 
   const checkAuthStatus = async () => {
+    const epoch = ++authEpoch.current;
     try {
       setLoading(true);
       const userProfile = await authService.getCurrentUser();
+      if (epoch !== authEpoch.current) return;
       setUser(userProfile.user);
       setIsAuthenticated(true);
     } catch (error) {
+      if (epoch !== authEpoch.current) return;
       localStorage.removeItem("userData");
       clearGithubStorage();
       setIsAuthenticated(false);
       setUser(null);
     } finally {
-      setLoading(false);
+      if (epoch === authEpoch.current) setLoading(false);
     }
   };
 
   const login = async (credentials) => {
+    const epoch = ++authEpoch.current;
     try {
       setLoading(true);
 
@@ -62,7 +74,7 @@ export const AuthProvider = ({ children }) => {
     } catch (error) {
       return { success: false, error: error.message || "Login failed" };
     } finally {
-      setLoading(false);
+      if (epoch === authEpoch.current) setLoading(false);
     }
   };
 

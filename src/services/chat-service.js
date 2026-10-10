@@ -8,6 +8,21 @@ export const chatService = {
     return response.data;
   },
 
+  uploadGroupLogo: async (file) => {
+    const formData = new FormData();
+    formData.append("logo", file);
+    const response = await axiosInstance.post(`${API_BASE}/groups/logo`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+      timeout: 60000,
+    });
+    return response.data;
+  },
+
+  updateGroup: async (chatId, updates) => {
+    const response = await axiosInstance.put(`${API_BASE}/${chatId}`, updates);
+    return response.data;
+  },
+
   getUserChats: async (page = 1, limit = 20) => {
     const response = await axiosInstance.get(
       `${API_BASE}?page=${page}&limit=${limit}`,

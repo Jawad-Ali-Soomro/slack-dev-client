@@ -201,7 +201,7 @@ const TeamStatus = memo(function TeamStatus({
         </span>
       </div>
 
-      <div className="rounded-xl border border-gray-100 bg-[#F8F9FA] p-3 dark:border-white/10 dark:bg-white/5">
+      <div className="rounded-xl border border-gray-100 p-3 dark:border-white/10 dark:bg-white/5">
         <div className="flex items-center gap-3 mb-3">
           <div className="relative shrink-0">
             <UserAvatar

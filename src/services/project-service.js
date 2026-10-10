@@ -10,6 +10,7 @@ const projectService = {
       if (filters.search) queryParams.append("search", filters.search);
       if (filters.page) queryParams.append("page", filters.page);
       if (filters.limit) queryParams.append("limit", filters.limit);
+      if (filters.summary) queryParams.append("summary", "true");
 
       const response = await axios.get(
         `/api/projects?${queryParams.toString()}`,

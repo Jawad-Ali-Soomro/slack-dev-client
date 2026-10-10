@@ -61,7 +61,7 @@ const headerPadClass = (isMobile) =>
   `flex-shrink-0 border-b border-black/[0.06] bg-white dark:border-white/10 dark:bg-black/40 ${isMobile ? "px-2 py-2.5" : "px-5 py-3.5"}`;
 
 const presenceDotClass = (isOnline) =>
-  `absolute bottom-0 right-0 h-3 w-3 rounded-full ring-2 ring-white dark:ring-black ${isOnline ? "bg-emerald-500" : "bg-gray-300"
+  `absolute bottom-0 right-0 h-3 w-3 rounded-[12px] ring-2 ring-white dark:ring-black ${isOnline ? "bg-emerald-500" : "bg-gray-300"
   }`;
 
 const statusTextClass = (typingCount, isOnline) => {
@@ -73,9 +73,9 @@ const statusTextClass = (typingCount, isOnline) => {
 };
 
 const statusDotClass = (typingCount, isOnline) => {
-  if (typingCount > 0) return "h-1.5 w-1.5 rounded-full bg-[#FF914B]";
-  if (isOnline) return "h-1.5 w-1.5 rounded-full bg-emerald-500";
-  return "h-1.5 w-1.5 rounded-full bg-gray-300";
+  if (typingCount > 0) return "h-1.5 w-1.5 rounded-[12px] bg-[#FF914B]";
+  if (isOnline) return "h-1.5 w-1.5 rounded-[12px] bg-emerald-500";
+  return "h-1.5 w-1.5 rounded-[12px] bg-gray-300";
 };
 
 const statusLabel = (typingCount, isOnline) => {
@@ -160,8 +160,8 @@ const bubbleStackClass = (isOwn) => {
 const bubbleClass = (isOwn, mediaOnly, isDeleted) => {
   const pad = mediaOnly ? "p-1" : "px-3.5 py-2";
   const tone = isOwn
-    ? "rounded-[22px] rounded-br-md bg-gradient-to-br from-[#FF914B] to-[#ff6a3d] text-white"
-    : "rounded-[22px] rounded-bl-none border border-black/[0.06] bg-white text-gray-900 dark:border-white/10 dark:bg-[#1c1c1e] dark:text-white";
+    ? "rounded-[12px] rounded-br-none bg-gradient-to-br from-[#FF914B] to-[#ff6a3d] text-white"
+    : "rounded-[12px] rounded-bl-none border border-black/[0.06] bg-white text-gray-900 dark:border-white/10 dark:bg-[#1c1c1e] dark:text-white";
   const faded = isDeleted ? "opacity-60" : "";
   return `relative ${pad} ${tone} ${faded}`;
 };
@@ -178,7 +178,7 @@ const editedLabelClass = (isOwn) => {
 
 const actionsBarClass = (isOwn) => {
   const side = isOwn ? "right-full mr-1.5" : "left-full ml-1.5";
-  return `absolute top-1 flex items-center gap-0.5 rounded-full border border-black/[0.06] bg-white p-0.5 opacity-0 transition-opacity group-hover:opacity-100 dark:border-white/10 dark:bg-[#2a2a2c] ${side}`;
+  return `absolute top-1 flex items-center gap-0.5 rounded-[12px] border border-black/[0.06] bg-white p-0.5 opacity-0 transition-opacity group-hover:opacity-100 dark:border-white/10 dark:bg-[#2a2a2c] ${side}`;
 };
 
 const profileTitle = (username) => {
@@ -385,7 +385,7 @@ const ChatHeader = ({
         <button
           type="button"
           onClick={onBack}
-          className="flex h-9 w-9 items-center justify-center rounded-full text-gray-700 hover:bg-black/[0.05] dark:text-white dark:hover:bg-white/10"
+          className="flex h-9 w-9 items-center justify-center rounded-[12px] text-gray-700 hover:bg-black/[0.05] dark:text-white dark:hover:bg-white/10"
           title="Back to chat list"
         >
           <ArrowLeft className="h-5 w-5" />
@@ -426,7 +426,7 @@ const ChatMessagesLoading = () => (
       >
         <div className="flex items-end gap-3 max-w-[300px]">
           {item % 2 !== 0 ? (
-            <Skeleton className="w-10 h-10 rounded-full shrink-0" />
+            <Skeleton className="w-10 h-10 rounded-[12px] shrink-0" />
           ) : null}
 
           <div className="flex flex-col gap-2">
@@ -438,7 +438,7 @@ const ChatMessagesLoading = () => (
           </div>
 
           {item % 2 === 0 ? (
-            <Skeleton className="w-10 h-10 rounded-full shrink-0" />
+            <Skeleton className="w-10 h-10 rounded-[12px] shrink-0" />
           ) : null}
         </div>
       </div>
@@ -528,7 +528,7 @@ const ChatMessageActions = ({
       {isOwn ? null : (
         <button
           type="button"
-          className="flex h-7 w-7 items-center justify-center rounded-full text-gray-500 hover:bg-black/[0.05] hover:text-[#FF914B] dark:hover:bg-white/10"
+          className="flex h-7 w-7 items-center justify-center rounded-[12px] text-gray-500 hover:bg-black/[0.05] hover:text-[#FF914B] dark:hover:bg-white/10"
           onClick={() => onReply(message)}
           title="Reply"
         >
@@ -539,7 +539,7 @@ const ChatMessageActions = ({
         <>
           <button
             type="button"
-            className="flex h-7 w-7 items-center justify-center rounded-full text-gray-500 hover:bg-black/[0.05] hover:text-[#FF914B] dark:hover:bg-white/10"
+            className="flex h-7 w-7 items-center justify-center rounded-[12px] text-gray-500 hover:bg-black/[0.05] hover:text-[#FF914B] dark:hover:bg-white/10"
             onClick={() => onEdit(message)}
             title="Edit"
           >
@@ -547,7 +547,7 @@ const ChatMessageActions = ({
           </button>
           <button
             type="button"
-            className="flex h-7 w-7 items-center justify-center rounded-full text-gray-500 hover:bg-red-50 hover:text-red-500"
+            className="flex h-7 w-7 items-center justify-center rounded-[12px] text-gray-500 hover:bg-red-50 hover:text-red-500"
             onClick={() => onDelete(message._id)}
             title="Delete"
           >
@@ -693,14 +693,14 @@ const ChatTypingIndicator = ({ typingUsers }) => {
 
   return (
     <div className="mt-3 flex items-center gap-2">
-      <div className="flex items-center gap-1 rounded-full border border-black/[0.06] bg-white px-3.5 py-2.5 dark:border-white/10 dark:bg-[#1c1c1e]">
-        <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#FF914B]"></div>
+      <div className="flex items-center gap-1 rounded-[12px] border border-black/[0.06] bg-white px-3.5 py-2.5 dark:border-white/10 dark:bg-[#1c1c1e]">
+        <div className="h-1.5 w-1.5 animate-bounce rounded-[12px] bg-[#FF914B]"></div>
         <div
-          className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#FF914B]"
+          className="h-1.5 w-1.5 animate-bounce rounded-[12px] bg-[#FF914B]"
           style={{ animationDelay: "0.15s" }}
         ></div>
         <div
-          className="h-1.5 w-1.5 animate-bounce rounded-full bg-[#FF914B]"
+          className="h-1.5 w-1.5 animate-bounce rounded-[12px] bg-[#FF914B]"
           style={{ animationDelay: "0.3s" }}
         ></div>
       </div>
@@ -801,7 +801,7 @@ const ChatPendingFiles = ({ pendingFiles, onRemove }) => {
           <button
             type="button"
             onClick={() => onRemove(item.id)}
-            className="rounded-full p-1 text-gray-500 hover:text-red-500"
+            className="rounded-[12px] p-1 text-gray-500 hover:text-red-500"
             title="Remove file"
           >
             <X className="h-3.5 w-3.5" />
@@ -832,7 +832,7 @@ const ChatContextBanner = ({
       <button
         type="button"
         onClick={onCancel}
-        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-gray-500 hover:bg-black/5 hover:text-red-500 dark:hover:bg-white/10"
+        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-[12px] text-gray-500 hover:bg-black/5 hover:text-red-500 dark:hover:bg-white/10"
         title="Cancel"
       >
         <X className="h-3.5 w-3.5" />
@@ -859,10 +859,10 @@ const ChatComposerForm = ({
   theme,
 }) => (
   <form onSubmit={onSubmit} className="flex items-center gap-2">
-    <div className="flex flex-1 items-center gap-1 rounded-full border border-black/[0.06] px-1.5 transition-colors focus-within:border-[#FF914B]/40 dark:border-white/10">
+    <div className="flex flex-1 items-center gap-1 rounded-[12px] border border-black/[0.06] px-1.5 transition-colors focus-within:border-[#FF914B]/40 dark:border-white/10">
       <button
         type="button"
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-500 hover:bg-white hover:text-[#FF914B] disabled:opacity-40 dark:hover:bg-white/10"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] text-gray-500 hover:bg-white hover:text-[#FF914B] disabled:opacity-40 dark:hover:bg-white/10"
         onClick={() => fileInputRef.current?.click()}
         disabled={attachDisabled(editingMessage, uploadingFiles)}
         title="Attach file"
@@ -886,7 +886,7 @@ const ChatComposerForm = ({
       >
         <button
           type="button"
-          className="flex h-9 w-9 items-center justify-center rounded-full text-gray-500 hover:bg-white hover:text-[#FF914B] dark:hover:bg-white/10"
+          className="flex h-9 w-9 items-center justify-center rounded-[12px] text-gray-500 hover:bg-white hover:text-[#FF914B] dark:hover:bg-white/10"
           onClick={onToggleEmoji}
           title="Emoji"
         >
@@ -915,7 +915,7 @@ const ChatComposerForm = ({
         messageText,
         pendingFiles,
       )}
-      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#FF914B] text-white transition-colors hover:bg-[#ff7a2e] disabled:opacity-40"
+      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#FF914B] text-white transition-colors hover:bg-[#ff7a2e] disabled:opacity-40"
       title="Send message"
     >
       {uploadingFiles ? (
@@ -993,7 +993,7 @@ const ChatImagePreview = ({ imagePreview, onClose }) => {
     >
       <button
         type="button"
-        className="absolute right-5 top-5 flex h-9 w-9 items-center justify-center rounded-full bg-white/95 text-gray-800"
+        className="absolute right-5 top-5 flex h-9 w-9 items-center justify-center rounded-[12px] bg-white/95 text-gray-800"
         onClick={onClose}
         title="Close"
       >
@@ -1015,7 +1015,7 @@ const ChatScrollButton = ({ show, onClick }) => {
   return (
     <button
       type="button"
-      className="absolute bottom-24 right-5 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-black/[0.08] bg-white text-gray-700 hover:text-[#FF914B] dark:border-white/10 dark:bg-[#2a2a2c] dark:text-white"
+      className="absolute bottom-24 right-5 z-10 flex h-9 w-9 items-center justify-center rounded-[12px] border border-black/[0.08] bg-white text-gray-700 hover:text-[#FF914B] dark:border-white/10 dark:bg-[#2a2a2c] dark:text-white"
       onClick={onClick}
     >
       <ArrowDown className="h-4 w-4" />
