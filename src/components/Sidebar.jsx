@@ -1,27 +1,32 @@
-import { useCallback, useEffect, useRef, useState } from "react";
-import { m, AnimatePresence } from "framer-motion";
+import { useCallback, useRef, useState } from "react";
+import { m } from "framer-motion";
 import {
-  LayoutDashboard,
+  LayoutGrid,
   LogOut,
-  Mic,
-  ChevronDown,
   Compass,
-  Package,
-  CheckCircle,
-  Zap,
+  ShoppingBag,
+  ListChecks,
+  CalendarDays,
+  FolderKanban,
+  Workflow,
+  MessageCircle,
+  KeyRound,
+  Users,
+  UserRound,
+  UserCog,
+  Home,
+  MessageSquareQuote,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { useSidebar } from "../contexts/sidebar-context";
 import { useAuth } from "../contexts/auth-context";
-import { GoCalendar } from "react-icons/go";
-import { IoFolderOpenOutline } from "react-icons/io5";
-import { PiUsersDuotone, PiUserCheck, PiKeyDuotone } from "react-icons/pi";
-import { BiMessageSquareDetail } from "react-icons/bi";
-import { useNotifications } from "@/contexts/notification-context";
 import BrandLogo from "./brand-logo";
+import { TbSmartHome } from "react-icons/tb";
+import { PiUser, PiUserCheck, PiUsers } from "react-icons/pi";
+import { BsChatSquareQuote } from "react-icons/bs";
 
-const EXPANDED_WIDTH = 240;
-const COLLAPSED_WIDTH = 72;
+
+const RAIL_WIDTH = 72;
 
 function pathIsActive(pathname, path) {
   return (
@@ -30,45 +35,27 @@ function pathIsActive(pathname, path) {
   );
 }
 
-function groupContainsPath(group, pathname) {
-  return group.items.some((item) => pathIsActive(pathname, item.path));
-}
-
-function NavItem({ item, pathname, collapsed, isMobile, onNavigate }) {
+function NavItem({ item, pathname, isMobile, onNavigate }) {
   const Icon = item.icon;
   const active = pathIsActive(pathname, item.path);
-  const badge = item.badgeCount > 0 ? item.badgeCount : null;
 
   return (
     <Link
       to={item.path}
-      title={item.title}
+      aria-label={item.title}
       onClick={() => isMobile && onNavigate()}
       data-nav-item
       data-active={active ? "true" : "false"}
-      className={`sidebar-nav-item ${collapsed ? "sidebar-nav-item--collapsed" : ""} ${
+      className={`sidebar-nav-item sidebar-nav-item--collapsed ${
         active ? "sidebar-nav-item--active" : ""
       }`}
     >
       <span
         className={`sidebar-icon-wrap relative ${active ? "sidebar-icon-wrap--active" : ""}`}
       >
-        <Icon className={`${collapsed ? "w-5 h-5" : "w-4 h-4"} shrink-0`} />
-        {badge && collapsed && (
-          <span
-            className="sidebar-badge uppercase sidebar-badge--dot"
-            aria-label={`${badge} unread`}
-          />
-        )}
+        <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
       </span>
-      {!collapsed && (
-        <span className="sidebar-label flex-1 truncate uppercase text-[10px]">{item.title}</span>
-      )}
-      {!collapsed && badge && (
-        <span className="sidebar-badge sidebar-badge--inline uppercase">
-          {badge > 99 ? "99+" : badge}
-        </span>
-      )}
+      <span className="sidebar-tip">{item.title}</span>
     </Link>
   );
 }
@@ -76,15 +63,10 @@ function NavItem({ item, pathname, collapsed, isMobile, onNavigate }) {
 function SidebarPanel({
   isMobile,
   isOpen,
-  collapsed,
   closeSidebar,
-  sidebarWidth,
   showOnScreen,
-  navGroups,
+  items,
   pathname,
-  openGroupId,
-  onToggle,
-  isTeamAdmin,
   logout,
 }) {
   const navRef = useRef(null);
@@ -137,30 +119,21 @@ function SidebarPanel({
       <m.aside
         initial={false}
         animate={{
-          width: sidebarWidth,
-          x: showOnScreen ? 0 : -EXPANDED_WIDTH,
+          width: RAIL_WIDTH,
+          x: showOnScreen ? 0 : -RAIL_WIDTH,
         }}
         transition={{ type: "spring", stiffness: 380, damping: 38 }}
         onMouseMove={onAsideMove}
         onMouseLeave={hidePill}
-        className={`ink-aside app-sidebar fixed left-0 top-0 h-[91.5vh] mt-[8.5vh] z-50 flex flex-col border-r border-[var(--sidebar-border)] ${
-          collapsed ? "app-sidebar--collapsed" : ""
-        }`}
+        className="ink-aside app-sidebar app-sidebar--icons app-sidebar--collapsed fixed left-0 top-0 h-screen z-50 flex flex-col"
       >
-        <div
-          className={`sidebar-brand ${collapsed ? "sidebar-brand--collapsed" : ""}`}
-        >
-          <BrandLogo />
-          {!collapsed && (
-            <span className="text-[10px] font-black uppercase tracking-widest truncate">
-              Slack Dev
-            </span>
-          )}
+        <div className="sidebar-cluster sidebar-cluster--logo">
+          <BrandLogo size={32} />
         </div>
 
         <nav
           ref={navRef}
-          className="ink-nav flex-1 overflow-y-auto overflow-x-hidden px-2 space-y-1 mt-1"
+          className="ink-nav sidebar-cluster sidebar-cluster--nav sidebar-icon-list"
         >
           <span
             aria-hidden
@@ -170,60 +143,28 @@ function SidebarPanel({
               height: pill.height,
             }}
           />
-          {collapsed
-            ? navGroups.flatMap((group) => group.items).map((item) => (
-                <NavItem
-                  key={item.path}
-                  item={item}
-                  pathname={pathname}
-                  collapsed={collapsed}
-                  isMobile={isMobile}
-                  onNavigate={closeSidebar}
-                />
-              ))
-            : navGroups.map((group) => (
-                <NavGroup
-                  key={group.id}
-                  group={group}
-                  pathname={pathname}
-                  collapsed={collapsed}
-                  isMobile={isMobile}
-                  openGroupId={openGroupId}
-                  onToggle={onToggle}
-                  onNavigate={closeSidebar}
-                />
-              ))}
+          {items.map((item) => (
+            <NavItem
+              key={item.path}
+              item={item}
+              pathname={pathname}
+              isMobile={isMobile}
+              onNavigate={closeSidebar}
+            />
+          ))}
         </nav>
 
-        <div className="p-2 border-t border-gray-200 dark:border-white/10 space-y-0.5">
-          {/* {isTeamAdmin && (
-            <button
-              type="button"
-              title="Assistant"
-              onClick={() => {
-                window.dispatchEvent(new Event("voice-assistant:open"));
-                if (isMobile) closeSidebar();
-              }}
-              className={`sidebar-nav-item mb-2 w-full cursor-pointer bg-transparent ${collapsed ? "sidebar-nav-item--collapsed" : ""}`}
-            >
-              <span className="sidebar-icon-wrap">
-                <Mic className="w-4.5 h-4.5 shrink-0" />
-              </span>
-              {!collapsed && (
-                <span className="sidebar-label flex-1 truncate text-left">
-                  Assistant
-                </span>
-              )}
-            </button>
-          )} */}
+        <div className="sidebar-cluster sidebar-cluster--foot">
           <button
             type="button"
             onClick={logout}
-            title="Logout"
-            className={`sidebar-logout ${collapsed ? "sidebar-logout--collapsed" : ""}`}
+            aria-label="Logout"
+            className="sidebar-nav-item sidebar-nav-item--collapsed"
           >
-            <LogOut className="w-5 h-5 shrink-0" />
-            {!collapsed && <span>Logout</span>}
+            <span className="sidebar-icon-wrap">
+              <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
+            </span>
+            <span className="sidebar-tip">Logout</span>
           </button>
         </div>
       </m.aside>
@@ -231,209 +172,48 @@ function SidebarPanel({
   );
 }
 
-function NavGroup({
-  group,
-  pathname,
-  collapsed,
-  isMobile,
-  openGroupId,
-  onToggle,
-  onNavigate,
-}) {
-  const isGroupOpen = openGroupId === group.id;
-  const hasActive = groupContainsPath(group, pathname);
-  const groupBadge = group.items.reduce(
-    (sum, item) => sum + (item.badgeCount > 0 ? item.badgeCount : 0),
-    0,
-  );
-
-  return (
-    <div className="sidebar-nav-group">
-      <button
-        type="button"
-        onClick={() => onToggle(group.id)}
-        title={group.label}
-        aria-expanded={isGroupOpen}
-        className={`sidebar-group-header ${collapsed ? "sidebar-group-header--collapsed" : ""} ${
-          hasActive ? "sidebar-group-header--active" : ""
-        }`}
-      >
-        {!collapsed && (
-          <>
-            <span className="sidebar-group-label h-7 flex items-center">{group.label}</span>
-            {groupBadge > 0 && !isGroupOpen && (
-              <span className="sidebar-badge sidebar-badge--inline">
-                {groupBadge > 99 ? "99+" : groupBadge}
-              </span>
-            )}
-            <ChevronDown
-              className={`sidebar-group-chevron ${isGroupOpen ? "sidebar-group-chevron--open" : ""}`}
-            />
-          </>
-        )}
-        {collapsed && (
-          <span className="sidebar-group-collapsed-dot" aria-hidden />
-        )}
-      </button>
-
-      <AnimatePresence initial={false}>
-        {(collapsed || isGroupOpen) && (
-          <m.div
-            key={`${group.id}-items`}
-            initial={collapsed ? false : { opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden space-y-0.5"
-          >
-            {group.items.map((item) => (
-              <NavItem
-                key={item.path}
-                item={item}
-                pathname={pathname}
-                collapsed={collapsed}
-                isMobile={isMobile}
-                onNavigate={onNavigate}
-              />
-            ))}
-          </m.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
-
 const Sidebar = () => {
-  const { isOpen, isMobile, closeSidebar, openSidebar } = useSidebar();
-  const { isAuthenticated, logout, isSuperadmin, user } = useAuth();
-  const isTeamAdmin = user?.role === "admin";
-  const { unreadCounts } = useNotifications();
+  const { isOpen, isMobile, closeSidebar } = useSidebar();
+  const { isAuthenticated, logout, isSuperadmin } = useAuth();
   const location = useLocation();
 
-  const collapsed = !isOpen && !isMobile;
-
-  const navGroups = [
-    {
-      id: "main",
-      label: "Main",
-      items: [
-        { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
-        { title: "Explore", icon: Compass, path: "/dashboard/explore" },
-        {
-          title: "Purchased",
-          icon: Package,
-          path: "/dashboard/my-bought-projects",
-        },
-      ],
-    },
-    {
-      id: "workspace",
-      label: "Workspace",
-      items: [
-        {
-          title: "Tasks",
-          icon: CheckCircle,
-          path: "/dashboard/tasks",
-          badgeCount: unreadCounts.tasks,
-        },
-        {
-          title: "Meetings",
-          icon: GoCalendar,
-          path: "/dashboard/meetings",
-          badgeCount: unreadCounts.meetings,
-        },
-        {
-          title: "Projects",
-          icon: IoFolderOpenOutline,
-          path: "/dashboard/projects",
-          badgeCount: unreadCounts.projects,
-        },
-        {
-          title: "Workspace",
-          icon: PiUsersDuotone,
-          path: "/dashboard/teams",
-          badgeCount: unreadCounts.teams,
-        },
-        { title: "Automation", icon: Zap, path: "/dashboard/automation" },
-      ],
-    },
-    {
-      id: "connect",
-      label: "Connect",
-      items: [
-        { title: "Friends", icon: PiUserCheck, path: "/dashboard/friends" },
-        {
-          title: "Messages",
-          icon: BiMessageSquareDetail,
-          path: "/dashboard/chat",
-          badgeCount: unreadCounts.messages,
-        },
-      ],
-    },
+  const items = [
+    { title: "Dashboard", icon: TbSmartHome , path: "/dashboard" },
+    { title: "Explore", icon: Compass, path: "/dashboard/explore" },
+    { title: "Purchased", icon: ShoppingBag, path: "/dashboard/my-bought-projects" },
+    { title: "Tasks", icon: ListChecks, path: "/dashboard/tasks" },
+    { title: "Meetings", icon: CalendarDays, path: "/dashboard/meetings" },
+    { title: "Projects", icon: FolderKanban, path: "/dashboard/projects" },
+    { title: "Workspace", icon: PiUsers, path: "/dashboard/teams" },
+    { title: "Automation", icon: Workflow, path: "/dashboard/automation" },
+    { title: "Friends", icon: PiUser, path: "/dashboard/friends" },
+    { title: "Messages", icon: MessageSquareQuote, path: "/dashboard/chat" },
     ...(isSuperadmin
       ? [
           {
-            id: "admin",
-            label: "Admin",
-            items: [
-              {
-                title: "User Management",
-                icon: PiUsersDuotone,
-                path: "/dashboard/admin/users",
-              },
-              {
-                title: "Permission Manage",
-                icon: PiKeyDuotone,
-                path: "/dashboard/admin/permissions",
-              },
-            ],
+            title: "User Management",
+            icon: PiUserCheck,
+            path: "/dashboard/admin/users",
+          },
+          {
+            title: "Permission Manage",
+            icon: KeyRound,
+            path: "/dashboard/admin/permissions",
           },
         ]
       : []),
   ];
 
-  const activeGroupId =
-    navGroups.find((g) => groupContainsPath(g, location.pathname))?.id ??
-    navGroups[0]?.id ??
-    null;
-
-  const [openGroupId, setOpenGroupId] = useState(activeGroupId);
-
-  useEffect(() => {
-    if (activeGroupId) setOpenGroupId(activeGroupId);
-  }, [location.pathname, activeGroupId]);
-
-  const toggleGroup = (id) => {
-    if (collapsed) {
-      openSidebar();
-      setOpenGroupId(id);
-      return;
-    }
-    setOpenGroupId((prev) => (prev === id ? null : id));
-  };
-
   if (!isAuthenticated) return null;
-
-  const sidebarWidth = isMobile
-    ? EXPANDED_WIDTH
-    : isOpen
-      ? EXPANDED_WIDTH
-      : COLLAPSED_WIDTH;
-  const showOnScreen = isMobile ? isOpen : true;
 
   return (
     <SidebarPanel
       isMobile={isMobile}
       isOpen={isOpen}
-      collapsed={collapsed}
       closeSidebar={closeSidebar}
-      sidebarWidth={sidebarWidth}
-      showOnScreen={showOnScreen}
-      navGroups={navGroups}
+      showOnScreen={isMobile ? isOpen : true}
+      items={items}
       pathname={location.pathname}
-      openGroupId={openGroupId}
-      onToggle={toggleGroup}
-      isTeamAdmin={isTeamAdmin}
       logout={logout}
     />
   );

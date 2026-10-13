@@ -197,7 +197,7 @@ const NotificationDropdown = () => {
       <DropdownMenuTrigger asChild>
         <Button
           size="sm"
-          className="relative rounde-[25px] h-12  mx-2 w-12 bg-white hover:bg-gray-100 hover:border  text-black cursor-pointer rounded-[15px]"
+          className="dash-icon-btn relative !h-10 !w-10 !min-w-0 !px-0 border-0 bg-transparent text-[#6b7280] shadow-none hover:bg-[#f3f4f6] hover:text-[#111] dark:text-[#c4c4c4] dark:hover:bg-white/10 dark:hover:text-white cursor-pointer rounded-[15px]"
         >
           <Bell className="w-5 h-5 icon" />
           {unreadCount > 0 && (
@@ -335,7 +335,7 @@ const NotificationDropdown = () => {
                                         "accept",
                                       )
                                     }
-                                    className="h-7 px-3 rounded-[10px] bg-theme hover:bg-theme text-white text-xs"
+                                    className="h-7 px-3 rounded-[15px] bg-theme hover:bg-theme text-white text-xs"
                                   >
                                     {isResponding ? (
                                       <Loader2 className="w-3 h-3 animate-spin" />
@@ -356,7 +356,7 @@ const NotificationDropdown = () => {
                                         "reject",
                                       )
                                     }
-                                    className="h-7 px-3 rounded-[10px] text-xs"
+                                    className="h-7 px-3 rounded-[15px] text-xs"
                                   >
                                     <X className="w-3 h-3 mr-1" />
                                     Decline

@@ -15,9 +15,7 @@ const formatTimeRange = (startDate, endDate) => {
   return `Time: ${end.toLocaleTimeString(undefined, timeOpts)}`;
 };
 
-/**
- * Dark featured meeting card — reference “Meeting with Arc” style.
- */
+
 export default function FeaturedMeetingCard({
   meeting,
   onJoin,
@@ -41,7 +39,7 @@ export default function FeaturedMeetingCard({
 
   return (
     <div
-      className={`rounded-[28px] bg-[#121212] text-white p-6 flex flex-col justify-between shadow-sm ${className}`}
+      className={`rounded-[28px] bg-[var(--theme-accent)] text-white p-6 flex flex-col justify-between shadow-sm ${className}`}
     >
       <div className="flex items-start justify-between gap-3">
         <h3 className="text-xl font-semibold leading-snug tracking-tight max-w-[85%]">
@@ -63,7 +61,7 @@ export default function FeaturedMeetingCard({
         type="button"
         onClick={handleCta}
         disabled={!meeting}
-        className="mt-8 w-full h-12 rounded-2xl bg-[#75FC96] hover:bg-[#4fd972] text-black font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="mt-8 w-full h-12 rounded-2xl bg-white hover:bg-white/90 text-[#1c1c1e] font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <Video className="w-4 h-4" />
         {hasLink ? "Start Meeting" : meeting ? "View Meeting" : "Schedule Meeting"}

@@ -25,7 +25,7 @@ html.lp-lock body {
   --trust-text: #4b5563;
   --accent: #ff914b;
   --accent-2: #e8772e;
-  --font-sans: "Exo", "Segoe UI", system-ui, sans-serif;
+  --font-sans: "Quicksand", "Segoe UI", system-ui, sans-serif;
   --trust-size: clamp(36px, 4.5vw, 42px);
 
   position: relative;
@@ -54,7 +54,7 @@ html.lp-lock body {
 }
 
 .lp .fa-brands {
-  font-family: "Font Awesome 6 Brands" !important;
+  font-family: "Quicksand" !important;
   font-weight: 400;
 }
 
@@ -128,7 +128,7 @@ html.lp-lock body {
   z-index: 1;
 }
 
-/* ── Header ── */
+
 .lp-header {
   position: sticky;
   top: 12px;
@@ -233,7 +233,7 @@ html.lp-lock body {
 
 .lp-signin {
   height: clamp(44px, 5.2vw, 48px);
-  /* padding: 0 22px; */
+  
   display: flex;
   justify-items: center;
   align-items: center;
@@ -319,7 +319,7 @@ html.lp-lock body {
   transform: translateX(-50%) translateY(-50%) rotate(-45deg);
 }
 
-/* ── Hero ── */
+
 .lp-hero {
   position: relative;
   display: flex;
@@ -546,7 +546,7 @@ html.lp-lock body {
 }
 
 .lp-headline .lp-rotator {
-  /* min-width: 7ch; */
+  
   text-align: center;
 }
 
@@ -584,7 +584,7 @@ html.lp-lock body {
   color: #6b7280;
   opacity: 1;
   font-weight: 400;
-  font-family: 'Exo' !important;
+  font-family: 'Quicksand' !important;
   font-size: clamp(calc(13.5px + 2pt), calc(1.55vw + 2pt), calc(16.5px + 2pt));
   line-height: 1.55;
   --d: 0.28s;
@@ -610,7 +610,7 @@ html.lp-lock body {
   font-weight: 700;
   font-size: clamp(13.5px, 1.5vw, 14.5px);
   letter-spacing: 0.04em;
-  text-transform: uppercase;
+  text-transform: capitalize;
   cursor: pointer;
   box-shadow: 0 10px 28px rgba(255, 145, 75, 0.28) !important;
   transition:
@@ -650,7 +650,7 @@ html.lp-lock body {
   box-shadow: 0 14px 32px rgba(255, 145, 75, 0.38) !important;
 }
 
-/* ── Stats ── */
+
 .lp-stats {
   flex-shrink: 0;
   display: grid;
@@ -694,7 +694,7 @@ html.lp-lock body {
   font-weight: 700;
 }
 
-/* ── Shared entrance ── */
+
 .lp .anim {
   opacity: 0;
   transform: translateY(22px) scale(0.98);
@@ -703,7 +703,7 @@ html.lp-lock body {
   animation-delay: var(--d, 0s);
 }
 
-/* ── Marquee ── */
+
 .lp-marquee {
   width: calc(100% + 2 * clamp(14px, 3vw, 32px));
   margin: 0 calc(-1 * clamp(14px, 3vw, 32px)) 24px;
@@ -739,7 +739,7 @@ html.lp-lock body {
   box-shadow: 0 0 10px rgba(255, 145, 75, 0.7);
 }
 
-/* ── Sections ── */
+
 .lp-section {
   width: 100%;
   max-width: 1080px;
@@ -1405,7 +1405,7 @@ html.lp-lock body {
   color: #111;
 }
 
-/* ── Mobile overlay ── */
+
 .lp-overlay {
   display: none;
   position: fixed;
@@ -1503,7 +1503,7 @@ body.menu-open .lp-sheet {
   display: block;
 }
 
-/* ── Keyframes ── */
+
 @keyframes slideDown {
   from {
     opacity: 0;

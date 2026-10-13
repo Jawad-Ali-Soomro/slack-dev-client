@@ -131,7 +131,6 @@ export const AuthProvider = ({ children }) => {
     try {
       localStorage.setItem("userData", JSON.stringify(next));
     } catch {
-      /* ignore */
     }
     setUser(next);
   };
@@ -154,7 +153,7 @@ export const AuthProvider = ({ children }) => {
       if (role === "superadmin") return user.role === "superadmin";
       if (role === "admin")
         return user.role === "admin" || user.role === "superadmin";
-      if (role === "user") return true; // All authenticated users have user role
+      if (role === "user") return true;
       return false;
     };
   }, [user]);

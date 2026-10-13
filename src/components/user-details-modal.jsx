@@ -20,18 +20,16 @@ import {
   UserCircle,
   UsersRoundIcon,
   UsersRound,
-  CheckSquare,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import UserAvatar from "./user-avatar";
 import { userService } from "../services/user-service";
-import { applyTaskToUser } from "../utils/apply-task-event";
 import { exploreService } from "../services/explore-service";
 import { PiUserDuotone, PiUsersDuotone } from "react-icons/pi";
 
 const USER_DETAIL_TABS = [
   { id: "overview", label: "Overview", icon: PiUserDuotone },
-  { id: "tasks", label: "Tasks", icon: CheckSquare },
+  { id: "friends", label: "Friends", icon: PiUsersDuotone },
   { id: "projects", label: "Projects", icon: Briefcase },
 ];
 
@@ -66,11 +64,6 @@ const getRoleColor = (role) => {
   }
 };
 
-const assignedTasksFor = (user) =>
-  (user?.tasks || []).filter(
-    (task) => !task.role || task.role === "assignee",
-  );
-
 const projectCount = (publicProjects) => publicProjects?.length || 0;
 
 const teamCount = (user) => user.teams?.length || 0;
@@ -95,8 +88,6 @@ const tabButtonClass = (isActive) => {
   }
   return "flex items-center gap-2 py-4 px-4 border-b-2 icon  text-sm transition-all duration-200 rounded-t-lg border-transparent text-muted-foreground hover:text-gray-900 dark:hover:text-white cursor-pointer";
 };
-
-const taskStatusLabel = (status) => (status || "pending").replace(/_/g, " ");
 
 const resolveLogoUrl = (logo) => {
   if (logo.startsWith("http")) return logo;
@@ -299,26 +290,6 @@ const OverviewStats = ({ user, publicProjects }) => (
         </div>
       </div>
     </div>
-
-    <div className="space-y-4">
-      <h4 className="text-md font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-        <Award className="w-5 h-5 text-yellow-500" />
-        Challenge Achievements
-      </h4>
-
-      <div className="bg-gradient-to-br from-yellow-50 to-orange-50 dark:from-yellow-900/20 dark:to-orange-900/20 p-4 rounded-[15px] border border-yellow-200/50 dark:border-yellow-700/50">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 justify-between w-full">
-            <p className="text-xl text-muted-foreground uppercase">
-              Total Points
-            </p>
-            <p className="text-xl font-bold text-yellow-700 dark:text-yellow-300 text-right">
-              {challengePoints(user)}
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 );
 
@@ -332,46 +303,36 @@ const UserDetailsOverview = ({ user, publicProjects }) => (
   </div>
 );
 
-const TaskCard = ({ task }) => (
-  <div
-    key={task.id || task.title}
-    className="flex items-start justify-between gap-3 rounded-[15px] border border-gray-200/60 bg-gray-50 p-4 dark:border-gray-700/50 dark:bg-gray-800"
-  >
+const FriendCard = ({ friend }) => (
+  <div className="flex items-center gap-3 rounded-[15px] border border-gray-200/60 bg-gray-50 p-4 dark:border-gray-700/50 dark:bg-gray-800">
+    <UserAvatar user={friend} size="md" />
     <div className="min-w-0">
-      <p className="font-semibold text-gray-900 dark:text-white">{task.title}</p>
-      {task.projectName ? (
-        <p className="mt-1 text-xs text-muted-foreground">{task.projectName}</p>
-      ) : null}
-    </div>
-    <div className="flex shrink-0 flex-col items-end gap-1">
-      <span className="rounded-full bg-white px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-        {taskStatusLabel(task.status)}
-      </span>
-      {task.priority ? (
-        <span className="text-[10px] font-medium uppercase text-muted-foreground">
-          {task.priority}
-        </span>
+      <p className="truncate font-semibold text-gray-900 dark:text-white">
+        {friend.username || "Friend"}
+      </p>
+      {friend.jobRole ? (
+        <p className="mt-0.5 truncate text-xs capitalize text-muted-foreground">
+          {String(friend.jobRole).replace(/_/g, " ")}
+        </p>
       ) : null}
     </div>
   </div>
 );
 
-const UserDetailsTasks = ({ assignedTasks }) => {
-  if (!assignedTasks.length) {
+const UserDetailsFriends = ({ friends }) => {
+  if (!friends.length) {
     return (
-      <div className="space-y-3">
-        <div className="py-10 text-center text-muted-foreground">
-          <CheckSquare className="mx-auto mb-2 h-10 w-10 opacity-40" />
-          <p>No assigned tasks</p>
-        </div>
+      <div className="py-10 text-center text-muted-foreground">
+        <PiUsersDuotone className="mx-auto mb-2 h-10 w-10 opacity-40" />
+        <p>No friends yet</p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-3">
-      {assignedTasks.map((task) => (
-        <TaskCard key={task.id || task.title} task={task} />
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+      {friends.map((friend) => (
+        <FriendCard key={friend.id || friend.username} friend={friend} />
       ))}
     </div>
   );
@@ -500,7 +461,6 @@ const UserDetailsContent = ({
   activeTab,
   user,
   publicProjects,
-  assignedTasks,
   loadingPublicProjects,
 }) => {
   if (activeTab === "overview") {
@@ -508,8 +468,8 @@ const UserDetailsContent = ({
       <UserDetailsOverview user={user} publicProjects={publicProjects} />
     );
   }
-  if (activeTab === "tasks") {
-    return <UserDetailsTasks assignedTasks={assignedTasks} />;
+  if (activeTab === "friends") {
+    return <UserDetailsFriends friends={user.friends || []} />;
   }
   if (activeTab === "projects") {
     return (
@@ -529,7 +489,6 @@ const UserDetailsBody = ({
   activeTab,
   setActiveTab,
   publicProjects,
-  assignedTasks,
   loadingPublicProjects,
 }) => (
   <>
@@ -540,7 +499,6 @@ const UserDetailsBody = ({
         activeTab={activeTab}
         user={user}
         publicProjects={publicProjects}
-        assignedTasks={assignedTasks}
         loadingPublicProjects={loadingPublicProjects}
       />
     </div>
@@ -555,7 +513,6 @@ const UserDetailsModalShell = ({
   activeTab,
   setActiveTab,
   publicProjects,
-  assignedTasks,
   loadingPublicProjects,
 }) => {
   let body = <UserDetailsNotFound />;
@@ -568,7 +525,6 @@ const UserDetailsModalShell = ({
         activeTab={activeTab}
         setActiveTab={setActiveTab}
         publicProjects={publicProjects}
-        assignedTasks={assignedTasks}
         loadingPublicProjects={loadingPublicProjects}
       />
     );
@@ -615,23 +571,6 @@ const UserDetailsModal = ({
       loadUserDetails();
     }
   }, [isOpen, userId, initialTab]);
-
-  useEffect(() => {
-    if (!isOpen || !userId) return undefined;
-    const onTasksChanged = (event) => {
-      const detail = event?.detail;
-      if (!detail) {
-        userService
-          .getUserDetails(userId)
-          .then((response) => setUser(response.user))
-          .catch(() => {});
-        return;
-      }
-      setUser((prev) => applyTaskToUser(prev, detail, userId));
-    };
-    window.addEventListener("tasks:changed", onTasksChanged);
-    return () => window.removeEventListener("tasks:changed", onTasksChanged);
-  }, [isOpen, userId]);
 
   useEffect(() => {
     setPublicProjects([]);
@@ -696,8 +635,6 @@ const UserDetailsModal = ({
 
   if (!isOpen) return null;
 
-  const assignedTasks = assignedTasksFor(user);
-
   return (
     <UserDetailsModalShell
       overlayClassName={overlayClassName}
@@ -707,7 +644,6 @@ const UserDetailsModal = ({
       activeTab={activeTab}
       setActiveTab={setActiveTab}
       publicProjects={publicProjects}
-      assignedTasks={assignedTasks}
       loadingPublicProjects={loadingPublicProjects}
     />
   );

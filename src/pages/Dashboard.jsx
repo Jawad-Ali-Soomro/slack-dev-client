@@ -110,7 +110,7 @@ const Dashboard = () => {
     const end = endOfMonth(monthDate);
     const days = [];
 
-    const leading = (start.getDay() + 6) % 7; // convert to Mon=0 ... Sun=6
+    const leading = (start.getDay() + 6) % 7;
     for (let i = 0; i < leading; i++) {
       days.push(null);
     }
@@ -148,9 +148,7 @@ const Dashboard = () => {
 
   const loadDashboardData = useCallback(async () => {
     try {
-      // Only show the full-page skeleton on the first load. Tab focus / visibility
-      // refreshes must not flip `loading` or the whole dashboard (incl. Team Status)
-      // unmounts and remounts.
+
       if (!hasLoadedOnce.current) {
         setLoading(true);
       }
@@ -176,8 +174,7 @@ const Dashboard = () => {
 
       const allMeetings = meetingResponse.meetings || [];
 
-      // A related party may be returned either as a populated object ({ id/_id })
-      // or as a raw id string, so normalize before comparing.
+
       const matchesUser = (party, userId) => {
         if (!party || !userId) return false;
         const partyId =
@@ -223,9 +220,7 @@ const Dashboard = () => {
       const completedTasks = userTasks.filter(
         (task) => task.status === "completed",
       ).length;
-      // Buckets are mutually exclusive so the status breakdown sums to the
-      // total: an overdue task counts only as "overdue", not also as
-      // pending/in_progress.
+
       const pendingTasks = userTasks.filter(
         (task) => task.status === "pending" && !isOverdue(task),
       ).length;
@@ -300,13 +295,15 @@ const Dashboard = () => {
         averageProgress,
       });
     } catch (error) {
-      console.error("Error loading dashboard data:", error);
+      if (error?.response) {
+        console.error("Error loading dashboard data:", error);
+      }
       toast.error("Failed to load dashboard data");
     } finally {
       setLoading(false);
       hasLoadedOnce.current = true;
     }
-    // Only depends on the user id; status/role changes shouldn't reload the dashboard
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
@@ -316,9 +313,7 @@ const Dashboard = () => {
     }
   }, [user?.id, loadDashboardData]);
 
-  // Re-sync dashboard stats when the user returns to this tab/window, or when a
-  // task changes elsewhere (e.g. deleted on the Tasks page), so the stats here
-  // stay in sync without requiring a full page reload.
+
   useEffect(() => {
     if (!user?.id) return;
 
@@ -391,9 +386,7 @@ const Dashboard = () => {
   const weeklyData = getWeeklyData();
 
   const weeklyMeetingsList = useMemo(() => {
-    // Current calendar week (Sunday 00:00 -> Saturday 23:59). We must NOT cap at
-    // "now", otherwise meetings scheduled for later today or upcoming days this
-    // week (a common case) get wrongly excluded from the count/distribution.
+
     const now = new Date();
     const weekStart = new Date(now);
     weekStart.setDate(now.getDate() - now.getDay());
@@ -422,7 +415,7 @@ const Dashboard = () => {
         name: "Concluded",
         value: weeklyMeetingsList.filter((m) => m.status === "completed")
           .length,
-        color: "#75FC96",
+        color: "var(--theme-accent)",
       },
       {
         name: "Draft",
@@ -513,7 +506,7 @@ const Dashboard = () => {
           data: weeklyMeetings.map((value) => ({
             value,
             itemStyle: {
-              color: value === maxValue ? "#75FC96" : "#000000",
+              color: value === maxValue ? "var(--theme-accent)" : "#000000",
               borderRadius: 40,
             },
           })),
@@ -715,16 +708,13 @@ const Dashboard = () => {
       <div className="mx-auto">
         <div className="mb-8">
           <div className="dashboard-page-header">
-            <div className="dashboard-welcome">
-              <div className="dashboard-welcome__icon">
-                <RiDashboard2Line size={22} />
-              </div>
+            <div className="dashboard-welcome"> 
               <div>
                 <h1 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white">
-                  Dashboard
+                  Good Morning, {welcomeUsername(user)}!
                 </h1>
                 <p className="text-sm text-gray-500 dark:text-gray-400 font-medium mt-0.5">
-                  Welcome back, {welcomeUsername(user)}
+                  Stay focused and productive with your tasks, monitor progress and meetings.
                 </p>
               </div>
             </div>
@@ -763,6 +753,7 @@ const Dashboard = () => {
             height={sizes.taskStats?.height}
             onMove={moveWidget}
             onSetSize={setWidgetSize}
+            className={'mr-4'}
           >
             <TaskStatisticsCard
               stats={stats}

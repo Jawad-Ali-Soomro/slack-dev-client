@@ -1,6 +1,4 @@
-/**
- * Decode base64url-encoded JSON from the Chrome extension `meta` query param.
- */
+
 export function decodeExtensionMeta(encoded) {
   if (!encoded || typeof encoded !== "string") return null;
   try {

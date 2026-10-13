@@ -1048,7 +1048,6 @@ export default function CreateTaskModal({
       try {
         await taskService.clearTaskCaches?.();
       } catch {
-        /* optional cache clear */
       }
 
       toast.success("Task created successfully!");

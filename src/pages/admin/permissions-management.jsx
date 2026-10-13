@@ -19,6 +19,11 @@ import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { cn } from "../../lib/utils";
 import {
+  detailBadgeClass,
+  permissionBadgeTone,
+  roleBadgeTone,
+} from "@/lib/status-badge-styles";
+import {
   Select,
   SelectContent,
   SelectItem,
@@ -41,44 +46,17 @@ import UserDetailsModal from "../../components/user-details-modal";
 import { PiPencil, PiTrashDuotone, PiUserDuotone, PiUsersDuotone } from "react-icons/pi";
 
 const ROLE_CONFIG = {
-  superadmin: {
-    label: "Super Admininistrator",
-    icon: Crown,
-    chip: "bg-gradient-to-br from-violet-500 to-fuchsia-500",
-    pill: "bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20",
-  },
-  admin: {
-    label: "Team Administrator",
-    icon: Shield,
-    chip: "bg-gradient-to-br from-rose-500 to-red-500",
-    pill: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20",
-  },
-  user: {
-    label: "Developer",
-    icon: PiUserDuotone,
-    chip: "bg-gradient-to-br from-slate-400 to-slate-500",
-    pill: "bg-slate-500/10 text-slate-600 dark:text-slate-300 border-slate-500/20",
-  },
+  superadmin: { label: "Super Admin", icon: Crown },
+  admin: { label: "Admin", icon: Shield },
+  user: { label: "Developer", icon: PiUserDuotone },
 };
 
 const RoleBadge = ({ role }) => {
   const cfg = ROLE_CONFIG[role] || ROLE_CONFIG.user;
   const Icon = cfg.icon;
   return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 px-1 pr-6 py-1 rounded-full text-xs font-semibold border",
-        cfg.pill,
-      )}
-    >
-      <span
-        className={cn(
-          "flex items-center justify-center w-8 h-8 rounded-full text-white shadow-sm",
-          cfg.chip,
-        )}
-      >
-        <Icon className="w-4 h-4" />
-      </span>
+    <span className={cn(detailBadgeClass, roleBadgeTone(role))}>
+      <Icon className="w-3.5 h-3.5" />
       {cfg.label}
     </span>
   );
@@ -90,48 +68,36 @@ const PERMISSION_BADGES = [
     label: "Workspaces",
     desc: "Can Create Workspaces",
     icon: PiUsersDuotone,
-    chip: "bg-gradient-to-br from-blue-500 to-sky-500",
-    pill: "bg-blue-500/10 text-blue-700 dark:text-blue-300 border-blue-500/20",
   },
   {
     key: "canCreateProject",
     label: "Projects",
     desc: "Can Create Projects",
     icon: FolderOpen,
-    chip: "bg-gradient-to-br from-orange-500 to-amber-500",
-    pill: "bg-orange-500/10 text-orange-700 dark:text-orange-300 border-orange-500/20",
   },
   {
     key: "canCreateTask",
     label: "Tasks",
     desc: "Can Create Tasks",
     icon: ClipboardList,
-    chip: "bg-gradient-to-br from-green-500 to-emerald-500",
-    pill: "bg-green-500/10 text-green-700 dark:text-green-300 border-green-500/20",
   },
   {
     key: "canCreateMeeting",
     label: "Meetings",
     desc: "Can Create Meetings",
     icon: Calendar,
-    chip: "bg-gradient-to-br from-violet-500 to-purple-500",
-    pill: "bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20",
   },
   {
     key: "canManageUsers",
     label: "Users",
     desc: "Can Manage Users",
     icon: Shield,
-    chip: "bg-gradient-to-br from-indigo-500 to-blue-500",
-    pill: "bg-indigo-500/10 text-indigo-700 dark:text-indigo-300 border-indigo-500/20",
   },
   {
     key: "canViewAllData",
     label: "View Data",
     desc: "Can View All Data",
     icon: Eye,
-    chip: "bg-gradient-to-br from-amber-500 to-yellow-500",
-    pill: "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20",
   },
 ];
 
@@ -139,19 +105,11 @@ const PermissionBadge = ({ config }) => {
   const Icon = config.icon;
   return (
     <span
-      className={cn(
-        "inline-flex items-center gap-1.5 p-2 rounded-full text-xs font-semibold border",
-        config.pill,
-      )}
+      className={cn(detailBadgeClass, "px-2", permissionBadgeTone(config.key))}
+      title={config.desc}
     >
-      <span
-        className={cn(
-          "flex items-center justify-center w-5 h-5 rounded-full text-white shadow-sm",
-          config.chip,
-        )}
-      >
-        <Icon className="w-3 h-3" />
-      </span>
+      <Icon className="w-3.5 h-3.5" />
+      {config.label}
     </span>
   );
 };
@@ -270,7 +228,7 @@ const PermissionsManagement = () => {
       if (response.success) {
         toast.success("Permissions updated successfully");
         setEditingUser(null);
-        loadUsers(); // Reload users
+        loadUsers();
       }
     } catch (error) {
       console.error("Error updating permissions:", error);
@@ -283,7 +241,7 @@ const PermissionsManagement = () => {
       const response = await permissionsService.deletePermissions(userId);
       if (response.success) {
         toast.success("Permissions deleted successfully");
-        loadUsers(); // Reload users
+        loadUsers();
       }
     } catch (error) {
       console.error("Error deleting permissions:", error);
@@ -300,7 +258,7 @@ const PermissionsManagement = () => {
 
   const getUserId = (userItem) => userItem.id || userItem._id;
 
-  // Only users that actually have a permissions record can have them removed.
+
   const isSelectable = (userItem) => Boolean(userItem.permissions);
 
   const handleSelectAll = () => {
@@ -372,7 +330,7 @@ const PermissionsManagement = () => {
   return (
     <div className="ambient-light mt-10">
       <div className="mx-auto">
-        {/* Header - no cards */}
+        
         <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
           <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
             <div className="flex p-3 bg-white  dark:bg-gray-800 rounded-[15px]">
@@ -382,8 +340,8 @@ const PermissionsManagement = () => {
           </div>
         </div>
 
-        {/* Filters */}
-        {/* Filters - no padding/cards */}
+        
+        
         <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -446,7 +404,7 @@ const PermissionsManagement = () => {
           </div>
         </m.div>
 
-        {/* Bulk actions bar */}
+        
         {selectedUsers.length > 0 && (
           <m.div
             initial={{ opacity: 0, y: -8 }}
@@ -476,17 +434,18 @@ const PermissionsManagement = () => {
           </m.div>
         )}
 
-        {/* Users Table */}
+        
         <m.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <div className="overflow-x-auto max-h-[700px] overflow-y-auto rounded-[15px] border border-gray-100 dark:border-white/10 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-            <table className="w-full border-collapse">
-              <thead className="bg-gray-50 dark:bg-white backdrop-blur-sm sticky top-0 z-10">
-                <tr>
-                  <th className="px-5 py-4 text-left items-center justify-center w-12">
+          <div className="bg-white dark:bg-transparent rounded-[15px] overflow-hidden border border-gray-100 dark:border-white/10">
+          <div className="overflow-x-auto max-h-[700px] overflow-y-auto rounded-[15px] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+            <table className="w-full">
+              <thead className="bg-white text-black border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+                <tr className="bg-white">
+                  <th className="px-6 py-4 text-left w-12">
                     <Checkbox
                       checked={(() => {
                         const selectable = filteredUsers.filter(isSelectable);
@@ -502,27 +461,25 @@ const PermissionsManagement = () => {
                       className={"mt-1"}
                     />
                   </th>
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
                     User
                   </th>
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
                     Email
                   </th>
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
                     Role
                   </th>
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
                     Permissions
                   </th>
-                  <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider">
+                  <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
                     Joined
                   </th>
-                  <th className="px-5 py-4 text-right text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider">
-                    
-                  </th>
+                  <th className="px-6 py-4 text-right text-xs text-black uppercase tracking-wider"></th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {filteredUsers.length === 0 ? (
                   <tr>
                     <td
@@ -539,10 +496,10 @@ const PermissionsManagement = () => {
                       className={cn(
                         "bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-white/5 transition-colors",
                         selectedUsers.includes(getUserId(userItem)) &&
-                          "bg-red-50/60 dark:bg-red-500/5",
+                          "bg-gray-100 dark:bg-white/10",
                       )}
                     >
-                      <td className="px-5 py-3 w-12">
+                      <td className="px-6 py-4 w-12">
                         {isSelectable(userItem) ? (
                           <Checkbox
                             checked={selectedUsers.includes(
@@ -555,7 +512,7 @@ const PermissionsManagement = () => {
                           />
                         ) : null}
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
                           <UserAvatar
                             user={userItem}
@@ -572,15 +529,15 @@ const PermissionsManagement = () => {
                           </div>
                         </div>
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4">
                         <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
                           {userItem.email}
                         </div>
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4">
                         <RoleBadge role={userItem.role} />
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4">
                         <div className="flex flex-wrap gap-1.5">
                           {userItem.permissions &&
                           getPermissionCount(userItem.permissions) > 0 ? (
@@ -596,12 +553,12 @@ const PermissionsManagement = () => {
                           )}
                         </div>
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4">
                         <div className="text-sm text-gray-600 dark:text-gray-400">
                           {getJoinedDate(userItem.id, userItem.createdAt)}
                         </div>
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4">
                         <div className="flex items-center justify-end gap-2">
                           <Button
                             size="sm"
@@ -633,9 +590,10 @@ const PermissionsManagement = () => {
               </tbody>
             </table>
           </div>
+          </div>
         </m.div>
 
-        {/* Edit Permissions Modal */}
+        
         {editingUser && (
           <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
             <m.div
@@ -688,8 +646,8 @@ const PermissionsManagement = () => {
                         />
                         <span
                           className={cn(
-                            "flex items-center justify-center w-8 h-8 rounded-full text-white shadow-sm flex-shrink-0",
-                            p.chip,
+                            "flex items-center justify-center w-8 h-8 rounded-[15px] flex-shrink-0 border",
+                            permissionBadgeTone(p.key),
                           )}
                         >
                           <Icon className="w-4 h-4" />
@@ -724,7 +682,7 @@ const PermissionsManagement = () => {
         )}
       </div>
 
-      {/* User Details Modal */}
+      
       <UserDetailsModal
         userId={selectedUserId}
         isOpen={showUserDetails}

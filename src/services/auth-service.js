@@ -4,7 +4,6 @@ export const authService = {
   register: async (userData) => {
     try {
       const response = await axiosInstance.post("/api/auth/register", userData);
-      console.log("AuthService register response:", response.data);
       return response.data;
     } catch (error) {
       console.error("AuthService register error:", error);
@@ -65,8 +64,6 @@ export const authService = {
         email,
         otp,
       });
-      console.log("Verify email response:", response.data);
-
       if (response.data.message === "email verified successfully") {
         return {
           success: true,
@@ -89,8 +86,6 @@ export const authService = {
       const response = await axiosInstance.post("/api/auth/resend-otp", {
         email,
       });
-      console.log("Resend OTP response:", response.data);
-
       if (response.data.message) {
         return {
           success: true,
@@ -113,7 +108,6 @@ export const authService = {
       const response = await axiosInstance.post("/api/auth/forgot-password", {
         email,
       });
-      console.log("Forgot password response:", response.data);
       return response.data;
     } catch (error) {
       console.error("Forgot password error:", error);
@@ -130,7 +124,6 @@ export const authService = {
         otp,
         newPassword,
       });
-      console.log("Reset password response:", response.data);
       return response.data;
     } catch (error) {
       console.error("Reset password error:", error);

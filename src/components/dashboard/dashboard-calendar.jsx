@@ -114,7 +114,7 @@ export default function DashboardCalendar({
           <button
             type="button"
             onClick={goToday}
-            className="h-8 px-3 text-[11px] font-bold rounded-xl bg-[#75FC96] text-black hover:bg-[#4fd972] transition-colors"
+            className="h-8 px-3 text-[11px] font-bold rounded-xl bg-[var(--theme-accent)] text-black hover:bg-[var(--theme-accent-2)] transition-colors"
           >
             Today
           </button>
@@ -175,7 +175,7 @@ export default function DashboardCalendar({
                 isSelected
                   ? "bg-black text-white dark:bg-white dark:text-black shadow-sm"
                   : isToday
-                    ? "bg-[#75FC96]/25 text-black dark:text-[#75FC96] ring-2 ring-[#75FC96] ring-offset-1 ring-offset-white dark:ring-offset-black"
+                    ? "bg-[var(--theme-accent)]/25 text-black dark:text-[var(--theme-accent)] ring-2 ring-[var(--theme-accent)] ring-offset-1 ring-offset-white dark:ring-offset-black"
                     : hasEvents
                       ? "bg-gray-50 dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10"
                       : "hover:bg-gray-50 dark:hover:bg-white/5",
@@ -190,7 +190,7 @@ export default function DashboardCalendar({
                   {events.tasks.length > 0 && (
                     <span
                       className={`w-1.5 h-1.5 rounded-full ${
-                        isSelected ? "bg-[#75FC96]" : "bg-[#75FC96]"
+                        isSelected ? "bg-[var(--theme-accent)]" : "bg-[var(--theme-accent)]"
                       }`}
                     />
                   )}
@@ -212,7 +212,7 @@ export default function DashboardCalendar({
 
       <div className="flex items-center gap-3 mt-3 mb-4 text-[11px] font-medium text-gray-500 dark:text-gray-400">
         <span className="inline-flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#75FC96]" />
+          <span className="w-1.5 h-1.5 rounded-full bg-[var(--theme-accent)]" />
           Task
         </span>
         <span className="inline-flex items-center gap-1.5">
@@ -275,7 +275,7 @@ export default function DashboardCalendar({
         <Button
           onClick={onScheduleTask}
           disabled={!canCreateTask}
-          className="flex-1 h-11 font-semibold rounded-xl text-sm bg-[#75FC96] hover:bg-[#4fd972] text-black disabled:opacity-50"
+          className="flex-1 h-11 font-semibold rounded-xl text-sm bg-[var(--theme-accent)] hover:bg-[var(--theme-accent-2)] text-black disabled:opacity-50"
         >
           <Target className="w-4 h-4" />
           Schedule Task

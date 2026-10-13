@@ -139,7 +139,7 @@ const TaskEditModal = ({
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6">
-          {/* Header */}
+          
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="text-2xl  text-black dark:text-white font-bold">
@@ -157,9 +157,9 @@ const TaskEditModal = ({
             </button>
           </div>
 
-          {/* Form */}
+          
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Title */}
+            
             <div>
               <Input
                 value={formData.title}
@@ -170,7 +170,7 @@ const TaskEditModal = ({
               />
             </div>
 
-            {/* Description */}
+            
             <div>
               <Textarea
                 value={formData.description}
@@ -183,7 +183,7 @@ const TaskEditModal = ({
               />
             </div>
 
-            {/* Priority and Status */}
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <Select
@@ -238,7 +238,7 @@ const TaskEditModal = ({
               </div>
             </div>
 
-            {/* Assigned To */}
+            
             <div>
               <Select
                 value={formData.assignedTo}
@@ -273,7 +273,7 @@ const TaskEditModal = ({
               </Select>
             </div>
 
-            {/* Due Date */}
+            
             <div>
               <DatePicker
                 value={formData.dueDate}
@@ -283,7 +283,7 @@ const TaskEditModal = ({
               />
             </div>
 
-            {/* Tags */}
+            
             <div>
               <div className="flex gap-2 mb-2">
                 <Input
@@ -318,7 +318,7 @@ const TaskEditModal = ({
               </div>
             </div>
 
-            {/* Action Buttons */}
+            
             <div className="flex gap-3 pt-4 border-t border-gray-200 dark:border-gray-700">
               <Button
                 type="button"

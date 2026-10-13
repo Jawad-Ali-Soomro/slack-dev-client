@@ -345,7 +345,7 @@ export default function AssignedTaskDrawer({
                                       data-no-drag
                                       disabled={savingId === id}
                                       onClick={() => moveTask(task, tab.id)}
-                                      className="cursor-pointer rounded-[10px] border border-gray-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground transition hover:border-[#FF914B]/40 hover:text-[#FF914B] disabled:opacity-50 dark:border-white/10"
+                                      className="cursor-pointer rounded-[15px] border border-gray-200 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground transition hover:border-[#FF914B]/40 hover:text-[#FF914B] disabled:opacity-50 dark:border-white/10"
                                     >
                                       {tab.label}
                                     </button>

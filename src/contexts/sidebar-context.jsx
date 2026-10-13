@@ -14,7 +14,7 @@ export const SidebarProvider = ({ children }) => {
   const [isOpen, setIsOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1100);
 
-  // Update isMobile on window resize
+
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 1100);
     window.addEventListener("resize", handleResize);

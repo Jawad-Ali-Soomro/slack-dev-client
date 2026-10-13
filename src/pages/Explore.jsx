@@ -16,6 +16,7 @@ import {
   Upload,
   Image as ImageIcon,
   FileArchive,
+  PlusCircle,
 } from "lucide-react";
 
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -47,11 +48,17 @@ import { PiCheck, PiCheckDuotone, PiX } from "react-icons/pi";
 import HorizontalLoader from "@/components/horizontal-loader";
 import { BiCalendar, BiCategory, BiStore } from "react-icons/bi";
 import { Skeleton } from "@/components/ui/skeleton";
+import { BsPlusCircleFill } from "react-icons/bs";
 
 const stripePublishableKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || "";
-const stripePromise = stripePublishableKey
-  ? loadStripe(stripePublishableKey)
-  : null;
+
+const getStripePromise = () => {
+  if (!stripePublishableKey) return null;
+  if (!getStripePromise.current) {
+    getStripePromise.current = loadStripe(stripePublishableKey);
+  }
+  return getStripePromise.current;
+};
 
 const formatAmountForDisplay = (amountInMinorUnits, currency = "usd") => {
   if (typeof amountInMinorUnits !== "number") return "";
@@ -273,9 +280,9 @@ function ExploreProjectsGrid({
   if (loading) {
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[67vh] overflow-scroll pb-20">
-        {[1, 2, 3, 4, 5, 6].map(() => {
-          return <Skeleton className={"w-full h-[310px]"} />;
-        })}
+        {[1, 2, 3, 4, 5, 6].map((item) => (
+          <Skeleton key={item} className="w-full h-[310px]" />
+        ))}
       </div>
     );
   }
@@ -622,6 +629,9 @@ function ExploreCheckoutModal({
   onClose,
   onSuccess,
 }) {
+  const stripePromise =
+    open && checkoutClientSecret && checkoutProject ? getStripePromise() : null;
+
   if (
     !shouldShowCheckoutModal(
       open,
@@ -1014,7 +1024,7 @@ const Explore = () => {
   };
 
   const handleStartCheckout = async (project) => {
-    if (!stripePromise) {
+    if (!stripePublishableKey) {
       toast.error(
         "Stripe is not configured. Please set VITE_STRIPE_PUBLISHABLE_KEY.",
       );
@@ -1149,8 +1159,6 @@ const Explore = () => {
     }
   };
 
-  console.log(projects);
-
   const itemVariants = {
     hidden: { y: 20, opacity: 0 },
     visible: {
@@ -1162,7 +1170,7 @@ const Explore = () => {
   return (
     <div className="pt-10">
       <m.div className="mx-auto relative">
-        {/* Header */}
+        
         <div className="flex py-6 gap-3 items-center justify-between fixed z-10 md:-top-3 -top-30 z-10">
           <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
             <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
@@ -1170,27 +1178,10 @@ const Explore = () => {
             </div>
             <h1 className="text-2xl font-bold">Explore Projects</h1>
           </div>
-          <Button
-            onClick={() => {
-              setUploadForm({
-                title: "",
-                description: "",
-                price: "",
-                category: "",
-                tags: "",
-                zipFile: null,
-                previewImages: [],
-              });
-              setShowUploadModal(true);
-            }}
-            className="h-14 text-white font-bold dark:text-black md:w-[200px] w-full"
-          >
-            <Plus className="w-4 h-4 icon mr-2" />
-            Upload Project
-          </Button>
+         
         </div>
 
-        {/* Filters */}
+        
         <m.div variants={itemVariants} className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="flex flex-col sm:flex-row gap-4 flex-1">
@@ -1249,15 +1240,36 @@ const Explore = () => {
                 </SelectContent>
               </Select>
             </div>
-            <ExploreAdminStatusTabs
+            
+          <div className="flex juistify-center gap-4">
+          <ExploreAdminStatusTabs
               isAdmin={isAdmin}
               statusTab={statusTab}
               onStatusTabChange={setStatusTab}
             />
+             <Button
+            onClick={() => {
+              setUploadForm({
+                title: "",
+                description: "",
+                price: "",
+                category: "",
+                tags: "",
+                zipFile: null,
+                previewImages: [],
+              });
+              setShowUploadModal(true);
+            }}
+            className="h-12 text-white font-bold dark:text-black md:w-[170px] w-full"
+          >
+            <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
+            Upload Project
+          </Button>
+          </div>
           </div>
         </m.div>
 
-        {/* Projects Grid */}
+        
         <ExploreProjectsGrid
           loading={loading}
           projects={projects}
@@ -1266,7 +1278,7 @@ const Explore = () => {
           onViewProject={handleViewProject}
         />
 
-        {/* Pagination */}
+        
       </m.div>
       <ExplorePagination
         pagination={pagination}

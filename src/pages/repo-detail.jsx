@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { m } from "framer-motion";
+import { BsPlusCircleFill } from "react-icons/bs";
 import {
   ArrowLeft,
   Star,
@@ -21,7 +22,6 @@ import {
   AlertCircle,
   CheckCircle2,
   Code2,
-  Plus,
   X,
   Loader2,
   ArrowRight,
@@ -29,7 +29,6 @@ import {
   MessageSquare,
   Send,
   XCircle,
-  PlusCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "../components/ui/badge";
@@ -758,7 +757,7 @@ const RepoSectionNav = ({
         onClick={onNewPr}
         className="h-11 shrink-0 rounded-[15px] bg-theme px-4 text-white w-[200px] hover:bg-theme"
       >
-        <PlusCircle className="mr-2 h-4 w-4" />
+        <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
         New pull request
       </Button>
     ) : null}
@@ -1144,7 +1143,7 @@ const CreatePrModal = ({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-[10px] p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-white/10 dark:hover:text-gray-200"
+            className="rounded-[15px] p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-white/10 dark:hover:text-gray-200"
           >
             <X className="h-5 w-5" />
           </button>

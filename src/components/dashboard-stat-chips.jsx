@@ -76,7 +76,7 @@ export default function DashboardStatChips({
       label: "Active Projects",
       value: stats?.activeProjects || 0,
       onClick: () => navigate("/dashboard/projects"),
-      visual: <MiniBarChart series={projectSeries} color="#75FC96" />,
+      visual: <MiniBarChart series={projectSeries} color="var(--theme-accent)" />,
     },
     {
       id: "completed",

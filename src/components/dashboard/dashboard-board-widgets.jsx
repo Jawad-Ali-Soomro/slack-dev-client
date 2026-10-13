@@ -1,5 +1,6 @@
 import { m } from "framer-motion";
-import ReactECharts from "echarts-for-react";
+import { BsPlusCircleFill } from "react-icons/bs";
+import SafeEChart from "../safe-echart";
 import {
   CheckCircle,
   Target,
@@ -13,7 +14,6 @@ import {
   Clock,
   CircleDot,
   AlertCircle,
-  PlusCircle,
   FileText,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -43,7 +43,7 @@ export const ProjectOverviewCard = ({ weeklyData }) => (
       <h4 className="text-base font-bold text-gray-900 dark:text-white">
         Project Overview
       </h4>
-      <span className="text-xs font-medium text-gray-500 dark:text-gray-400 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-white/10">
+      <span className="text-xs font-bold text-gray-500 dark:text-gray-400 px-3 py-1.5 rounded-[15px] bg-gray-100 dark:bg-white/10">
         This Week
       </span>
     </div>
@@ -67,7 +67,7 @@ export const TaskStatisticsCard = ({
       <h4 className="text-base font-bold text-gray-900 dark:text-white">
         Task Statistics
       </h4>
-      <span className="text-xs font-medium text-gray-500 dark:text-gray-400 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-white/10">
+      <span className="text-xs font-medium text-gray-500 dark:text-gray-400 px-3 py-1.5 rounded-[15px] bg-gray-100 dark:bg-white/10">
         Monthly
       </span>
     </div>
@@ -76,46 +76,42 @@ export const TaskStatisticsCard = ({
       <p className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
         Total Tasks: {stats.totalTasks}
       </p>
-      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#75FC96]/30 text-emerald-800 dark:text-emerald-200">
-        {stats.completionRate}% done
+      <span className="inline-flex items-center px-2 py-0.5 rounded-[5px] uppercase text-[11px] font-semibold bg-[var(--theme-accent)]/20 text-[#9a3412] dark:text-[#ffd7ba]">
+        {stats.completionRate}% 
       </span>
     </div>
 
     <div className="flex items-center gap-3 text-[11px] font-medium text-gray-500 dark:text-gray-400 mb-2">
-      <span className="inline-flex items-center gap-1.5">
-        <span className="w-2 h-2 rounded-full bg-gray-200 dark:bg-white/20" />
+      <span className="inline-flex items-center gap-1.5 bg-gray-50 border px-2 pr-3 rounded-[15px] py-1">
+        <span className="w-2 h-2 rounded-[15px] bg-gray-200 dark:bg-white/20" />
         Total
       </span>
-      <span className="inline-flex items-center gap-1.5">
-        <span className="w-2 h-2 rounded-full bg-[#75FC96]" />
+      <span className="inline-flex items-center gap-1.5 bg-gray-50 border px-2 pr-3 rounded-[15px] py-1">
+        <span className="w-2 h-2 rounded-[15px] bg-[var(--theme-accent)]" />
         Done
       </span>
-      <span className="inline-flex items-center gap-1.5">
-        <span className="w-2 h-2 rounded-full bg-black dark:bg-white" />
+      <span className="inline-flex items-center gap-1.5 bg-gray-50 border px-2 pr-3 rounded-[15px] py-1">
+        <span className="w-2 h-2 rounded-[15px] bg-black dark:bg-white" />
         In Progress
       </span>
     </div>
 
-    <div className="flex h-3 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-white/10 mb-5">
+    <div className="flex h-3 w-full overflow-hidden rounded-[5px] bg-[#ADADAD]/50 dark:bg-white/10 mb-5">
       <div
-        className="h-full bg-[#75FC96] transition-[width] duration-500"
+        className="h-full bg-[var(--theme-accent)] rounded-[5px] transition-[width] duration-500"
         style={{ width: `${taskSegmentPercents.done}%` }}
       />
       <div
-        className="h-full bg-black dark:bg-white transition-[width] duration-500"
+        className="h-full bg-black dark:bg-white rounded-[5px] transition-[width] duration-500"
         style={{ width: `${taskSegmentPercents.inProgress}%` }}
-      />
-      <div
-        className="h-full bg-[#ADADAD]/50 transition-[width] duration-500"
-        style={{ width: `${taskSegmentPercents.other}%` }}
       />
     </div>
 
     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-auto">
       <div className="rounded-2xl border border-gray-100 dark:border-white/10 bg-[#F8F9FA] dark:bg-white/5 p-3.5">
         <div className="flex items-start gap-2.5 mb-2.5">
-          <div className="w-9 h-9 rounded-xl bg-[#75FC96]/25 flex items-center justify-center flex-shrink-0">
-            <FileText className="w-4 h-4 text-emerald-700 dark:text-emerald-300" />
+          <div className="w-9 h-9 rounded-xl bg-[var(--theme-accent)]/25 flex items-center justify-center flex-shrink-0">
+            <FileText className="w-4 h-4 text-[var(--theme-accent-2)] dark:text-[var(--theme-accent)]" />
           </div>
           <div className="min-w-0">
             <p className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">
@@ -126,15 +122,15 @@ export const TaskStatisticsCard = ({
             </p>
           </div>
         </div>
-        <div className="h-1.5 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden mb-1.5">
+        <div className="h-1.5 rounded-[15px] bg-gray-200 dark:bg-white/10 overflow-hidden mb-1.5">
           <div
-            className="h-full rounded-full bg-[#75FC96]"
+            className="h-full rounded-[15px] bg-[var(--theme-accent)]"
             style={{
               width: taskProgressWidth(sampleInProgressTask, "43%"),
             }}
           />
         </div>
-        <p className="text-[11px] text-gray-500 dark:text-gray-400">
+        <p className="text-[11px] capitalize text-gray-500 dark:text-gray-400">
           {taskSampleCaption(
             sampleInProgressTask,
             `${stats.inProgressTasks} in progress`,
@@ -145,8 +141,8 @@ export const TaskStatisticsCard = ({
 
       <div className="rounded-2xl border border-gray-100 dark:border-white/10 bg-[#F8F9FA] dark:bg-white/5 p-3.5">
         <div className="flex items-start gap-2.5 mb-2.5">
-          <div className="w-9 h-9 rounded-xl bg-[#75FC96]/25 flex items-center justify-center flex-shrink-0">
-            <CheckCircle className="w-4 h-4 text-emerald-700 dark:text-emerald-300" />
+          <div className="w-9 h-9 rounded-xl bg-[var(--theme-accent)]/25 flex items-center justify-center flex-shrink-0">
+            <CheckCircle className="w-4 h-4 text-[var(--theme-accent-2)] dark:text-[var(--theme-accent)]" />
           </div>
           <div className="min-w-0">
             <p className="text-[10px] font-semibold text-gray-500 dark:text-gray-400">
@@ -157,15 +153,15 @@ export const TaskStatisticsCard = ({
             </p>
           </div>
         </div>
-        <div className="h-1.5 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden mb-1.5">
+        <div className="h-1.5 rounded-[15px] bg-gray-200 dark:bg-white/10 overflow-hidden mb-1.5">
           <div
-            className="h-full rounded-full bg-[#75FC96]"
+            className="h-full rounded-[15px] bg-[var(--theme-accent)]"
             style={{
               width: taskProgressWidth(sampleCompletedTask, "100%"),
             }}
           />
         </div>
-        <p className="text-[11px] text-gray-500 dark:text-gray-400">
+        <p className="text-[11px] capitalize text-gray-500 dark:text-gray-400">
           {taskSampleCaption(
             sampleCompletedTask,
             `${stats.completedTasks} completed`,
@@ -218,7 +214,7 @@ const taskListStatusMeta = (task) => {
           : Clock;
   const statusColor =
     status === "completed"
-      ? "text-emerald-500"
+      ? "text-[var(--theme-accent)]"
       : status === "in_progress"
         ? "text-blue-500"
         : isOverdue
@@ -234,7 +230,7 @@ const taskListStatusMeta = (task) => {
           : 15;
   const iconBg =
     status === "completed"
-      ? "bg-emerald-500/10"
+      ? "bg-[var(--theme-accent)]/15"
       : status === "in_progress"
         ? "bg-blue-500/10"
         : isOverdue
@@ -242,7 +238,7 @@ const taskListStatusMeta = (task) => {
           : "bg-amber-500/10";
   const barColor =
     status === "completed"
-      ? "bg-[#75FC96]"
+      ? "bg-[var(--theme-accent)]"
       : isOverdue
         ? "bg-[#D13817]"
         : "bg-black dark:bg-white";
@@ -264,11 +260,11 @@ const TaskListItems = ({ recentTasks, navigate }) => (
       return (
         <li
           key={task.id || task._id}
-          className="flex items-center gap-3 py-2.5 px-3 rounded-lg border border-gray-100 dark:border-white/5 bg-[#F8F9FA] dark:bg-white/5 hover:bg-gray-100/80 dark:hover:bg-white/10 transition-colors cursor-pointer"
+          className="flex items-center gap-3 py-2.5 px-3 rounded-[20px] border border-gray-100 dark:border-white/5 bg-[] dark:bg-white/5 hover:bg-gray-100/80 dark:hover:bg-white/10 transition-colors cursor-pointer"
           onClick={() => navigate("/dashboard/tasks")}
         >
           <div
-            className={`flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center ${iconBg}`}
+            className={`flex-shrink-0 w-8 h-8 rounded-[20px] flex items-center justify-center ${iconBg}`}
           >
             <StatusIcon className={`w-4 h-4 ${statusColor}`} />
           </div>
@@ -286,9 +282,9 @@ const TaskListItems = ({ recentTasks, navigate }) => (
                   })}
                 </span>
               )}
-              <div className="flex-1 max-w-[100px] h-1.5 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden">
+              <div className="flex-1 max-w-[100px] h-1.5 rounded-[15px] bg-gray-200 dark:bg-white/10 overflow-hidden">
                 <div
-                  className={`h-full rounded-full ${barColor}`}
+                  className={`h-full rounded-[15px] ${barColor}`}
                   style={{ width: `${progressPct}%` }}
                 />
               </div>
@@ -310,7 +306,7 @@ export const TaskListCard = ({ recentTasks, navigate }) => (
   >
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-2">
-        <div className="dashboard-section-icon !w-8 !h-8 !rounded-lg">
+        <div className="dashboard-section-icon !w-8 !h-8 !rounded-[20px]">
           <Target className="w-4 h-4" />
         </div>
         <h3 className="text-base font-bold text-gray-900 dark:text-white">
@@ -319,7 +315,7 @@ export const TaskListCard = ({ recentTasks, navigate }) => (
       </div>
       <button
         type="button"
-        className="p-1.5 rounded-lg text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-white/10 dark:hover:text-gray-300 transition-colors"
+        className="p-1.5 rounded-[20px] text-gray-400 hover:text-gray-600 hover:bg-gray-100 dark:hover:bg-white/10 dark:hover:text-gray-300 transition-colors"
         aria-label="More options"
         onClick={() => navigate("/dashboard/tasks")}
       >
@@ -334,7 +330,7 @@ export const TaskListCard = ({ recentTasks, navigate }) => (
     <Button
       variant="outline"
       size="sm"
-      className="w-full mt-4 rounded-lg border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
+      className="w-full mt-4 rounded-[20px] border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
       onClick={() => navigate("/dashboard/tasks")}
     >
       Show details
@@ -368,12 +364,9 @@ export const MeetingStatusCard = ({
     </div>
     <div style={{ width: "100%", height: "160px" }}>
       {hasMeetingChartData(meetingStatusData) ? (
-        <ReactECharts
+        <SafeEChart
           option={meetingStatusOption}
           style={{ height: "100%", width: "100%" }}
-          opts={{ renderer: "svg" }}
-          notMerge={true}
-          lazyUpdate={true}
         />
       ) : (
         <div className="flex items-center justify-center h-full text-gray-400 dark:text-gray-500 text-sm">
@@ -389,7 +382,7 @@ export const MeetingStatusCard = ({
         >
           <div className="flex items-center gap-2 min-w-0">
             <span
-              className="w-2.5 h-2.5 rounded-full flex-shrink-0"
+              className="w-2.5 h-2.5 rounded-[15px] flex-shrink-0"
               style={{ backgroundColor: item.color }}
             />
             <span className="text-xs text-gray-600 dark:text-gray-400 font-medium truncate">
@@ -407,7 +400,7 @@ export const MeetingStatusCard = ({
 
 const projectRowClass = (highlight) =>
   highlight
-    ? "bg-[#75FC96]/25 dark:bg-[#75FC96]/15"
+    ? "bg-[var(--theme-accent)]/25 dark:bg-[var(--theme-accent)]/15"
     : "hover:bg-gray-50 dark:hover:bg-white/5";
 
 const projectTasksLabel = (openTasks) =>
@@ -426,7 +419,7 @@ export const ProjectsSpotlightCard = ({ projectSpotlight, navigate }) => (
       </h4>
       <button
         type="button"
-        className="p-1.5 rounded-lg text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10"
+        className="p-1.5 rounded-[20px] text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10"
         onClick={() => navigate("/dashboard/projects")}
       >
         <MoreHorizontal className="w-4 h-4" />
@@ -443,10 +436,10 @@ export const ProjectsSpotlightCard = ({ projectSpotlight, navigate }) => (
               onClick={() => navigate("/dashboard/projects")}
               className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-colors ${projectRowClass(project.highlight)}`}
             >
-              <span className="w-7 h-7 rounded-full bg-white dark:bg-white/10 border border-gray-100 dark:border-white/10 flex items-center justify-center text-xs font-bold text-gray-700 dark:text-gray-200">
+              <span className="w-7 h-7 rounded-[15px] bg-white dark:bg-white/10 border border-gray-100 dark:border-white/10 flex items-center justify-center text-xs font-bold text-gray-700 dark:text-gray-200">
                 {index + 1}
               </span>
-              <span className="w-8 h-8 rounded-lg bg-gray-100 dark:bg-white/10 flex items-center justify-center flex-shrink-0">
+              <span className="w-8 h-8 rounded-[20px] bg-gray-100 dark:bg-white/10 flex items-center justify-center flex-shrink-0">
                 <Folder className="w-4 h-4 text-gray-600 dark:text-gray-300" />
               </span>
               <span className="min-w-0 flex-1">
@@ -513,9 +506,9 @@ const GithubReposList = ({
                 navigate(`/dashboard/repos/${repo.id}`);
               }
             }}
-            className="flex items-center gap-2.5 py-2 w-full px-2.5 relative rounded-lg border border-gray-100 dark:border-white/5 bg-[#F8F9FA] dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors group cursor-pointer"
+            className="flex items-center gap-2.5 py-2 w-full px-2.5 relative rounded-[20px] border border-gray-100 dark:border-white/5 bg-[#F8F9FA] dark:bg-white/5 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors group cursor-pointer"
           >
-            <div className="flex-shrink-0 w-7 h-7 rounded-lg bg-gray-200/80 dark:bg-white/10 flex items-center justify-center">
+            <div className="flex-shrink-0 w-7 h-7 rounded-[20px] bg-gray-200/80 dark:bg-white/10 flex items-center justify-center">
               <FolderGit2 className="w-3.5 h-3.5 text-gray-600 dark:text-gray-400" />
             </div>
             <p className="text-xs font-medium text-gray-900 dark:text-white truncate flex-1 group-hover:text-theme">
@@ -530,7 +523,7 @@ const GithubReposList = ({
                 onCreateTaskFromRepo(repo);
               }}
             >
-              <PlusCircle className="w-3.5 h-3.5" />
+              <BsPlusCircleFill className="w-3.5 h-3.5" />
             </button>
           </span>
         </li>
@@ -540,7 +533,7 @@ const GithubReposList = ({
       <Button
         variant="outline"
         size="sm"
-        className="w-full mt-3 rounded-lg text-xs border-gray-200 dark:border-white/10"
+        className="w-full mt-3 rounded-[20px] text-xs border-gray-200 dark:border-white/10"
         onClick={() => navigate("/dashboard/repos")}
       >
         View all ({githubRepos.length})
@@ -649,8 +642,8 @@ const calendarDayClasses = ({
       ? "border-transparent cursor-default"
       : isPast
         ? "border-[#ADADAD]/30 dark:border-gray-700 opacity-40 cursor-not-allowed"
-        : "border-[#ADADAD]/35 dark:border-gray-700 hover:border-black dark:hover:border-[#75FC96] hover:shadow-md cursor-pointer",
-    isToday ? "ring-2 ring-[#75FC96] ring-offset-1" : "",
+        : "border-[#ADADAD]/35 dark:border-gray-700 hover:border-black dark:hover:border-[var(--theme-accent)] hover:shadow-md cursor-pointer",
+    isToday ? "ring-2 ring-[var(--theme-accent)] ring-offset-1" : "",
     isSelected
       ? "bg-black border-none text-white font-bold"
       : "text-black dark:text-gray-200",
@@ -658,7 +651,7 @@ const calendarDayClasses = ({
   ].join(" ");
 
 const meetingDotClass = (isSelected) =>
-  `w-1.5 h-1.5 rounded-full ${isSelected ? "bg-white" : "bg-black"} dark:bg-white`;
+  `w-1.5 h-1.5 rounded-[15px] ${isSelected ? "bg-white" : "bg-black"} dark:bg-white`;
 
 export const DashboardCalendarCard = ({
   calendarMonth,
@@ -776,7 +769,7 @@ export const DashboardCalendarCard = ({
                 {hasEvents && (
                   <div className="flex items-center gap-0.5 mt-0.5">
                     {events.tasks.length > 0 && (
-                      <div className="w-1.5 h-1.5 rounded-full bg-[#75FC96]"></div>
+                      <div className="w-1.5 h-1.5 rounded-[15px] bg-[var(--theme-accent)]"></div>
                     )}
                     {events.meetings.length > 0 && (
                       <div className={meetingDotClass(isSelected)}></div>
@@ -784,7 +777,7 @@ export const DashboardCalendarCard = ({
                   </div>
                 )}
                 {events.total > 2 && (
-                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-[#75FC96] text-black text-[10px] font-bold flex items-center justify-center">
+                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-[15px] bg-[var(--theme-accent)] text-black text-[10px] font-bold flex items-center justify-center">
                     {events.total}
                   </span>
                 )}
@@ -817,7 +810,7 @@ export const DashboardCalendarCard = ({
             });
           }}
           disabled={!permissions.canCreateTask}
-          className="flex-1 h-11 font-semibold w-[100px] rounded-xl text-sm bg-gradient-to-r from-[#75FC96] to-[#4fd972] text-black transition-[opacity,box-shadow] shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          className="flex-1 h-11 font-semibold w-[100px] rounded-xl text-sm bg-gradient-to-r from-[var(--theme-accent)] to-[var(--theme-accent-2)] text-white transition-[opacity,box-shadow] shadow-sm hover:shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
         >
           <Target className="w-4 h-4" />
           Schedule Task
@@ -863,7 +856,7 @@ const toastScheduleMeetingDenied = () =>
   );
 
 const pillDotColor = (variant) => {
-  if (variant === "green") return "#10b981";
+  if (variant === "green") return "var(--theme-accent)";
   if (variant === "orange") return "var(--theme-accent)";
   if (variant === "theme") return "var(--theme-accent)";
   return "#6b7280";
@@ -888,11 +881,11 @@ export const DashboardQuickPills = ({ quickPills }) => (
           className="dashboard-pill__dot"
           style={{ background: pillDotColor(pill.variant) }}
         />
-        <div className="min-w-0">
+        <div className="min-w-0 flex justify-between items-center w-full">
           <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
             {pill.label}
           </p>
-          <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
             {pill.value}
           </p>
         </div>

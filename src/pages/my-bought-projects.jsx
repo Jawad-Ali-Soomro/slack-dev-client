@@ -336,7 +336,7 @@ const MyBoughtProjects = () => {
   return (
     <div className="pt-10">
       <m.div className="mx-auto relative">
-        {/* Header */}
+        
         <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
           <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
             <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
@@ -346,7 +346,7 @@ const MyBoughtProjects = () => {
           </div>
         </div>
 
-        {/* Search */}
+        
         <m.div variants={itemVariants} className="mb-8">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon" />
@@ -360,7 +360,7 @@ const MyBoughtProjects = () => {
           </div>
         </m.div>
 
-        {/* Projects Grid */}
+        
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-h-[67vh] overflow-scroll pb-20">
             {[1, 2, 3, 4, 5, 6].map((i) => (
@@ -473,7 +473,6 @@ const MyBoughtProjects = () => {
           </m.div>
         )}
 
-        {/* Pagination */}
       </m.div>
       {pagination.pages > 1 && (
         <div className="flex items-center absolute right-5 -bottom-0 justify-end w-full col-span-3 gap-2 mt-8 mb-10">

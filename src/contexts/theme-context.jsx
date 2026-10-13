@@ -15,7 +15,6 @@ const readTheme = () => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme === "light" || savedTheme === "dark") return savedTheme;
   } catch {
-    /* storage can be unavailable */
   }
   return "dark";
 };
@@ -23,7 +22,7 @@ const readTheme = () => {
 export const ThemeProvider = ({ children }) => {
   const [theme, setTheme] = useState(readTheme);
 
-  // Apply theme
+
   useEffect(() => {
     const root = document.documentElement;
     root.classList.remove("light", "dark");

@@ -23,6 +23,13 @@ export const chatService = {
     return response.data;
   },
 
+  removeGroupMember: async (chatId, memberId) => {
+    const response = await axiosInstance.delete(
+      `${API_BASE}/${chatId}/members/${memberId}`,
+    );
+    return response.data;
+  },
+
   getUserChats: async (page = 1, limit = 20) => {
     const response = await axiosInstance.get(
       `${API_BASE}?page=${page}&limit=${limit}`,

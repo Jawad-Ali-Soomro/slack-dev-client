@@ -2,8 +2,6 @@ import { useState } from "react";
 import { useChat } from "../contexts/chat-context";
 import { useAuth } from "../contexts/auth-context";
 import { Input } from "./ui/input";
-import { Card, CardContent } from "./ui/card";
-import { Badge } from "./ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { MessageCircle, Search } from "lucide-react";
 import UserDetailsModal from "./user-details-modal";
@@ -68,18 +66,19 @@ const ChatList = () => {
 
   if (chatsLoading && chats.length === 0) {
     return (
-      <div className="flex flex-col h-full md:border-r icon m-0 w-full">
-        <div className="p-2 md:p-4 border-b icon">
+      <div className="flex flex-col h-full icon m-0 w-full">
+        <div className="px-4 pt-4 pb-2">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 icon text-muted-foreground" />
             <Input
-              placeholder="Search chats..."
+              placeholder="Search"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white rounded-[15px]"
+              className="chat-search pl-10 h-11 border-0 bg-[#f4f5f7] dark:bg-white/5 text-black dark:text-white"
               disabled
             />
           </div>
+          <h2 className="mt-4 text-lg font-bold text-gray-900 dark:text-white">Messages</h2>
         </div>
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -92,17 +91,18 @@ const ChatList = () => {
   }
 
   return (
-    <div className="flex flex-col h-full md:border-r icon m-0 w-full">
-      <div className="p-2 md:p-4 border-b icon">
+    <div className="flex flex-col h-full icon m-0 w-full">
+      <div className="px-4 pt-4 pb-2">
         <div className="relative">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 icon text-muted-foreground" />
           <Input
-            placeholder="Search chats..."
+            placeholder="Search"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 border border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white rounded-[15px]"
+            className="chat-search pl-10 h-11 border-0 bg-[#f4f5f7] dark:bg-white/5 text-black dark:text-white"
           />
         </div>
+        <h2 className="mt-4 text-lg font-bold text-gray-900 dark:text-white">Messages</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto">
@@ -127,7 +127,7 @@ const ChatList = () => {
             <p className="text-xs">Start a conversation with someone</p>
           </div>
         ) : (
-          <div className="space-y-1 p-1 md:p-2">
+          <div className="space-y-0.5 px-2 pb-3">
             {filteredChats.map((chat) => {
               const isActive = currentChat?._id === chat._id;
               const chatName = getChatName(chat);
@@ -142,70 +142,63 @@ const ChatList = () => {
                 : false;
 
               return (
-                <Card
+                <button
                   key={chat._id}
-                  className={`cursor-pointer border dark:bg-transparent bg-transparent rounded-[15px] ${
+                  type="button"
+                  className={`flex w-full items-center gap-3 rounded-[12px] px-2.5 py-2.5 text-left transition-colors ${
                     isActive
-                      ? "bg-white border bg-white dark:bg-[rgba(255,255,255,.1)]"
-                      : ""
+                      ? "bg-[var(--theme-accent)]/12"
+                      : "hover:bg-black/[0.04] dark:hover:bg-white/5"
                   }`}
                   onClick={() => setCurrentChat(chat)}
                 >
-                  <CardContent>
-                    <div className="flex items-center gap-3">
-                      <div className="relative">
-                        <Avatar
-                          className="h-10 w-10 border border-gray-300 dark:border-gray-700 cursor-pointer hover:opacity-80 transition-opacity"
-                          onClick={(e) =>
-                            otherParticipant &&
-                            handleUserAvatarClick(
-                              e,
-                              otherParticipant._id || otherParticipant.id,
-                            )
-                          }
-                          title={
-                            otherParticipant?.username
-                              ? `View ${otherParticipant.username}'s profile`
-                              : "View profile"
-                          }
-                        >
-                          <AvatarImage src={getAvatarUrl(chatAvatar)} />
-                          <AvatarFallback>
-                            {chatName.charAt(0).toUpperCase()}
-                          </AvatarFallback>
-                        </Avatar>
-                        {isOnline && (
-                          <div className="absolute -bottom-1 -right-1 h-3 w-3 bg-green-500 border-2 border-background rounded-[15px]"></div>
-                        )}
-                      </div>
+                  <div className="relative shrink-0">
+                    <Avatar
+                      className="chat-avatar h-11 w-11 cursor-pointer"
+                      onClick={(e) =>
+                        otherParticipant &&
+                        handleUserAvatarClick(
+                          e,
+                          otherParticipant._id || otherParticipant.id,
+                        )
+                      }
+                      title={
+                        otherParticipant?.username
+                          ? `View ${otherParticipant.username}'s profile`
+                          : "View profile"
+                      }
+                    >
+                      <AvatarImage src={getAvatarUrl(chatAvatar)} />
+                      <AvatarFallback>
+                        {chatName.charAt(0).toUpperCase()}
+                      </AvatarFallback>
+                    </Avatar>
+                    {isOnline && (
+                      <span className="absolute bottom-0 right-0 h-2.5 w-2.5 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#111]" />
+                    )}
+                  </div>
 
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-medium text-sm truncate">
-                            {chatName}
-                          </h3>
-                          <span className="text-xs text-muted-foreground truncate w-fit">
-                            {formatTime(chat.lastMessageAt)}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-2 mt-2">
-                          <p className="text-xs text-muted-foreground truncate">
-                            {chat.lastMessage?.content || "No messages yet"}
-                          </p>
-                          {chat.unreadCount > 0 && (
-                            <Badge
-                              variant="destructive"
-                              className="h-5 w-5 p-0 text-xs flex items-center justify-center"
-                            >
-                              {chat.unreadCount}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center justify-between gap-2">
+                      <h3 className="truncate text-sm font-semibold text-gray-900 dark:text-white">
+                        {chatName}
+                      </h3>
+                      <span className="shrink-0 text-[11px] text-gray-400">
+                        {formatTime(chat.lastMessageAt)}
+                      </span>
                     </div>
-                  </CardContent>
-                </Card>
+                    <div className="mt-0.5 flex items-center gap-2">
+                      <p className="truncate text-xs text-gray-500 dark:text-gray-400">
+                        {chat.lastMessage?.content || "No messages yet"}
+                      </p>
+                      {chat.unreadCount > 0 && (
+                        <span className="inline-flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-[var(--theme-accent)] px-1 text-[10px] font-bold text-white">
+                          {chat.unreadCount}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </button>
               );
             })}
           </div>

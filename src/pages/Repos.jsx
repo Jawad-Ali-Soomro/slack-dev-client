@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { m } from "framer-motion";
+import { BsPlusCircleFill } from "react-icons/bs";
 import {
   ArrowLeft,
   Search,
@@ -11,7 +12,6 @@ import {
   Globe,
   ExternalLink,
   ChevronRight,
-  Plus,
   Github,
   FolderGit2,
 } from "lucide-react";
@@ -159,7 +159,7 @@ const Repos = () => {
     setTaskRepo({ repoId: String(first.id), repoName: first.name });
   };
 
-  // Called after a task is successfully created; advances to the next queued repo.
+
   const advanceQueue = () => {
     if (queue.length === 0) {
       setSelectedRepos([]);
@@ -205,7 +205,7 @@ const Repos = () => {
 
   return (
     <div className="ambient-light">
-      {/* Header */}
+      
       <div className="flex items-center justify-between gap-3 py-6">
         <div className="flex items-center gap-3">
           <div className="flex p-2 border-2 items-center gap-2 pr-5 rounded-[15px] fixed z-10 md:top-3 -top-10">
@@ -223,7 +223,7 @@ const Repos = () => {
         </div>
       </div>
 
-      {/* Filters */}
+      
       <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -259,7 +259,7 @@ const Repos = () => {
         </div>
       </m.div>
 
-      {/* Bulk actions bar */}
+      
       {selectedRepos.length > 0 && (
         <m.div
           initial={{ opacity: 0, y: -8 }}
@@ -284,14 +284,14 @@ const Repos = () => {
               className="rounded-[12px] bg-theme w-[200px] hover:bg-theme text-white"
               onClick={handleBulkCreateTasks}
             >
-              <Plus className="w-4 h-4 mr-1.5" />
+              <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
               Create Tasks ({selectedRepos.length})
             </Button>
           </div>
         </m.div>
       )}
 
-      {/* Table */}
+      
       <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -431,7 +431,7 @@ const Repos = () => {
                             title={`Create task for ${repo.name}`}
                             onClick={() => openTaskForRepo(repo)}
                           >
-                            <Plus className="w-4 h-4" />
+                            <BsPlusCircleFill className="w-4 h-4 icon" />
                           </Button>
                           {repo.html_url && (
                             <a

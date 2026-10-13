@@ -42,12 +42,9 @@ export const CodeCollaborationProvider = ({ children }) => {
         withCredentials: true,
         transports: ["websocket", "polling"],
         timeout: 20000,
-        forceNew: true,
-        autoConnect: true,
         reconnection: true,
-        reconnectionDelay: 1000,
+        reconnectionDelay: 2000,
         reconnectionAttempts: 5,
-        maxReconnectionAttempts: 5,
       });
 
       newSocket.on("connect", () => {
@@ -55,19 +52,13 @@ export const CodeCollaborationProvider = ({ children }) => {
         setError(null);
       });
 
-      newSocket.on("disconnect", (reason) => {
-        console.log("disconnected from code collaboration server:", reason);
+      newSocket.on("disconnect", () => {
         setIsConnected(false);
-        setTimeout(() => {
-          if (!newSocket.connected) {
-            newSocket.connect();
-          }
-        }, 3000);
       });
 
       newSocket.on("connect_error", (error) => {
         setIsConnected(false);
-        setError("Connection failed: " + error.message);
+        setError(error?.message || "Connection failed");
       });
 
       newSocket.on("connected", (data) => {
@@ -405,10 +396,8 @@ export const CodeCollaborationProvider = ({ children }) => {
 
   const joinByInviteCode = async (inviteCode) => {
     try {
-      console.log("Attempting to join with invite code:", inviteCode);
       const result =
         await codeCollaborationService.joinByInviteCode(inviteCode);
-      console.log("Join result:", result);
 
       await loadUserSessions();
 

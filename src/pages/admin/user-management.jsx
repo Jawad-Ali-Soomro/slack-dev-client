@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { m } from "framer-motion";
+import { BsPlusCircleFill } from "react-icons/bs";
 import {
   Users,
   Shield,
@@ -11,7 +12,6 @@ import {
   Mail,
   Calendar,
   Eye,
-  Plus,
   UserPlus,
   X,
   MoreVertical,
@@ -23,6 +23,11 @@ import { Input } from "../../components/ui/input";
 import { Badge } from "../../components/ui/badge";
 import { Checkbox } from "../../components/ui/checkbox";
 import { cn } from "../../lib/utils";
+import {
+  detailBadgeClass,
+  roleBadgeTone,
+  verificationBadgeTone,
+} from "@/lib/status-badge-styles";
 import {
   Select,
   SelectContent,
@@ -53,83 +58,30 @@ import UserDetailsModal from "../../components/user-details-modal";
 import { userService } from "../../services/user-service";
 import { authService } from "../../services/auth-service";
 
-// Shared badge style matching the status badges used across the app (see Tasks).
-const BADGE_BASE =
-  "inline-flex items-center gap-1.5 rounded-[15px] px-3 py-1 text-xs font-medium backdrop-blur-sm border";
-
 const ROLE_CONFIG = {
-  superadmin: {
-    label: "Super Admininistrator",
-    icon: Crown,
-    chip: "bg-gradient-to-br from-violet-500 to-fuchsia-500",
-    pill: "bg-violet-500/10 text-violet-700 dark:text-violet-300 border-violet-500/20",
-  },
-  admin: {
-    label: "Team Administrator",
-    icon: Shield,
-    chip: "bg-gradient-to-br from-rose-500 to-red-500",
-    pill: "bg-rose-500/10 text-rose-700 dark:text-rose-300 border-rose-500/20",
-  },
-  user: {
-    label: "Developer",
-    icon: PiUserDuotone,
-    chip: "bg-gradient-to-br from-slate-400 to-slate-500",
-    pill: "bg-slate-500/10 text-slate-600 dark:text-slate-300 border-slate-500/20",
-  },
+  superadmin: { label: "Super Admin", icon: Crown },
+  admin: { label: "Admin", icon: Shield },
+  user: { label: "Developer", icon: PiUserDuotone },
 };
 
 const RoleBadge = ({ role }) => {
   const cfg = ROLE_CONFIG[role] || ROLE_CONFIG.user;
   const Icon = cfg.icon;
   return (
-    <span
-      className={cn(
-        "inline-flex items-center gap-1.5 px-1 pr-6 py-1 rounded-full text-xs font-semibold border",
-        cfg.pill,
-      )}
-    >
-      <span
-        className={cn(
-          "flex items-center justify-center w-8 h-8 rounded-full text-white shadow-sm",
-          cfg.chip,
-        )}
-      >
-        <Icon className="w-4 h-4" />
-      </span>
+    <span className={cn(detailBadgeClass, roleBadgeTone(role))}>
+      <Icon className="w-3.5 h-3.5" />
       {cfg.label}
     </span>
   );
 };
 
-const verificationBadgeClass = (verified) =>
-  verified
-    ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20"
-    : "bg-amber-500/10 text-amber-700 dark:text-amber-300 border-amber-500/20";
-
-const verificationIconClass = (verified) =>
-  verified
-    ? "bg-gradient-to-br from-emerald-500 to-green-500"
-    : "bg-gradient-to-br from-amber-500 to-orange-500";
-
 const VerificationBadge = ({ verified }) => (
-  <span
-    className={cn(
-      "inline-flex items-center gap-1.5 p-1 rounded-full pr-6 text-xs font-semibold border",
-      verificationBadgeClass(verified),
+  <span className={cn(detailBadgeClass, verificationBadgeTone(verified))}>
+    {verified ? (
+      <PiUserCheckDuotone className="w-3.5 h-3.5" />
+    ) : (
+      <PiUserMinusDuotone className="w-3.5 h-3.5" />
     )}
-  >
-    <span
-      className={cn(
-        "flex items-center justify-center w-8 h-8 rounded-full text-white shadow-sm",
-        verificationIconClass(verified),
-      )}
-    >
-      {verified ? (
-        <PiUserCheckDuotone className="w-4 h-4" />
-      ) : (
-        <PiUserMinusDuotone className="w-4 h-4" />
-      )}
-    </span>
     {verified ? "Verified" : "Pending"}
   </span>
 );
@@ -264,7 +216,7 @@ const UserManagementFilters = ({
           onClick={onCreateUser}
           className="bg-theme h-12 hover:bg-theme text-white font-bold w-[200px]"
         >
-          <Plus className="w-4 h-4 mr-2" />
+          <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
           New User
         </Button>
       )}
@@ -398,12 +350,13 @@ const UsersTable = ({
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: 0.3 }}
   >
-    <div className="overflow-x-auto max-h-[700px] overflow-y-auto rounded-[15px] border border-gray-100 dark:border-white/10 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-      <table className="w-full border-collapse">
-        <thead className="bg-gray-50 dark:bg-white backdrop-blur-sm sticky top-0 z-10">
-          <tr>
+    <div className="bg-white dark:bg-transparent rounded-[15px] overflow-hidden border border-gray-100 dark:border-white/10">
+    <div className="overflow-x-auto max-h-[700px] overflow-y-auto rounded-[15px] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+      <table className="w-full">
+        <thead className="bg-white text-black border-b border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+          <tr className="bg-white">
             {isSuperadmin && (
-              <th className="px-5 py-4 text-left w-12">
+              <th className="px-6 py-4 text-left w-12">
                 <Checkbox
                   checked={selectAllCheckboxState(
                     filteredUsers,
@@ -415,25 +368,25 @@ const UsersTable = ({
                 />
               </th>
             )}
-            <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider">
+            <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
               User
             </th>
-            <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider">
+            <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
               Email
             </th>
-            <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider">
+            <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
               Role
             </th>
-            <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider">
+            <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
               Email Verification
             </th>
-            <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider">
+            <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
               Joined
             </th>
-            <th className="px-5 py-4 text-right text-[11px] font-semibold text-gray-500 dark:text-black uppercase tracking-wider"></th>
+            <th className="px-6 py-4 text-right text-xs text-black uppercase tracking-wider"></th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+        <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
           {filteredUsers.length === 0 ? (
             <tr>
               <td
@@ -450,11 +403,11 @@ const UsersTable = ({
                 className={cn(
                   "bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-white/5 transition-colors",
                   selectedUsers.includes(getUserId(userItem)) &&
-                    "bg-red-50/60 dark:bg-red-500/5",
+                    "bg-gray-100 dark:bg-white/10",
                 )}
               >
                 {isSuperadmin && (
-                  <td className="px-5 py-3 w-12">
+                  <td className="px-6 py-4 w-12">
                     {isSelectable(userItem) ? (
                       <Checkbox
                         checked={selectedUsers.includes(getUserId(userItem))}
@@ -466,7 +419,7 @@ const UsersTable = ({
                     ) : null}
                   </td>
                 )}
-                <td className="px-5 py-3">
+                <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <UserAvatar
                       user={userItem}
@@ -480,18 +433,18 @@ const UsersTable = ({
                     </div>
                   </div>
                 </td>
-                <td className="px-5 py-3">
+                <td className="px-6 py-4">
                   <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
                     {userItem.email}
                   </div>
                 </td>
-                <td className="px-5 py-3">
+                <td className="px-6 py-4">
                   <RoleBadge role={userItem.role} />
                 </td>
-                <td className="px-5 py-3">
+                <td className="px-6 py-4">
                   <VerificationBadge verified={userItem.emailVerified} />
                 </td>
-                <td className="px-5 py-3">
+                <td className="px-6 py-4">
                   <div className="text-sm text-gray-600 dark:text-gray-400">
                     {getJoinedDate(
                       userItem.id || userItem._id,
@@ -499,7 +452,7 @@ const UsersTable = ({
                     )}
                   </div>
                 </td>
-                <td className="px-5 py-3 text-right">
+                <td className="px-6 py-4 text-right">
                   <UserRowActions
                     userItem={userItem}
                     canAssignRoles={canAssignRoles}
@@ -516,6 +469,7 @@ const UsersTable = ({
           )}
         </tbody>
       </table>
+    </div>
     </div>
   </m.div>
 );

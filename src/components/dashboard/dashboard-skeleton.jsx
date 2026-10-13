@@ -118,7 +118,7 @@ function FeaturedCardSkeleton() {
         <Skeleton className="mt-4 h-6 w-4/5 rounded-md bg-white/20" />
         <Skeleton className="mt-3 h-4 w-3/5 rounded-md bg-white/10" />
       </div>
-      <Skeleton className="h-12 w-full rounded-2xl bg-[#75FC96]/40" />
+      <Skeleton className="h-12 w-full rounded-2xl bg-[var(--theme-accent)]/40" />
     </div>
   );
 }

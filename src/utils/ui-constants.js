@@ -49,10 +49,10 @@ export const COLOR_THEME = {
   low: "bg-green-500 text-white border-green-500",
 
   completed: "bg-green-500 text-white border-green-500",
-  in_progress: "bg-gray-500 text-white border-gray-500", // Changed from blue
+  in_progress: "bg-gray-500 text-white border-gray-500",
   pending: "bg-yellow-500 text-white border-yellow-500",
   cancelled: "bg-red-500 text-white border-red-500",
-  planning: "bg-gray-500 text-white border-gray-500", // Changed from blue
+  planning: "bg-gray-500 text-white border-gray-500",
   active: "bg-green-500 text-white border-green-500",
   on_hold: "bg-yellow-500 text-white border-yellow-500",
 };

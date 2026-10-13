@@ -13,6 +13,7 @@ import {
   Trash2,
   ArrowDown,
   ArrowLeft,
+  Info,
   X,
   FileText,
   Film,
@@ -22,6 +23,7 @@ import {
 import EmojiPicker from "emoji-picker-react";
 import { toast } from "sonner";
 import UserDetailsModal from "./user-details-modal";
+import GroupDetailsModal from "./group-details-modal";
 import { Skeleton } from "./ui/skeleton";
 import chatUploadService from "../services/chat-upload-service";
 
@@ -58,7 +60,7 @@ const chatShellClass = (isMobile) =>
   `flex flex-col h-full ${isMobile ? "m-0 w-full" : ""}`;
 
 const headerPadClass = (isMobile) =>
-  `flex-shrink-0 border-b border-black/[0.06] bg-white dark:border-white/10 dark:bg-black/40 ${isMobile ? "px-2 py-2.5" : "px-5 py-3.5"}`;
+  `flex-shrink-0 ${isMobile ? "px-3 py-3" : "px-5 py-4"}`;
 
 const presenceDotClass = (isOnline) =>
   `absolute bottom-0 right-0 h-3 w-3 rounded-[12px] ring-2 ring-white dark:ring-black ${isOnline ? "bg-emerald-500" : "bg-gray-300"
@@ -72,23 +74,11 @@ const statusTextClass = (typingCount, isOnline) => {
   return "mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground";
 };
 
-const statusDotClass = (typingCount, isOnline) => {
-  if (typingCount > 0) return "h-1.5 w-1.5 rounded-[12px] bg-[#FF914B]";
-  if (isOnline) return "h-1.5 w-1.5 rounded-[12px] bg-emerald-500";
-  return "h-1.5 w-1.5 rounded-[12px] bg-gray-300";
-};
-
-const statusLabel = (typingCount, isOnline) => {
-  if (typingCount > 0) return "Typing...";
-  if (isOnline) return "Active now";
-  return "Offline";
-};
-
 const messagesPadClass = (isMobile) =>
-  `relative flex-1 overflow-y-auto dark:bg-transparent ${isMobile ? "px-2 py-3" : "px-5 py-4"}`;
+  `relative flex-1 overflow-y-auto bg-[#f7f8f6] dark:bg-black/30 ${isMobile ? "px-3 py-3" : "px-5 py-5"}`;
 
 const composerPadClass = (isMobile) =>
-  `relative flex-shrink-0 border-t border-black/[0.06] dark:border-white/10 dark:bg-black/40 ${isMobile ? "p-2" : "px-4 py-3"}`;
+  `relative flex-shrink-0 bg-white dark:bg-transparent ${isMobile ? "p-3" : "px-4 py-4"}`;
 
 const formatMessageTime = (date) =>
   new Date(date).toLocaleTimeString([], {
@@ -160,15 +150,15 @@ const bubbleStackClass = (isOwn) => {
 const bubbleClass = (isOwn, mediaOnly, isDeleted) => {
   const pad = mediaOnly ? "p-1" : "px-3.5 py-2";
   const tone = isOwn
-    ? "rounded-[12px] rounded-br-none bg-gradient-to-br from-[#FF914B] to-[#ff6a3d] text-white"
-    : "rounded-[12px] rounded-bl-none border border-black/[0.06] bg-white text-gray-900 dark:border-white/10 dark:bg-[#1c1c1e] dark:text-white";
+    ? "rounded-[15px] rounded-br-none bg-[var(--theme-accent)] text-white"
+    : "rounded-[15px] rounded-bl-none bg-white text-black";
   const faded = isDeleted ? "opacity-60" : "";
   return `relative ${pad} ${tone} ${faded}`;
 };
 
 const replyQuoteClass = (isOwn) => {
-  if (isOwn) return "mb-1.5 rounded-md mt-1 border-l-2 px-2.5 py-1.5 text-xs border-white/70 bg-white/15 text-white/90";
-  return "mb-1.5 rounded-md mt-1 border-l-2 px-2.5 py-1.5 text-xs border-[#FF914B] bg-[#FF914B]/10 text-gray-600 dark:text-gray-300";
+  if (isOwn) return "mb-1.5 rounded-md mt-1 border-l-2 border-r-2 border-1 px-2.5 py-1.5 text-xs border-white bg-white/15 text-white";
+  return "mb-1.5 rounded-md mt-1 border-l-2 border-1 border-r-2 bg-gray-100 px-2.5 py-1.5 text-xs border-black text-black";
 };
 
 const editedLabelClass = (isOwn) => {
@@ -208,7 +198,7 @@ const contextBannerBody = (editingMessage, replyTo) => {
 };
 
 const messagePlaceholder = (editingMessage) =>
-  editingMessage ? "Edit message..." : "Message";
+  editingMessage ? "Edit message..." : "Write a message";
 
 const emojiPickerTheme = (theme) => (theme === "dark" ? "dark" : "light");
 
@@ -372,12 +362,14 @@ const ChatEmptyState = () => (
 const ChatHeader = ({
   isMobile,
   onBack,
+  isGroup,
+  memberCount,
   otherParticipant,
   onAvatarClick,
+  onOpenGroup,
   chatAvatarUrl,
   chatName,
   isOnline,
-  typingUsers,
 }) => (
   <div className={headerPadClass(isMobile)}>
     <div className="flex items-center gap-3">
@@ -391,31 +383,84 @@ const ChatHeader = ({
           <ArrowLeft className="h-5 w-5" />
         </button>
       ) : null}
-      <div className="relative">
-        <Avatar
-          className="h-11 w-11 cursor-pointer"
-          onClick={() =>
-            otherParticipant &&
-            onAvatarClick(otherParticipant._id || otherParticipant.id)
+      <button
+        type="button"
+        className="flex min-w-0 flex-1 items-center gap-3 text-left"
+        onClick={() => {
+          if (isGroup) {
+            onOpenGroup?.();
+            return;
           }
+          if (otherParticipant) {
+            onAvatarClick(otherParticipant._id || otherParticipant.id);
+          }
+        }}
+      >
+        <div className="relative">
+          <Avatar className="chat-avatar h-11 w-11">
+            <AvatarImage src={chatAvatarUrl} />
+            <AvatarFallback>{chatName.charAt(0).toUpperCase()}</AvatarFallback>
+          </Avatar>
+          {isGroup ? null : <span className={presenceDotClass(isOnline)} />}
+        </div>
+        <div className="min-w-0">
+          <h3 className="truncate text-base font-bold leading-tight text-gray-900 dark:text-white">
+            {chatName}
+          </h3>
+          {isGroup ? (
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              {memberCount} {memberCount === 1 ? "member" : "members"}
+            </p>
+          ) : null}
+        </div>
+      </button>
+      {isGroup ? (
+        <button
+          type="button"
+          onClick={onOpenGroup}
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] text-gray-500 hover:bg-black/[0.05] hover:text-[var(--theme-accent)] dark:hover:bg-white/10"
+          title="Group details"
         >
-          <AvatarImage src={chatAvatarUrl} />
-          <AvatarFallback>{chatName.charAt(0).toUpperCase()}</AvatarFallback>
-        </Avatar>
-        <span className={presenceDotClass(isOnline)} />
-      </div>
-      <div className="min-w-0">
-        <h3 className="truncate text-[15px] font-semibold leading-tight text-gray-900 dark:text-white">
-          {chatName}
-        </h3>
-        <p className={statusTextClass(typingUsers.length, isOnline)}>
-          <span className={statusDotClass(typingUsers.length, isOnline)} />
-          {statusLabel(typingUsers.length, isOnline)}
-        </p>
-      </div>
+          <Info className="h-4 w-4" />
+        </button>
+      ) : null}
     </div>
   </div>
 );
+
+const GroupMembersEnd = ({ members, onOpen }) => {
+  if (!members?.length) return null;
+
+  return (
+    <button
+      type="button"
+      onClick={onOpen}
+      className="mt-6 flex w-full items-center gap-3 rounded-[15px] bg-white px-3 py-3 text-left dark:bg-[#1c1c1e]"
+    >
+      <div className="flex shrink-0 -space-x-2">
+        {members.slice(0, 5).map((member) => {
+          const id = String(member._id || member.id || member.username);
+          const name = member.username || member.name || "Member";
+          return (
+            <Avatar key={id} className="chat-avatar h-8 w-8 ring-2 ring-white dark:ring-[#1c1c1e]">
+              <AvatarImage src={resolveAvatarUrl(member.avatar)} />
+              <AvatarFallback>{name.charAt(0).toUpperCase()}</AvatarFallback>
+            </Avatar>
+          );
+        })}
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs font-semibold text-gray-900 dark:text-white">
+          {members.length} {members.length === 1 ? "member" : "members"}
+        </p>
+        <p className="truncate text-[11px] text-muted-foreground">
+          {members.map((member) => member.username || member.name).filter(Boolean).join(", ")}
+        </p>
+      </div>
+      <Info className="h-4 w-4 shrink-0 text-[var(--theme-accent)]" />
+    </button>
+  );
+};
 
 const ChatMessagesLoading = () => (
   <div className="flex flex-col gap-6 h-full">
@@ -614,7 +659,7 @@ const ChatMessageBubble = ({
     ) : null}
 
     {showText ? (
-      <p className="text-[14px] font-normal leading-relaxed whitespace-pre-wrap break-words">
+      <p className="text-[14px] font-normal  leading-relaxed whitespace-pre-wrap break-words">
         {message.content}
       </p>
     ) : null}
@@ -752,6 +797,8 @@ const ChatMessagesPane = ({
   onReply,
   onEdit,
   onDelete,
+  groupMembers,
+  onOpenGroup,
 }) => {
   let body = <ChatMessagesList
     messages={messages}
@@ -768,6 +815,9 @@ const ChatMessagesPane = ({
   return (
     <div ref={messagesContainerRef} className={messagesPadClass(isMobile)}>
       {body}
+      {messagesLoading || !groupMembers ? null : (
+        <GroupMembersEnd members={groupMembers} onOpen={onOpenGroup} />
+      )}
       <ChatTypingIndicator typingUsers={typingUsers} />
       <div ref={messagesEndRef} />
     </div>
@@ -788,10 +838,10 @@ const ChatPendingFiles = ({ pendingFiles, onRemove }) => {
             <img
               src={item.preview}
               alt=""
-              className="h-9 w-9 rounded-[10px] object-cover"
+              className="h-9 w-9 rounded-[15px] object-cover"
             />
           ) : (
-            <span className="flex h-9 w-9 items-center justify-center rounded-[10px] bg-[#FF914B]/10 text-[#FF914B]">
+            <span className="flex h-9 w-9 items-center justify-center rounded-[15px] bg-[#FF914B]/10 text-[#FF914B]">
               <FileText className="h-4 w-4" />
             </span>
           )}
@@ -859,7 +909,7 @@ const ChatComposerForm = ({
   theme,
 }) => (
   <form onSubmit={onSubmit} className="flex items-center gap-2">
-    <div className="flex flex-1 items-center gap-1 rounded-[12px] border border-black/[0.06] px-1.5 transition-colors focus-within:border-[#FF914B]/40 dark:border-white/10">
+    <div className="chat-composer flex flex-1 items-center gap-1 border border-black/[0.06] bg-[#f6f7f8] px-1.5 transition-colors focus-within:border-[var(--theme-accent)]/50 dark:border-white/10 dark:bg-white/5">
       <button
         type="button"
         className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] text-gray-500 hover:bg-white hover:text-[#FF914B] disabled:opacity-40 dark:hover:bg-white/10"
@@ -915,7 +965,7 @@ const ChatComposerForm = ({
         messageText,
         pendingFiles,
       )}
-      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] bg-[#FF914B] text-white transition-colors hover:bg-[#ff7a2e] disabled:opacity-40"
+      className="chat-composer flex h-11 w-11 shrink-0 items-center justify-center bg-[var(--theme-accent)] text-white transition-colors hover:bg-[var(--theme-accent-2)] disabled:opacity-40"
       title="Send message"
     >
       {uploadingFiles ? (
@@ -1051,6 +1101,7 @@ const ChatWindow = ({ isMobile = false }) => {
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [showUserDetails, setShowUserDetails] = useState(false);
+  const [showGroupDetails, setShowGroupDetails] = useState(false);
   const [pendingFiles, setPendingFiles] = useState([]);
   const [uploadingFiles, setUploadingFiles] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
@@ -1113,6 +1164,7 @@ const ChatWindow = ({ isMobile = false }) => {
   };
 
   useEffect(() => {
+    setShowGroupDetails(false);
     return () => {
       clearPendingFiles();
     };
@@ -1281,8 +1333,12 @@ const ChatWindow = ({ isMobile = false }) => {
 
   const typingUsers = typingUsersFor(currentChat, getTypingUsers);
   const currentUserId = resolveUserId(user);
-  const otherParticipant = findOtherParticipant(currentChat, currentUserId);
+  const isGroup = currentChat?.type === "group";
+  const otherParticipant = isGroup
+    ? null
+    : findOtherParticipant(currentChat, currentUserId);
   const isOnline = resolveOnline(otherParticipant, isUserOnline);
+  const groupMembers = isGroup ? currentChat.participants || [] : null;
 
   if (!currentChat) {
     return <ChatEmptyState />;
@@ -1293,12 +1349,14 @@ const ChatWindow = ({ isMobile = false }) => {
       <ChatHeader
         isMobile={isMobile}
         onBack={() => setCurrentChat(null)}
+        isGroup={isGroup}
+        memberCount={groupMembers?.length || 0}
         otherParticipant={otherParticipant}
         onAvatarClick={handleUserAvatarClick}
+        onOpenGroup={() => setShowGroupDetails(true)}
         chatAvatarUrl={resolveAvatarUrl(getChatAvatar(currentChat))}
         chatName={getChatName(currentChat)}
         isOnline={isOnline}
-        typingUsers={typingUsers}
       />
 
       <div className="flex relative flex-col h-full overflow-hidden">
@@ -1315,6 +1373,7 @@ const ChatWindow = ({ isMobile = false }) => {
           onReply={handleReplyToMessage}
           onEdit={handleEditMessage}
           onDelete={handleDeleteMessage}
+          onOpenGroup={() => setShowGroupDetails(true)}
         />
 
         <ChatScrollButton
@@ -1362,6 +1421,15 @@ const ChatWindow = ({ isMobile = false }) => {
           setShowUserDetails(false);
           setSelectedUserId(null);
         }}
+      />
+
+      <GroupDetailsModal
+        isOpen={showGroupDetails}
+        chat={currentChat}
+        currentUserId={currentUserId}
+        isUserOnline={isUserOnline}
+        onClose={() => setShowGroupDetails(false)}
+        onMemberClick={handleUserAvatarClick}
       />
     </div>
   );

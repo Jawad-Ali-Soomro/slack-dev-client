@@ -52,7 +52,7 @@ export function spanClassForCols(cols) {
   return COL_SPAN_CLASS[n] || "lg:col-span-4";
 }
 
-/** @deprecated */
+
 export const WIDGET_SPANS = Object.fromEntries(
   Object.entries(DEFAULT_WIDGET_SIZES).map(([id, s]) => [
     id,
@@ -128,7 +128,6 @@ export function useDashboardLayout() {
     try {
       localStorage.setItem(DASHBOARD_LAYOUT_KEY, JSON.stringify(order));
     } catch {
-      /* ignore */
     }
   }, [order]);
 
@@ -136,7 +135,6 @@ export function useDashboardLayout() {
     try {
       localStorage.setItem(DASHBOARD_SIZES_KEY, JSON.stringify(sizes));
     } catch {
-      /* ignore */
     }
   }, [sizes]);
 
@@ -181,10 +179,7 @@ export function useDashboardLayout() {
   };
 }
 
-/**
- * Grid tile: fills column span, hugs content height by default (no scrollbar).
- * Drag edges/corner to resize; shrinking below content enables scroll.
- */
+
 export function SortableWidget({
   id,
   children,
@@ -371,11 +366,11 @@ export function DashboardLayoutReset({ onReset }) {
     <button
       type="button"
       onClick={onReset}
-      className="inline-flex items-center gap-1.5 text-xs font-semibold text-gray-500 hover:text-[var(--theme-accent)] transition-colors"
+      className="inline-flex items-center px-5 py-3 bg-gray-100 gap-1.5 text-xs font-semibold text-gray-500 transition-colors"
       title="Reset dashboard layout & sizes"
     >
       <RotateCcw className="w-3.5 h-3.5" />
-      Reset layout
+      Reset Layout
     </button>
   );
 }

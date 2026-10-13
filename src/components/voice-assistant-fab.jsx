@@ -392,7 +392,6 @@ const VoiceAssistantFab = () => {
       try {
         recognition.stop();
       } catch {
-        /* already stopped */
       }
     }
     stopMic();
@@ -476,7 +475,6 @@ const VoiceAssistantFab = () => {
       try {
         recognition.stop();
       } catch {
-        /* already stopped */
       }
     }
     if (!keepSpeech) {

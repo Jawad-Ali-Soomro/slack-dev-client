@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { m } from "framer-motion";
+import { BsPlusCircleFill } from "react-icons/bs";
 import {
   Search,
-  Plus,
   Edit,
   Trash2,
   Users,
@@ -212,7 +212,7 @@ const Teams = () => {
         initial="hidden"
         animate="visible"
       >
-        {/* Header */}
+        
         <m.div
           variants={itemVariants}
           className="flex items-center justify-between mb-8"
@@ -230,13 +230,13 @@ const Teams = () => {
               onClick={() => setShowNewTeamPopup(true)}
               className={"w-[200px] rounded-[15px] h-12"}
             >
-              <Plus className={ICON_SIZES.sm} />
+              <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
               New Workspace
             </Button>
           </div>
         </m.div>
 
-        {/* Stats Cards - skeleton until stats loaded */}
+        
         {statsLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
             {[1, 2, 3, 4].map((i) => (
@@ -284,7 +284,7 @@ const Teams = () => {
           </m.div>
         ) : null}
 
-        {/* Filters */}
+        
         <m.div
           variants={itemVariants}
           className="flex flex-wrap justify-start items-center gap-4 mb-6"
@@ -327,7 +327,7 @@ const Teams = () => {
           </Select>
         </m.div>
 
-        {/* Teams Grid - skeleton until loading finished */}
+        
         <m.div
           variants={itemVariants}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -373,7 +373,7 @@ const Teams = () => {
                 onClick={() => setShowNewTeamPopup(true)}
                 className={"w-[200px]"}
               >
-                <Plus className="w-4 h-4 icon icon mr-2 icon" />
+                <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
                 Create Workspace
               </Button>
             </div>
@@ -385,10 +385,10 @@ const Teams = () => {
                 whileHover={{ y: -4 }}
                 className="group relative flex flex-col overflow-hidden rounded-[20px] border border-gray-200/70 dark:border-white/10 bg-white dark:bg-white/[0.03] p-6 shadow-sm transition-[border-color,box-shadow] duration-300 hover:shadow-xl hover:border-[#FF914B]/40"
               >
-                {/* Accent glow */}
+                
                 <div className="pointer-events-none absolute -right-16 -top-16 h-32 w-32 rounded-full bg-[#FF914B]/10 blur-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-                {/* Team Header */}
+                
                 <div className="relative mb-4 flex items-start justify-between gap-3">
                   <div className="flex min-w-0 flex-1 items-start gap-3">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[15px] bg-gradient-to-br from-[#FF914B] to-[#ff6a3d] text-lg font-bold text-white shadow-md">
@@ -436,7 +436,7 @@ const Teams = () => {
                   </DropdownMenu>
                 </div>
 
-                {/* Team Stats */}
+                
                 <div className="relative mb-5 flex flex-wrap items-center gap-2">
                   <span className="inline-flex items-center gap-1.5 rounded-[15px] bg-gray-100 px-3 py-1.5 text-xs font-medium text-gray-700 dark:bg-white/5 dark:text-gray-300">
                     <PiUsersDuotone className="h-3.5 w-3.5" />
@@ -450,7 +450,7 @@ const Teams = () => {
                   </span>
                 </div>
 
-                {/* Team Members */}
+                
                 <div className="relative mt-auto flex items-center justify-between border-t border-gray-100 pt-4 dark:border-white/10">
                   <AvatarGroup
                     users={team.members}
@@ -469,7 +469,7 @@ const Teams = () => {
           )}
         </m.div>
 
-        {/* New Team Popup */}
+        
         {showNewTeamPopup && (
           <m.div
             initial={{ opacity: 0 }}
@@ -568,7 +568,7 @@ const Teams = () => {
         )}
       </m.div>
 
-      {/* User Details Modal */}
+      
       <UserDetailsModal
         userId={selectedUserId}
         isOpen={showUserDetails}

@@ -210,7 +210,7 @@ function TimeColumn({ items, active, render, onPick }) {
           type="button"
           onClick={() => onPick(item)}
           className={cn(
-            "rounded-[10px] px-3 py-1.5 text-sm transition-colors",
+            "rounded-[15px] px-3 py-1.5 text-sm transition-colors",
             active === item
               ? "bg-primary text-primary-foreground"
               : "hover:bg-accent hover:text-accent-foreground",

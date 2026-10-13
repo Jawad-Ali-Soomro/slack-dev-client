@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import { patchProjectTasks } from "../utils/apply-task-event";
 import { m } from "framer-motion";
+import { BsPlusCircleFill } from "react-icons/bs";
 import HorizontalLoader from "../components/horizontal-loader";
 import {
   Search,
-  Plus,
   Edit,
   Trash2,
   Calendar,
@@ -93,7 +93,7 @@ const ProjectsHeaderSection = ({
             <h1 className="text-2xl font-bold">My Projects</h1>
           </div>
         </div>
-        {/* Header */}
+        
         <m.div
           variants={itemVariants}
           className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8"
@@ -231,9 +231,9 @@ const ProjectsHeaderSection = ({
           </div>
         </m.div>
 
-        {/* Stats Cards */}
+        
 
-        {/* Filters */}
+        
   </>
 );
 
@@ -256,7 +256,7 @@ const ProjectsGridSection = ({
   handleUserAvatarClick,
 }) => (
   <>
-    {/* Projects Grid - skeleton matching card layout until loading finished */}
+    
         <m.div
           variants={itemVariants}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -320,7 +320,7 @@ const ProjectsGridSection = ({
                 disabled={!permissions.canCreateProject}
                 className={"md:w-[200px] w-full"}
               >
-                <Plus className="w-4 h-4 icon icon mr-2 icon" />
+                <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
                 Create Project
               </Button>
             </div>
@@ -332,10 +332,10 @@ const ProjectsGridSection = ({
                 whileHover={{ y: -4 }}
                 className="group relative flex flex-col overflow-hidden rounded-[15px] border border-gray-200 bg-white p-6 shadow-sm transition-[border-color,box-shadow] duration-300 hover:border-[#FF914B]/40 hover:shadow-xl dark:border-none dark:bg-[rgba(255,255,255,.1)]"
               >
-                {/* Accent glow */}
+                
                 <div className="pointer-events-none absolute -right-16 -top-16 h-32 w-32 rounded-full bg-[#FF914B]/10 blur-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-                {/* Project Header */}
+                
                 <div className="relative mb-4 flex items-start justify-between gap-2">
                   <div className="flex min-w-0 flex-1 items-center gap-3">
                     {project.logo ? (
@@ -422,7 +422,7 @@ const ProjectsGridSection = ({
                   </div>
                 </div>
 
-                {/* Status and Priority */}
+                
                 <div className="relative mb-4 flex flex-wrap gap-2">
                   <span
                     className={`inline-flex items-center gap-1 rounded-[15px] border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide ${getStatusColor(project.status)}`}
@@ -437,7 +437,7 @@ const ProjectsGridSection = ({
                   </span>
                 </div>
 
-                {/* Progress Bar */}
+                
                 <div className="relative mb-4">
                   <div className="mb-1.5 flex justify-between text-xs font-medium text-gray-500 dark:text-gray-400">
                     <span>Progress</span>
@@ -453,32 +453,13 @@ const ProjectsGridSection = ({
                   </div>
                 </div>
 
-                {/* Team Info */}
-                {/* {project.teamId && (
-                  <div className="mb-4">
-                    <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400 text-sm">
-                      <Users className="w-4 h-4 icon icon icon" />
-                      <span>Team: {project.teamId.name}</span>
-                    </div>
-                  </div>
-                )} */}
+                
+                
 
-                {/* Project Stats */}
-                {/* <div className="grid grid-cols-4 gap-4 mb-4 text-sm">
-                  <div className="flex items-center gap-2 text-gray-600 col-span-2 dark:text-gray-400">
-                    
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <CheckCircle className="w-4 h-4 icon icon icon" />
-                    <span>{project?.tasks.length || 0} tasks</span>
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-600 dark:text-gray-400">
-                    <Calendar className="w-4 h-4 icon icon icon" />
-                    <span>{project?.meetings.length || 0} meetings</span>
-                  </div>
-                </div> */}
+                
+                
 
-                {/* Tags */}
+                
                 {project.tags && project.tags.length > 0 && (
                   <div className="relative mb-4 flex flex-wrap items-center gap-2">
                     {project.tags.slice(0, 3).map((tag, index) => (
@@ -498,7 +479,7 @@ const ProjectsGridSection = ({
                   </div>
                 )}
 
-                {/* Project Footer */}
+                
                 <div className="relative mt-auto flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
                   <AvatarGroup
                     users={project.members}
@@ -526,7 +507,7 @@ const ProjectsPaginationSection = ({
   getPageNumbers,
 }) => (
   <>
-    {/* Pagination Controls - Fixed at Bottom */}
+    
         <div className="sticky bottom-0  border-gray-200 dark:border-gray-700 p-4">
           <m.div
             initial={{ opacity: 0, y: 20 }}
@@ -534,12 +515,12 @@ const ProjectsPaginationSection = ({
             transition={{ delay: 0.3 }}
             className="flex flex-col sm:flex-row items-center justify-end gap-4"
           >
-            {/* Page Info */}
+            
 
-            {/* Pagination Buttons - Only show if more than 1 page */}
+            
             {pagination.pages > 1 && (
               <div className="flex items-center gap-2">
-                {/* Previous Button */}
+                
                 <Button
                   variant="outline"
                   size="sm"
@@ -551,7 +532,7 @@ const ProjectsPaginationSection = ({
                   Previous
                 </Button>
 
-                {/* Page Numbers */}
+                
                 <div className="flex items-center gap-1">
                   {getPageNumbers().map((pageNum, index) => (
                     <div key={index}>
@@ -578,7 +559,7 @@ const ProjectsPaginationSection = ({
                   ))}
                 </div>
 
-                {/* Next Button */}
+                
                 <Button
                   variant="outline"
                   size="sm"
@@ -594,7 +575,7 @@ const ProjectsPaginationSection = ({
           </m.div>
         </div>
 
-        {/* Loading Overlay for Pagination */}
+        
   </>
 );
 
@@ -793,7 +774,6 @@ const NewProjectPopupSection = ({
   selectedProject,
   teams,
 }) => {
-  console.log(selectedProject);
   if (!showNewProjectPopup) return null;
   return (
 <m.div
@@ -811,7 +791,7 @@ const NewProjectPopupSection = ({
               onClick={(e) => e.stopPropagation()}
             >
               <form onSubmit={handleCreateProject} className="space-y-2">
-                {/* Project Name and Description */}
+                
                 <div className="grid grid-cols-1 gap-4">
                   <div>
                     <Input
@@ -873,7 +853,7 @@ const NewProjectPopupSection = ({
                   </div>
                 </div>
 
-                {/* Project Logo Upload */}
+                
                 <div>
                   <input
                     type="file"
@@ -897,7 +877,7 @@ const NewProjectPopupSection = ({
                   />
                 </div>
 
-                {/* Status, Priority, and Dates */}
+                
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Select
@@ -1004,7 +984,7 @@ const NewProjectPopupSection = ({
                   </div>
                 </div>
 
-                {/* Members */}
+                
                 <div>
                   <div className="relative mb-3">
                     <Input
@@ -1026,7 +1006,7 @@ const NewProjectPopupSection = ({
                   />
                 </div>
 
-                {/* Links */}
+                
                 <div>
                   <div className="flex gap-2 mb-3">
                     <Input
@@ -1087,7 +1067,7 @@ const NewProjectPopupSection = ({
                       onClick={handleAddLink}
                       variant="outline"
                     >
-                      <Plus />
+                      <BsPlusCircleFill className="w-4 h-4 icon" />
                     </Button>
                   </div>
 
@@ -1097,7 +1077,7 @@ const NewProjectPopupSection = ({
                   />
                 </div>
 
-                {/* Tags */}
+                
                 <div>
                   <div className="flex gap-2 mb-3">
                     <Input
@@ -1125,9 +1105,9 @@ const NewProjectPopupSection = ({
                   />
                 </div>
 
-                {/* Public Toggle */}
+                
 
-                {/* Action Buttons */}
+                
                 <div className="flex gap-3 pt-4 border-t icon border-gray-200 dark:border-gray-700">
                   <Button
                     type="button"
@@ -1650,7 +1630,7 @@ const ProjectProgressModalSection = ({
   showProgressModal,
 }) => (
   <>
-    {/* Progress Update Modal */}
+    
         {showProgressModal && selectedProject && (
           <m.div
             initial={{ opacity: 0 }}
@@ -1735,7 +1715,7 @@ const ProjectMembersModalSection = ({
   refreshKey,
 }) => (
   <>
-    {/* Members Management Modal */}
+    
         {showMembersModal && selectedProject && (
           <m.div
             initial={{ opacity: 0 }}
@@ -1765,9 +1745,9 @@ const ProjectMembersModalSection = ({
                 </div>
 
                 <div className="space-y-4">
-                  {/* Add Member */}
+                  
                   <div>
-                    {/* <h3 className="text-lg  text-gray-900 dark:text-white mb-2">Add Member</h3> */}
+                    
                     <div className="flex gap-2">
                       <Input
                         value={projectMemberSearch}
@@ -1838,7 +1818,7 @@ const ProjectMembersModalSection = ({
                       )}
                   </div>
 
-                  {/* Current Members */}
+                  
                   <div>
                     <h3 className="text-lg  text-gray-900 dark:text-white mb-2">
                       Current Members
@@ -1902,7 +1882,7 @@ const ProjectLinksModalSection = ({
   handleRemoveLinkFromProject,
 }) => (
   <>
-    {/* Links Management Modal */}
+    
         {showLinksModal && selectedProject && (
           <m.div
             initial={{ opacity: 0 }}
@@ -1932,7 +1912,7 @@ const ProjectLinksModalSection = ({
                 </div>
 
                 <div className="space-y-4">
-                  {/* Add Link */}
+                  
                   <div>
                     <h3 className="text-lg  text-gray-900 dark:text-white mb-2">
                       Add Link
@@ -2005,7 +1985,7 @@ const ProjectLinksModalSection = ({
                     </div>
                   </div>
 
-                  {/* Current Links */}
+                  
                   <div>
                     <h3 className="text-lg  text-gray-900 dark:text-white mb-2">
                       Current Links

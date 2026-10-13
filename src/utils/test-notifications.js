@@ -36,10 +36,3 @@ export const createTestNotification = (type = "task") => {
 
   return notifications[type] || notifications.task;
 };
-
-if (typeof window !== "undefined") {
-  window.addTestNotification = (type) => {
-    console.log("Test notification created:", createTestNotification(type));
-    return createTestNotification(type);
-  };
-}

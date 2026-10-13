@@ -40,6 +40,13 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { Badge } from "../components/ui/badge";
+import {
+  detailBadgeClass,
+  priorityBadgeTone,
+  projectBadgeTone,
+  statusBadgeTone,
+  tableBadgeClass,
+} from "@/lib/status-badge-styles";
 import taskService from "../services/task-service";
 import { userService } from "../services/user-service";
 import projectService from "../services/project-service";
@@ -68,7 +75,7 @@ import {
   SheetTitle,
 } from "../components/ui/sheet";
 import { cn } from "../lib/utils";
-import { PiPlus } from "react-icons/pi";
+import { BsPlusCircleFill } from "react-icons/bs";
 import {
   decodeExtensionMeta,
   hasCaptureMetadata,
@@ -119,7 +126,7 @@ function TasksToolbarActions({
           onClick={onScheduleTask}
           className={"md:w-[200px] w-full rounded-[15px] h-12 font-bold"}
         >
-          <PiPlus />
+          <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
           Schedule Task
         </Button>
       )}
@@ -203,17 +210,13 @@ function TasksTableBody({
         </div>
       </td>
       <td className="px-6 py-4">
-        <span
-          className={`inline-flex items-center justify-center uppercase px-2.5 py-0.5 rounded-[15px] text-[9px]   ${getPriorityColor(task.priority)}`}
-        >
+        <span className={`${tableBadgeClass} ${getPriorityColor(task.priority)}`}>
           {task.priority}
         </span>
       </td>
       <td className="px-6 py-4">
         {isTaskOverdue(task) ? (
-          <span
-            className="inline-flex items-center gap-1 font-bold rounded-[15px] text-[9px] uppercase px-4 py-2 min-w-[100px] bg-red-500 text-white"
-          >
+          <span className={`${tableBadgeClass} ${statusBadgeTone("overdue")}`}>
             <AlertCircle className="w-4 h-4 icon icon" />
             Overdue
           </span>
@@ -221,8 +224,7 @@ function TasksTableBody({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <button
-              className={`inline-flex items-center gap-1 font-bold rounded-[15px] text-[9px] uppercase cursor-pointer hover:opacity-80 transition-opacity px-4 py-2 min-w-[100px]
-    ${getStatusColor(task.status)}`}
+              className={`${tableBadgeClass} cursor-pointer hover:opacity-80 transition-opacity ${getStatusColor(task.status)}`}
             >
               {getStatusIcon(task.status)}
               {task.status === "in_progress"
@@ -389,25 +391,19 @@ function TaskDetailsHeader({
       <div className="relative flex flex-col gap-4">
         <div className="flex flex-wrap items-center gap-2">
           <Badge
-            className={cn(
-              "inline-flex items-center gap-2 rounded-[15px] px-3 py-1 text-xs f  ont-medium backdrop-blur-sm border",
-              getStatusBadgeStyles(task.status),
-            )}
+            className={cn(detailBadgeClass, getStatusBadgeStyles(task.status))}
           >
             {getStatusIcon(task.status)}
             <span className="capitalize">{formatLabel(task.status)}</span>
           </Badge>
           <Badge
-            className={cn(
-              "inline-flex items-center gap-2 rounded-[15px] px-3 py-1 text-xs font-medium backdrop-blur-sm border",
-              getPriorityBadgeStyles(task.priority),
-            )}
+            className={cn(detailBadgeClass, getPriorityBadgeStyles(task.priority))}
           >
             <AlertCircle className="w-3 h-3 icon" />
             <span className="capitalize">{formatLabel(task.priority)}</span>
           </Badge>
           {task.project && (
-            <Badge className="inline-flex items-center gap-2 rounded-[15px] px-3 py-1 text-xs font-medium border border-transparent bg-[#FF914B] text-black">
+            <Badge className={cn(detailBadgeClass, projectBadgeTone)}>
               <FolderOpen className="w-3 h-3 icon" />
               {task.project.name}
             </Badge>
@@ -561,12 +557,10 @@ function TaskDetailsRelated({
                 <div className="flex items-center gap-2">
                   <Badge
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-[15px] px-2.5 py-1 text-[10px] font-medium border backdrop-blur-sm",
+                      detailBadgeClass,
                       isTaskOverdue(relatedTask)
-                        ? "bg-red-500/15 text-red-600 border border-red-400/40 dark:border-transparent dark:bg-red-500 dark:text-white"
-                        : getStatusBadgeStyles(
-                          relatedTask.status || "pending",
-                        ),
+                        ? statusBadgeTone("overdue")
+                        : getStatusBadgeStyles(relatedTask.status || "pending"),
                     )}
                   >
                     {isTaskOverdue(relatedTask)
@@ -729,7 +723,7 @@ const Tasks = () => {
     return new Date(task.dueDate) < new Date();
   }, []);
 
-  // Always derive live chip numbers from the tasks currently shown
+
   const liveStats = useMemo(() => {
     const pending = tasks.filter((t) => t.status === "pending").length;
     const completed = tasks.filter((t) => t.status === "completed").length;
@@ -747,7 +741,7 @@ const Tasks = () => {
     };
   }, [tasks]);
 
-  // Prefer live table counts when viewing unfiltered list; otherwise API
+
   const chipStats = useMemo(() => {
     const viewingAll = filterStatus === "all" && filterPriority === "all";
     if (viewingAll && tasks.length > 0) return liveStats;
@@ -761,7 +755,7 @@ const Tasks = () => {
     return apiHasData ? taskStats : liveStats;
   }, [filterStatus, filterPriority, tasks.length, liveStats, taskStats]);
 
-  // Daily activity for barcode + streak (last 56 days)
+
   const activitySeries = useMemo(() => {
     const days = 56;
     const counts = Array.from({ length: days }, () => 0);
@@ -884,7 +878,7 @@ const Tasks = () => {
     setShowNewTaskPopup(true);
   }, [location.state]);
 
-  // Chrome extension → open create-task modal with hidden capture metadata
+
   useEffect(() => {
     const encoded = searchParams.get("meta");
     if (!encoded) return;
@@ -899,7 +893,7 @@ const Tasks = () => {
           return fromWindow;
         }
       } catch {
-        // ignore
+
       }
       try {
         return sessionStorage.getItem("tm-ext-screenshot");
@@ -924,7 +918,7 @@ const Tasks = () => {
     setShowNewTaskPopup(true);
   }, [searchParams]);
 
-  // Attach screenshot delivered by the extension (event + short poll)
+
   useEffect(() => {
     const applyShot = (dataUrl) => {
       if (!dataUrl || typeof dataUrl !== "string") return;
@@ -939,12 +933,12 @@ const Tasks = () => {
       try {
         sessionStorage.removeItem("tm-ext-screenshot");
       } catch {
-        // ignore
+
       }
       try {
         delete window.__TM_EXT_SCREENSHOT;
       } catch {
-        // ignore
+
       }
 
       window.postMessage({ type: "TM_EXT_CLEAR_SCREENSHOT" }, "*");
@@ -967,7 +961,7 @@ const Tasks = () => {
           return;
         }
       } catch {
-        // ignore
+
       }
       try {
         const fromSession = sessionStorage.getItem("tm-ext-screenshot");
@@ -977,7 +971,7 @@ const Tasks = () => {
           return;
         }
       } catch {
-        // ignore
+
       }
       if (tries >= 25) window.clearInterval(poll);
     }, 300);
@@ -1002,7 +996,7 @@ const Tasks = () => {
           avatar: friendship.friend.avatar,
           availability: friendship.friend.availability || "available",
         }))
-        .filter((friend) => friend.id !== user?.id); // Exclude current user
+        .filter((friend) => friend.id !== user?.id);
 
       setUsers(transformedUsers);
     } catch (error) {
@@ -1110,33 +1104,9 @@ const Tasks = () => {
     }
   };
 
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case "high":
-        return "text-dark dark:border-transparent dark:text-black bg-red-100 border border-red-500 px-4 py-2 min-w-[80px]";
-      case "medium":
-        return "text-dark dark:border-transparent dark:text-black bg-yellow-100 border border-yellow-500 px-4 py-2 min-w-[80px]";
-      case "low":
-        return "text-dark dark:border-transparent dark:text-black bg-green-100 border border-green-500 px-4 py-2 min-w-[80px]";
-      default:
-        return "text-dark dark:border-transparent dark:text-black bg-green-100 border border-green-500 px-4 py-2 min-w-[80px]";
-    }
-  };
+  const getPriorityColor = (priority) => priorityBadgeTone(priority);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "completed":
-        return "text-black dark:text-black font-bold dark:text-white bg-green-500/15 dark:bg-green-500 dark:border-green-500 text-black dark:text-black border border-green-400/40 px-4 py-2 min-w-[100px]";
-      case "in_progress":
-        return "text-black dark:text-black font-bold dark:text-white bg-gray-500/15 text-gray-600 border border-gray-400/40 px-4 py-2 min-w-[100px]";
-      case "pending":
-        return "text-black dark:text-black font-bold dark:text-white bg-yellow-500/15 text-yellow-600 border border-yellow-400/40 px-4 py-2 min-w-[100px]";
-      case "cancelled":
-        return "text-black dark:text-black font-bold dark:bg-red-500 dark:border-red-500 dark:text-white bg-red-500/15 text-red-600 border border-red-400/40 px-4 py-2 min-w-[100px]";
-      default:
-        return "text-black dark:text-black font-bold dark:bg-red-500 dark:border-red-500 dark:text-white bg-yellow-500/15 text-yellow-600 border border-yellow-400/40 px-4 py-2 min-w-[100px]";
-    }
-  };
+  const getStatusColor = (status) => statusBadgeTone(status);
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -1161,36 +1131,9 @@ const Tasks = () => {
       .replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
-  const getStatusBadgeStyles = (status) => {
-    switch (status) {
-      case "completed":
-        return "bg-emerald-500/15 text-emerald-700 border border-emerald-400/40 dark:border-transparent dark:bg-green-500 dark:text-white";
-      case "in_progress":
-        return "bg-sky-500/15 text-sky-700 border border-sky-400/40 dark:border-transparent dark:bg-sky-500 dark:text-white";
-      case "pending":
-        return "bg-amber-500/15 text-amber-700 border border-amber-400/40 dark:border-transparent dark:bg-amber-500 dark:text-black";
-      case "cancelled":
-        return "bg-red-500/15 text-red-600 border border-red-400/40 dark:border-transparent dark:bg-red-500 dark:text-white";
-      case "overdue":
-        return "bg-red-500/15 text-red-600 border border-red-400/40 dark:border-transparent dark:bg-red-500 dark:text-white";
-      default:
-        return "bg-gray-500/15 text-gray-600 border border-gray-400/40 dark:border-transparent dark:bg-zinc-600 dark:text-white";
-    }
-  };
+  const getStatusBadgeStyles = (status) => statusBadgeTone(status);
 
-  const getPriorityBadgeStyles = (priority) => {
-    switch (priority) {
-      case "urgent":
-      case "high":
-        return "bg-red-500/15 text-red-600 border border-red-400/40 dark:border-transparent dark:bg-red-500 dark:text-white";
-      case "medium":
-        return "bg-orange-500/15 text-orange-600 border border-orange-400/40 dark:border-transparent dark:bg-orange-500 dark:text-black";
-      case "low":
-        return "bg-green-500/15 text-green-700 border border-green-400/40 dark:border-transparent dark:bg-green-500 dark:text-white";
-      default:
-        return "bg-green-500/15 text-green-700 border border-green-400/40 dark:border-transparent dark:bg-green-500 dark:text-white";
-    }
-  };
+  const getPriorityBadgeStyles = (priority) => priorityBadgeTone(priority);
 
   const handleDeleteTask = async (id) => {
     try {
@@ -1300,23 +1243,13 @@ const Tasks = () => {
   document.title = "Tasks - Schedule & Manage";
 
   return (
-    <div className="overflow-hidden pt-10">
+    <div className="overflow-hidden">
       <m.div
         className="mx-auto"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
-        {/* Header */}
-        <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
-          <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
-            <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
-              <CheckCircle size={15} />
-            </div>
-            <h1 className="text-2xl font-bold">Tasks Assigned</h1>
-          </div>
-        </div>
-
         <m.div variants={itemVariants} className="mb-8">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
@@ -1450,12 +1383,12 @@ const Tasks = () => {
           />
         </m.div>
 
-        {/* Tasks Table */}
+        
         <m.div
           variants={itemVariants}
           className="bg-white dark:bg-transparent rounded-[15px] shadow-xl overflow-hidden"
         >
-          <div className="overflow-x-auto max-h-[550px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 rounded-[15px]">
+          <div className="overflow-x-auto max-h-[630px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 rounded-[15px]">
             <table className="w-full">
               <thead className="bg-white dark:bg-white dark:text-black text-black border-b dark:border-gray-700 sticky top-0 z-10">
                 <tr className="bg-white">
@@ -1589,7 +1522,7 @@ const Tasks = () => {
           }}
         />
 
-        {/* Task Edit Modal */}
+        
         <TaskEditModal
           task={editingTask}
           isOpen={showEditModal}
@@ -1598,7 +1531,7 @@ const Tasks = () => {
           users={users}
         />
 
-        {/* User Details Modal */}
+        
         <UserDetailsModal
           userId={selectedUserId}
           isOpen={showUserDetails}

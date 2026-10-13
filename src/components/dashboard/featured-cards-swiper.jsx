@@ -39,7 +39,7 @@ function SpotlightCard({
   disabled,
 }) {
   return (
-    <div className="h-full rounded-[28px] bg-[#121212] text-white p-6 flex flex-col justify-between shadow-sm">
+    <div className="h-full bg-[var(--theme-accent)] text-white p-6 flex flex-col justify-between">
       <div>
         <div className="flex items-start justify-between gap-3">
           <span className="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/10 text-white/80">
@@ -66,7 +66,7 @@ function SpotlightCard({
         type="button"
         onClick={onCta}
         disabled={disabled}
-        className="mt-6 w-full h-12 rounded-2xl bg-[#75FC96] hover:bg-[#4fd972] text-black font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="mt-6 w-full h-12 rounded-2xl bg-white hover:bg-white/90 text-[#1c1c1e] font-semibold text-sm flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {CtaIcon ? <CtaIcon className="w-4 h-4" /> : null}
         {ctaLabel}

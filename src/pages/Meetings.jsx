@@ -5,7 +5,6 @@ import HorizontalLoader from "../components/horizontal-loader";
 import { usePermissions } from "../hooks/use-permissions";
 import {
   Search,
-  Plus,
   Edit,
   Trash2,
   Calendar,
@@ -43,6 +42,13 @@ import {
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { Badge } from "../components/ui/badge";
+import {
+  detailBadgeClass,
+  meetingTypeBadgeTone,
+  projectBadgeTone,
+  statusBadgeTone,
+  tableBadgeClass,
+} from "@/lib/status-badge-styles";
 import { userService } from "../services/user-service";
 import meetingService from "../services/meeting-service";
 import projectService from "../services/project-service";
@@ -63,7 +69,7 @@ import {
   SheetTitle,
 } from "../components/ui/sheet";
 import { DatePicker } from "../components/ui/date-picker";
-import { PiCalendarDuotone } from "react-icons/pi";
+import { BsPlusCircleFill } from "react-icons/bs";
 import { getAvatarProps } from "@/utils/avatar-utils";
 
 
@@ -119,146 +125,146 @@ const MeetingsHeaderSection = ({
   setShowNewMeetingPopup,
 }) => (
   <>
-    {/* Header */}
-        <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
-          <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
-            <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
-              <Calendar size={15} />
-            </div>
-            <h1 className="text-2xl font-bold">Meetings Scheduled</h1>
-          </div>
+    
+    <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
+      <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
+        <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
+          <Calendar size={15} />
         </div>
+        <h1 className="text-2xl font-bold">Meetings Scheduled</h1>
+      </div>
+    </div>
 
-        <m.div variants={itemVariants} className="mb-8">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <m.div variants={itemVariants}>
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <div className="relative flex-1">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon  icon" />
-                    <Input
-                      type="text"
-                      placeholder="Search meetings..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="md:w-[500px] w-full pl-10 pr-4 py-3 border border-gray-200 h-13 dark:border-gray-700   bg-white dark:bg-[black] text-black dark:text-white"
-                    />
-                  </div>
-                  <div className="flex gap-3">
-                    <Select
-                      value={filterStatus}
-                      onValueChange={setFilterStatus}
+    <m.div variants={itemVariants} className="mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <m.div variants={itemVariants}>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5 icon  icon" />
+                <Input
+                  type="text"
+                  placeholder="Search meetings..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="md:w-[500px] w-full pl-10 pr-4 py-3 border border-gray-200 h-13 dark:border-gray-700   bg-white dark:bg-[black] text-black dark:text-white"
+                />
+              </div>
+              <div className="flex gap-3">
+                <Select
+                  value={filterStatus}
+                  onValueChange={setFilterStatus}
+                >
+                  <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 bg-white cursor-pointer dark:bg-[black] dark:text-white">
+                    <SelectValue placeholder="All Status" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white dark:bg-[black]  border-gray-200 dark:border-gray-700">
+                    <SelectItem
+                      className={"cursor-pointer h-10 px-5"}
+                      value="all"
                     >
-                      <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 bg-white cursor-pointer dark:bg-[black] dark:text-white">
-                        <SelectValue placeholder="All Status" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-[black]  border-gray-200 dark:border-gray-700">
-                        <SelectItem
-                          className={"cursor-pointer h-10 px-5"}
-                          value="all"
-                        >
-                          All Status
-                        </SelectItem>
-                        <SelectItem
-                          className={"cursor-pointer h-10 px-5"}
-                          value="scheduled"
-                        >
-                          Scheduled
-                        </SelectItem>
-                        <SelectItem
-                          className={"cursor-pointer h-10 px-5"}
-                          value="pregress"
-                        >
-                          In Progress
-                        </SelectItem>
-                        <SelectItem
-                          className={"cursor-pointer h-10 px-5"}
-                          value="completed"
-                        >
-                          Completed
-                        </SelectItem>
-                        <SelectItem
-                          className={"cursor-pointer h-10 px-5"}
-                          value="cancelled"
-                        >
-                          Cancelled
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select value={filterType} onValueChange={setFilterType}>
-                      <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 cursor-pointer bg-white dark:bg-[black] dark:text-white">
-                        <SelectValue placeholder="All Types" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-white dark:bg-[black]  border-gray-200 dark:border-gray-700">
-                        <SelectItem
-                          className={"cursor-pointer h-10 px-5"}
-                          value="all"
-                        >
-                          All Types
-                        </SelectItem>
-                        <SelectItem
-                          className={"cursor-pointer h-10 px-5"}
-                          value="online"
-                        >
-                          Online
-                        </SelectItem>
-                        <SelectItem
-                          className={"cursor-pointer h-10 px-5"}
-                          value="in-person"
-                        >
-                          In Person
-                        </SelectItem>
-                        <SelectItem
-                          className={"cursor-pointer h-10 px-5"}
-                          value="hybrid"
-                        >
-                          Hybrid
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-              </m.div>
+                      All Status
+                    </SelectItem>
+                    <SelectItem
+                      className={"cursor-pointer h-10 px-5"}
+                      value="scheduled"
+                    >
+                      Scheduled
+                    </SelectItem>
+                    <SelectItem
+                      className={"cursor-pointer h-10 px-5"}
+                      value="pregress"
+                    >
+                      In Progress
+                    </SelectItem>
+                    <SelectItem
+                      className={"cursor-pointer h-10 px-5"}
+                      value="completed"
+                    >
+                      Completed
+                    </SelectItem>
+                    <SelectItem
+                      className={"cursor-pointer h-10 px-5"}
+                      value="cancelled"
+                    >
+                      Cancelled
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+                <Select value={filterType} onValueChange={setFilterType}>
+                  <SelectTrigger className="md:w-[180px] w-1/2 px-5 h-13 cursor-pointer bg-white dark:bg-[black] dark:text-white">
+                    <SelectValue placeholder="All Types" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white dark:bg-[black]  border-gray-200 dark:border-gray-700">
+                    <SelectItem
+                      className={"cursor-pointer h-10 px-5"}
+                      value="all"
+                    >
+                      All Types
+                    </SelectItem>
+                    <SelectItem
+                      className={"cursor-pointer h-10 px-5"}
+                      value="online"
+                    >
+                      Online
+                    </SelectItem>
+                    <SelectItem
+                      className={"cursor-pointer h-10 px-5"}
+                      value="in-person"
+                    >
+                      In Person
+                    </SelectItem>
+                    <SelectItem
+                      className={"cursor-pointer h-10 px-5"}
+                      value="hybrid"
+                    >
+                      Hybrid
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div className="flex items-center gap-3">
-              {selectedMeetings.length > 0 && (
-                <m.button
-                  onClick={handleBulkDelete}
-                  className="flex items-center h-12 flex items-center justify-center font-bold gap-2 px-4 py-2 bg-red-600 text-white rounded-[15px] md:w-[200px] w-[400px] hover:bg-red-700 transition-colors"
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                >
-                  <Trash2 className="w-4 h-4 icon icon icon" />
-                  Delete ({selectedMeetings.length})
-                </m.button>
-              )}
+          </m.div>
+        </div>
+        <div className="flex items-center gap-3">
+          {selectedMeetings.length > 0 && (
+            <m.button
+              onClick={handleBulkDelete}
+              className="flex items-center h-12 flex items-center justify-center font-bold gap-2 px-4 py-2 bg-red-600 text-white rounded-[15px] md:w-[200px] w-[400px] hover:bg-red-700 transition-colors"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+            >
+              <Trash2 className="w-4 h-4 icon icon icon" />
+              Delete ({selectedMeetings.length})
+            </m.button>
+          )}
 
-              {permissions.canCreateMeeting && (
-                <Button
-                  onClick={() => {
-                    if (!permissions.canCreateMeeting) {
-                      toast.error(
-                        "You do not have permission to create meetings. Contact an admin.",
-                      );
-                      return;
-                    }
-                    setEditingMeeting(null);
-                    resetMeetingForm();
-                    setShowNewMeetingPopup(true);
-                  }}
-                  className={
-                    "md:w-[200px] w-full rounded-[15px] h-12 font-bold"
-                  }
-                >
-                  <PiCalendarDuotone />
-                  Schedule Meeting
-                </Button>
-              )}
-            </div>
-          </div>
-        </m.div>
+          {permissions.canCreateMeeting && (
+            <Button
+              onClick={() => {
+                if (!permissions.canCreateMeeting) {
+                  toast.error(
+                    "You do not have permission to create meetings. Contact an admin.",
+                  );
+                  return;
+                }
+                setEditingMeeting(null);
+                resetMeetingForm();
+                setShowNewMeetingPopup(true);
+              }}
+              className={
+                "md:w-[200px] w-full rounded-[15px] h-12 font-bold"
+              }
+            >
+              <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
+              Schedule Meeting
+            </Button>
+          )}
+        </div>
+      </div>
+    </m.div>
 
-        {/* Search and Filters */}
+    
   </>
 );
 
@@ -283,187 +289,305 @@ const MeetingsTableSection = ({
   handleJoinMeeting,
 }) => (
   <>
-    {/* Meetings Table */}
-        <m.div
-          variants={itemVariants}
-          className="bg-white dark:bg-[black] rounded-[15px] shadow-xl overflow-hidden"
-        >
-          <div className="overflow-x-auto max-h-[700px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-            <table className="w-full rounded-[15px]">
-              <thead className="bg-white rounded-[15px] text-black border-gray-200 dark:border-gray-700 sticky top-0 z-10">
-                <tr>
-                  <th className="px-6 py-4 text-left w-12">
-                    <Checkbox
-                      checked={selectAllCheckedState(filteredMeetings.length, selectedMeetings.length)}
-                      onCheckedChange={handleSelectAll}
-                      aria-label="Select all meetings"
-                    />
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
-                    Meeting
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider"></th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
-                    Status
-                  </th>
+    
+    <m.div
+      variants={itemVariants}
+      className="bg-white dark:bg-[black] rounded-[15px] shadow-xl overflow-hidden"
+    >
+      <div className="overflow-x-auto max-h-[800px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+        <table className="w-full rounded-[15px]">
+          <thead className="bg-white rounded-[15px] text-black border-gray-200 dark:border-gray-700 sticky top-0 z-10">
+            <tr>
+              <th className="px-6 py-4 text-left w-12">
+                <Checkbox
+                  checked={selectAllCheckedState(filteredMeetings.length, selectedMeetings.length)}
+                  onCheckedChange={handleSelectAll}
+                  aria-label="Select all meetings"
+                />
+              </th>
+              <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                Meeting
+              </th>
+              <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider"></th>
+              <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                Status
+              </th>
 
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
-                    Participants
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
-                    Project
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
-                    Date & Time
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
-                    Location
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                {loading ? (
-                  <tr>
-                    <td colSpan="10" className="px-6 py-8 text-center">
-                      <HorizontalLoader
-                        message="Loading meetings..."
-                        subMessage="Fetching your meeting schedule"
-                        progress={70}
-                        className="py-4"
-                      />
-                    </td>
-                  </tr>
-                ) : filteredMeetings.length === 0 ? (
-                  <tr>
-                    <td
-                      colSpan="10"
-                      className="px-6 py-8 text-center text-gray-500 dark:text-gray-400"
+              <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                Participants
+              </th>
+              <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                Project
+              </th>
+              <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                Date & Time
+              </th>
+              <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider">
+                Location
+              </th>
+              <th className="px-6 py-4 text-left text-xs  text-black dark:text-black uppercase tracking-wider"></th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            {loading ? (
+              <tr>
+                <td colSpan="10" className="px-6 py-8 text-center">
+                  <HorizontalLoader
+                    message="Loading meetings..."
+                    subMessage="Fetching your meeting schedule"
+                    progress={70}
+                    className="py-4"
+                  />
+                </td>
+              </tr>
+            ) : filteredMeetings.length === 0 ? (
+              <tr>
+                <td
+                  colSpan="10"
+                  className="px-6 py-8 text-center text-gray-500 dark:text-gray-400"
+                >
+                  No meetings found
+                </td>
+              </tr>
+            ) : (
+              filteredMeetings.map((meeting) => (
+                <m.tr
+                  key={meeting.id}
+                  className={`hover:bg-gray-50 dark:hover:bg-black transition-colors ${selectedMeetings.includes(meeting.id) ? "bg-gray-100 dark:bg-[black]" : ""}`}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <td
+                    className="px-6 py-4 w-12"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Checkbox
+                      checked={selectedMeetings.includes(meeting.id)}
+                      onCheckedChange={() =>
+                        handleSelectMeeting(meeting.id)
+                      }
+                      aria-label={`Select meeting ${meeting.title}`}
+                    />
+                  </td>
+                  <td className="px-6 py-4">
+                    <div>
+                      <div className="text-sm  text-gray-900 flex items-center gap-2 dark:text-white truncate font-semibold">
+                        {getStatusIcon(meeting.status)}
+                        {meeting.title}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-2 py-2">
+                    <span
+                      className={`${tableBadgeClass} ${getTypeColor(meeting.type)}`}
                     >
-                      No meetings found
-                    </td>
-                  </tr>
-                ) : (
-                  filteredMeetings.map((meeting) => (
-                    <m.tr
-                      key={meeting.id}
-                      className={`hover:bg-gray-50 dark:hover:bg-black transition-colors ${selectedMeetings.includes(meeting.id) ? "bg-gray-100 dark:bg-[black]" : ""}`}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.2 }}
-                    >
-                      <td
-                        className="px-6 py-4 w-12"
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <Checkbox
-                          checked={selectedMeetings.includes(meeting.id)}
-                          onCheckedChange={() =>
-                            handleSelectMeeting(meeting.id)
+                      {meeting.type === "in-person"
+                        ? "In Person"
+                        : meeting.type === "hybrid"
+                          ? "Hybrid"
+                          : "Online"}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      {(() => {
+                        const overdue = isMeetingOverdue(meeting);
+                        const displayStatus = getDisplayStatus(meeting);
+                        return (
+                          <span
+                            className={`${tableBadgeClass} truncate ${getStatusColor(meeting.status, overdue)}`}
+                          >
+                            
+                            {displayStatus}
+                          </span>
+                        );
+                      })()}
+                      {(() => {
+                        const overdue = isMeetingOverdue(meeting);
+                        const canResolve =
+                          meeting.status === "scheduled" || overdue;
+                        return (
+                          canResolve && (
+                            <div className="flex gap-1">
+                              <button
+                                onClick={() =>
+                                  handleStatusChangeWithConfirmation(
+                                    meeting.id,
+                                    "completed",
+                                    meeting.title,
+                                  )
+                                }
+                                className="p-1 rounded-[15px] bg-green-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/40 transition-colors"
+                                title="Mark as Completed"
+                              >
+                                <CheckCircle className="w-4 h-4 icon icon text-green-600 dark:text-green-400" />
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleStatusChangeWithConfirmation(
+                                    meeting.id,
+                                    "cancelled",
+                                    meeting.title,
+                                  )
+                                }
+                                className="p-1 rounded-[15px] bg-red-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/40 transition-colors"
+                                title="Cancel Meeting"
+                              >
+                                <AlertCircle className="w-4 h-4 icon icon text-red-600 dark:text-red-400" />
+                              </button>
+                            </div>
+                          )
+                        );
+                      })()}
+                      {meeting.status === "completed" && (
+                        <button
+                          onClick={() =>
+                            handleStatusChangeWithConfirmation(
+                              meeting.id,
+                              "cancelled",
+                              meeting.title,
+                            )
                           }
-                          aria-label={`Select meeting ${meeting.title}`}
-                        />
-                      </td>
-                      <td className="px-6 py-4">
-                        <div>
-                          <div className="text-sm  text-gray-900 flex items-center gap-2 dark:text-white truncate font-semibold">
-                            {getStatusIcon(meeting.status)}
-                            {meeting.title}
-                          </div>
-                          {/* <div className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                          {meeting.description}
-                        </div> */}
-                          {/* {meeting.tags && meeting.tags.length > 0 && (
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {meeting.tags.map((tag, index) => (
-                              <span
-                                key={index}
-                                className="inline-flex items-center px-2 py-1 rounded-[15px] text-xs font-medium bg-gray-100 dark:bg-[black] text-gray-800 dark:text-gray-200"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        )} */}
-                        </div>
-                      </td>
-                      <td className="px-2 py-2">
-                        <div
-                          className={`inline-flex items-center justify-center uppercase px-2.5 py-0.5 rounded-[15px] text-[9px] ${getTypeColor(meeting.type)}`}
+                          className="p-1 rounded-[15px] bg-red-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/40 transition-colors"
+                          title="Mark as Cancelled"
                         >
-                          {meeting.type === "online" && (
-                            <div className="flex items-center gap-2 font-semibold">
-                              Online
-                            </div>
-                          )}
-                          {meeting.type === "in-person" && (
-                            <div className="flex items-center gap-2 font-semibold">
-                              {/* <MapPin className="w-4 h-4 icon icon icon" /> In */}
-                              In Person
-                            </div>
-                          )}
-                          {meeting.type === "hybrid" && (
-                            <div className="flex items-center gap-2 font-semibold">
-                              {/* <Calendar className="w-4 h-4 icon icon icon" />{" "} */}
-                              Hybrid
-                            </div>
-                          )}
-                          {/* {meeting.type.replaceAll("-", " ")} */}
+                          <AlertCircle className="w-4 h-4 icon icon text-red-600 dark:text-red-400" />
+                        </button>
+                      )}
+                      {meeting.status === "cancelled" && (
+                        <button
+                          onClick={() =>
+                            handleStatusChangeWithConfirmation(
+                              meeting.id,
+                              "completed",
+                              meeting.title,
+                            )
+                          }
+                          className="p-1 rounded-[15px] bg-green-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/40 transition-colors"
+                          title="Mark as Completed"
+                        >
+                          <CheckCircle className="w-4 h-4 icon icon text-green-600 dark:text-green-400" />
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 w-[180px]">
+                    <AvatarGroup
+                      users={meeting.attendees}
+                      max={4}
+                      size="md"
+                      emptyLabel="No attendees"
+                      onUserClick={(id) => id && handleUserAvatarClick(id)}
+                    />
+                  </td>
+                  <td className="px-6 py-4 w-[200px]">
+                    {meeting.project ? (
+                      <div className="flex items-center gap-2">
+
+                        <span className="text-sm text-gray-900 dark:text-white truncate">
+                          {meeting.project.name}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                        No Project
+                      </span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="w-4 h-4 icon icon text-gray-400 icon" />
+                      <div>
+                        <div className="text-sm text-gray-900 dark:text-white">
+                          {meeting.startDate
+                            ? new Date(
+                              meeting.startDate,
+                            ).toLocaleDateString()
+                            : "N/A"}
                         </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          {(() => {
-                            const overdue = isMeetingOverdue(meeting);
-                            const displayStatus = getDisplayStatus(meeting);
-                            return (
-                              <span
-                                className={`inline-flex items-center gap-1 justify-center font-bold rounded-[15px] text-[9px] uppercase truncate ${getStatusColor(meeting.status, overdue)}`}
+                        
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="text-sm text-gray-900 dark:text-white truncate">
+                      {meeting.location}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleViewMeetingDetails(meeting)}
+                        className="p-2 text-gray-400 h-10 w-10 hover:text-black dark:hover:text-white"
+                        title="View meeting details"
+                      >
+                        <Eye className="w-4 h-4 icon icon" />
+                      </Button>
+                      {user &&
+                        user.id &&
+                        meeting.assignedBy?.id === user.id && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleEditMeeting(meeting)}
+                            className="p-2 text-gray-400 h-10 w-10 hover:text-black dark:hover:text-white"
+                          >
+                            <Edit className="w-4 h-4 icon icon icon" />
+                          </Button>
+                        )}
+                      {user &&
+                        user.id &&
+                        meeting.assignedBy?.id === user.id && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleDeleteMeeting(meeting.id)}
+                            className="p-2 text-gray-400 h-10 w-10 hover:text-red-600"
+                          >
+                            <Trash2 className="w-4 h-4 icon icon icon" />
+                          </Button>
+                        )}
+                      <DropdownMenu>
+                        <DropdownMenuContent
+                          align="end"
+                          className="bg-white dark:bg-[black]  border-gray-200 dark:border-gray-700"
+                        >
+                          
+                          {meeting.status === "scheduled" && (
+                            <>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  handleStatusChangeWithConfirmation(
+                                    meeting.id,
+                                    "completed",
+                                    meeting.title,
+                                  )
+                                }
+                                className="text-green-600 dark:text-green-400 h-12 px-5 cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/20"
                               >
-                                {/* {getStatusIcon(meeting.status, overdue)} */}
-                                {displayStatus}
-                              </span>
-                            );
-                          })()}
-                          {(() => {
-                            const overdue = isMeetingOverdue(meeting);
-                            const canResolve =
-                              meeting.status === "scheduled" || overdue;
-                            return (
-                              canResolve && (
-                                <div className="flex gap-1">
-                                  <button
-                                    onClick={() =>
-                                      handleStatusChangeWithConfirmation(
-                                        meeting.id,
-                                        "completed",
-                                        meeting.title,
-                                      )
-                                    }
-                                    className="p-1 rounded-[15px] bg-green-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/40 transition-colors"
-                                    title="Mark as Completed"
-                                  >
-                                    <CheckCircle className="w-4 h-4 icon icon text-green-600 dark:text-green-400" />
-                                  </button>
-                                  <button
-                                    onClick={() =>
-                                      handleStatusChangeWithConfirmation(
-                                        meeting.id,
-                                        "cancelled",
-                                        meeting.title,
-                                      )
-                                    }
-                                    className="p-1 rounded-[15px] bg-red-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/40 transition-colors"
-                                    title="Cancel Meeting"
-                                  >
-                                    <AlertCircle className="w-4 h-4 icon icon text-red-600 dark:text-red-400" />
-                                  </button>
-                                </div>
-                              )
-                            );
-                          })()}
+                                <CheckCircle className="w-4 h-4 icon icon mr-2 icon" />
+                                Mark as Completed
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                onClick={() =>
+                                  handleStatusChangeWithConfirmation(
+                                    meeting.id,
+                                    "cancelled",
+                                    meeting.title,
+                                  )
+                                }
+                                className="text-red-600 dark:text-red-400 h-12 px-5 cursor-pointer hover:bg-red-100 dark:hover:bg-red-900/20"
+                              >
+                                <AlertCircle className="w-4 h-4 icon icon mr-2 icon" />
+                                Cancel Meeting
+                              </DropdownMenuItem>
+                            </>
+                          )}
                           {meeting.status === "completed" && (
-                            <button
+                            <DropdownMenuItem
                               onClick={() =>
                                 handleStatusChangeWithConfirmation(
                                   meeting.id,
@@ -471,14 +595,14 @@ const MeetingsTableSection = ({
                                   meeting.title,
                                 )
                               }
-                              className="p-1 rounded-[15px] bg-red-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-red-200 dark:bg-red-900/20 dark:hover:bg-red-900/40 transition-colors"
-                              title="Mark as Cancelled"
+                              className="text-red-600 dark:text-red-400 h-12 px-5 cursor-pointer hover:bg-red-100 dark:hover:bg-red-900/20"
                             >
-                              <AlertCircle className="w-4 h-4 icon icon text-red-600 dark:text-red-400" />
-                            </button>
+                              <AlertCircle className="w-4 h-4 icon icon mr-2 icon" />
+                              Mark as Cancelled
+                            </DropdownMenuItem>
                           )}
                           {meeting.status === "cancelled" && (
-                            <button
+                            <DropdownMenuItem
                               onClick={() =>
                                 handleStatusChangeWithConfirmation(
                                   meeting.id,
@@ -486,201 +610,45 @@ const MeetingsTableSection = ({
                                   meeting.title,
                                 )
                               }
-                              className="p-1 rounded-[15px] bg-green-100 w-8 h-8 flex items-center justify-center cursor-pointer hover:bg-green-200 dark:bg-green-900/20 dark:hover:bg-green-900/40 transition-colors"
-                              title="Mark as Completed"
+                              className="text-green-600 dark:text-green-400 h-12 px-5 cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/20"
                             >
-                              <CheckCircle className="w-4 h-4 icon icon text-green-600 dark:text-green-400" />
-                            </button>
+                              <CheckCircle className="w-4 h-4 icon icon mr-2 icon" />
+                              Mark as Completed
+                            </DropdownMenuItem>
                           )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 w-[180px]">
-                        <AvatarGroup
-                          users={meeting.attendees}
-                          max={4}
-                          size="md"
-                          emptyLabel="No attendees"
-                          onUserClick={(id) => id && handleUserAvatarClick(id)}
-                        />
-                      </td>
-                      <td className="px-6 py-4 w-[200px]">
-                        {meeting.project ? (
-                          <div className="flex items-center gap-2">
-                            {meeting.project.logo && (
-                            <img 
-                            {...getAvatarProps(meeting.project.logo, meeting.project.name)}
-                            alt={meeting.project.name || "User"}
-                            className="w-6 h-6 rounded-[15px] object-cover border border-gray-200 dark:border-gray-700 cursor-pointer hover:scale-110 transition-transform"
-                            onClick={() => attendee.id && handleUserAvatarClick(attendee.id)}
-                            title={meeting.attendees.username ? `View ${meeting.attendees.username}'s profile` : ''}
-                          />
-                          )}
-                            <span className="text-sm text-gray-900 dark:text-white truncate">
-                              {meeting.project.name}
-                            </span>
-                          </div>
-                        ) : (
-                          <span className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                            No Project
-                          </span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center gap-2">
-                          <Calendar className="w-4 h-4 icon icon text-gray-400 icon" />
-                          <div>
-                            <div className="text-sm text-gray-900 dark:text-white">
-                              {meeting.startDate
-                                ? new Date(
-                                    meeting.startDate,
-                                  ).toLocaleDateString()
-                                : "N/A"}
-                            </div>
-                            {/* <div className="text-xs text-gray-500 dark:text-gray-400">
-                            {meeting.startDate ? new Date(meeting.startDate).toLocaleTimeString() : 'N/A'} - {meeting.endDate ? new Date(meeting.endDate).toLocaleTimeString() : 'N/A'}
-                          </div> */}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="text-sm text-gray-900 dark:text-white truncate">
-                          {meeting.location}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center justify-end gap-2">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleViewMeetingDetails(meeting)}
-                            className="p-2 text-gray-400 h-10 w-10 hover:text-black dark:hover:text-white"
-                            title="View meeting details"
+                          <DropdownMenuItem
+                            className="text-black dark:text-white h-12 px-5 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
+                            onClick={() =>
+                              handleJoinMeeting(meeting.meetingLink)
+                            }
                           >
-                            <Eye className="w-4 h-4 icon icon" />
-                          </Button>
+                            <Video className="w-4 h-4 icon icon mr-2 icon" />
+                            Join Meeting
+                          </DropdownMenuItem>
                           {user &&
                             user.id &&
                             meeting.assignedBy?.id === user.id && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleEditMeeting(meeting)}
-                                className="p-2 text-gray-400 h-10 w-10 hover:text-black dark:hover:text-white"
-                              >
-                                <Edit className="w-4 h-4 icon icon icon" />
-                              </Button>
-                            )}
-                          {user &&
-                            user.id &&
-                            meeting.assignedBy?.id === user.id && (
-                              <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => handleDeleteMeeting(meeting.id)}
-                                className="p-2 text-gray-400 h-10 w-10 hover:text-red-600"
-                              >
-                                <Trash2 className="w-4 h-4 icon icon icon" />
-                              </Button>
-                            )}
-                          <DropdownMenu>
-                            <DropdownMenuContent
-                              align="end"
-                              className="bg-white dark:bg-[black]  border-gray-200 dark:border-gray-700"
-                            >
-                              {/* Status Update Options */}
-                              {meeting.status === "scheduled" && (
-                                <>
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      handleStatusChangeWithConfirmation(
-                                        meeting.id,
-                                        "completed",
-                                        meeting.title,
-                                      )
-                                    }
-                                    className="text-green-600 dark:text-green-400 h-12 px-5 cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/20"
-                                  >
-                                    <CheckCircle className="w-4 h-4 icon icon mr-2 icon" />
-                                    Mark as Completed
-                                  </DropdownMenuItem>
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      handleStatusChangeWithConfirmation(
-                                        meeting.id,
-                                        "cancelled",
-                                        meeting.title,
-                                      )
-                                    }
-                                    className="text-red-600 dark:text-red-400 h-12 px-5 cursor-pointer hover:bg-red-100 dark:hover:bg-red-900/20"
-                                  >
-                                    <AlertCircle className="w-4 h-4 icon icon mr-2 icon" />
-                                    Cancel Meeting
-                                  </DropdownMenuItem>
-                                </>
-                              )}
-                              {meeting.status === "completed" && (
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleStatusChangeWithConfirmation(
-                                      meeting.id,
-                                      "cancelled",
-                                      meeting.title,
-                                    )
-                                  }
-                                  className="text-red-600 dark:text-red-400 h-12 px-5 cursor-pointer hover:bg-red-100 dark:hover:bg-red-900/20"
-                                >
-                                  <AlertCircle className="w-4 h-4 icon icon mr-2 icon" />
-                                  Mark as Cancelled
-                                </DropdownMenuItem>
-                              )}
-                              {meeting.status === "cancelled" && (
-                                <DropdownMenuItem
-                                  onClick={() =>
-                                    handleStatusChangeWithConfirmation(
-                                      meeting.id,
-                                      "completed",
-                                      meeting.title,
-                                    )
-                                  }
-                                  className="text-green-600 dark:text-green-400 h-12 px-5 cursor-pointer hover:bg-green-100 dark:hover:bg-green-900/20"
-                                >
-                                  <CheckCircle className="w-4 h-4 icon icon mr-2 icon" />
-                                  Mark as Completed
-                                </DropdownMenuItem>
-                              )}
                               <DropdownMenuItem
-                                className="text-black dark:text-white h-12 px-5 cursor-pointer hover:bg-gray-100 dark:hover:bg-black"
                                 onClick={() =>
-                                  handleJoinMeeting(meeting.meetingLink)
+                                  handleDeleteMeeting(meeting.id)
                                 }
+                                className="text-red-600 hover:bg-red-500 hover:text-white px-5 h-12 cursor-pointer dark:hover:bg-red-900"
                               >
-                                <Video className="w-4 h-4 icon icon mr-2 icon" />
-                                Join Meeting
+                                <Trash2 className="w-4 h-4 icon icon mr-2 icon" />
+                                Delete Meeting
                               </DropdownMenuItem>
-                              {user &&
-                                user.id &&
-                                meeting.assignedBy?.id === user.id && (
-                                  <DropdownMenuItem
-                                    onClick={() =>
-                                      handleDeleteMeeting(meeting.id)
-                                    }
-                                    className="text-red-600 hover:bg-red-500 hover:text-white px-5 h-12 cursor-pointer dark:hover:bg-red-900"
-                                  >
-                                    <Trash2 className="w-4 h-4 icon icon mr-2 icon" />
-                                    Delete Meeting
-                                  </DropdownMenuItem>
-                                )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      </td>
-                    </m.tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </m.div>
+                            )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </td>
+                </m.tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </m.div>
   </>
 );
 
@@ -812,263 +780,263 @@ const NewMeetingPopupSection = ({
 }) => {
   if (!showNewMeetingPopup) return null;
   return (
-          <m.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm bg-opacity-50 bg-black/50 icon flex items-center justify-center p-4 z-50"
+    <m.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 backdrop-blur-sm bg-opacity-50 bg-black/50 icon flex items-center justify-center p-4 z-50"
+      onClick={handleCloseMeetingPopup}
+    >
+      <m.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-xl w-full p-6 max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-start justify-between mb-5">
+          <div>
+            <h2 className="text-lg font-black text-gray-900 dark:text-white">
+              {meetingFormTitle(editingMeeting)}
+            </h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              {meetingFormSubtitle(editingMeeting)}
+            </p>
+          </div>
+          <button
+            type="button"
             onClick={handleCloseMeetingPopup}
+            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500"
           >
-            <m.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-xl w-full p-6 max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="flex items-start justify-between mb-5">
-                <div>
-                  <h2 className="text-lg font-black text-gray-900 dark:text-white">
-                    {meetingFormTitle(editingMeeting)}
-                  </h2>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {meetingFormSubtitle(editingMeeting)}
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  onClick={handleCloseMeetingPopup}
-                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-              <div className="space-y-4">
-                <div>
-                  <Input
-                    type="text"
-                    value={newMeeting.title}
-                    onChange={(e) =>
-                      setNewMeeting({ ...newMeeting, title: e.target.value })
-                    }
-                    className="w-full"
-                    placeholder="Enter meeting title"
-                  />
-                </div>
+            <X size={18} />
+          </button>
+        </div>
+        <div className="space-y-4">
+          <div>
+            <Input
+              type="text"
+              value={newMeeting.title}
+              onChange={(e) =>
+                setNewMeeting({ ...newMeeting, title: e.target.value })
+              }
+              className="w-full"
+              placeholder="Enter meeting title"
+            />
+          </div>
 
-                <div>
-                  <Textarea
-                    value={newMeeting.description}
-                    onChange={(e) =>
-                      setNewMeeting({
-                        ...newMeeting,
-                        description: e.target.value,
-                      })
-                    }
-                    className="w-full"
-                    placeholder="Enter meeting description"
-                    rows="3"
-                  />
-                </div>
+          <div>
+            <Textarea
+              value={newMeeting.description}
+              onChange={(e) =>
+                setNewMeeting({
+                  ...newMeeting,
+                  description: e.target.value,
+                })
+              }
+              className="w-full"
+              placeholder="Enter meeting description"
+              rows="3"
+            />
+          </div>
 
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Select
-                      value={newMeeting.type || undefined}
-                      onValueChange={(value) =>
-                        setNewMeeting({ ...newMeeting, type: value })
-                      }
-                    >
-                      <SelectTrigger className="w-full  border-gray-200 dark:border-gray-700">
-                        <SelectValue placeholder="Select meeting type" />
-                      </SelectTrigger>
-                      <SelectContent className="  border-gray-200 dark:border-gray-700">
-                        <SelectItem
-                          className={"cursor-pointer h-10 px-5"}
-                          value="online"
-                        >
-                          Online
-                        </SelectItem>
-                        <SelectItem
-                          className={"cursor-pointer h-10 px-5"}
-                          value="in-person"
-                        >
-                          In Person
-                        </SelectItem>
-                        <SelectItem
-                          className={"cursor-pointer h-10 px-5"}
-                          value="hybrid"
-                        >
-                          Hybrid
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div>
-                    <Input
-                      type="text"
-                      value={newMeeting.location}
-                      onChange={(e) =>
-                        setNewMeeting({
-                          ...newMeeting,
-                          location: e.target.value,
-                        })
-                      }
-                      className="w-full"
-                      placeholder="Enter location or platform"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="relative">
-                    <Input
-                      type="text"
-                      value={newMeeting.assignedTo}
-                      onChange={(e) => handleAssignedToChange(e.target.value)}
-                      onFocus={() => {
-                        if (newMeeting.assignedTo.length > 0) {
-                          setShowAssignedToSuggestions(true);
-                        }
-                      }}
-                      className="w-full"
-                      placeholder="Assign To Person"
-                    />
-                    <UserSuggestionList
-                      show={showAssignedToSuggestions}
-                      suggestions={assignedToSuggestions}
-                      onSelect={selectUser}
-                      onAvatarClick={handleUserAvatarClick}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <DatePicker
-                      value={newMeeting.startDate}
-                      onChange={(value) =>
-                        setNewMeeting({ ...newMeeting, startDate: value })
-                      }
-                      placeholder="Start date"
-                      disablePast
-                    />
-                  </div>
-
-                  <div>
-                    <DatePicker
-                      value={newMeeting.endDate}
-                      onChange={(value) =>
-                        setNewMeeting({ ...newMeeting, endDate: value })
-                      }
-                      placeholder="End date"
-                      disablePast
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <Input
-                      type="url"
-                      value={newMeeting.meetingLink}
-                      onChange={(e) =>
-                        setNewMeeting({
-                          ...newMeeting,
-                          meetingLink: e.target.value,
-                        })
-                      }
-                      className="w-full"
-                      placeholder="Enter meeting link or create Zoom meeting"
-                    />
-                    <ZoomScheduleButton
-                      loading={loading}
-                      title={newMeeting.title}
-                      onClick={handleScheduleZoomMeeting}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <div className="relative">
-                    <Input
-                      type="text"
-                      placeholder="Search and add attendees..."
-                      onChange={(e) => handleAttendeeSearch(e.target.value)}
-                      onFocus={() => {
-                        if (attendeeSuggestions.length > 0) {
-                          setShowAttendeeSuggestions(true);
-                        }
-                      }}
-                      className="w-full"
-                    />
-                    <UserSuggestionList
-                      show={showAttendeeSuggestions}
-                      suggestions={attendeeSuggestions}
-                      onSelect={handleAddAttendee}
-                      onAvatarClick={handleUserAvatarClick}
-                    />
-                  </div>
-
-                  <SelectedAttendeesList
-                    attendees={newMeeting.attendees}
-                    onRemove={handleRemoveAttendee}
-                    onAvatarClick={handleUserAvatarClick}
-                  />
-                </div>
-
-                <div>
-                  <Select
-                    value={
-                      newMeeting.projectId && newMeeting.projectId !== "none"
-                        ? newMeeting.projectId
-                        : undefined
-                    }
-                    onValueChange={(value) =>
-                      setNewMeeting({ ...newMeeting, projectId: value })
-                    }
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Select
+                value={newMeeting.type || undefined}
+                onValueChange={(value) =>
+                  setNewMeeting({ ...newMeeting, type: value })
+                }
+              >
+                <SelectTrigger className="w-full  border-gray-200 dark:border-gray-700">
+                  <SelectValue placeholder="Select meeting type" />
+                </SelectTrigger>
+                <SelectContent className="  border-gray-200 dark:border-gray-700">
+                  <SelectItem
+                    className={"cursor-pointer h-10 px-5"}
+                    value="online"
                   >
-                    <SelectTrigger className="w-full  border-gray-200 dark:border-gray-700">
-                      <SelectValue placeholder="Select project (optional)" />
-                    </SelectTrigger>
-                    <SelectContent className="  border-gray-200 dark:border-gray-700">
-                      <SelectItem
-                        className={"cursor-pointer h-10 px-5"}
-                        value="none"
-                      >
-                        No Project
-                      </SelectItem>
-                      {projects.map((project) => (
-                        <SelectItem
-                          className={"cursor-pointer h-10 px-5"}
-                          key={project.id}
-                          value={project.id}
-                        >
-                          {project.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
+                    Online
+                  </SelectItem>
+                  <SelectItem
+                    className={"cursor-pointer h-10 px-5"}
+                    value="in-person"
+                  >
+                    In Person
+                  </SelectItem>
+                  <SelectItem
+                    className={"cursor-pointer h-10 px-5"}
+                    value="hybrid"
+                  >
+                    Hybrid
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
 
-              <div className="flex gap-3 mt-6 text-white dark:text-black">
-                <Button
-                  onClick={handleCloseMeetingPopup}
-                  variant={"outline"}
-                  className={"flex-1 text-black dark:text-white"}
+            <div>
+              <Input
+                type="text"
+                value={newMeeting.location}
+                onChange={(e) =>
+                  setNewMeeting({
+                    ...newMeeting,
+                    location: e.target.value,
+                  })
+                }
+                className="w-full"
+                placeholder="Enter location or platform"
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="relative">
+              <Input
+                type="text"
+                value={newMeeting.assignedTo}
+                onChange={(e) => handleAssignedToChange(e.target.value)}
+                onFocus={() => {
+                  if (newMeeting.assignedTo.length > 0) {
+                    setShowAssignedToSuggestions(true);
+                  }
+                }}
+                className="w-full"
+                placeholder="Assign To Person"
+              />
+              <UserSuggestionList
+                show={showAssignedToSuggestions}
+                suggestions={assignedToSuggestions}
+                onSelect={selectUser}
+                onAvatarClick={handleUserAvatarClick}
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <DatePicker
+                value={newMeeting.startDate}
+                onChange={(value) =>
+                  setNewMeeting({ ...newMeeting, startDate: value })
+                }
+                placeholder="Start date"
+                disablePast
+              />
+            </div>
+
+            <div>
+              <DatePicker
+                value={newMeeting.endDate}
+                onChange={(value) =>
+                  setNewMeeting({ ...newMeeting, endDate: value })
+                }
+                placeholder="End date"
+                disablePast
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <Input
+                type="url"
+                value={newMeeting.meetingLink}
+                onChange={(e) =>
+                  setNewMeeting({
+                    ...newMeeting,
+                    meetingLink: e.target.value,
+                  })
+                }
+                className="w-full"
+                placeholder="Enter meeting link or create Zoom meeting"
+              />
+              <ZoomScheduleButton
+                loading={loading}
+                title={newMeeting.title}
+                onClick={handleScheduleZoomMeeting}
+              />
+            </div>
+          </div>
+
+          <div>
+            <div className="relative">
+              <Input
+                type="text"
+                placeholder="Search and add attendees..."
+                onChange={(e) => handleAttendeeSearch(e.target.value)}
+                onFocus={() => {
+                  if (attendeeSuggestions.length > 0) {
+                    setShowAttendeeSuggestions(true);
+                  }
+                }}
+                className="w-full"
+              />
+              <UserSuggestionList
+                show={showAttendeeSuggestions}
+                suggestions={attendeeSuggestions}
+                onSelect={handleAddAttendee}
+                onAvatarClick={handleUserAvatarClick}
+              />
+            </div>
+
+            <SelectedAttendeesList
+              attendees={newMeeting.attendees}
+              onRemove={handleRemoveAttendee}
+              onAvatarClick={handleUserAvatarClick}
+            />
+          </div>
+
+          <div>
+            <Select
+              value={
+                newMeeting.projectId && newMeeting.projectId !== "none"
+                  ? newMeeting.projectId
+                  : undefined
+              }
+              onValueChange={(value) =>
+                setNewMeeting({ ...newMeeting, projectId: value })
+              }
+            >
+              <SelectTrigger className="w-full  border-gray-200 dark:border-gray-700">
+                <SelectValue placeholder="Select project (optional)" />
+              </SelectTrigger>
+              <SelectContent className="  border-gray-200 dark:border-gray-700">
+                <SelectItem
+                  className={"cursor-pointer h-10 px-5"}
+                  value="none"
                 >
-                  Cancel
-                </Button>
-                <MeetingSaveButton
-                  loading={loading}
-                  editingMeeting={editingMeeting}
-                  onClick={handleNewMeeting}
-                />
-              </div>
-            </m.div>
-          </m.div>
+                  No Project
+                </SelectItem>
+                {projects.map((project) => (
+                  <SelectItem
+                    className={"cursor-pointer h-10 px-5"}
+                    key={project.id}
+                    value={project.id}
+                  >
+                    {project.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="flex gap-3 mt-6 text-white dark:text-black">
+          <Button
+            onClick={handleCloseMeetingPopup}
+            variant={"outline"}
+            className={"flex-1 text-black dark:text-white"}
+          >
+            Cancel
+          </Button>
+          <MeetingSaveButton
+            loading={loading}
+            editingMeeting={editingMeeting}
+            onClick={handleNewMeeting}
+          />
+        </div>
+      </m.div>
+    </m.div>
   );
 };
 
@@ -1082,7 +1050,7 @@ const MeetingTypeIcon = ({ type }) => {
 const MeetingProjectBadge = ({ project }) => {
   if (!project) return null;
   return (
-    <Badge className="inline-flex items-center gap-2 rounded-[15px] px-3 py-1 text-xs font-medium border border-transparent bg-[#FF914B] text-black">
+    <Badge className={cn(detailBadgeClass, projectBadgeTone)}>
       <FolderOpen className="w-3 h-3 icon" />
       {project.name}
     </Badge>
@@ -1190,7 +1158,7 @@ const MeetingRelatedBlock = ({
                 <div className="flex items-center gap-2">
                   <Badge
                     className={cn(
-                      "inline-flex items-center gap-1 rounded-[15px] px-2.5 py-1 text-[10px] font-medium border backdrop-blur-sm",
+                      detailBadgeClass,
                       getMeetingStatusBadgeStyles(
                         relatedMeeting.status,
                         isMeetingOverdue(relatedMeeting),
@@ -1228,7 +1196,7 @@ const MeetingDetailsContent = ({
         <div className="flex flex-wrap items-center gap-2">
           <Badge
             className={cn(
-              "inline-flex items-center gap-2 rounded-[15px] px-3 py-1 text-xs font-medium backdrop-blur-sm border",
+              detailBadgeClass,
               getMeetingStatusBadgeStyles(
                 meeting.status,
                 isMeetingOverdue(meeting),
@@ -1242,7 +1210,7 @@ const MeetingDetailsContent = ({
           </Badge>
           <Badge
             className={cn(
-              "inline-flex items-center gap-2 rounded-[15px] px-3 py-1 text-xs font-medium backdrop-blur-sm border",
+              detailBadgeClass,
               getMeetingTypeBadgeStyles(meeting.type),
             )}
           >
@@ -1752,7 +1720,7 @@ const Meetings = () => {
     }
   }, [location.state]);
 
-  // Chrome extension → open create-meeting modal
+
   useEffect(() => {
     if (searchParams.get("create") !== "1") return;
     setEditingMeeting(null);
@@ -1791,7 +1759,7 @@ const Meetings = () => {
             friendship.friend.avatar ||
             `https://ui-avatars.com/api/?name=${encodeURIComponent(friendship.friend.username)}&background=random&color=fff&size=128`,
         }))
-        .filter((friend) => friend.id !== user?.id); // Exclude current user
+        .filter((friend) => friend.id !== user?.id);
 
       setUsers(transformedUsers);
     } catch (error) {
@@ -1956,18 +1924,7 @@ const Meetings = () => {
     }
   };
 
-  const getTypeColor = (type) => {
-    switch (type) {
-      case "online":
-        return "text-dark dark:border-transparent dark:text-black bg-gray-100 border border-gray-500 px-4 py-2 min-w-[100px] pt-2.5";
-      case "in-person":
-        return "text-dark dark:border-transparent dark:text-black bg-green-100 border border-green-500 px-4 py-2 min-w-[100px] pt-2.5";
-      case "hybrid":
-        return "text-dark dark:border-transparent dark:text-black bg-yellow-100 border border-yellow-500 px-4 py-2 min-w-[100px] pt-2.5";
-      default:
-        return "text-dark dark:border-transparent dark:text-black bg-gray-100 border border-gray-500 px-4 py-2 min-w-[100px] pt-2.5";
-    }
-  };
+  const getTypeColor = (type) => meetingTypeBadgeTone(type);
 
   const isMeetingOverdue = (meeting) => {
     if (!meeting.endDate) return false;
@@ -1987,24 +1944,8 @@ const Meetings = () => {
     return meeting.status;
   };
 
-  const getStatusColor = (status, isOverdue = false) => {
-    if (isOverdue) {
-      return "text-black dark:text-black font-bold dark:text-white bg-red-100/50 dark:bg-red-500 dark:border-red-500 text-red-600 border border-red-400 px-4 py-2 pt-2.5 min-w-[100px]";
-    }
-    switch (status) {
-      case "completed":
-        return "text-black dark:text-black font-bold dark:bg-green-500 dark:border-green-500 dark:text-white bg-green-100/50 text-black dark:text-black border border-green-400 px-4 py-2 pt-2.5 min-w-[100px]";
-      case "pregress":
-      case "in_progress":
-        return "text-black dark:text-black font-bold dark:text-white bg-gray-100/50 text-gray-600 border border-gray-400 px-4 py-2 pt-2.5 min-w-[100px]";
-      case "scheduled":
-        return "text-black dark:text-black font-bold dark:text-white bg-yellow-100/50 text-yellow-600 border border-yellow-400 px-4 py-2 pt-2.5 min-w-[100px]";
-      case "cancelled":
-        return "text-black dark:text-black font-bold dark:text-white bg-red-100/50 dark:bg-red-500 dark:border-red-500 text-red-600 border border-red-400 px-4 py-2 pt-2.5 min-w-[100px]";
-      default:
-        return "text-black dark:text-black font-bold dark:text-white bg-yellow-100/50 text-yellow-600 border border-yellow-400 px-4 py-2 pt-2.5 min-w-[100px]";
-    }
-  };
+  const getStatusColor = (status, isOverdue = false) =>
+    statusBadgeTone(status, isOverdue);
 
   const getStatusIcon = (status, isOverdue = false) => {
     if (isOverdue) {
@@ -2032,39 +1973,10 @@ const Meetings = () => {
       .replace(/\b\w/g, (char) => char.toUpperCase());
   };
 
-  const getMeetingStatusBadgeStyles = (status, isOverdue = false) => {
-    if (isOverdue) {
-      return "bg-red-500/15 text-red-600 border border-red-400/40 dark:border-transparent dark:bg-red-500 dark:text-white";
-    }
-    switch (status) {
-      case "completed":
-        return "bg-emerald-500/15 text-emerald-700 border border-emerald-400/40 dark:border-transparent dark:bg-green-500 dark:text-white";
-      case "scheduled":
-        return "bg-amber-500/15 text-amber-700 border border-amber-400/40 dark:border-transparent dark:bg-amber-500 dark:text-black";
-      case "pregress":
-      case "in_progress":
-        return "bg-sky-500/15 text-sky-700 border border-sky-400/40 dark:border-transparent dark:bg-sky-500 dark:text-white";
-      case "cancelled":
-        return "bg-red-500/15 text-red-600 border border-red-400/40 dark:border-transparent dark:bg-red-500 dark:text-white";
-      case "overdue":
-        return "bg-red-500/15 text-red-600 border border-red-400/40 dark:border-transparent dark:bg-red-500 dark:text-white";
-      default:
-        return "bg-gray-500/15 text-gray-600 border border-gray-400/40 dark:border-transparent dark:bg-zinc-600 dark:text-white";
-    }
-  };
+  const getMeetingStatusBadgeStyles = (status, isOverdue = false) =>
+    statusBadgeTone(status, isOverdue);
 
-  const getMeetingTypeBadgeStyles = (type) => {
-    switch (type) {
-      case "online":
-        return "bg-sky-500/15 text-sky-700 border border-sky-400/40 dark:border-transparent dark:bg-sky-500 dark:text-white";
-      case "in-person":
-        return "bg-green-500/15 text-green-700 border border-green-400/40 dark:border-transparent dark:bg-green-500 dark:text-white";
-      case "hybrid":
-        return "bg-orange-500/15 text-orange-700 border border-orange-400/40 dark:border-transparent dark:bg-orange-500 dark:text-black";
-      default:
-        return "bg-green-500/15 text-green-700 border border-green-400/40 dark:border-transparent dark:bg-green-500 dark:text-white";
-    }
-  };
+  const getMeetingTypeBadgeStyles = (type) => meetingTypeBadgeTone(type);
 
   const handleNewMeeting = async () => {
     if (!newMeeting.title.trim()) {
@@ -2121,9 +2033,9 @@ const Meetings = () => {
       console.error("Error saving meeting:", error);
       toast.error(
         error.message ||
-          (editingMeeting
-            ? "Failed to update meeting"
-            : "Failed to create meeting"),
+        (editingMeeting
+          ? "Failed to update meeting"
+          : "Failed to create meeting"),
       );
     } finally {
       setLoading(false);
@@ -2134,7 +2046,7 @@ const Meetings = () => {
     try {
       setLoading(true);
       await meetingService.deleteMeeting(id);
-      await loadMeetings(); // Reload meetings after deletion
+      await loadMeetings();
       toast.success("Meeting deleted successfully!");
     } catch (error) {
       console.error("Error deleting meeting:", error);
@@ -2148,7 +2060,7 @@ const Meetings = () => {
     try {
       setLoading(true);
       await meetingService.updateMeetingStatus(meetingId, newStatus);
-      await loadMeetings(); // Reload meetings after status change
+      await loadMeetings();
       toast.success(
         `Meeting ${newStatus === "completed" ? "completed" : "cancelled"} successfully!`,
       );
@@ -2339,7 +2251,7 @@ const Meetings = () => {
     try {
       setLoading(true);
 
-      let duration = 60; // default 60 minutes
+      let duration = 60;
       if (newMeeting.startDate && newMeeting.endDate) {
         const start = new Date(newMeeting.startDate);
         const end = new Date(newMeeting.endDate);

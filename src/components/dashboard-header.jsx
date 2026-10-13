@@ -4,7 +4,7 @@ import {
   Camera,
   X,
   RefreshCw,
-  Book,
+  Search,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -18,7 +18,8 @@ import { useSidebar } from "../contexts/sidebar-context";
 import { RiMenu3Fill } from "react-icons/ri";
 import { ThemeToggle } from "./theme-toggle";
 import { PiUserDuotone } from "react-icons/pi";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Connections from "./Connections";
 import { Skeleton } from "./ui/skeleton";
 import {
   isUserGithubConnected,
@@ -182,54 +183,74 @@ const DashboardHeader = () => {
     }
   };
 
-  const { toggleSidebar } = useSidebar();
+  const { toggleSidebar, isMobile } = useSidebar();
+  const navigate = useNavigate();
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [query, setQuery] = useState("");
+
+  const submitSearch = (event) => {
+    event.preventDefault();
+    const q = query.trim();
+    if (!q) return;
+    navigate("/dashboard/explore", { state: { q } });
+    setSearchOpen(false);
+    setQuery("");
+  };
 
   return (
     <>
-      <header className="bg-[#eee] dark:bg-[black] z-5 icon  border-gray-300 dark:border-gray-700 px-6 py-4 border-b fixed w-full">
-        <div className={`flex items-center justify-between `}>
-          <div className="flex justify-center items-center gap-4">
-            <div
-              className={`flex left-2 top-20 p-3 hover:bg-gray-100 cursor-pointer rounded-sm hover:text-black z-10`}
+      <header className={`dash-topbar ${isMobile ? "" : "dash-topbar--offset"}`}>
+        {isMobile && (
+          <div className="dash-cluster dash-cluster--menu">
+            <button
+              type="button"
+              className="dash-icon-btn"
+              aria-label="Open menu"
               onClick={() => toggleSidebar()}
             >
               <RiMenu3Fill />
-            </div>
+            </button>
           </div>
-          <div className="flex items-center gap-2">
-            <div className="flex gap-2">
-              <Link
-                to="/learn-point"
-                className="flex w-12 h-12 flex items-center justify-center  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] cursor-pointer rounded-[15px]"
-              >
-                <Book className="w-4 h-4 icon" />
-              </Link>
-              <ThemeToggle className="flex w-12 h-12  hidden md:flex items-center justify-center border-none  bg-transparent hover:bg-white dark:hover:bg-[rgba(255,255,255,.1)] dark:hover:text-white hover:text-black cursor-pointer rounded-[15px]" />
-            </div>
+        )}
+
+        <div className="dash-topbar__end">
+          <div className="dash-cluster">
+           
+
+            <ThemeToggle className="dash-icon-btn hidden md:flex border-none bg-transparent shadow-none hover:shadow-none" />
             <NotificationDropdown />
+          </div>
 
-            <div className="flex items-center gap-3 ">
-              <div className="text-right hidden md:block">
-                <div className="text-sm font-bold text-gray-900 dark:text-white">
-                  {user?.username || "User"}
-                </div>
-              </div>
-
-              <div className="flex flex-col items-center gap-1">
-                <div
-                  onClick={handleOpenProfileModal}
-                  className="relative group"
-                >
-                  <UserAvatar
-                    user={{
-                      ...user,
-                      avatar: avatarPreview || user?.avatar,
-                    }}
-                    size="xl"
-                    onClick={handleOpenProfileModal}
-                  />
-                </div>
-              </div>
+          <div
+            role="button"
+            tabIndex={0}
+            onClick={handleOpenProfileModal}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                handleOpenProfileModal();
+              }
+            }}
+            className="dash-cluster dash-user"
+          >
+            <span className="dash-user__avatar">
+              <UserAvatar
+                user={{
+                  ...user,
+                  avatar: avatarPreview || user?.avatar,
+                }}
+                size="lg"
+                onClick={handleOpenProfileModal}
+              />
+              <span className="dash-user__dot" aria-hidden />
+            </span>
+            <div className="flex flex-col items-start">
+              <span className="dash-user__meta">
+                <span className="dash-user__name">{user?.username || "User"}</span>
+              </span>
+              <span className="dash-user__meta">
+                <span className="dash-user__name dash-user__email">{user?.email || "User"}</span>
+              </span>
             </div>
           </div>
         </div>

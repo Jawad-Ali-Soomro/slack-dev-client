@@ -47,10 +47,10 @@ export function StreakHeatmap({ series = [], cols = 12, rows = 4, className }) {
 
   const tone = (level) => {
     if (level <= 0) return "bg-gray-100 dark:bg-white/10";
-    if (level === 1) return "bg-emerald-100 dark:bg-emerald-900/40";
-    if (level === 2) return "bg-emerald-300 dark:bg-emerald-700/60";
-    if (level === 3) return "bg-emerald-400 dark:bg-emerald-600";
-    return "bg-emerald-500 dark:bg-emerald-500";
+    if (level === 1) return "bg-orange-100 dark:bg-orange-900/40";
+    if (level === 2) return "bg-orange-300 dark:bg-orange-700/60";
+    if (level === 3) return "bg-orange-400 dark:bg-orange-600";
+    return "bg-[var(--theme-accent)] dark:bg-[var(--theme-accent)]";
   };
 
   return (
@@ -92,7 +92,7 @@ export function MiniProgress({
       <div
         className={cn(
           "absolute inset-y-0 left-0 rounded-full transition-[width] duration-500",
-          fillClassName || "bg-emerald-300 dark:bg-emerald-500",
+          fillClassName || "bg-orange-300 dark:bg-[var(--theme-accent)]",
         )}
         style={{ width: `${pct}%` }}
       />
@@ -130,7 +130,7 @@ export function MiniLineChart({
   return (
     <svg
       viewBox="0 0 72 28"
-      className={cn("w-[72px] h-7 text-[#75FC96]", className)}
+      className={cn("w-[72px] h-7 text-[var(--theme-accent)]", className)}
       aria-hidden
     >
       <polyline

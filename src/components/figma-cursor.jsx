@@ -20,7 +20,7 @@ const FigmaCursor = () => {
   const [pressed, setPressed] = useState(false);
   const [hidden, setHidden] = useState(true);
 
-  // Only enable on devices with a fine pointer (mouse/trackpad).
+
   useEffect(() => {
     if (typeof window === "undefined" || !window.matchMedia) return;
     const mq = window.matchMedia("(pointer: fine)");

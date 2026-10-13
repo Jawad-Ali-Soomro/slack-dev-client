@@ -34,7 +34,7 @@ export const ChatProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);
   const [chats, setChats] = useState([]);
   const [currentChat, setCurrentChat] = useState(null);
-  const [messages, setMessages] = useState(new Map()); // Use Map for better performance
+  const [messages, setMessages] = useState(new Map());
   const [unreadCount, setUnreadCount] = useState(0);
   const [onlineUsers, setOnlineUsers] = useState([]);
   const [typingUsers, setTypingUsers] = useState({});
@@ -164,12 +164,9 @@ export const ChatProvider = ({ children }) => {
       withCredentials: true,
       transports: ["websocket", "polling"],
       timeout: 20000,
-      forceNew: true,
-      autoConnect: true,
       reconnection: true,
-      reconnectionDelay: 1000,
+      reconnectionDelay: 2000,
       reconnectionAttempts: 5,
-      maxReconnectionAttempts: 5,
     });
 
     let hasConnectedOnce = false;
@@ -185,23 +182,13 @@ export const ChatProvider = ({ children }) => {
       hasConnectedOnce = true;
     });
 
-    newSocket.on("disconnect", (reason) => {
+    newSocket.on("disconnect", () => {
       setIsConnected(false);
-      if (reason !== "io client disconnect") {
-        setTimeout(() => {
-          newSocket.connect();
-        }, 3000);
-      }
     });
 
     newSocket.on("connect_error", (error) => {
       setIsConnected(false);
-      setError("Connection failed: " + error.message);
-      setTimeout(() => {
-        if (!isConnected) {
-          newSocket.connect();
-        }
-      }, 5000);
+      setError(error?.message || "Connection failed");
     });
 
     newSocket.on("online_users", (users) => {
@@ -230,6 +217,19 @@ export const ChatProvider = ({ children }) => {
         newChats.splice(index, 1);
         return [updatedChat, ...newChats];
       });
+      setCurrentChat((prev) =>
+        prev && normalizeId(prev._id) === normalizeId(updatedChat._id)
+          ? { ...prev, ...updatedChat }
+          : prev,
+      );
+    });
+
+    newSocket.on("removed_from_chat", ({ chatId }) => {
+      const removedId = normalizeId(chatId);
+      setChats((prev) => prev.filter((chat) => normalizeId(chat._id) !== removedId));
+      setCurrentChat((prev) =>
+        prev && normalizeId(prev._id) === removedId ? null : prev,
+      );
     });
 
     newSocket.on("message_updated", (message) => {
@@ -533,6 +533,20 @@ export const ChatProvider = ({ children }) => {
     return updated;
   };
 
+  const removeGroupMember = async (chatId, memberId) => {
+    const response = await chatService.removeGroupMember(chatId, memberId);
+    const updated = response.data;
+    setChats((prev) =>
+      prev.map((chat) =>
+        chat._id === updated._id ? { ...chat, ...updated } : chat,
+      ),
+    );
+    setCurrentChat((prev) =>
+      prev && prev._id === updated._id ? { ...prev, ...updated } : prev,
+    );
+    return updated;
+  };
+
   const sendMessage = async (
     content,
     type = "text",
@@ -766,6 +780,7 @@ export const ChatProvider = ({ children }) => {
     messagesLoading,
     createChat,
     updateGroup,
+    removeGroupMember,
     setCurrentChat,
     sendMessage,
     updateMessage,

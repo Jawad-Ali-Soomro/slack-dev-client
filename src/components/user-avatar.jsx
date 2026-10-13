@@ -98,7 +98,7 @@ function AvatarCircle({
   return (
     <span
       className={cn(
-        "relative inline-flex shrink-0 overflow-hidden rounded-full bg-gray-200 dark:bg-zinc-800",
+        "relative inline-flex shrink-0 overflow-hidden rounded-[15px] bg-gray-200 dark:bg-zinc-800",
         ring && "ring-2 ring-white dark:ring-black",
         SIZE[size] || SIZE.md,
         className,
@@ -107,7 +107,7 @@ function AvatarCircle({
       <img
         src={url}
         alt={name || "User"}
-        className="h-full w-full object-cover rounded-full"
+        className="h-full w-full object-cover rounded-[15px]"
         onError={(e) => {
           if (e.currentTarget.src !== fallback) e.currentTarget.src = fallback;
         }}
@@ -221,20 +221,18 @@ function ExtraCountHover({ extra, extraCount, size, zIndex }) {
           type="button"
           className={cn(
             "relative inline-flex items-center justify-center rounded-full",
-            "ring-white dark:ring-black bg-gray-100 text-black font-semibold leading-none",
+            "ring-2 ring-white dark:ring-zinc-900 bg-[#ececee] text-[#1c1c1e] font-bold leading-none",
+            "dark:bg-white/10 dark:text-white",
             SIZE[size] || SIZE.md,
-            "mb-1.5"
           )}
-          style={{ marginLeft: -10, zIndex }}
+          style={{ marginLeft: -8, zIndex }}
           aria-label={`${extraCount} more`}
         >
           +{extraCount > 99 ? 99 : extraCount}
         </button>
       </HoverCardTrigger>
       <HoverCardContent side="top" className="w-auto max-w-[240px] p-2">
-        {/* <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400 mb-2">
-          {extraCount} more
-        </p> */}
+        
         <ul className="">
           {extra.slice(0, 8).map((person, index) => (
             <li
@@ -273,16 +271,23 @@ export function AvatarGroup({
   }
 
   return (
-    <div className={cn("flex items-center", className)}>
+    <div
+      className={cn(
+        "avatar-group inline-flex items-center rounded-full bg-white py-1 pl-1 pr-1",
+        "border border-black/[0.06] dark:border-white/10 dark:bg-zinc-900",
+        className,
+      )}
+    >
       {visible.map((person, index) => (
         <div
           key={person.id || `${person.name}-${index}`}
-          className="relative"
-          style={{ marginLeft: index === 0 ? 0 : -10, zIndex: index + 1 }}
+          className="relative inline-flex"
+          style={{ marginLeft: index === 0 ? 0 : -8, zIndex: index + 1 }}
         >
           <UserAvatar
             user={person}
             size={size}
+            className="rounded-full ring-2 ring-white dark:ring-zinc-900"
             onClick={
               onUserClick
                 ? (id, e) => onUserClick(id ?? person.id, e)

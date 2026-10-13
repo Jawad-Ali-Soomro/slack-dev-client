@@ -4,11 +4,9 @@ import HorizontalLoader from "./horizontal-loader";
 import Sidebar from "./sidebar";
 import DashboardHeader from "./dashboard-header";
 import VoiceAssistantFab from "./voice-assistant-fab";
-import { useSidebar } from "../contexts/sidebar-context";
 
 const ProtectedRoute = ({ children, requireAuth = true }) => {
   const { isAuthenticated, loading } = useAuth();
-  const { isOpen } = useSidebar();
   const location = useLocation();
 
   if (loading) {
@@ -39,9 +37,7 @@ const ProtectedRoute = ({ children, requireAuth = true }) => {
         </div>
 
         <div
-          className={`transition-all duration-300 flex-1 pr-5 md:pr-10 md:pt-20 pt-25 pl-5 overflow-hidden ${
-            isOpen ? "md:pl-[270px]" : "md:pl-[100px]"
-          }`}
+          className="transition-all duration-300 flex-1 pr-5 md:pr-10 md:pt-20 pt-25 pl-5 md:pl-[88px] overflow-hidden"
         >
           {children}
         </div>

@@ -1,5 +1,5 @@
 export const SERIES = [
-    { key: "Task", label: "Tasks", color: "#75FC96" },
+    { key: "Task", label: "Tasks", color: "var(--theme-accent)" },
     { key: "Meeting", label: "Meetings", color: "#000000" },
     { key: "Project", label: "Projects", color: "#ADADAD" },
 ];

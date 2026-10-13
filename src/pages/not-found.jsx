@@ -38,18 +38,18 @@ const NotFound = () => {
         animate="visible"
       >
         <img src="/not.png" alt="" />
-        {/* 404 Number */}
+        
 
-        {/* Error Message */}
+        
         <m.div variants={itemVariants} className="mb-8 mt-10">
           <p className="text-base sm:text-lg font-bold text-gray-600 dark:text-gray-400 mb-6 px-4">
             Oops! the page you're looking for doesn't exist or has been moved.
           </p>
         </m.div>
 
-        {/* Loader animation */}
+        
 
-        {/* Action Buttons */}
+        
         <m.div
           variants={itemVariants}
           className="flex flex-col  gap-3 sm:gap-4 justify-center items-center px-4 w-full"
@@ -63,7 +63,7 @@ const NotFound = () => {
           </Button>
         </m.div>
 
-        {/* Additional Help */}
+        
         <m.div variants={itemVariants} className="mt-8 sm:mt-12 px-4">
           <p className="text-sm text-gray-500 dark:text-gray-400 font-bold">
             Need help? Try searching for what you're looking for or{" "}

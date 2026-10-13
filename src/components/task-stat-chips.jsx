@@ -4,9 +4,7 @@ import LiveStatChips, {
   MiniProgress,
 } from "./live-stat-chips";
 
-/**
- * Top summary chips for Tasks page (live charts).
- */
+
 export default function TaskStatChips({
   total = 0,
   pending = 0,

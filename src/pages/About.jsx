@@ -32,7 +32,7 @@ const About = () => {
         initial="hidden"
         animate="visible"
       >
-        {/* Hero Section */}
+        
         <div className="text-center mb-20">
           <m.h1
             variants={itemVariants}
@@ -49,7 +49,7 @@ const About = () => {
             community!
           </m.p>
 
-          {/* Team Hero Image */}
+          
           <m.div variants={itemVariants} className="mt-12 relative">
             <img
               src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1800&h=900&fit=crop"
@@ -59,7 +59,7 @@ const About = () => {
           </m.div>
         </div>
 
-        {/* Stats Section */}
+        
         <m.section
           variants={itemVariants}
           className="grid md:grid-cols-4 gap-8 mb-20"
@@ -95,7 +95,7 @@ const About = () => {
           ))}
         </m.section>
 
-        {/* Mission Section */}
+        
         <m.section variants={itemVariants} className="text-center mb-20">
           <h2
             className="text-4xl text-gray-900 dark:text-white  mb-8"
@@ -110,11 +110,9 @@ const About = () => {
           </p>
         </m.section>
 
-        {/* Values Section */}
+        
         <m.section variants={itemVariants}>
-          {/* <h2 className="text-4xl text-gray-900 dark:text-white  text-center mb-16" style={{ fontWeight: 900 }}>
-            Our Values
-          </h2> */}
+          
           <div className="grid md:grid-cols-2 gap-8">
             {[
               {

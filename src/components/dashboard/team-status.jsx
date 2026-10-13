@@ -10,19 +10,19 @@ import { useAuth } from "../../contexts/auth-context";
 import { PiUsersDuotone } from "react-icons/pi";
 
 const STATUS_OPTIONS = [
-  { key: "available", label: "Available", color: "#10b981" },
+  { key: "available", label: "Available", color: "var(--theme-accent)" },
   { key: "busy", label: "Busy", color: "#ef4444" },
   { key: "away", label: "Away", color: "#6b7280" },
   { key: "meeting", label: "In a meeting", color: "#8b5cf6" },
 ];
 
 const JOB_ROLES = [
-  { key: "frontend", label: "Frontend", full: "Frontend Developer", color: "#75FC96" },
-  { key: "backend", label: "Backend", full: "Backend Developer", color: "#4fd972" },
+  { key: "frontend", label: "Frontend", full: "Frontend Developer", color: "var(--theme-accent)" },
+  { key: "backend", label: "Backend", full: "Backend Developer", color: "var(--theme-accent-2)" },
   { key: "qa", label: "QA", full: "QA Engineer", color: "#ADADAD" },
   { key: "devops", label: "DevOps", full: "DevOps Engineer", color: "#D13817" },
   { key: "fullstack", label: "Full Stack", full: "Full Stack Developer", color: "#000000" },
-  { key: "designer", label: "Design", full: "UI/UX Designer", color: "#75FC96" },
+  { key: "designer", label: "Design", full: "UI/UX Designer", color: "var(--theme-accent)" },
   { key: "unassigned", label: "Member", full: "Member", color: "#ADADAD" },
 ];
 
@@ -39,10 +39,10 @@ const RoleLabel = ({ roleKey }) => {
   return (
     <span
       title={role.full}
-      className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-[#ADADAD]/40 bg-white px-2 py-1 text-[10px] font-semibold tracking-wide text-black dark:border-white/10 dark:bg-white/5 dark:text-gray-200"
+      className="inline-flex shrink-0 items-center gap-1.5 rounded-[15px] border border-[#ADADAD]/40 bg-white px-2 py-1 text-[10px] font-semibold tracking-wide text-black dark:border-white/10 dark:bg-white/5 dark:text-gray-200"
     >
       <span
-        className="h-1.5 w-1.5 rounded-full"
+        className="h-1.5 w-1.5 rounded-[15px]"
         style={{ background: role.color }}
       />
       {role.label}
@@ -193,15 +193,9 @@ const TeamStatus = memo(function TeamStatus({
             Workspace Status
           </h3>
         </div>
-        <span className="flex items-center gap-1.5 text-xs font-semibold text-[#ADADAD] shrink-0">
-          <span
-            className={`h-1.5 w-1.5 rounded-full ${onlineCount > 0 ? "bg-[#75FC96]" : "bg-[#ADADAD]"}`}
-          />
-          {onlineCount} online
-        </span>
       </div>
 
-      <div className="rounded-xl border border-gray-100 p-3 dark:border-white/10 dark:bg-white/5">
+      <div className="rounded-xl">
         <div className="flex items-center gap-3 mb-3">
           <div className="relative shrink-0">
             <UserAvatar
@@ -222,7 +216,7 @@ const TeamStatus = memo(function TeamStatus({
           </div>
         </div>
 
-        {/* Availability selector — original chip style */}
+        
         <div className="mt-3 flex flex-wrap gap-1.5">
           {STATUS_OPTIONS.map((option) => {
             const active = option.key === myAvailability;
@@ -256,7 +250,7 @@ const TeamStatus = memo(function TeamStatus({
         )}
       </div>
 
-      <div className="mt-5 pt-4 border-t border-[#ADADAD]/25 dark:border-white/10">
+      <div className="mt-5 pt-4 border-t icon border-[#ADADAD]/25 dark:border-white/10">
         <p className="mb-2.5 text-[11px] font-bold uppercase tracking-wider text-[#ADADAD]">
           Workspace Members
         </p>
@@ -286,7 +280,7 @@ const TeamStatus = memo(function TeamStatus({
                 <li
                   key={memberId}
                   onClick={() => onUserClick?.(memberId)}
-                  className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-[#ADADAD]/25 bg-white px-2.5 py-2 transition-colors hover:bg-[#75FC96]/15 dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10"
+                  className="flex cursor-pointer items-center gap-2.5 rounded-lg border border-[#ADADAD]/25 bg-white px-2.5 py-2 transition-colors hover:bg-[var(--theme-accent)]/15 dark:border-white/5 dark:bg-white/5 dark:hover:bg-white/10"
                 >
                   <div className="relative shrink-0">
                     <UserAvatar
@@ -313,7 +307,7 @@ const TeamStatus = memo(function TeamStatus({
                   </div>
                   <div className="flex items-center gap-1.5 shrink-0">
                     {member.availability === "busy" && (
-                      <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-red-500">
+                      <span className="rounded-[15px] bg-red-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-red-500">
                         Busy
                       </span>
                     )}

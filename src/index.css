@@ -1,7 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-/* ---------------- Figma-style custom cursor ---------------- */
+
 html.figma-cursor-active,
 html.figma-cursor-active * {
   cursor: none !important;
@@ -17,8 +17,7 @@ html.figma-cursor-active * {
   transition: opacity 0.15s ease;
 }
 
-/* The arrow's visual tip is at the top-left (~3,2); nudge so it sits on the
-   real pointer / click hotspot. */
+
 .figma-cursor-inner {
   color: currentColor;
   transform-origin: 3px 2px;
@@ -30,7 +29,7 @@ html.figma-cursor-active * {
     drop-shadow(0 4px 10px rgba(0, 0, 0, 0.25));
 }
 
-/* The I-beam centers on the pointer, so cancel the arrow's tip offset. */
+
 .figma-cursor-inner[data-variant="text"] {
   transform-origin: 0 0;
   margin-left: 0;
@@ -57,7 +56,7 @@ html.figma-cursor-active * {
     0 1px 3px rgba(0, 0, 0, 0.4);
 }
 
-/* Advanced UI Styles */
+
 .glass-card {
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(20px);
@@ -145,10 +144,10 @@ html.figma-cursor-active * {
   }
 }
 
-/* Custom variant for dark mode */
+
 @custom-variant dark (&:is(.dark *));
 
-/* Theme variables */
+
 @theme inline {
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
@@ -257,7 +256,7 @@ html.figma-cursor-active * {
   --sidebar-ring: oklch(0.551 0.027 264.364);
 }
 
-/* Base layer styles */
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -267,7 +266,7 @@ html.figma-cursor-active * {
   }
 }
 
-/* Material-style ripple on buttons and clickable items */
+
 .mui-ripple-overlay {
   position: fixed;
   overflow: hidden;

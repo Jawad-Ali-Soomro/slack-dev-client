@@ -5,7 +5,6 @@ export const getGithubProfile = async (token) => {
     const res = await axios.get("https://api.github.com/user", {
       headers: {
         Authorization: `token ${token}`,
-        "User-Agent": "Slack Developers",
       },
     });
     return res.data;
@@ -18,14 +17,13 @@ export const getGithubProfile = async (token) => {
   }
 };
 
-// GitHub paginates list endpoints (30 per page by default, 100 max), so we
-// have to follow every page to get the complete list of repos.
+
 const fetchAllPages = async (url, token) => {
   const results = [];
   let page = 1;
   const perPage = 100;
 
-  // Loop until GitHub returns a page with fewer than perPage items.
+
   // eslint-disable-next-line no-constant-condition
   while (true) {
     const separator = url.includes("?") ? "&" : "?";
@@ -34,7 +32,6 @@ const fetchAllPages = async (url, token) => {
       {
         headers: {
           Authorization: `token ${token}`,
-          "User-Agent": "Slack Developers",
         },
       },
     );
@@ -51,8 +48,7 @@ const fetchAllPages = async (url, token) => {
 
 export const getGithubRepos = async (token) => {
   try {
-    // visibility=all + every affiliation returns both private and public repos
-    // the user owns, collaborates on, or belongs to via an organization.
+
     const allRepos = await fetchAllPages(
       "https://api.github.com/user/repos?visibility=all&affiliation=owner,collaborator,organization_member",
       token,
@@ -78,7 +74,6 @@ export const getGithubPulls = async (token, owner, repo) => {
       {
         headers: {
           Authorization: `token ${token}`,
-          "User-Agent": "Slack Developers",
         },
       },
     );
@@ -99,7 +94,6 @@ export const getGithubIssues = async (token, owner, repo) => {
       {
         headers: {
           Authorization: `token ${token}`,
-          "User-Agent": "Slack Developers",
         },
       },
     );
@@ -120,7 +114,6 @@ export const getGithubContributors = async (token, owner, repo) => {
       {
         headers: {
           Authorization: `token ${token}`,
-          "User-Agent": "Slack Developers",
         },
       },
     );
@@ -141,7 +134,6 @@ export const getGithubLanguages = async (token, owner, repo) => {
       {
         headers: {
           Authorization: `token ${token}`,
-          "User-Agent": "Slack Developers",
         },
       },
     );
@@ -162,7 +154,6 @@ export const getGithubBranches = async (token, owner, repo) => {
       {
         headers: {
           Authorization: `token ${token}`,
-          "User-Agent": "Slack Developers",
         },
       },
     );
@@ -183,7 +174,6 @@ export const getGithubCommits = async (token, owner, repo) => {
       {
         headers: {
           Authorization: `token ${token}`,
-          "User-Agent": "Slack Developers",
         },
       },
     );
@@ -210,7 +200,6 @@ export const createGithubPullRequest = async (
       {
         headers: {
           Authorization: `token ${token}`,
-          "User-Agent": "Slack Developers",
           Accept: "application/vnd.github+json",
         },
       },
@@ -230,7 +219,7 @@ export const createGithubPullRequest = async (
   }
 };
 
-// Merge a pull request. merge_method can be "merge", "squash" or "rebase".
+
 export const mergeGithubPullRequest = async (
   token,
   owner,
@@ -245,7 +234,6 @@ export const mergeGithubPullRequest = async (
       {
         headers: {
           Authorization: `token ${token}`,
-          "User-Agent": "Slack Developers",
           Accept: "application/vnd.github+json",
         },
       },
@@ -264,7 +252,7 @@ export const mergeGithubPullRequest = async (
   }
 };
 
-// Reject/close a pull request without merging it.
+
 export const closeGithubPullRequest = async (
   token,
   owner,
@@ -278,7 +266,6 @@ export const closeGithubPullRequest = async (
       {
         headers: {
           Authorization: `token ${token}`,
-          "User-Agent": "Slack Developers",
           Accept: "application/vnd.github+json",
         },
       },
@@ -297,7 +284,7 @@ export const closeGithubPullRequest = async (
   }
 };
 
-// PRs are issues under the hood, so the issue comments endpoint works for both.
+
 export const getGithubComments = async (token, owner, repo, issueNumber) => {
   try {
     const res = await axios.get(
@@ -305,7 +292,6 @@ export const getGithubComments = async (token, owner, repo, issueNumber) => {
       {
         headers: {
           Authorization: `token ${token}`,
-          "User-Agent": "Slack Developers",
         },
       },
     );
@@ -333,7 +319,6 @@ export const createGithubComment = async (
       {
         headers: {
           Authorization: `token ${token}`,
-          "User-Agent": "Slack Developers",
           Accept: "application/vnd.github+json",
         },
       },

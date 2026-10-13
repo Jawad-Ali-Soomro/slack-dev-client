@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { m } from "framer-motion";
+import { BsPlusCircleFill } from "react-icons/bs";
 import { usePermissions } from "../hooks/use-permissions";
 import {
-  Plus,
   Search,
   MoreVertical,
   Eye,
@@ -319,7 +319,7 @@ const TeamsEmptyState = ({
         disabled={!canCreateTeam}
         className={"md:w-[200px] w-full"}
       >
-        <Plus className="w-4 h-4 icon icon mr-2 icon" />
+        <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
         Create Workspace
       </Button>
     )}
@@ -788,7 +788,7 @@ const TeamDetailsMembersPanel = ({
           <TeamMembersList
             members={selectedTeam.members}
             refreshKey={refreshKey}
-            roundedClass="rounded-[10px]"
+            roundedClass="rounded-[15px]"
           />
         </TabsContent>
         <TabsContent value="invitations">
@@ -963,7 +963,7 @@ const TeamDetailsModal = ({
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <span
-                  className={`inline-flex items-center px-4 py-2 uppercase rounded-[10px] text-xs font-medium ${getStatusColor(selectedTeam.isActive)}`}
+                  className={`inline-flex items-center px-4 py-2 uppercase rounded-[15px] text-xs font-medium ${getStatusColor(selectedTeam.isActive)}`}
                 >
                   {selectedTeam.isActive ? "Active" : "Inactive"}
                 </span>
@@ -1206,7 +1206,7 @@ const MembersManageModal = ({
                     </SelectContent>
                   </Select>
                   <span
-                    className={`inline-flex items-center w-[70px] h-7 justify-center uppercase rounded-[10px] text-[10px] font-medium ${getRoleColor(member.role)}`}
+                    className={`inline-flex items-center w-[70px] h-7 justify-center uppercase rounded-[15px] text-[10px] font-medium ${getRoleColor(member.role)}`}
                   >
                     {member.role}
                   </span>
@@ -1380,7 +1380,7 @@ const TeamsManage = () => {
           role: "Friend",
           avatar: friendship.friend.avatar,
         }))
-        .filter((friend) => friend.id !== user?.id); // Exclude current user
+        .filter((friend) => friend.id !== user?.id);
 
       setUsers(transformedUsers);
     } catch (error) {

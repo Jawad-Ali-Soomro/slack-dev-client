@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { m } from "framer-motion";
+import { BsPlusCircleFill } from "react-icons/bs";
 import {
   Zap,
-  Plus,
   GitBranch,
   Bell,
   Calendar,
@@ -190,7 +190,7 @@ const Automation = () => {
             </div>
           </div>
           <Button className="w-full sm:w-auto" disabled>
-            <Plus className="mr-2 h-4 w-4" />
+            <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
             New Automation
           </Button>
         </div>

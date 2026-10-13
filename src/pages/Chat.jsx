@@ -25,27 +25,21 @@ const Chat = () => {
   }, [markAsReadByType]);
 
   return (
-    <div
-      className={`h-[calc(100vh-5rem)] flex flex-col ${isMobile ? "m-0" : ""}`}
-    >
-      {/* Chat Interface */}
-      <div className={`flex flex-1 min-h-0 ${isMobile ? "m-0" : ""}`}>
-        {isMobile ? (
-          <div className="flex-1 w-full m-0">
-            {currentChat ? <ChatWindow isMobile={isMobile} /> : <ChatList />}
+    <div className="chat-shell">
+      {isMobile ? (
+        <div className="chat-panel min-w-0 flex-1">
+          {currentChat ? <ChatWindow isMobile={isMobile} /> : <ChatList />}
+        </div>
+      ) : (
+        <>
+          <div className="chat-panel w-[340px] shrink-0">
+            <ChatList />
           </div>
-        ) : (
-          <>
-            <div className="w-80 border-r">
-              <ChatList />
-            </div>
-            <div className="flex-1">
-              <ChatWindow />
-            </div>
-          </>
-        )}
-      </div>
-
+          <div className="chat-panel min-w-0 flex-1">
+            <ChatWindow />
+          </div>
+        </>
+      )}
     </div>
   );
 };

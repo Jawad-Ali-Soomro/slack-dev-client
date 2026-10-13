@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { m } from "framer-motion";
+import { BsPlusCircleFill } from "react-icons/bs";
 import HorizontalLoader from "../components/horizontal-loader";
 import {
   Search,
-  Plus,
   Edit,
   Trash2,
   Book,
@@ -706,7 +706,7 @@ function LearnPointFilters({
           onClick={onCreateClick}
           className="md:w-[200px] w-full rounded-[15px] h-12 font-bold"
         >
-          <Plus className="w-4 h-4 icon mr-2" />
+          <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
           Create Note
         </Button>
       </div>
@@ -1168,12 +1168,12 @@ const LearnPoint = () => {
   const [notes, setNotes] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [subjects, setSubjects] = useState([]);
-  const [modalSubjects, setModalSubjects] = useState([]); // Subjects for the create/edit modal
+  const [modalSubjects, setModalSubjects] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const [selectedSubject, setSelectedSubject] = useState("");
-  const [activeTab, setActiveTab] = useState("public"); // 'public' or 'mine'
+  const [activeTab, setActiveTab] = useState("public");
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [editingNote, setEditingNote] = useState(null);
   const [pdfFile, setPdfFile] = useState(null);
@@ -1415,7 +1415,7 @@ const LearnPoint = () => {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.3 }}
       >
-        {/* Header */}
+        
         <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
           <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
             <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
@@ -1451,7 +1451,7 @@ const LearnPoint = () => {
           }}
         />
 
-        {/* Notes Grid */}
+        
         <m.div
           className="rounded-[15px] shadow-xl overflow-hidden"
           initial={{ opacity: 0, y: 20 }}

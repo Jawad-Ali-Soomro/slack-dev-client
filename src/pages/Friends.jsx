@@ -175,7 +175,7 @@ const Friends = () => {
   return (
     <div className="dashboard-page min-h-screen pt-6 md:pt-10 pb-10">
       <div className="mx-auto">
-        {/* Header */}
+        
         <div className="mb-6">
           <div className="dashboard-page-header">
             <div className="dashboard-welcome">
@@ -227,7 +227,7 @@ const Friends = () => {
           </div>
         </div>
 
-        {/* Tabs */}
+        
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
           <TabsList className="flex flex-wrap w-full h-auto gap-2 bg-transparent p-0 mb-5">
             {[

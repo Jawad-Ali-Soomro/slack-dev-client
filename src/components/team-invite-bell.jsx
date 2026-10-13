@@ -150,7 +150,7 @@ const TeamInviteBell = ({ onResponded }) => {
                               size="sm"
                               disabled={isResponding}
                               onClick={() => handleRespond(notification, "accept")}
-                              className="h-7 px-3 rounded-[10px] text-xs"
+                              className="h-7 px-3 rounded-[15px] text-xs"
                             >
                               {isResponding ? (
                                 <Loader2 className="w-3 h-3 animate-spin" />
@@ -166,7 +166,7 @@ const TeamInviteBell = ({ onResponded }) => {
                               variant="outline"
                               disabled={isResponding}
                               onClick={() => handleRespond(notification, "reject")}
-                              className="h-7 px-3 rounded-[10px] text-xs"
+                              className="h-7 px-3 rounded-[15px] text-xs"
                             >
                               <X className="w-3 h-3 mr-1" />
                               Decline
