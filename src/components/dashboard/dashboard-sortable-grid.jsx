@@ -306,7 +306,7 @@ export function SortableWidget({
         type="button"
         aria-label="Drag to reorder"
         title="Drag to move"
-        className="absolute -top-3 -left-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200/80 bg-white text-gray-400 shadow-sm hover:text-[var(--theme-accent)] dark:border-white/10 dark:bg-zinc-900 cursor-grab active:cursor-grabbing"
+        className="absolute -top-2 -left-2 z-10 inline-flex h-8 w-8 items-center justify-center rounded-lg border border-gray-200/80 bg-white text-gray-400 shadow-sm hover:text-[var(--theme-accent)] dark:border-white/10 dark:bg-zinc-900 cursor-grab active:cursor-grabbing"
       >
         <GripVertical className="w-4 h-4" />
       </button>

@@ -184,18 +184,6 @@ const DashboardHeader = () => {
   };
 
   const { toggleSidebar, isMobile } = useSidebar();
-  const navigate = useNavigate();
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [query, setQuery] = useState("");
-
-  const submitSearch = (event) => {
-    event.preventDefault();
-    const q = query.trim();
-    if (!q) return;
-    navigate("/dashboard/explore", { state: { q } });
-    setSearchOpen(false);
-    setQuery("");
-  };
 
   return (
     <>
@@ -215,8 +203,6 @@ const DashboardHeader = () => {
 
         <div className="dash-topbar__end">
           <div className="dash-cluster">
-           
-
             <ThemeToggle className="dash-icon-btn hidden md:flex border-none bg-transparent shadow-none hover:shadow-none" />
             <NotificationDropdown />
           </div>

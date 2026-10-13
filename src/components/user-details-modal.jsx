@@ -585,10 +585,12 @@ const UserDetailsModal = ({
   const loadUserDetails = async () => {
     try {
       setLoading(true);
+      setUser(null);
       const response = await userService.getUserDetails(userId);
-      setUser(response.user);
+      setUser(response.user || null);
     } catch (error) {
       console.error("Failed to load user details:", error);
+      setUser(null);
     } finally {
       setLoading(false);
     }

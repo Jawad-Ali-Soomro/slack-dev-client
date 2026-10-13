@@ -1866,7 +1866,7 @@ button.status-chip {
   top: 0;
   z-index: 50;
   isolation: isolate;
-  background: #eee;
+  background: black;
   overflow: hidden;
   border-right: 1px solid #38323246 !important;
 }
@@ -2091,7 +2091,7 @@ button.status-chip {
   justify-content: flex-end;
   gap: 12px;
   padding: 0 18px;
-  background: transparent;
+  background: #eee;
   border-bottom: none;
 }
 
@@ -2100,7 +2100,7 @@ button.status-chip {
 }
 
 .dark .dash-topbar {
-  background: transparent;
+  background: black;
 }
 
 .dash-topbar__end {
