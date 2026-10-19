@@ -1,20 +1,15 @@
 import { useCallback, useRef, useState } from "react";
 import { m } from "framer-motion";
 import {
-  LayoutGrid,
   LogOut,
+  AudioLines,
   Compass,
   ShoppingBag,
   ListChecks,
   CalendarDays,
   FolderKanban,
   Workflow,
-  MessageCircle,
   KeyRound,
-  Users,
-  UserRound,
-  UserCog,
-  Home,
   MessageSquareQuote,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -23,7 +18,6 @@ import { useAuth } from "../contexts/auth-context";
 import BrandLogo from "./brand-logo";
 import { TbSmartHome } from "react-icons/tb";
 import { PiUser, PiUserCheck, PiUsers } from "react-icons/pi";
-import { BsChatSquareQuote } from "react-icons/bs";
 
 
 const RAIL_WIDTH = 72;
@@ -155,6 +149,17 @@ function SidebarPanel({
         </nav>
 
         <div className="sidebar-cluster sidebar-cluster--foot">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event("voice-assistant:open"))}
+            aria-label="Voice assistant"
+            className="sidebar-nav-item sidebar-nav-item--collapsed"
+          >
+            <span className="sidebar-icon-wrap">
+              <AudioLines className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
+            </span>
+            <span className="sidebar-tip">Voice assistant</span>
+          </button>
           <button
             type="button"
             onClick={logout}

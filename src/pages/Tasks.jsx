@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { m } from "framer-motion";
 import HorizontalLoader from "../components/horizontal-loader";
@@ -22,6 +22,10 @@ import {
 } from "lucide-react";
 import { connectGithub } from "@/hooks/use-github-repos";
 import { applyTaskToList, taskIdOf } from "../utils/apply-task-event";
+import {
+  TableWindowSpacer,
+  useWindowedRows,
+} from "../components/windowed-table-rows";
 import { toast } from "sonner";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
@@ -134,6 +138,23 @@ function TasksToolbarActions({
   );
 }
 
+function TaskTableCols() {
+  return (
+    <colgroup>
+      <col style={{ width: 48 }} />
+      <col style={{ width: 240 }} />
+      <col style={{ width: 100 }} />
+      <col style={{ width: 150 }} />
+      <col style={{ width: 170 }} />
+      <col style={{ width: 180 }} />
+      <col style={{ width: 160 }} />
+      <col style={{ width: 170 }} />
+      <col style={{ width: 140 }} />
+      <col />
+    </colgroup>
+  );
+}
+
 function TasksTableBody({
   loading,
   filteredTasks,
@@ -153,8 +174,15 @@ function TasksTableBody({
   getStatusColor,
   isTaskOverdue,
   formatLabel,
+  scrollRef,
 }) {
-  if (loading) {
+  const showLoader = loading && filteredTasks.length === 0;
+  const taskWindow = useWindowedRows({
+    count: showLoader ? 0 : filteredTasks.length,
+    scrollRef,
+  });
+
+  if (showLoader) {
     return (
       <tr>
         <td colSpan="10" className="px-6 py-8 text-center">
@@ -182,7 +210,12 @@ function TasksTableBody({
     );
   }
 
-  return filteredTasks.map((task) => (
+  const visibleTasks = filteredTasks.slice(taskWindow.start, taskWindow.end);
+
+  return (
+    <>
+      <TableWindowSpacer height={taskWindow.paddingTop} colSpan={10} />
+      {visibleTasks.map((task) => (
     <m.tr
       key={task.id}
       className={`hover:bg-gray-50 dark:hover:bg-transparent dark:hover:text-black dark:bg-black transition-colors ${selectedTasks.includes(task.id) ? "bg-gray-100 dark:bg-transparent" : ""}`}
@@ -197,7 +230,7 @@ function TasksTableBody({
           aria-label={`Select task ${task.title}`}
         />
       </td>
-      <td className="px-6 py-4">
+      <td className="py-4 pl-6 pr-2">
         <div>
           <div className="flex items-center gap-2">
             <div className="text-sm font-semibold text-gray-900 flex items-center gap-2 dark:text-white truncate">
@@ -209,7 +242,7 @@ function TasksTableBody({
           </div>
         </div>
       </td>
-      <td className="px-6 py-4">
+      <td className="py-4 pl-2 pr-4">
         <span className={`${tableBadgeClass} ${getPriorityColor(task.priority)}`}>
           {task.priority}
         </span>
@@ -375,7 +408,10 @@ function TasksTableBody({
         </div>
       </td>
     </m.tr>
-  ));
+      ))}
+      <TableWindowSpacer height={taskWindow.paddingBottom} colSpan={10} />
+    </>
+  );
 }
 
 function TaskDetailsHeader({
@@ -652,6 +688,7 @@ const Tasks = () => {
   const [users, setUsers] = useState([]);
   const [projects, setProjects] = useState([]);
   const [teams, setTeams] = useState([]);
+  const tableScrollRef = useRef(null);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 20,
@@ -1384,76 +1421,87 @@ const Tasks = () => {
         </m.div>
 
         
-        <m.div
-          variants={itemVariants}
-          className="bg-white dark:bg-transparent rounded-[15px] shadow-xl overflow-hidden"
-        >
-          <div className="overflow-x-auto max-h-[630px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800 rounded-[15px]">
-            <table className="w-full">
-              <thead className="bg-white dark:bg-white dark:text-black text-black border-b dark:border-gray-700 sticky top-0 z-10">
-                <tr className="bg-white">
-                  <th className="pl-6 py-4 text-left w-12">
-                    <Checkbox
-                      checked={getSelectAllCheckedState(
-                        filteredTasks,
-                        selectedTasks,
-                      )}
-                      onCheckedChange={handleSelectAll}
-                      aria-label="Select all tasks"
+        <div className="bg-white dark:bg-transparent rounded-[15px] shadow-xl overflow-hidden">
+          <div className="overflow-x-auto rounded-[15px]">
+            <div className="min-w-[1100px]">
+              <div className="overflow-y-auto [scrollbar-gutter:stable]">
+              <table className="w-full table-fixed bg-white">
+                <TaskTableCols />
+                <thead className="bg-white text-black border-b dark:border-gray-700">
+                  <tr className="bg-white">
+                    <th className="pl-6 py-4 text-left">
+                      <Checkbox
+                        checked={getSelectAllCheckedState(
+                          filteredTasks,
+                          selectedTasks,
+                        )}
+                        onCheckedChange={handleSelectAll}
+                        aria-label="Select all tasks"
+                      />
+                    </th>
+                    <th className="py-4 pl-6 pr-2 text-left text-xs text-black uppercase tracking-wider">
+                      Task
+                    </th>
+                    <th className="py-4 pl-2 pr-4 text-left text-xs text-black uppercase tracking-wider">
+                      Priority
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
+                      Assigned To
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
+                      Assigned BY
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
+                      Project
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
+                      Repository
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider">
+                      Due Date
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs text-black uppercase tracking-wider"></th>
+                  </tr>
+                </thead>
+              </table>
+              </div>
+              <div
+                ref={tableScrollRef}
+                className="max-h-[560px] overflow-y-auto overflow-x-hidden [scrollbar-gutter:stable] scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800"
+              >
+                <table className="w-full table-fixed">
+                  <TaskTableCols />
+                  <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                    <TasksTableBody
+                      loading={loading}
+                      filteredTasks={filteredTasks}
+                      selectedTasks={selectedTasks}
+                      user={user}
+                      users={users}
+                      onSelectTask={handleSelectTask}
+                      onStatusChange={handleStatusChange}
+                      onViewDetails={handleViewTaskDetails}
+                      onEditTask={handleEditTask}
+                      onDeleteTask={handleDeleteTask}
+                      onUserAvatarClick={handleUserAvatarClick}
+                      onTaskUpdated={handleTaskUpdated}
+                      canReassignTask={canReassignTask}
+                      getStatusIcon={getStatusIcon}
+                      getPriorityColor={getPriorityColor}
+                      getStatusColor={getStatusColor}
+                      isTaskOverdue={isTaskOverdue}
+                      formatLabel={formatLabel}
+                      scrollRef={tableScrollRef}
                     />
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
-                    Task
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
-                    Priority
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
-                    Assigned To
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
-                    Assigned BY
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
-                    Project
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
-                    Repository
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider">
-                    Due Date
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs  text-black uppercase tracking-wider"></th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
-                <TasksTableBody
-                  loading={loading}
-                  filteredTasks={filteredTasks}
-                  selectedTasks={selectedTasks}
-                  user={user}
-                  users={users}
-                  onSelectTask={handleSelectTask}
-                  onStatusChange={handleStatusChange}
-                  onViewDetails={handleViewTaskDetails}
-                  onEditTask={handleEditTask}
-                  onDeleteTask={handleDeleteTask}
-                  onUserAvatarClick={handleUserAvatarClick}
-                  onTaskUpdated={handleTaskUpdated}
-                  canReassignTask={canReassignTask}
-                  getStatusIcon={getStatusIcon}
-                  getPriorityColor={getPriorityColor}
-                  getStatusColor={getStatusColor}
-                  isTaskOverdue={isTaskOverdue}
-                  formatLabel={formatLabel}
-                />
-              </tbody>
-            </table>
+                  </tbody>
+                </table>
+              </div>
+            </div>
           </div>
-        </m.div>
+        </div>
 
         <CreateTaskModal
           open={showNewTaskPopup}

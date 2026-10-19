@@ -4,9 +4,6 @@ import { m } from "framer-motion";
 import { BsPlusCircleFill } from "react-icons/bs";
 import {
   ArrowLeft,
-  Star,
-  GitFork,
-  Eye,
   CircleDot,
   GitPullRequest,
   GitPullRequestClosed,
@@ -31,7 +28,6 @@ import {
   XCircle,
 } from "lucide-react";
 import { toast } from "sonner";
-import { Badge } from "../components/ui/badge";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
@@ -53,6 +49,13 @@ import {
   createGithubComment,
 } from "@/hooks/github-hooks";
 import HorizontalLoader from "@/components/horizontal-loader";
+import LiveStatChips, {
+  BarcodeSpark,
+  MiniProgress,
+  StreakHeatmap,
+} from "@/components/live-stat-chips";
+import { detailBadgeClass, statusBadgeTone, tableBadgeClass } from "@/lib/status-badge-styles";
+import { cn } from "@/lib/utils";
 import { PiUsersDuotone } from "react-icons/pi";
 
 const LANGUAGE_COLORS = {
@@ -91,39 +94,14 @@ const formatNumber = (n) => {
   return String(n);
 };
 
-const StatCard = ({ icon: Icon, label, value, accent }) => (
-  <div className="dashboard-card flex items-center justify-between gap-3 p-4 rounded-[15px] border border-gray-100 dark:border-white/10 bg-white dark:bg-[rgba(255,255,255,.05)]">
-    <div className="flex gap-2 items-center">
-    <div
-      className="flex-shrink-0 w-9 h-9 rounded-[12px] flex items-center justify-center"
-      style={{ background: accent || "var(--theme-accent, #ff914b)" }}
-    >
-      <Icon className="w-4 h-4 text-white" />
-    </div>
-      <p className="text-[11px] font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400 mt-1">
-        {label}
-      </p>
-    </div>
-    <div className="min-w-0">
-      <p className="text-xl font-black text-gray-900 dark:text-white leading-none">
-        {value}
-      </p>
-    </div>
-  </div>
-);
-
 const StateBadge = ({ state, merged }) => {
-  if (merged) {
-    return (
-      <Badge className="bg-purple-500/90 text-white border-none">Merged</Badge>
-    );
-  }
-  if (state === "closed") {
-    return (
-      <Badge className="bg-red-500/90 text-white border-none">Closed</Badge>
-    );
-  }
-  return <Badge className="bg-green-500/90 text-white border-none">Open</Badge>;
+  const label = merged ? "Merged" : state === "closed" ? "Closed" : "Open";
+  const tone = merged
+    ? statusBadgeTone("in_progress")
+    : state === "closed"
+      ? statusBadgeTone("cancelled")
+      : statusBadgeTone("completed");
+  return <span className={cn(tableBadgeClass, tone)}>{label}</span>;
 };
 
 const getPrMerged = (item) => Boolean(item.merged_at) || item.merged === true;
@@ -139,14 +117,10 @@ const githubAccessToken = (user) =>
 const orEmpty = (value) => value || [];
 const orMain = (value) => value || "main";
 const languageColor = (name) => LANGUAGE_COLORS[name] || "#8b949e";
-const privacyBadgeClass = (isPrivate) =>
-  isPrivate
-    ? "bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300"
-    : "bg-theme/10 text-theme";
 const sectionTabClass = (active) =>
   active
-    ? "flex h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-[15px] px-3 text-sm font-semibold transition-colors bg-theme text-white"
-    : "flex h-11 min-w-0 flex-1 items-center justify-center gap-2 rounded-[15px] px-3 text-sm font-semibold transition-colors bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-300";
+    ? "flex h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-[15px] px-3 text-sm font-bold transition-colors bg-[#FF914B] text-white"
+    : "flex h-12 min-w-0 flex-1 items-center justify-center gap-2 rounded-[15px] border border-gray-200 bg-white px-3 text-sm font-bold text-gray-700 transition-colors dark:border-white/10 dark:bg-transparent dark:text-gray-200";
 const prBranchHintClass = (sameBranch) =>
   sameBranch
     ? "mt-3 text-xs font-medium text-red-500"
@@ -197,7 +171,7 @@ const AccordionItemLabels = ({ labels }) => (
       return (
         <span
           key={labelKey(label)}
-          className="px-2.5 py-1 rounded-full text-[11px] font-semibold"
+          className="rounded-[10px] px-2.5 py-1 text-[11px] font-semibold"
           style={{
             backgroundColor: `#${color}22`,
             color: `#${color}`,
@@ -580,16 +554,19 @@ const RepoNotFound = ({ isGithubConnected, onBack }) => (
     <p className="text-gray-500 dark:text-gray-400 mb-6 max-w-md">
       {notFoundMessage(isGithubConnected)}
     </p>
-    <Button onClick={onBack}>
-      <ArrowLeft className="w-4 h-4 mr-2" />
-      Back to Dashboard
+    <Button onClick={onBack} className="h-12 w-[200px] rounded-[15px] font-bold">
+      <ArrowLeft className="mr-2 h-4 w-4" />
+      Repositories
     </Button>
   </div>
 );
 
 const RepoPrivacyBadge = ({ isPrivate }) => (
   <span
-    className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${privacyBadgeClass(isPrivate)}`}
+    className={cn(
+      detailBadgeClass,
+      isPrivate ? statusBadgeTone() : statusBadgeTone("completed"),
+    )}
   >
     {isPrivate ? <Lock className="h-3 w-3" /> : <Globe className="h-3 w-3" />}
     {isPrivate ? "Private" : "Public"}
@@ -599,9 +576,9 @@ const RepoPrivacyBadge = ({ isPrivate }) => (
 const RepoLanguageChip = ({ language }) => {
   if (!language) return null;
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full bg-gray-50 px-2 py-1 text-[11px] font-medium text-gray-600 dark:bg-white/5 dark:text-gray-300">
+    <span className={cn(detailBadgeClass, statusBadgeTone())}>
       <span
-        className="h-2 w-2 rounded-full"
+        className="h-2 w-2 rounded-[2px]"
         style={{ background: languageColor(language) }}
       />
       {language}
@@ -612,7 +589,7 @@ const RepoLanguageChip = ({ language }) => {
 const RepoLicenseChip = ({ license }) => {
   if (!license?.name) return null;
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-gray-50 px-2 py-1 text-[11px] font-medium text-gray-600 dark:bg-white/5 dark:text-gray-300">
+    <span className={cn(detailBadgeClass, statusBadgeTone())}>
       <Scale className="h-3 w-3" />
       {licenseLabel(license)}
     </span>
@@ -628,92 +605,81 @@ const RepoDescription = ({ description }) => {
   );
 };
 
-const RepoDetailHeader = ({ repo }) => (
-  <m.div
-    initial={{ opacity: 0, y: 16 }}
-    animate={{ opacity: 1, y: 0 }}
-    className="dashboard-card mb-6 rounded-[18px] border border-gray-100 bg-white p-5 dark:border-white/10 dark:bg-[rgba(255,255,255,.05)]"
-  >
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-      <div className="flex min-w-0 items-center gap-3.5">
-        <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[14px] bg-theme/10 text-theme">
-          <GitBranch className="h-5 w-5" />
-        </div>
-        <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="truncate text-xl font-bold text-gray-900 dark:text-white">
-              {repo.name}
-            </h1>
-            <RepoPrivacyBadge isPrivate={repo.private} />
-          </div>
-          <p className="mt-0.5 truncate text-xs text-gray-400">
-            {repo.full_name}
-          </p>
-          <RepoDescription description={repo.description} />
-          <div className="mt-2 flex flex-wrap items-center gap-1.5">
-            <RepoLanguageChip language={repo.language} />
-            <RepoLicenseChip license={repo.license} />
-            <span className="inline-flex items-center border px-4 py-2 gap-1 rounded-xl bg-gray-50 px-2 py-1 text-[11px] font-bold text-gray-600 dark:bg-white/5 dark:text-gray-300">
-              <Calendar className="h-3 w-3" />
-              Last Updated {formatDate(repo.updated_at)}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <a
-        href={repo.html_url}
-        target="_blank"
-        rel="noreferrer"
-        className="shrink-0 self-start sm:self-center"
+const RepoDetailHeader = ({ repo, onBack }) => (
+  <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <div className="min-w-0">
+      <button
+        type="button"
+        onClick={onBack}
+        className="mb-3 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500 hover:text-gray-900 dark:hover:text-white"
       >
-        <Button className="h-11 rounded-[14px] w-[200px] bg-theme px-4 text-white hover:bg-theme">
-          <ExternalLink className="mr-2 h-4 w-4" />
-          Open on GitHub
-        </Button>
-      </a>
+        <ArrowLeft className="h-3.5 w-3.5" />
+        Repositories
+      </button>
+      <div className="flex flex-wrap items-center gap-2">
+        <RepoPrivacyBadge isPrivate={repo.private} />
+        <RepoLanguageChip language={repo.language} />
+        <RepoLicenseChip license={repo.license} />
+        <span className={cn(detailBadgeClass, statusBadgeTone())}>
+          <Calendar className="h-3 w-3" />
+          Updated {formatDate(repo.updated_at)}
+        </span>
+      </div>
+      <h1 className="mt-3 text-xl font-semibold leading-8 text-gray-900 dark:text-white">
+        {repo.name}
+      </h1>
+      <p className="mt-1 text-xs font-semibold text-muted-foreground">
+        {repo.full_name}
+      </p>
+      <RepoDescription description={repo.description} />
     </div>
-  </m.div>
+    <a href={repo.html_url} target="_blank" rel="noreferrer" className="shrink-0">
+      <Button className="h-12 w-[200px] rounded-[15px] font-bold">
+        <ExternalLink className="mr-2 h-4 w-4" />
+        Open on GitHub
+      </Button>
+    </a>
+  </div>
 );
 
 const RepoDetailStats = ({ repo, pullsCount, issuesCount, branchesCount }) => (
-  <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-6">
-    <StatCard
-      icon={Star}
-      label="Stars"
-      value={formatNumber(repo.stargazers_count)}
-      accent="#eab308"
+  <div className="mb-6">
+    <LiveStatChips
+      items={[
+        {
+          id: "stars",
+          label: "Stars",
+          value: formatNumber(repo.stargazers_count),
+          visual: <BarcodeSpark series={[repo.stargazers_count || 0, repo.forks_count || 0, repo.watchers_count || 0]} />,
+        },
+        {
+          id: "forks",
+          label: "Forks",
+          value: formatNumber(repo.forks_count),
+          visual: <StreakHeatmap series={[repo.forks_count || 0, repo.stargazers_count || 0]} />,
+        },
+        {
+          id: "pulls",
+          label: "Pull Requests",
+          value: formatNumber(pullsCount),
+          visual: <MiniProgress value={Math.min(100, pullsCount)} />,
+        },
+        {
+          id: "issues",
+          label: "Open Issues",
+          value: formatNumber(issuesCount),
+          visual: (
+            <MiniProgress
+              value={Math.min(100, issuesCount)}
+              fillClassName="bg-rose-300 dark:bg-rose-500"
+            />
+          ),
+        },
+      ]}
     />
-    <StatCard
-      icon={GitFork}
-      label="Forks"
-      value={formatNumber(repo.forks_count)}
-      accent="#3b82f6"
-    />
-    <StatCard
-      icon={Eye}
-      label="Watchers"
-      value={formatNumber(repo.watchers_count)}
-      accent="#8b5cf6"
-    />
-    <StatCard
-      icon={GitPullRequest}
-      label="Open PRs"
-      value={formatNumber(pullsCount)}
-      accent="#22c55e"
-    />
-    <StatCard
-      icon={CircleDot}
-      label="Open Issues"
-      value={formatNumber(issuesCount)}
-      accent="#ef4444"
-    />
-    <StatCard
-      icon={GitBranch}
-      label="Branches"
-      value={formatNumber(branchesCount)}
-      accent="#06b6d4"
-    />
+    <p className="mt-3 text-xs text-muted-foreground">
+      {formatNumber(repo.watchers_count)} watchers · {formatNumber(branchesCount)} branches
+    </p>
   </div>
 );
 
@@ -755,7 +721,7 @@ const RepoSectionNav = ({
     {section !== "issues" ? (
       <Button
         onClick={onNewPr}
-        className="h-11 shrink-0 rounded-[15px] bg-theme px-4 text-white w-[200px] hover:bg-theme"
+        className="h-12 w-[200px] shrink-0 rounded-[15px] font-bold"
       >
         <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
         New pull request
@@ -833,14 +799,14 @@ const RepoBranchRow = ({ branch, isDefault, onOpenPr }) => (
           {branch.name}
         </span>
         {isDefault ? (
-          <Badge className="border-none bg-theme text-[10px] text-white">
-            default
-          </Badge>
+          <span className={cn(detailBadgeClass, statusBadgeTone("completed"))}>
+            Default
+          </span>
         ) : null}
         {branch.protected ? (
-          <Badge className="border-none bg-gray-700 text-[10px] text-white">
-            protected
-          </Badge>
+          <span className={cn(detailBadgeClass, statusBadgeTone())}>
+            Protected
+          </span>
         ) : null}
       </div>
       <p className="mt-0.5 truncate font-mono text-xs text-gray-400">
@@ -1003,7 +969,7 @@ const RepoContributorsList = ({ extraLoading, contributors }) => {
             <img
               src={c.avatar_url}
               alt={c.login}
-              className="w-9 h-9 rounded-full border border-gray-200 dark:border-white/10"
+              className="h-9 w-9 rounded-[10px] border border-gray-200 object-cover dark:border-white/10"
             />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-theme">
@@ -1249,6 +1215,7 @@ const CreatePrModal = ({
 };
 
 const RepoDetailView = ({
+  onBack,
   repo,
   pulls,
   issues,
@@ -1272,7 +1239,7 @@ const RepoDetailView = ({
   setPrForm,
 }) => (
   <div className="dashboard-page pt-2 md:pt-4 pb-16">
-    <RepoDetailHeader repo={repo} />
+    <RepoDetailHeader repo={repo} onBack={onBack} />
     <RepoDetailStats
       repo={repo}
       pullsCount={pulls.length}
@@ -1506,13 +1473,14 @@ const RepoDetail = () => {
     return (
       <RepoNotFound
         isGithubConnected={isGithubConnected}
-        onBack={() => navigate("/dashboard")}
+        onBack={() => navigate("/dashboard/repos")}
       />
     );
   }
 
   return (
     <RepoDetailView
+      onBack={() => navigate("/dashboard/repos")}
       repo={repo}
       pulls={pulls}
       issues={issues}

@@ -98,7 +98,7 @@ function AvatarCircle({
   return (
     <span
       className={cn(
-        "relative inline-flex shrink-0 overflow-hidden rounded-[15px] bg-gray-200 dark:bg-zinc-800",
+        "relative inline-flex shrink-0 overflow-hidden rounded-[10px] bg-gray-200 dark:bg-zinc-800",
         ring && "ring-2 ring-white dark:ring-black",
         SIZE[size] || SIZE.md,
         className,
@@ -107,7 +107,7 @@ function AvatarCircle({
       <img
         src={url}
         alt={name || "User"}
-        className="h-full w-full object-cover rounded-[15px]"
+        className="h-full w-full object-cover rounded-[10px]"
         onError={(e) => {
           if (e.currentTarget.src !== fallback) e.currentTarget.src = fallback;
         }}
@@ -171,7 +171,7 @@ export function UserAvatar({
   if (!showHoverCard) {
     if (!onClick) return circle;
     return (
-      <button type="button" onClick={handleClick} className="inline-flex rounded-full p-0 border-0 bg-transparent">
+      <button type="button" onClick={handleClick} className="inline-flex rounded-[10px] p-0 border-0 bg-transparent">
         {circle}
       </button>
     );
@@ -189,7 +189,7 @@ export function UserAvatar({
           {...hover.triggerProps}
           type="button"
           onClick={handleClick}
-          className="inline-flex rounded-full p-0 border-0 bg-transparent cursor-pointer"
+          className="inline-flex rounded-[10px] p-0 border-0 bg-transparent cursor-pointer"
           aria-label={displayName}
         >
           {circle}
@@ -220,7 +220,7 @@ function ExtraCountHover({ extra, extraCount, size, zIndex }) {
           {...hover.triggerProps}
           type="button"
           className={cn(
-            "relative inline-flex items-center justify-center rounded-full",
+            "relative inline-flex items-center justify-center rounded-[10px]",
             "ring-2 ring-white dark:ring-zinc-900 bg-[#ececee] text-[#1c1c1e] font-bold leading-none",
             "dark:bg-white/10 dark:text-white",
             SIZE[size] || SIZE.md,
@@ -273,7 +273,7 @@ export function AvatarGroup({
   return (
     <div
       className={cn(
-        "avatar-group inline-flex items-center rounded-full bg-white py-1 pl-1 pr-1",
+        "avatar-group inline-flex items-center rounded-[10px] bg-white py-1 pl-1 pr-1",
         "border border-black/[0.06] dark:border-white/10 dark:bg-zinc-900",
         className,
       )}
@@ -287,7 +287,7 @@ export function AvatarGroup({
           <UserAvatar
             user={person}
             size={size}
-            className="rounded-full ring-2 ring-white dark:ring-zinc-900"
+            className="rounded-[10px] ring-2 ring-white dark:ring-zinc-900"
             onClick={
               onUserClick
                 ? (id, e) => onUserClick(id ?? person.id, e)

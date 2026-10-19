@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useChat } from "../contexts/chat-context";
 import { useAuth } from "../contexts/auth-context";
 import { useTheme } from "../contexts/theme-context";
@@ -9,12 +9,14 @@ import {
   Smile,
   Paperclip,
   Reply,
+  Eye,
   Edit,
   Trash2,
   ArrowDown,
   ArrowLeft,
   Info,
   X,
+  AtSign,
   FileText,
   Film,
   Music,
@@ -26,11 +28,166 @@ import UserDetailsModal from "./user-details-modal";
 import GroupDetailsModal from "./group-details-modal";
 import { Skeleton } from "./ui/skeleton";
 import chatUploadService from "../services/chat-upload-service";
+import taskService from "../services/task-service";
+import { statusBadgeTone } from "@/lib/status-badge-styles";
 
 const MAX_CHAT_FILES = 5;
 const MAX_CHAT_FILE_BYTES = 20 * 1024 * 1024;
 
 const resolveUserId = (value) => String(value?.id || value?._id || "");
+
+const personIdOf = (value) => {
+  if (!value) return "";
+  if (typeof value === "object") {
+    return String(value._id || value.id || "");
+  }
+  return String(value);
+};
+
+const rememberPerson = (directory, person) => {
+  const id = personIdOf(person);
+  if (!id) return;
+  const existing = directory.get(id) || {};
+  directory.set(id, {
+    id,
+    username: person.username || person.name || existing.username || "User",
+    avatar: person.avatar || existing.avatar || null,
+  });
+};
+
+const buildPeopleDirectory = (participants, messages, user) => {
+  const directory = new Map();
+  (participants || []).forEach((person) => rememberPerson(directory, person));
+  (messages || []).forEach((message) => {
+    rememberPerson(directory, message.sender);
+    if (message.replyTo?.sender && typeof message.replyTo.sender === "object") {
+      rememberPerson(directory, message.replyTo.sender);
+    }
+    (message.readBy || []).forEach((read) => {
+      if (read?.user && typeof read.user === "object") {
+        rememberPerson(directory, read.user);
+      }
+    });
+  });
+  if (user) rememberPerson(directory, user);
+  return directory;
+};
+
+const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+
+const mentionAtCursor = (text, cursor) => {
+  const upto = String(text || "").slice(0, cursor);
+  const match = upto.match(/(^|\s)@([^\n@]*)$/);
+  if (!match) return null;
+  return {
+    query: match[2],
+    start: upto.length - match[2].length - 1,
+  };
+};
+
+const splitMessageTags = (content, names) => {
+  const unique = [...new Set((names || []).filter(Boolean))].sort(
+    (a, b) => b.length - a.length,
+  );
+  if (!content || !unique.length) return [{ type: "text", value: content || "" }];
+  const pattern = new RegExp(`@(${unique.map(escapeRegExp).join("|")})`, "g");
+  const parts = [];
+  let last = 0;
+  for (const match of content.matchAll(pattern)) {
+    const index = match.index ?? 0;
+    if (index > last) parts.push({ type: "text", value: content.slice(last, index) });
+    parts.push({ type: "tag", value: match[1] });
+    last = index + match[0].length;
+  }
+  if (last < content.length) parts.push({ type: "text", value: content.slice(last) });
+  return parts.length ? parts : [{ type: "text", value: content }];
+};
+
+const isOverdueTask = (task) => {
+  if (!task?.dueDate) return false;
+  if (task.status === "completed" || task.status === "cancelled") return false;
+  return new Date(task.dueDate) < new Date();
+};
+
+const canAssignOverdueTag = (task, user, isAdmin) => {
+  if (!isOverdueTask(task)) return false;
+  if (isAdmin) return true;
+  return personIdOf(task.assignedBy) === resolveUserId(user);
+};
+
+const chatTagPeople = (participants, user) => {
+  const self = resolveUserId(user);
+  return (participants || [])
+    .map((person) => ({
+      id: personIdOf(person),
+      username: person.username || person.name || "User",
+      avatar: person.avatar || null,
+    }))
+    .filter((person) => person.id && person.id !== self && person.username);
+};
+
+const TaggedMessage = ({ content, names, overdueNames }) => {
+  const overdue = new Set(overdueNames || []);
+  return splitMessageTags(content, names).map((part, index) => {
+    if (part.type !== "tag") return <span key={index}>{part.value}</span>;
+    const late = overdue.has(part.value);
+    return (
+      <span
+        key={index}
+        className={`mx-0.5 inline-flex items-center rounded-[10px] px-1.5 py-0.5 text-[12px] font-bold ${
+          late
+            ? statusBadgeTone("overdue")
+            : "bg-[#FF914B]/15 text-[#c2410c] dark:text-[#ffb48a]"
+        }`}
+      >
+        @{part.value}
+      </span>
+    );
+  });
+};
+
+const personRecord = (value, directory) => {
+  const id = personIdOf(value);
+  const known = directory.get(id);
+  const named = typeof value === "object" ? value : null;
+  return {
+    id,
+    username: named?.username || named?.name || known?.username || "User",
+    avatar: named?.avatar || known?.avatar || null,
+  };
+};
+
+const viewersByMessageId = (messages, directory) => {
+  const grouped = new Map();
+  messages.forEach((message) => {
+    const senderId = personIdOf(message.sender);
+    const people = [];
+    (message.readBy || []).forEach((read) => {
+      const reader = personRecord(read.user, directory);
+      if (!reader.id || reader.id === senderId) return;
+      if (people.some((person) => person.id === reader.id)) return;
+      people.push(reader);
+    });
+    if (people.length) grouped.set(String(message._id), people);
+  });
+  return grouped;
+};
+
+const repliesByMessageId = (messages, directory) => {
+  const grouped = new Map();
+  messages.forEach((message) => {
+    const parentId = message.replyTo?._id;
+    if (!parentId || message.isDeleted) return;
+    const replier = personRecord(message.sender, directory);
+    if (!replier.id) return;
+    const list = grouped.get(String(parentId)) || [];
+    if (!list.some((person) => person.id === replier.id)) {
+      list.push(replier);
+    }
+    grouped.set(String(parentId), list);
+  });
+  return grouped;
+};
 
 const resolveAvatarUrl = (avatar) => {
   if (!avatar) return null;
@@ -157,13 +314,13 @@ const bubbleClass = (isOwn, mediaOnly, isDeleted) => {
 };
 
 const replyQuoteClass = (isOwn) => {
-  if (isOwn) return "mb-1.5 rounded-md mt-1 border-l-2 border-r-2 border-1 px-2.5 py-1.5 text-xs border-white bg-white/15 text-white";
-  return "mb-1.5 rounded-md mt-1 border-l-2 border-1 border-r-2 bg-gray-100 px-2.5 py-1.5 text-xs border-black text-black";
+  if (isOwn) return "mb-1.5 rounded-md mt-1 border-l-4 border-white px-2.5 py-1.5 text-xs bg-white/15 text-white";
+  return "mb-1.5 rounded-md mt-1 border-l-4 border-1 bg-gray-100 px-2.5 py-1.5 text-xs border-gray-300 text-black";
 };
 
 const editedLabelClass = (isOwn) => {
-  if (isOwn) return "mt-0.5 block text-[10px] text-white/70";
-  return "mt-0.5 block text-[10px] text-muted-foreground";
+  if (isOwn) return "mt-0.5 block text-[10px] absolute right-2 uppercase bg-gray-100 text-black -top-5";
+  return "mt-0.5 block text-[10px] absolute right-2 uppercase bg-gray-100 text-black -top-5";
 };
 
 const actionsBarClass = (isOwn) => {
@@ -428,39 +585,6 @@ const ChatHeader = ({
   </div>
 );
 
-const GroupMembersEnd = ({ members, onOpen }) => {
-  if (!members?.length) return null;
-
-  return (
-    <button
-      type="button"
-      onClick={onOpen}
-      className="mt-6 flex w-full items-center gap-3 rounded-[15px] bg-white px-3 py-3 text-left dark:bg-[#1c1c1e]"
-    >
-      <div className="flex shrink-0 -space-x-2">
-        {members.slice(0, 5).map((member) => {
-          const id = String(member._id || member.id || member.username);
-          const name = member.username || member.name || "Member";
-          return (
-            <Avatar key={id} className="chat-avatar h-8 w-8 ring-2 ring-white dark:ring-[#1c1c1e]">
-              <AvatarImage src={resolveAvatarUrl(member.avatar)} />
-              <AvatarFallback>{name.charAt(0).toUpperCase()}</AvatarFallback>
-            </Avatar>
-          );
-        })}
-      </div>
-      <div className="min-w-0 flex-1">
-        <p className="text-xs font-semibold text-gray-900 dark:text-white">
-          {members.length} {members.length === 1 ? "member" : "members"}
-        </p>
-        <p className="truncate text-[11px] text-muted-foreground">
-          {members.map((member) => member.username || member.name).filter(Boolean).join(", ")}
-        </p>
-      </div>
-      <Info className="h-4 w-4 shrink-0 text-[var(--theme-accent)]" />
-    </button>
-  );
-};
 
 const ChatMessagesLoading = () => (
   <div className="flex flex-col gap-6 h-full">
@@ -570,16 +694,7 @@ const ChatMessageActions = ({
 
   return (
     <div className={actionsBarClass(isOwn)}>
-      {isOwn ? null : (
-        <button
-          type="button"
-          className="flex h-7 w-7 items-center justify-center rounded-[12px] text-gray-500 hover:bg-black/[0.05] hover:text-[#FF914B] dark:hover:bg-white/10"
-          onClick={() => onReply(message)}
-          title="Reply"
-        >
-          <Reply className="h-3.5 w-3.5" />
-        </button>
-      )}
+    
       {isOwn ? (
         <>
           <button
@@ -628,6 +743,129 @@ const ChatMessageAvatar = ({
   );
 };
 
+const TinyPersonAvatar = ({ person, onClick }) => (
+  <Avatar
+    className="chat-avatar h-4 w-4 cursor-pointer border-0 p-0 ring-2 ring-white dark:ring-[#111]"
+    title={person.username}
+    onClick={
+      onClick
+        ? (event) => {
+            event.stopPropagation();
+            onClick(person.id);
+          }
+        : undefined
+    }
+  >
+    <AvatarImage className="rounded-full" src={resolveAvatarUrl(person.avatar)} />
+    <AvatarFallback className="rounded-full text-[8px]">
+      {(person.username || "?").charAt(0).toUpperCase()}
+    </AvatarFallback>
+  </Avatar>
+);
+
+const PersonAvatarStack = ({ people }) => {
+  if (!people?.length) return null;
+  const visible = people.slice(0, 3);
+  const extra = people.length - visible.length;
+
+  return (
+    <span className="flex items-center -space-x-1">
+      {visible.map((person) => (
+        <TinyPersonAvatar key={person.id} person={person} />
+      ))}
+      {extra > 0 ? (
+        <span className="pl-1 text-[10px] font-semibold text-muted-foreground">
+          +{extra}
+        </span>
+      ) : null}
+    </span>
+  );
+};
+
+const ReceiptPeople = ({ title, people, onAvatarClick }) => {
+  if (!people?.length) return null;
+  return (
+    <div>
+      <p className="px-2 pb-1 text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+        {title}
+      </p>
+      <ul className="space-y-0.5">
+        {people.map((person) => (
+          <li key={`${title}-${person.id}`}>
+            <button
+              type="button"
+              className="flex w-full items-center gap-2 rounded-[12px] px-2 py-1.5 text-left hover:bg-black/[0.04] dark:hover:bg-white/10"
+              onClick={() => onAvatarClick(person.id)}
+            >
+              <Avatar className="h-6 w-6">
+                <AvatarImage src={resolveAvatarUrl(person.avatar)} />
+                <AvatarFallback className="text-[10px]">
+                  {(person.username || "?").charAt(0).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+              <span className="truncate text-xs font-medium text-gray-900 dark:text-white">
+                {person.username}
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+const MessageReceipts = ({ seenPeople, repliedPeople, isOwn, onAvatarClick }) => {
+  const [open, setOpen] = useState(false);
+  if (!seenPeople.length && !repliedPeople.length) return null;
+
+  return (
+    <div className={`relative ${isOwn ? "self-end" : "self-start"}`}>
+      <button
+        type="button"
+        onClick={() => setOpen((value) => !value)}
+        className="flex items-center gap-1.5 rounded-full border border-black/[0.06] bg-white px-1.5 py-1 dark:border-white/10 dark:bg-[#1c1c1e]"
+        title="Who viewed and replied"
+      >
+        {seenPeople.length ? (
+          <span className="flex items-center gap-1">
+            <PersonAvatarStack people={seenPeople} />
+          </span>
+        ) : null}
+        {seenPeople.length && repliedPeople.length ? (
+          <span className="h-3 w-px bg-black/10 dark:bg-white/15" />
+        ) : null}
+        {repliedPeople.length ? (
+          <span className="flex items-center gap-1">
+            <Reply className="h-3 w-3 text-[#FF914B]" />
+            <PersonAvatarStack people={repliedPeople} />
+          </span>
+        ) : null}
+      </button>
+      {open ? (
+        <div
+          className={`absolute bottom-full z-20 mb-1 w-52 rounded-2xl border border-black/[0.06] bg-white p-2 shadow-lg dark:border-white/10 dark:bg-[#1c1c1e] ${
+            isOwn ? "right-0" : "left-0"
+          }`}
+        >
+          <ReceiptPeople
+            title="Viewed"
+            people={seenPeople}
+            onAvatarClick={onAvatarClick}
+          />
+          {seenPeople.length && repliedPeople.length ? (
+            <div className="my-1 h-px bg-black/[0.06] dark:bg-white/10" />
+          ) : null}
+          <ReceiptPeople
+            title="Replied"
+            people={repliedPeople}
+            onAvatarClick={onAvatarClick}
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+};
+
 const ChatMessageBubble = ({
   message,
   isOwn,
@@ -635,13 +873,10 @@ const ChatMessageBubble = ({
   showText,
   mediaOnly,
   onOpenImage,
+  tagNames,
+  overdueNames,
 }) => (
   <div className={bubbleClass(isOwn, mediaOnly, isDeleted)}>
-    {message.replyTo ? (
-      <div className={replyQuoteClass(isOwn)}>
-        <span className="line-clamp-2">{message.replyTo?.content}</span>
-      </div>
-    ) : null}
 
     {shouldShowAttachments(isDeleted, message) ? (
       <div className="mb-2 flex flex-col gap-2">
@@ -659,8 +894,12 @@ const ChatMessageBubble = ({
     ) : null}
 
     {showText ? (
-      <p className="text-[14px] font-normal  leading-relaxed whitespace-pre-wrap break-words">
-        {message.content}
+      <p className="text-[14px] font-normal leading-relaxed whitespace-pre-wrap break-words">
+        <TaggedMessage
+          content={message.content}
+          names={tagNames}
+          overdueNames={overdueNames}
+        />
       </p>
     ) : null}
 
@@ -675,11 +914,17 @@ const ChatMessageItem = ({
   index,
   messages,
   user,
+  directory,
+  isGroup,
+  seenPeople,
+  repliedPeople,
   onAvatarClick,
   onOpenImage,
   onReply,
   onEdit,
   onDelete,
+  tagNames,
+  overdueNames,
 }) => {
   const senderId = senderKey(message);
   const currentUserId = resolveUserId(user);
@@ -693,6 +938,9 @@ const ChatMessageItem = ({
   const toNext = continuesToNext(nextMessage, senderId, isDeleted);
   const showText = showMessageText(isDeleted, message);
   const mediaOnly = isMediaOnlyBubble(showText, message);
+  const replyAuthor = message.replyTo
+    ? personRecord(message.replyTo.sender, directory)
+    : null;
 
   return (
     <div className={messageRowClass(fromPrev, isOwn)}>
@@ -706,18 +954,29 @@ const ChatMessageItem = ({
         />
 
         <div className={bubbleStackClass(isOwn)}>
-          <ChatMessageBubble
-            message={message}
-            isOwn={isOwn}
-            isDeleted={isDeleted}
-            showText={showText}
-            mediaOnly={mediaOnly}
-            onOpenImage={onOpenImage}
-          />
+        <ChatMessageBubble
+          message={message}
+          isOwn={isOwn}
+          isDeleted={isDeleted}
+          showText={showText}
+          mediaOnly={mediaOnly}
+          onOpenImage={onOpenImage}
+          tagNames={tagNames}
+          overdueNames={overdueNames}
+        />
 
           <span className="px-1 text-[11px] text-muted-foreground">
             {formatMessageTime(message.createdAt)}
           </span>
+
+          {isGroup && !isDeleted ? (
+            <MessageReceipts
+              seenPeople={seenPeople}
+              repliedPeople={repliedPeople}
+              isOwn={isOwn}
+              onAvatarClick={onAvatarClick}
+            />
+          ) : null}
 
           <ChatMessageActions
             isDeleted={isDeleted}
@@ -760,29 +1019,45 @@ const ChatTypingIndicator = ({ typingUsers }) => {
 const ChatMessagesList = ({
   messages,
   user,
+  participants,
+  isGroup,
   onAvatarClick,
   onOpenImage,
   onReply,
   onEdit,
   onDelete,
-}) => (
-  <>
-    {messages.map((message, index) => (
-      <ChatMessageItem
-        key={message._id}
-        message={message}
-        index={index}
-        messages={messages}
-        user={user}
-        onAvatarClick={onAvatarClick}
-        onOpenImage={onOpenImage}
-        onReply={onReply}
-        onEdit={onEdit}
-        onDelete={onDelete}
-      />
-    ))}
-  </>
-);
+  tagNames,
+  overdueNames,
+}) => {
+  const directory = buildPeopleDirectory(participants, messages, user);
+  const seenMap = viewersByMessageId(messages, directory);
+  const replyMap = repliesByMessageId(messages, directory);
+
+  return (
+    <>
+      {messages.map((message, index) => (
+        <ChatMessageItem
+          key={message._id}
+          message={message}
+          index={index}
+          messages={messages}
+          user={user}
+          directory={directory}
+          isGroup={isGroup}
+          seenPeople={seenMap.get(String(message._id)) || []}
+          repliedPeople={replyMap.get(String(message._id)) || []}
+          onAvatarClick={onAvatarClick}
+          onOpenImage={onOpenImage}
+          onReply={onReply}
+          onEdit={onEdit}
+          onDelete={onDelete}
+          tagNames={tagNames}
+          overdueNames={overdueNames}
+        />
+      ))}
+    </>
+  );
+};
 
 const ChatMessagesPane = ({
   isMobile,
@@ -790,6 +1065,8 @@ const ChatMessagesPane = ({
   messagesLoading,
   messages,
   user,
+  participants,
+  isGroup,
   typingUsers,
   messagesEndRef,
   onAvatarClick,
@@ -799,15 +1076,21 @@ const ChatMessagesPane = ({
   onDelete,
   groupMembers,
   onOpenGroup,
+  tagNames,
+  overdueNames,
 }) => {
   let body = <ChatMessagesList
     messages={messages}
     user={user}
+    participants={participants}
+    isGroup={isGroup}
     onAvatarClick={onAvatarClick}
     onOpenImage={onOpenImage}
     onReply={onReply}
     onEdit={onEdit}
     onDelete={onDelete}
+    tagNames={tagNames}
+    overdueNames={overdueNames}
   />;
   if (messagesLoading) body = <ChatMessagesLoading />;
   else if (messages.length === 0) body = <ChatMessagesEmpty />;
@@ -815,9 +1098,6 @@ const ChatMessagesPane = ({
   return (
     <div ref={messagesContainerRef} className={messagesPadClass(isMobile)}>
       {body}
-      {messagesLoading || !groupMembers ? null : (
-        <GroupMembersEnd members={groupMembers} onOpen={onOpenGroup} />
-      )}
       <ChatTypingIndicator typingUsers={typingUsers} />
       <div ref={messagesEndRef} />
     </div>
@@ -891,6 +1171,53 @@ const ChatContextBanner = ({
   );
 };
 
+const MentionMenu = ({
+  people,
+  activeIndex,
+  overdueById,
+  overdueCount,
+  showOverdue,
+  onPick,
+  onTagOverdue,
+}) => (
+    <div className="mb-2 max-h-64 overflow-y-auto rounded-[15px] border border-black/[0.06] bg-white shadow-lg dark:border-white/10 dark:bg-[#1c1c1e]">
+    {people.length === 0 ? (
+      <p className="px-3 py-3 text-xs text-muted-foreground">No one matches that tag</p>
+    ) : (
+      people.map((person, index) => {
+        const titles = overdueById[person.id] || [];
+        return (
+          <button
+            key={person.id}
+            type="button"
+            onClick={() => onPick(person)}
+            className={`flex w-full items-center justify-between gap-3 px-3 py-2 text-left ${
+              index === activeIndex ? "bg-[#FF914B]/10" : "hover:bg-black/[0.03] dark:hover:bg-white/5"
+            }`}
+          >
+            <span className="min-w-0">
+              <span className="block truncate text-sm font-medium text-gray-900 dark:text-white">
+                {person.username}
+              </span>
+              {titles.length ? (
+                <span className="block truncate text-[11px] text-red-500">
+                  {titles[0]}
+                  {titles.length > 1 ? ` +${titles.length - 1}` : ""}
+                </span>
+              ) : null}
+            </span>
+            {titles.length ? (
+              <span className={`shrink-0 rounded-[10px] px-2 py-0.5 text-[10px] font-bold uppercase ${statusBadgeTone("overdue")}`}>
+                Overdue
+              </span>
+            ) : null}
+          </button>
+        );
+      })
+    )}
+  </div>
+);
+
 const ChatComposerForm = ({
   onSubmit,
   fileInputRef,
@@ -898,7 +1225,7 @@ const ChatComposerForm = ({
   emojiPickerRef,
   messageText,
   onTyping,
-  onKeyPress,
+  onKeyDown,
   editingMessage,
   uploadingFiles,
   messagesLoading,
@@ -907,12 +1234,33 @@ const ChatComposerForm = ({
   onToggleEmoji,
   onEmojiClick,
   theme,
+  mentionOpen,
+  mentionPeople,
+  mentionIndex,
+  overdueById,
+  overdueCount,
+  showOverdue,
+  onPickMention,
+  onTagOverdue,
+  onInsertAt,
 }) => (
-  <form onSubmit={onSubmit} className="flex items-center gap-2">
-    <div className="chat-composer flex flex-1 items-center gap-1 border border-black/[0.06] bg-[#f6f7f8] px-1.5 transition-colors focus-within:border-[var(--theme-accent)]/50 dark:border-white/10 dark:bg-white/5">
+  <form onSubmit={onSubmit} className="flex items-end gap-2">
+    <div className="min-w-0 flex-1">
+      {mentionOpen ? (
+        <MentionMenu
+          people={mentionPeople}
+          activeIndex={mentionIndex}
+          overdueById={showOverdue ? overdueById : {}}
+          overdueCount={overdueCount}
+          showOverdue={showOverdue}
+          onPick={onPickMention}
+          onTagOverdue={onTagOverdue}
+        />
+      ) : null}
+      <div className="chat-composer flex flex-1 items-center gap-1 border border-black/[0.06] bg-[#f6f7f8] px-1.5 transition-colors focus-within:border-[var(--theme-accent)]/50 dark:border-white/10 dark:bg-white/5">
       <button
         type="button"
-        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] text-gray-500 hover:bg-white hover:text-[#FF914B] disabled:opacity-40 dark:hover:bg-white/10"
+        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-gray-500 disabled:opacity-40 dark:hover:bg-white/10"
         onClick={() => fileInputRef.current?.click()}
         disabled={attachDisabled(editingMessage, uploadingFiles)}
         title="Attach file"
@@ -924,7 +1272,7 @@ const ChatComposerForm = ({
         ref={inputRef}
         value={messageText}
         onChange={onTyping}
-        onKeyPress={onKeyPress}
+        onKeyDown={onKeyDown}
         placeholder={messagePlaceholder(editingMessage)}
         className="h-11 flex-1 border-0 bg-transparent px-1 text-sm shadow-none focus-visible:ring-0"
         disabled={messagesLoading}
@@ -954,6 +1302,7 @@ const ChatComposerForm = ({
             />
           </div>
         ) : null}
+      </div>
       </div>
     </div>
 
@@ -990,8 +1339,17 @@ const ChatComposer = ({
   emojiPickerRef,
   messageText,
   onTyping,
-  onKeyPress,
+  onKeyDown,
   uploadingFiles,
+  mentionOpen,
+  mentionPeople,
+  mentionIndex,
+  overdueById,
+  overdueCount,
+  showOverdue,
+  onPickMention,
+  onTagOverdue,
+  onInsertAt,
   messagesLoading,
   showEmojiPicker,
   onToggleEmoji,
@@ -1013,8 +1371,17 @@ const ChatComposer = ({
       emojiPickerRef={emojiPickerRef}
       messageText={messageText}
       onTyping={onTyping}
-      onKeyPress={onKeyPress}
+      onKeyDown={onKeyDown}
       editingMessage={editingMessage}
+      mentionOpen={mentionOpen}
+      mentionPeople={mentionPeople}
+      mentionIndex={mentionIndex}
+      overdueById={overdueById}
+      overdueCount={overdueCount}
+      showOverdue={showOverdue}
+      onPickMention={onPickMention}
+      onTagOverdue={onTagOverdue}
+      onInsertAt={onInsertAt}
       uploadingFiles={uploadingFiles}
       messagesLoading={messagesLoading}
       pendingFiles={pendingFiles}
@@ -1092,9 +1459,12 @@ const ChatWindow = ({ isMobile = false }) => {
     loading,
   } = useChat();
 
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const { theme } = useTheme();
   const [messageText, setMessageText] = useState("");
+  const [mention, setMention] = useState(null);
+  const [mentionIndex, setMentionIndex] = useState(0);
+  const [overdueById, setOverdueById] = useState({});
   const [editingMessage, setEditingMessage] = useState(null);
   const [replyTo, setReplyTo] = useState(null);
   const [showEmojiPicker, setShowEmojiPicker] = useState(false);
@@ -1189,6 +1559,7 @@ const ChatWindow = ({ isMobile = false }) => {
       await updateMessage(editingMessage._id, text);
       setEditingMessage(null);
       setMessageText("");
+      setMention(null);
       stopTyping(currentChat._id);
       return;
     }
@@ -1211,6 +1582,7 @@ const ChatWindow = ({ isMobile = false }) => {
       );
       setReplyTo(null);
       setMessageText("");
+      setMention(null);
       clearPendingFiles();
       stopTyping(currentChat._id);
       scrollToBottomLocal();
@@ -1221,11 +1593,74 @@ const ChatWindow = ({ isMobile = false }) => {
     }
   };
 
+  const tagPeople = useMemo(
+    () => chatTagPeople(currentChat?.participants, user),
+    [currentChat?.participants, user],
+  );
+
+  const mentionPeople = useMemo(() => {
+    const query = (mention?.query || "").trim().toLowerCase();
+    return tagPeople
+      .filter((person) => !query || person.username.toLowerCase().includes(query))
+      .sort((a, b) => {
+        const aLate = overdueById[a.id]?.length ? 0 : 1;
+        const bLate = overdueById[b.id]?.length ? 0 : 1;
+        if (aLate !== bLate) return aLate - bLate;
+        return a.username.localeCompare(b.username);
+      });
+  }, [tagPeople, mention?.query, overdueById]);
+
+  const overdueNames = useMemo(
+    () =>
+      tagPeople
+        .filter((person) => overdueById[person.id]?.length)
+        .map((person) => person.username),
+    [tagPeople, overdueById],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    const people = chatTagPeople(currentChat?.participants, user);
+    if (!currentChat?._id || !people.length) {
+      setOverdueById({});
+      return undefined;
+    }
+
+    const load = async () => {
+      const entries = await Promise.all(
+        people.map(async (person) => {
+          try {
+            const response = await taskService.getTasks({ assignTo: person.id });
+            const titles = (response.tasks || [])
+              .filter((task) => canAssignOverdueTag(task, user, isAdmin))
+              .map((task) => task.title)
+              .filter(Boolean);
+            return [person.id, titles];
+          } catch {
+            return [person.id, []];
+          }
+        }),
+      );
+      if (!cancelled) {
+        setOverdueById(Object.fromEntries(entries.filter(([, titles]) => titles.length)));
+      }
+    };
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [currentChat?._id, currentChat?.participants, user, isAdmin]);
+
   const handleTyping = (e) => {
-    setMessageText(e.target.value);
+    const value = e.target.value;
+    const cursor = e.target.selectionStart ?? value.length;
+    setMessageText(value);
+    setMention(mentionAtCursor(value, cursor));
+    setMentionIndex(0);
 
     if (currentChat) {
-      if (e.target.value.trim()) {
+      if (value.trim()) {
         startTyping(currentChat._id);
       } else {
         stopTyping(currentChat._id);
@@ -1233,7 +1668,70 @@ const ChatWindow = ({ isMobile = false }) => {
     }
   };
 
-  const handleKeyPress = (e) => {
+  const insertMention = (person) => {
+    const start = mention?.start ?? messageText.length;
+    const cursor = inputRef.current?.selectionStart ?? messageText.length;
+    const next = `${messageText.slice(0, start)}@${person.username} ${messageText.slice(cursor)}`;
+    const caret = start + person.username.length + 2;
+    setMessageText(next);
+    setMention(null);
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+      inputRef.current?.setSelectionRange(caret, caret);
+    });
+  };
+
+  const tagOverduePeople = () => {
+    const names = overdueNames.map((name) => `@${name}`);
+    if (!names.length) {
+      toast.error("Nobody in this chat has an overdue task");
+      return;
+    }
+    const prefix = messageText && !/\s$/.test(messageText) ? `${messageText} ` : messageText;
+    setMessageText(`${prefix}${names.join(" ")} `);
+    setMention(null);
+    inputRef.current?.focus();
+  };
+
+  const insertAtSign = () => {
+    const cursor = inputRef.current?.selectionStart ?? messageText.length;
+    const before = messageText.slice(0, cursor);
+    const after = messageText.slice(cursor);
+    const needsSpace = before && !/\s$/.test(before);
+    const next = `${before}${needsSpace ? " " : ""}@${after}`;
+    const caret = before.length + (needsSpace ? 2 : 1);
+    setMessageText(next);
+    setMention({ query: "", start: caret - 1 });
+    setMentionIndex(0);
+    requestAnimationFrame(() => {
+      inputRef.current?.focus();
+      inputRef.current?.setSelectionRange(caret, caret);
+    });
+  };
+
+  const handleKeyDown = (e) => {
+    if (mention) {
+      if (e.key === "ArrowDown" && mentionPeople.length) {
+        e.preventDefault();
+        setMentionIndex((index) => (index + 1) % mentionPeople.length);
+        return;
+      }
+      if (e.key === "ArrowUp" && mentionPeople.length) {
+        e.preventDefault();
+        setMentionIndex((index) => (index - 1 + mentionPeople.length) % mentionPeople.length);
+        return;
+      }
+      if ((e.key === "Enter" || e.key === "Tab") && mentionPeople[mentionIndex]) {
+        e.preventDefault();
+        insertMention(mentionPeople[mentionIndex]);
+        return;
+      }
+      if (e.key === "Escape") {
+        e.preventDefault();
+        setMention(null);
+        return;
+      }
+    }
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
       handleSendMessage(e);
@@ -1366,6 +1864,9 @@ const ChatWindow = ({ isMobile = false }) => {
           messagesLoading={messagesLoading}
           messages={messages}
           user={user}
+          participants={currentChat?.participants}
+          isGroup={isGroup}
+          groupMembers={groupMembers}
           typingUsers={typingUsers}
           messagesEndRef={messagesEndRef}
           onAvatarClick={handleUserAvatarClick}
@@ -1374,6 +1875,11 @@ const ChatWindow = ({ isMobile = false }) => {
           onEdit={handleEditMessage}
           onDelete={handleDeleteMessage}
           onOpenGroup={() => setShowGroupDetails(true)}
+          tagNames={[
+            ...tagPeople.map((person) => person.username),
+            user?.username,
+          ].filter(Boolean)}
+          overdueNames={overdueNames}
         />
 
         <ChatScrollButton
@@ -1391,6 +1897,7 @@ const ChatWindow = ({ isMobile = false }) => {
             setReplyTo(null);
             setEditingMessage(null);
             setMessageText("");
+            setMention(null);
           }}
           onSubmit={handleSendMessage}
           fileInputRef={fileInputRef}
@@ -1398,7 +1905,16 @@ const ChatWindow = ({ isMobile = false }) => {
           emojiPickerRef={emojiPickerRef}
           messageText={messageText}
           onTyping={handleTyping}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown}
+          mentionOpen={Boolean(mention)}
+          mentionPeople={mentionPeople}
+          mentionIndex={mentionIndex}
+          overdueById={overdueById}
+          overdueCount={overdueNames.length}
+          showOverdue={overdueNames.length > 0}
+          onPickMention={insertMention}
+          onTagOverdue={tagOverduePeople}
+          onInsertAt={insertAtSign}
           uploadingFiles={uploadingFiles}
           messagesLoading={messagesLoading}
           showEmojiPicker={showEmojiPicker}

@@ -67,6 +67,45 @@ html.lp-lock body {
   pointer-events: none;
 }
 
+.lp-scroll-art {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  pointer-events: none;
+}
+
+.lp-scroll-svg {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+
+.lp-scroll-line {
+  fill: none;
+  stroke: #171717;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.lp-scroll-line--echo {
+  stroke: #ff914b;
+  stroke-width: 1.4;
+  stroke-linecap: butt;
+}
+
+.lp-scroll-knots,
+.lp-scroll-dot {
+  fill: #ff914b;
+  stroke: none;
+}
+
+.dark .lp-scroll-line {
+  stroke: rgba(255, 255, 255, 0.72);
+}
+
 .lp-bg .landing-grid,
 .lp-grid,
 .dark .lp .landing-grid {
@@ -793,6 +832,19 @@ html.lp-lock body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 14px;
+}
+
+.lp-hero-inner,
+.lp-section-head,
+.lp-feature,
+.lp-step,
+.lp-mac,
+.lp-auto-card,
+.lp-stat,
+.lp-band,
+.lp-foot {
+  position: relative;
+  z-index: 2;
 }
 
 .lp-feature {

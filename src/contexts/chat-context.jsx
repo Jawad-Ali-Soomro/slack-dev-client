@@ -48,6 +48,8 @@ export const ChatProvider = ({ children }) => {
   const messageIdsRef = useRef(new Set());
   const currentChatRef = useRef(currentChat);
   const chatsRef = useRef(chats);
+  const userIdRef = useRef("");
+  const readTimersRef = useRef({});
   const socketRef = useRef(null);
   const notificationHandlersRef = useRef({
     addNotification,
@@ -67,6 +69,8 @@ export const ChatProvider = ({ children }) => {
 
   const normalizeId = (id) => (id == null ? "" : String(id));
 
+  userIdRef.current = normalizeId(user?.id || user?._id);
+
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, []);
@@ -80,13 +84,14 @@ export const ChatProvider = ({ children }) => {
       const messageId = normalizeId(message._id);
       if (!messageId || messageIdsRef.current.has(messageId)) return;
       messageIdsRef.current.add(messageId);
+      const senderId = normalizeId(
+        message.sender?._id || message.sender?.id || message.sender,
+      );
 
       setMessages((prev) => {
         const next = new Map(prev);
-        const senderId = normalizeId(
-          message.sender?._id || message.sender?.id || message.sender,
-        );
         const incomingChat = normalizeId(message.chat);
+        let carriedReads = [];
         for (const [id, existing] of next) {
           if (!existing?.pending) continue;
           if (normalizeId(existing.chat) !== incomingChat) continue;
@@ -95,12 +100,16 @@ export const ChatProvider = ({ children }) => {
           );
           if (existingSender !== senderId) continue;
           if ((existing.content || "") !== (message.content || "")) continue;
+          carriedReads = existing.readBy || [];
           next.delete(id);
           messageIdsRef.current.delete(normalizeId(id));
           break;
         }
         if (!next.has(messageId)) {
-          next.set(messageId, message);
+          next.set(messageId, {
+            ...message,
+            readBy: message.readBy?.length ? message.readBy : carriedReads,
+          });
         }
         return next;
       });
@@ -138,6 +147,12 @@ export const ChatProvider = ({ children }) => {
 
       if (normalizeId(currentChatRef.current?._id) === chatId) {
         setTimeout(() => scrollToBottom(), 100);
+        if (senderId && senderId !== userIdRef.current) {
+          clearTimeout(readTimersRef.current[chatId]);
+          readTimersRef.current[chatId] = setTimeout(() => {
+            chatService.markAsRead(chatId).catch(() => {});
+          }, 250);
+        }
       }
     },
     [scrollToBottom],
@@ -321,6 +336,42 @@ export const ChatProvider = ({ children }) => {
           });
         }
         return newMessages;
+      });
+    });
+
+    newSocket.on("messages_seen", (data) => {
+      const readerId = normalizeId(data.userId);
+      const chatId = normalizeId(data.chatId);
+      if (!readerId) return;
+      const reader = {
+        _id: readerId,
+        id: readerId,
+        username: data.username || data.userName || "User",
+        avatar: data.avatar || null,
+      };
+      setMessages((prev) => {
+        const next = new Map(prev);
+        let changed = false;
+        next.forEach((msg, id) => {
+          const messageChat = normalizeId(msg.chat?._id || msg.chat?.id || msg.chat);
+          if (chatId && messageChat && messageChat !== chatId) return;
+          const senderId = normalizeId(msg.sender?._id || msg.sender?.id || msg.sender);
+          if (senderId === readerId) return;
+          const already = (msg.readBy || []).some((read) => {
+            const seenId =
+              typeof read.user === "object"
+                ? normalizeId(read.user._id || read.user.id)
+                : normalizeId(read.user);
+            return seenId === readerId;
+          });
+          if (already) return;
+          changed = true;
+          next.set(id, {
+            ...msg,
+            readBy: [...(msg.readBy || []), { user: reader, readAt: data.readAt }],
+          });
+        });
+        return changed ? next : prev;
       });
     });
 

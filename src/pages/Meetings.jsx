@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useLocation, useSearchParams } from "react-router-dom";
 import { m } from "framer-motion";
 import HorizontalLoader from "../components/horizontal-loader";
@@ -49,6 +49,10 @@ import {
   statusBadgeTone,
   tableBadgeClass,
 } from "@/lib/status-badge-styles";
+import {
+  TableWindowSpacer,
+  useWindowedRows,
+} from "../components/windowed-table-rows";
 import { userService } from "../services/user-service";
 import meetingService from "../services/meeting-service";
 import projectService from "../services/project-service";
@@ -287,14 +291,28 @@ const MeetingsTableSection = ({
   handleEditMeeting,
   handleDeleteMeeting,
   handleJoinMeeting,
-}) => (
+}) => {
+  const tableScrollRef = useRef(null);
+  const meetingWindow = useWindowedRows({
+    count: loading ? 0 : filteredMeetings.length,
+    scrollRef: tableScrollRef,
+  });
+  const visibleMeetings = filteredMeetings.slice(
+    meetingWindow.start,
+    meetingWindow.end,
+  );
+
+  return (
   <>
     
     <m.div
       variants={itemVariants}
       className="bg-white dark:bg-[black] rounded-[15px] shadow-xl overflow-hidden"
     >
-      <div className="overflow-x-auto max-h-[800px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
+      <div
+        ref={tableScrollRef}
+        className="overflow-x-auto max-h-[720px] overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800"
+      >
         <table className="w-full rounded-[15px]">
           <thead className="bg-white rounded-[15px] text-black border-gray-200 dark:border-gray-700 sticky top-0 z-10">
             <tr>
@@ -350,7 +368,12 @@ const MeetingsTableSection = ({
                 </td>
               </tr>
             ) : (
-              filteredMeetings.map((meeting) => (
+              <>
+                <TableWindowSpacer
+                  height={meetingWindow.paddingTop}
+                  colSpan={10}
+                />
+                {visibleMeetings.map((meeting) => (
                 <m.tr
                   key={meeting.id}
                   className={`hover:bg-gray-50 dark:hover:bg-black transition-colors ${selectedMeetings.includes(meeting.id) ? "bg-gray-100 dark:bg-[black]" : ""}`}
@@ -643,14 +666,20 @@ const MeetingsTableSection = ({
                     </div>
                   </td>
                 </m.tr>
-              ))
+                ))}
+                <TableWindowSpacer
+                  height={meetingWindow.paddingBottom}
+                  colSpan={10}
+                />
+              </>
             )}
           </tbody>
         </table>
       </div>
     </m.div>
   </>
-);
+  );
+};
 
 const UserSuggestionList = ({ show, suggestions, onSelect, onAvatarClick }) => {
   if (!show || suggestions.length === 0) return null;

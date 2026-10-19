@@ -8,15 +8,15 @@ import {
   Eye,
   Trash2,
   X,
-  CheckCircle,
   Calendar,
   Target,
   Settings,
   ChevronDown,
   Trash,
-  ArrowUp,
-  ArrowDown,
+  ChevronLeft,
+  ChevronRight,
   FolderOpen,
+  Crown,
 } from "lucide-react";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
@@ -144,22 +144,14 @@ const projectPriorityClass = (priority) => {
   return "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200";
 };
 
-const settingIconClass = (enabled) =>
-  enabled ? "text-green-500" : "text-gray-400";
+const settingBadgeClass = (enabled) =>
+  enabled
+    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+    : "bg-gray-100 text-gray-500 dark:bg-white/5 dark:text-gray-400";
 
 const projectsChevronClass = (showProjects) =>
   `w-5 h-5 icon text-gray-500 transition-transform duration-200 ${
     showProjects ? "rotate-180" : ""
-  }`;
-
-const pageButtonVariant = (current, pageNum) =>
-  current === pageNum ? "default" : "outline";
-
-const pageButtonClass = (current, pageNum) =>
-  `h-12 w-12 p-0 md:w-[120px] w-full ${
-    current === pageNum
-      ? "bg-gray-600 text-white hover:bg-gray-700"
-      : "hover:bg-gray-100 dark:hover:bg-gray-800"
   }`;
 
 const TeamsManageToolbar = ({
@@ -413,7 +405,7 @@ const TeamCard = ({
 
     <div className="flex gap-2 mb-4">
       <span
-        className={`inline-flex items-center px-4 py-2 rounded-[15px] text-xs uppercase  ${getStatusColor(team.isActive)}`}
+        className={`inline-flex items-center rounded-[10px] px-2.5 py-1 text-[10px] font-semibold uppercase ${getStatusColor(team.isActive)}`}
       >
         {team.isActive ? "Active" : "Inactive"}
       </span>
@@ -502,67 +494,62 @@ const TeamsListBody = ({
   );
 };
 
-const TeamsPagination = ({
-  pagination,
-  loading,
-  getPageNumbers,
-  onPageChange,
-}) => (
-  <div className="sticky bottom-0  border-gray-200 dark:border-gray-700 p-4">
-    <m.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3 }}
-      className="flex flex-col sm:flex-row items-center justify-end gap-4"
-    >
-      {pagination.pages > 1 && (
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pagination.page - 1)}
-            disabled={pagination.page === 1 || loading}
-            className="flex items-center gap-1 h-8 px-3 w-[120px] h-[50px]"
-          >
-            <ArrowUp className="w-4 h-4 icon icon rotate-[-90deg]" />
-            Previous
-          </Button>
+const TeamsPagination = ({ pagination, setPagination }) => {
+  if (!pagination || pagination.pages <= 1) return null;
 
-          <div className="flex items-center gap-1">
-            {getPageNumbers().map((pageNum, index) => (
-              <div key={index}>
-                {pageNum === "..." ? (
-                  <span className="px-3 py-1 text-gray-500">...</span>
-                ) : (
-                  <Button
-                    variant={pageButtonVariant(pagination.page, pageNum)}
-                    size="sm"
-                    onClick={() => onPageChange(pageNum)}
-                    disabled={loading}
-                    className={pageButtonClass(pagination.page, pageNum)}
-                  >
-                    {pageNum}
-                  </Button>
+  return (
+    <div className="flex items-center absolute right-5 -bottom-0 justify-end w-full col-span-3 gap-2 mt-8 mb-10">
+      <Button
+        className="w-10 h-10 bg-white hover:bg-white text-black"
+        onClick={() =>
+          setPagination((prev) => ({ ...prev, page: prev.page - 1 }))
+        }
+        disabled={pagination.page === 1}
+      >
+        <ChevronLeft className="w-4 h-4" />
+      </Button>
+
+      <div className="flex items-center gap-1">
+        {Array.from({ length: pagination.pages }, (_, i) => i + 1)
+          .filter((page) => {
+            if (pagination.pages <= 9) return true;
+            return (
+              page === 1 ||
+              page === pagination.pages ||
+              Math.abs(page - pagination.page) <= 1
+            );
+          })
+          .map((page, index, arr) => {
+            const prevPage = arr[index - 1];
+            return (
+              <div key={page} className="flex items-center gap-1">
+                {prevPage && page - prevPage > 1 && (
+                  <span className="px-2 text-muted-foreground">...</span>
                 )}
+                <Button
+                  size="sm"
+                  className={`w-10 h-10 font-bold bg-[#ff914b] hover:bg-[#ff914b] ${pagination.page === page ? "bg-[#ff914b] dark:text-white hover:bg-[#ff914b]" : "bg-white text-black hover:bg-gray-100"}`}
+                  onClick={() => setPagination((prev) => ({ ...prev, page }))}
+                >
+                  {page < 10 ? `0${page}` : page}
+                </Button>
               </div>
-            ))}
-          </div>
+            );
+          })}
+      </div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pagination.page + 1)}
-            disabled={pagination.page === pagination.pages || loading}
-            className="flex items-center gap-1 h-8 px-3 w-[120px] h-[50px]"
-          >
-            Next
-            <ArrowDown className="w-4 h-4 icon icon rotate-[-90deg]" />
-          </Button>
-        </div>
-      )}
-    </m.div>
-  </div>
-);
+      <Button
+        className="w-10 h-10 bg-white hover:bg-white text-black"
+        onClick={() =>
+          setPagination((prev) => ({ ...prev, page: prev.page + 1 }))
+        }
+        disabled={pagination.page === pagination.pages}
+      >
+        <ChevronRight className="w-4 h-4" />
+      </Button>
+    </div>
+  );
+};
 
 const NewTeamModal = ({
   newTeam,
@@ -682,40 +669,42 @@ const NewTeamModal = ({
   </m.div>
 );
 
-const TeamMembersList = ({ members, refreshKey, roundedClass }) => (
-  <div className="space-y-2 max-h-60 overflow-y-auto" key={refreshKey}>
-    {members?.map((member, index) => (
-      <div
-        key={memberKey(member, index, refreshKey)}
-        className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[15px]"
-      >
-        <div className="flex items-center gap-3">
-          <UserAvatar user={member} size="md" />
-          <div>
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                {member.user?.username}
-              </p>
-              {member.user?.availability === "busy" && (
-                <span className="rounded-full bg-red-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-red-500">
-                  Busy
-                </span>
-              )}
-            </div>
-            <p className="text-[11px] text-muted-foreground capitalize">
-              {jobRoleLabel(member.jobRole)}
-            </p>
+const roleBadgeClass = (role) =>
+  `inline-flex h-7 min-w-[68px] items-center justify-center rounded-[10px] px-2 text-[10px] font-semibold uppercase tracking-wide ${getRoleColor(role)}`;
+
+const TeamMembersList = ({ members, refreshKey }) => {
+  const ordered = [...(members || [])].sort((a, b) => {
+    const rank = (role) => (role === "owner" || role === "admin" ? 0 : 1);
+    return rank(a.role) - rank(b.role);
+  });
+
+  return (
+    <div key={refreshKey} className="flex items-end pt-3">
+      {ordered.map((member, index) => {
+        const lead = member.role === "owner" || member.role === "admin";
+        return (
+          <div
+            key={memberKey(member, index, refreshKey)}
+            className="relative"
+            style={{
+              marginLeft: index === 0 ? 0 : -12,
+              zIndex: lead ? ordered.length + 2 : index + 1,
+            }}
+          >
+            {lead && (
+              <Crown className="pointer-events-none absolute -top-3.5 left-1/2 z-20 h-4 w-4 -translate-x-1/2 fill-[#FF914B] text-[#FF914B]" />
+            )}
+            <UserAvatar
+              user={member}
+              size="xl"
+              className="rounded-[10px] ring-2 ring-white dark:ring-zinc-900"
+            />
           </div>
-        </div>
-        <span
-          className={`inline-flex items-center w-[70px] h-7 justify-center uppercase ${roundedClass} text-[10px] font-medium ${getRoleColor(member.role)}`}
-        >
-          {member.role}
-        </span>
-      </div>
-    ))}
-  </div>
-);
+        );
+      })}
+    </div>
+  );
+};
 
 const TeamInvitationsList = ({ teamInvites, onCancelInvite }) => {
   if (teamInvites.length === 0) {
@@ -746,7 +735,7 @@ const TeamInvitationsList = ({ teamInvites, onCancelInvite }) => {
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <span
-            className={`px-3 py-1 rounded-[15px] text-[10px] uppercase font-medium ${getInviteStatusColor(invite.status)}`}
+            className={`rounded-[10px] px-2.5 py-1 text-[10px] font-semibold uppercase ${getInviteStatusColor(invite.status)}`}
           >
             {invite.status}
           </span>
@@ -788,7 +777,6 @@ const TeamDetailsMembersPanel = ({
           <TeamMembersList
             members={selectedTeam.members}
             refreshKey={refreshKey}
-            roundedClass="rounded-[15px]"
           />
         </TabsContent>
         <TabsContent value="invitations">
@@ -810,7 +798,6 @@ const TeamDetailsMembersPanel = ({
       <TeamMembersList
         members={selectedTeam.members}
         refreshKey={refreshKey}
-        roundedClass="rounded-[15px]"
       />
     </>
   );
@@ -837,12 +824,12 @@ const TeamProjectCard = ({ project, index }) => (
     <div className="flex items-center justify-between text-xs">
       <div className="flex items-center gap-2">
         <span
-          className={`px-2 py-1 rounded-[15px] text-xs uppercase font-medium ${projectStatusClass(project.status)}`}
+          className={`rounded-[10px] px-2 py-1 text-[10px] font-semibold uppercase ${projectStatusClass(project.status)}`}
         >
           {project.status || "planning"}
         </span>
         <span
-          className={`px-2 py-1 rounded-[15px] text-xs uppercase font-medium ${projectPriorityClass(project.priority)}`}
+          className={`rounded-[10px] px-2 py-1 text-[10px] font-semibold uppercase ${projectPriorityClass(project.priority)}`}
         >
           {project.priority || "low"}
         </span>
@@ -930,80 +917,60 @@ const TeamDetailsModal = ({
       initial={{ scale: 0.9, opacity: 0 }}
       animate={{ scale: 1, opacity: 1 }}
       exit={{ scale: 0.9, opacity: 0 }}
-      className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+      className="max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl border border-gray-200 bg-white shadow-2xl dark:border-white/10 dark:bg-zinc-900"
       onClick={(e) => e.stopPropagation()}
     >
       <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h2 className="text-2xl  text-gray-900 dark:text-white font-bold">
-              {selectedTeam.name}
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
+        <div className="flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                {selectedTeam.name}
+              </h2>
+              <span
+                className={`inline-flex items-center rounded-[10px] px-2.5 py-1 text-[10px] font-semibold uppercase ${getStatusColor(selectedTeam.isActive)}`}
+              >
+                {selectedTeam.isActive ? "Active" : "Inactive"}
+              </span>
+            </div>
+            <p className="mt-1 text-sm text-muted-foreground">
               Created by {selectedTeam.createdBy?.username} •{" "}
               {new Date(selectedTeam.createdAt).toLocaleDateString()}
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500"
+            className="rounded-[10px] p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-white/10"
           >
-            <X className="w-6 h-6 icon" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div>
-              <p className="text-muted-foreground">
-                {selectedTeam.description || "No description provided"}
-              </p>
-            </div>
+        <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+          {selectedTeam.description || "No description provided"}
+        </p>
 
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <span
-                  className={`inline-flex items-center px-4 py-2 uppercase rounded-[15px] text-xs font-medium ${getStatusColor(selectedTeam.isActive)}`}
-                >
-                  {selectedTeam.isActive ? "Active" : "Inactive"}
-                </span>
-              </div>
-            </div>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <span
+            className={`inline-flex items-center rounded-[10px] px-2.5 py-1 text-[10px] font-semibold uppercase ${settingBadgeClass(selectedTeam.settings?.allowMemberInvites)}`}
+          >
+            Member invites
+          </span>
+          <span
+            className={`inline-flex items-center rounded-[10px] px-2.5 py-1 text-[10px] font-semibold uppercase ${settingBadgeClass(selectedTeam.settings?.allowProjectCreation)}`}
+          >
+            Project creation
+          </span>
+        </div>
 
-            <div>
-              <h4 className="text-sm font-medium text-muted-foreground mb-2">
-                Settings
-              </h4>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2 text-sm">
-                  <CheckCircle
-                    className={`w-4 h-4 icon ${settingIconClass(selectedTeam.settings?.allowMemberInvites)}`}
-                  />
-                  <span className="text-muted-foreground">
-                    Member invites allowed
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-sm">
-                  <CheckCircle
-                    className={`w-4 h-4 icon ${settingIconClass(selectedTeam.settings?.allowProjectCreation)}`}
-                  />
-                  <span className="text-muted-foreground">
-                    Project creation allowed
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div>
-            <TeamDetailsMembersPanel
-              selectedTeam={selectedTeam}
-              user={user}
-              teamInvites={teamInvites}
-              refreshKey={refreshKey}
-              onCancelInvite={onCancelInvite}
-            />
-          </div>
+        <div className="mt-6 border-t border-gray-100 pt-5 dark:border-white/10">
+          <TeamDetailsMembersPanel
+            selectedTeam={selectedTeam}
+            user={user}
+            teamInvites={teamInvites}
+            refreshKey={refreshKey}
+            onCancelInvite={onCancelInvite}
+          />
         </div>
 
         <TeamDetailsProjects
@@ -1045,27 +1012,32 @@ const MembersManageModal = ({
       onClick={(e) => e.stopPropagation()}
     >
       <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl  text-gray-900 dark:text-white">
-            Manage Members - {selectedTeam.name}
-          </h2>
+        <div className="mb-5 flex items-start justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+              Edit members
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {selectedTeam.name}
+            </p>
+          </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500"
+            className="rounded-[10px] p-2 text-gray-500 hover:bg-gray-100 dark:hover:bg-white/10"
           >
-            <X className="w-6 h-6 icon" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="mb-6 rounded-[15px]">
+        <div className="mb-6">
           <div className="flex flex-col gap-2">
             <div className="flex gap-2">
-              <div className="relative flex-1 member-search-container">
+              <div className="relative min-w-0 flex-1 member-search-container">
                 <Input
                   value={memberSearch}
                   onChange={(e) => onMemberSearch(e.target.value)}
                   placeholder="Search friends..."
-                  className="w-full h-12 rounded-[15px]"
+                  className="h-11 w-full rounded-[10px]"
                 />
                 {showMemberSuggestions && memberSuggestions.length > 0 && (
                   <div className="absolute z-10 w-full mt-1 bg-white dark:bg-black  border-gray-200 dark:border-gray-700 rounded-[15px] shadow-lg max-h-48 overflow-y-auto">
@@ -1103,7 +1075,7 @@ const MembersManageModal = ({
                   setNewMember({ ...newMember, role: value })
                 }
               >
-                <SelectTrigger className="w-36 px-5 cursor-pointer">
+                <SelectTrigger className="h-11 w-32 shrink-0 cursor-pointer rounded-[10px] px-3">
                   <SelectValue placeholder="Access" />
                 </SelectTrigger>
                 <SelectContent>
@@ -1125,7 +1097,7 @@ const MembersManageModal = ({
                 setNewMember({ ...newMember, jobRole: value })
               }
             >
-              <SelectTrigger className="w-full px-5 cursor-pointer h-12">
+              <SelectTrigger className="h-11 w-full cursor-pointer rounded-[10px] px-3">
                 <SelectValue placeholder="Select job role (required)" />
               </SelectTrigger>
               <SelectContent>
@@ -1144,37 +1116,37 @@ const MembersManageModal = ({
         </div>
 
         <div>
-          <h3 className="text-lg  text-gray-900 dark:text-white mb-4">
-            Current Members
+          <h3 className="mb-3 text-sm font-semibold text-gray-900 dark:text-white">
+            Current members
           </h3>
           <div
-            className="space-y-2 max-h-60 overflow-y-auto"
+            className="max-h-72 space-y-1.5 overflow-y-auto"
             key={refreshKey}
           >
             {selectedTeam.members?.map((member, index) => (
               <div
                 key={memberKey(member, index, refreshKey)}
-                className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[15px]"
+                className="flex flex-col gap-3 rounded-[12px] border border-gray-100 bg-gray-50 px-3 py-2.5 dark:border-white/5 dark:bg-white/[0.03] sm:flex-row sm:items-center sm:justify-between"
               >
-                <div className="flex items-center gap-3 min-w-0">
+                <div className="flex min-w-0 items-center gap-3">
                   <UserAvatar user={member} size="md" />
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white truncate">
+                      <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
                         {member.user?.username}
                       </p>
                       {member.user?.availability === "busy" && (
-                        <span className="shrink-0 rounded-full bg-red-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-red-500">
+                        <span className="shrink-0 rounded-[10px] bg-red-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase text-red-500">
                           Busy
                         </span>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="truncate text-xs text-muted-foreground">
                       {member.user?.email}
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
+                <div className="flex items-center gap-2 sm:shrink-0">
                   <Select
                     value={member.jobRole || "unassigned"}
                     onValueChange={(value) =>
@@ -1184,7 +1156,7 @@ const MembersManageModal = ({
                       )
                     }
                   >
-                    <SelectTrigger className="h-8 w-[120px] px-3 text-xs">
+                    <SelectTrigger className="h-8 w-[120px] rounded-[10px] px-3 text-xs">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -1205,9 +1177,7 @@ const MembersManageModal = ({
                       </SelectItem>
                     </SelectContent>
                   </Select>
-                  <span
-                    className={`inline-flex items-center w-[70px] h-7 justify-center uppercase rounded-[15px] text-[10px] font-medium ${getRoleColor(member.role)}`}
-                  >
+                  <span className={roleBadgeClass(member.role)}>
                     {member.role}
                   </span>
                   {member.role !== "owner" && (
@@ -1219,9 +1189,9 @@ const MembersManageModal = ({
                           member.user?.id || member.user?._id,
                         )
                       }
-                      className="text-red-600 w-12 hover:text-red-700"
+                      className="h-8 w-8 rounded-[10px] p-0 text-red-600 hover:text-red-700"
                     >
-                      <Trash className="w-4 h-4 icon icon icon" />
+                      <Trash className="h-4 w-4" />
                     </Button>
                   )}
                 </div>
@@ -1625,45 +1595,6 @@ const TeamsManage = () => {
     return matchesSearch && matchesStatus;
   });
 
-  const handlePageChange = (newPage) => {
-    setPagination((prev) => ({ ...prev, page: newPage }));
-  };
-
-  const handlePageSizeChange = (newLimit) => {
-    setPagination((prev) => ({ ...prev, limit: newLimit, page: 1 }));
-  };
-
-  const getPageNumbers = () => {
-    const { page, pages } = pagination;
-    const delta = 2;
-    const range = [];
-    const rangeWithDots = [];
-
-    for (
-      let i = Math.max(2, page - delta);
-      i <= Math.min(pages - 1, page + delta);
-      i++
-    ) {
-      range.push(i);
-    }
-
-    if (page - delta > 2) {
-      rangeWithDots.push(1, "...");
-    } else {
-      rangeWithDots.push(1);
-    }
-
-    rangeWithDots.push(...range);
-
-    if (page + delta < pages - 1) {
-      rangeWithDots.push("...", pages);
-    } else if (pages > 1) {
-      rangeWithDots.push(pages);
-    }
-
-    return rangeWithDots;
-  };
-
   useEffect(() => {
     if (pagination.page !== 1) {
       setPagination((prev) => ({ ...prev, page: 1 }));
@@ -1761,9 +1692,7 @@ const TeamsManage = () => {
 
       <TeamsPagination
         pagination={pagination}
-        loading={loading}
-        getPageNumbers={getPageNumbers}
-        onPageChange={handlePageChange}
+        setPagination={setPagination}
       />
 
       <TeamsManageModals

@@ -363,7 +363,7 @@ const Friends = () => {
                       actions: (
                         <Badge
                           variant="outline"
-                          className="text-amber-600 border-amber-200 bg-amber-50 dark:bg-amber-500/10 shrink-0"
+                          className="text-amber-600 border-amber-200 bg-amber-50 dark:bg-amber-500/10 px-2 py-2 rounded-[10px] dark:border-amber-500/10 shrink-0"
                         >
                           <Clock className="h-3 w-3 mr-1" />
                           Pending

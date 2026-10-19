@@ -1,6 +1,6 @@
 * {
-  font-family: "Quicksand", sans-serif !important;
-  font-weight: 700 !important;
+  font-family: "Tuffy" !important;
+  font-weight: 600 !important;
 }
 
 
@@ -1805,7 +1805,7 @@ button.status-chip {
 }
 
 .avatar-group {
-  border-radius: 999px !important;
+  border-radius: 10px !important;
 }
 
 .chat-shell {

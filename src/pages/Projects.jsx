@@ -21,6 +21,8 @@ import {
   TrendingUp,
   ArrowDown,
   ArrowUp,
+  ChevronLeft,
+  ChevronRight,
   Minus,
   AlertTriangle,
   Camera,
@@ -30,6 +32,7 @@ import {
   Folder,
 } from "lucide-react";
 import { toast } from "sonner";
+import { statusBadgeTone, tableBadgeClass } from "@/lib/status-badge-styles";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { Textarea } from "../components/ui/textarea";
@@ -63,7 +66,7 @@ import {
 import UserDetailsModal from "../components/user-details-modal";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DatePicker } from "@/components/ui/date-picker";
-import { PiFolderDuotone, PiLinkSimpleDuotone, PiUsersDuotone } from "react-icons/pi";
+import { PiFolderDuotone, PiLinkSimpleDuotone, PiPlusCircleFill, PiUsersDuotone } from "react-icons/pi";
 import { usePermissions } from "@/hooks/use-permissions";
 import { Link } from "react-router-dom";
 
@@ -86,154 +89,154 @@ const ProjectsHeaderSection = ({
 }) => (
   <>
     <div className="flex py-6 gap-3 items-center fixed z-10 md:-top-3 -top-30 z-10">
-          <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
-            <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
-              <Folder size={15} />
-            </div>
-            <h1 className="text-2xl font-bold">My Projects</h1>
-          </div>
+      <div className="flex p-2 border-2 items-center gap-2 pr-10 rounded-[15px]">
+        <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
+          <Folder size={15} />
         </div>
-        
+        <h1 className="text-2xl font-bold">My Projects</h1>
+      </div>
+    </div>
+
+    <m.div
+      variants={itemVariants}
+      className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8"
+    >
+      <div>
         <m.div
           variants={itemVariants}
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8"
+          className="flex flex-col sm:flex-row gap-4 w-full"
         >
-          <div>
-            <m.div
-              variants={itemVariants}
-              className="flex flex-col sm:flex-row gap-4 w-full"
-            >
-              <div className="w-full md:w-auto">
-                <div className="relative max-w-3xl">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon icon" />
-                  <Input
-                    type="text"
-                    placeholder="Search projects..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className={getInputClasses(
-                      "default",
-                      "md",
-                      "pl-10 w-full md:w-[500px] w-full h-13 bg-white dark:bg-[black] text-black dark:text-white",
-                    )}
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-4 w-full">
-                <Select value={filterStatus} onValueChange={setFilterStatus}>
-                  <SelectTrigger className="md:w-[180px] w-1/2 px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[black] h-13">
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem
-                      className={"px-5 h-10 cursor-pointer"}
-                      value="all"
-                    >
-                      All Status
-                    </SelectItem>
-                    <SelectItem
-                      className={"px-5 h-10 cursor-pointer"}
-                      value="planning"
-                    >
-                      Planning
-                    </SelectItem>
-                    <SelectItem
-                      className={"px-5 h-10 cursor-pointer"}
-                      value="active"
-                    >
-                      Active
-                    </SelectItem>
-                    <SelectItem
-                      className={"px-5 h-10 cursor-pointer"}
-                      value="on_hold"
-                    >
-                      On Hold
-                    </SelectItem>
-                    <SelectItem
-                      className={"px-5 h-10 cursor-pointer"}
-                      value="completed"
-                    >
-                      Completed
-                    </SelectItem>
-                    <SelectItem
-                      className={"px-5 h-10 cursor-pointer"}
-                      value="cancelled"
-                    >
-                      Cancelled
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-
-                <Select
-                  value={filterPriority}
-                  onValueChange={setFilterPriority}
-                >
-                  <SelectTrigger className="md:w-[180px] w-1/2 bg-white px-5 text-gray-600 dark:text-white cursor-pointer dark:bg-[black] h-13">
-                    <SelectValue placeholder="Priority" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem
-                      className={"px-5 h-10 cursor-pointer"}
-                      value="all"
-                    >
-                      All Priority
-                    </SelectItem>
-                    <SelectItem
-                      className={"px-5 h-10 cursor-pointer"}
-                      value="low"
-                    >
-                      Low
-                    </SelectItem>
-                    <SelectItem
-                      className={"px-5 h-10 cursor-pointer"}
-                      value="medium"
-                    >
-                      Medium
-                    </SelectItem>
-                    <SelectItem
-                      className={"px-5 h-10 cursor-pointer"}
-                      value="high"
-                    >
-                      High
-                    </SelectItem>
-                    <SelectItem
-                      className={"px-5 h-10 cursor-pointer"}
-                      value="urgent"
-                    >
-                      Urgent
-                    </SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </m.div>
+          <div className="w-full md:w-auto">
+            <div className="relative max-w-3xl">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 icon icon" />
+              <Input
+                type="text"
+                placeholder="Search projects..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={getInputClasses(
+                  "default",
+                  "md",
+                  "pl-10 w-full md:w-[500px] w-full h-13 bg-white dark:bg-[black] text-black dark:text-white",
+                )}
+              />
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            {permissions.canCreateProject && (
-              <Button
-                onClick={() => {
-                  if (!permissions.canCreateProject) {
-                    toast.error(
-                      "You do not have permission to create projects. Contact an admin.",
-                    );
-                    return;
-                  }
-                  setShowNewProjectPopup(true);
-                }}
-                className={
-                  "md:w-[200px] w-full rounded-[15px] rounded-[15px] h-12 font-bold"
-                }
-              >
-                <PiFolderDuotone />
-                New Project
-              </Button>
-            )}
+
+          <div className="flex gap-4 w-full">
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="md:w-[180px] w-1/2 px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[black] h-13">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  className={"px-5 h-10 cursor-pointer"}
+                  value="all"
+                >
+                  All Status
+                </SelectItem>
+                <SelectItem
+                  className={"px-5 h-10 cursor-pointer"}
+                  value="planning"
+                >
+                  Planning
+                </SelectItem>
+                <SelectItem
+                  className={"px-5 h-10 cursor-pointer"}
+                  value="active"
+                >
+                  Active
+                </SelectItem>
+                <SelectItem
+                  className={"px-5 h-10 cursor-pointer"}
+                  value="on_hold"
+                >
+                  On Hold
+                </SelectItem>
+                <SelectItem
+                  className={"px-5 h-10 cursor-pointer"}
+                  value="completed"
+                >
+                  Completed
+                </SelectItem>
+                <SelectItem
+                  className={"px-5 h-10 cursor-pointer"}
+                  value="cancelled"
+                >
+                  Cancelled
+                </SelectItem>
+              </SelectContent>
+            </Select>
+
+            <Select
+              value={filterPriority}
+              onValueChange={setFilterPriority}
+            >
+              <SelectTrigger className="md:w-[180px] w-1/2 bg-white px-5 text-gray-600 dark:text-white cursor-pointer dark:bg-[black] h-13">
+                <SelectValue placeholder="Priority" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem
+                  className={"px-5 h-10 cursor-pointer"}
+                  value="all"
+                >
+                  All Priority
+                </SelectItem>
+                <SelectItem
+                  className={"px-5 h-10 cursor-pointer"}
+                  value="low"
+                >
+                  Low
+                </SelectItem>
+                <SelectItem
+                  className={"px-5 h-10 cursor-pointer"}
+                  value="medium"
+                >
+                  Medium
+                </SelectItem>
+                <SelectItem
+                  className={"px-5 h-10 cursor-pointer"}
+                  value="high"
+                >
+                  High
+                </SelectItem>
+                <SelectItem
+                  className={"px-5 h-10 cursor-pointer"}
+                  value="urgent"
+                >
+                  Urgent
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </m.div>
+      </div>
+      <div className="flex items-center gap-4">
+        {permissions.canCreateProject && (
+          <Button
+            onClick={() => {
+              if (!permissions.canCreateProject) {
+                toast.error(
+                  "You do not have permission to create projects. Contact an admin.",
+                );
+                return;
+              }
+              setShowNewProjectPopup(true);
+            }}
+            className={
+              "md:w-[150px] w-full rounded-[15px] rounded-[15px] h-12 font-bold"
+            }
+          >
+            <PiPlusCircleFill />
+            New Project
+          </Button>
+        )}
+      </div>
+    </m.div>
 
-        
 
-        
+
+
   </>
 );
 
@@ -256,328 +259,305 @@ const ProjectsGridSection = ({
   handleUserAvatarClick,
 }) => (
   <>
-    
-        <m.div
-          variants={itemVariants}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-        >
-          {loading ? (
-            [1, 2, 3, 4, 5, 6].map((i) => (
-              <div
-                key={i}
-                className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] border border-gray-200 dark:border-none p-6"
-              >
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1 min-h-[3rem] flex items-center gap-3">
-                    <Skeleton className="h-8 w-8 rounded-[15px] flex-shrink-0" />
-                    <Skeleton className="h-5 w-[140px] rounded-md" />
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Skeleton className="h-10 w-10 rounded-md" />
-                    <Skeleton className="h-10 w-10 rounded-md" />
-                    <Skeleton className="h-10 w-10 rounded-md" />
-                  </div>
-                </div>
-                <div className="flex gap-2 mb-4">
-                  <Skeleton className="h-8 w-[80px] rounded-[15px]" />
-                  <Skeleton className="h-8 w-[70px] rounded-[15px]" />
-                </div>
-                <div className="mb-4">
-                  <div className="flex justify-between text-sm mb-1">
-                    <Skeleton className="h-4 w-14 rounded-md" />
-                    <Skeleton className="h-4 w-8 rounded-md" />
-                  </div>
-                  <Skeleton className="w-full h-2 rounded-[15px]" />
-                </div>
-                <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
-                  <div className="flex -space-x-2">
-                    <Skeleton className="h-10 w-10 rounded-[15px]" />
-                    <Skeleton className="h-10 w-10 rounded-[15px]" />
-                    <Skeleton className="h-10 w-10 rounded-[15px]" />
-                  </div>
-                  <Skeleton className="h-4 w-20 rounded-md" />
-                </div>
+
+    <m.div
+      variants={itemVariants}
+      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+    >
+      {loading ? (
+        [1, 2, 3, 4, 5, 6].map((i) => (
+          <div
+            key={i}
+            className="bg-white dark:bg-[rgba(255,255,255,.1)] rounded-[15px] border border-gray-200 dark:border-none p-6"
+          >
+            <div className="flex items-start justify-between mb-4">
+              <div className="flex-1 min-h-[3rem] flex items-center gap-3">
+                <Skeleton className="h-8 w-8 rounded-[15px] flex-shrink-0" />
+                <Skeleton className="h-5 w-[140px] rounded-md" />
               </div>
-            ))
-          ) : filteredProjects.length === 0 ? (
-            <div className="col-span-full text-center py-12">
-              <h3 className="text-xl  text-gray-900 dark:text-white mb-2">
-                No projects found
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                Get started by creating your first project
-              </p>
-              <Button
-                onClick={() => {
-                  if (!permissions.canCreateProject) {
-                    toast.error(
-                      "You do not have permission to create projects. Contact an admin.",
-                    );
-                    return;
-                  }
-                  setShowNewProjectPopup(true);
-                }}
-                disabled={!permissions.canCreateProject}
-                className={"md:w-[200px] w-full"}
-              >
-                <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
-                Create Project
-              </Button>
+              <div className="flex items-center gap-1">
+                <Skeleton className="h-10 w-10 rounded-md" />
+                <Skeleton className="h-10 w-10 rounded-md" />
+                <Skeleton className="h-10 w-10 rounded-md" />
+              </div>
             </div>
-          ) : (
-            filteredProjects.map((project) => (
-              <m.div
-                key={project.id}
-                variants={itemVariants}
-                whileHover={{ y: -4 }}
-                className="group relative flex flex-col overflow-hidden rounded-[15px] border border-gray-200 bg-white p-6 shadow-sm transition-[border-color,box-shadow] duration-300 hover:border-[#FF914B]/40 hover:shadow-xl dark:border-none dark:bg-[rgba(255,255,255,.1)]"
-              >
-                
-                <div className="pointer-events-none absolute -right-16 -top-16 h-32 w-32 rounded-full bg-[#FF914B]/10 blur-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+            <div className="flex gap-2 mb-4">
+              <Skeleton className="h-8 w-[80px] rounded-[15px]" />
+              <Skeleton className="h-8 w-[70px] rounded-[15px]" />
+            </div>
+            <div className="mb-4">
+              <div className="flex justify-between text-sm mb-1">
+                <Skeleton className="h-4 w-14 rounded-md" />
+                <Skeleton className="h-4 w-8 rounded-md" />
+              </div>
+              <Skeleton className="w-full h-2 rounded-[15px]" />
+            </div>
+            <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-gray-700">
+              <div className="flex -space-x-2">
+                <Skeleton className="h-10 w-10 rounded-[15px]" />
+                <Skeleton className="h-10 w-10 rounded-[15px]" />
+                <Skeleton className="h-10 w-10 rounded-[15px]" />
+              </div>
+              <Skeleton className="h-4 w-20 rounded-md" />
+            </div>
+          </div>
+        ))
+      ) : filteredProjects.length === 0 ? (
+        <div className="col-span-full text-center py-12">
+          <h3 className="text-xl  text-gray-900 dark:text-white mb-2">
+            No projects found
+          </h3>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            Get started by creating your first project
+          </p>
+          <Button
+            onClick={() => {
+              if (!permissions.canCreateProject) {
+                toast.error(
+                  "You do not have permission to create projects. Contact an admin.",
+                );
+                return;
+              }
+              setShowNewProjectPopup(true);
+            }}
+            disabled={!permissions.canCreateProject}
+            className={"md:w-[200px] w-full"}
+          >
+            <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
+            Create Project
+          </Button>
+        </div>
+      ) : (
+        filteredProjects.map((project) => (
+          <m.div
+            key={project.id}
+            variants={itemVariants}
+            whileHover={{ y: -4 }}
+            className="group relative flex flex-col overflow-hidden rounded-[15px] border border-gray-200 bg-white p-6 shadow-sm transition-[border-color,box-shadow] duration-300 hover:border-[#FF914B]/40 hover:shadow-xl dark:border-none dark:bg-[rgba(255,255,255,.1)]"
+          >
 
-                
-                <div className="relative mb-4 flex items-start justify-between gap-2">
-                  <div className="flex min-w-0 flex-1 items-center gap-3">
-                    {project.logo ? (
-                      <img
-                        src={
-                          project.logo.startsWith("http")
-                            ? project.logo
-                            : `${import.meta.env.VITE_API_URL || "http://localhost:4000"}${project.logo}`
-                        }
-                        alt={project.name}
-                        className="h-12 w-12 shrink-0 rounded-[15px] border border-gray-200 bg-gray-100 object-cover p-1 dark:border-gray-700"
-                      />
-                    ) : (
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[15px] bg-gradient-to-br from-[#FF914B] to-[#ff6a3d] text-lg font-bold text-white shadow-md">
-                        {(project.name?.charAt(0) || "P").toUpperCase()}
-                      </div>
-                    )}
-                    <h3 className="line-clamp-2 min-w-0 text-lg font-bold text-gray-900 dark:text-white">
-                      {project.name}
-                    </h3>
-                  </div>
-                  <div className="flex shrink-0 items-center gap-0.5">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => handleViewProject(project)}
-                      className="w-12 p-2 text-gray-400 hover:text-[#FF914B] dark:hover:text-[#FF914B]"
-                    >
-                      <Eye className="w-4 h-4 icon icon icon" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedProject(project);
-                        setProjectProgress(project.progress || 0);
-                        setShowProgressModal(true);
-                      }}
-                      className="w-12 p-2 text-gray-400 hover:text-[#FF914B] dark:hover:text-[#FF914B]"
-                    >
-                      <TrendingUp className="w-4 h-4 icon icon icon" />
-                    </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm" className="w-12 p-2">
-                          <MoreVertical className="w-4 h-4 icon icon icon" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem
-                          className="h-11 px-5 pr-8 cursor-pointer"
-                          onClick={() => handleViewProject(project)}
-                        >
-                          <Eye className="w-4 h-4 icon icon mr-2 icon" />
-                          View Details
-                        </DropdownMenuItem>
-                        {isProjectOwner(project) && (
-                          <>
-                            <DropdownMenuItem className="h-11 px-5 pr-8 cursor-pointer">
-                              <Edit className="w-4 h-4 icon icon mr-2 icon" />
-                              Edit Project
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="h-11 px-5 pr-8 cursor-pointer"
-                              onClick={() => {
-                                setSelectedProject(project);
-                                setShowMembersModal(true);
-                              }}
-                            >
-                              <Settings className="w-4 h-4 icon icon mr-2 icon" />
-                              Edit Members
-                            </DropdownMenuItem>
-                            <DropdownMenuItem
-                              className="h-11 px-5 pr-8 cursor-pointer"
-                              onClick={() => handleDeleteProject(project.id)}
-                            >
-                              <Trash2 className="w-4 h-4 text-red-600 icon icon mr-2" />
-                              <span className="text-red-600 hover:text-red-600">Delete</span>
-                            </DropdownMenuItem>
-                          </>
-                        )}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </div>
+            <div className="pointer-events-none absolute -right-16 -top-16 h-32 w-32 rounded-full bg-[#FF914B]/10 blur-2xl opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
 
-                
-                <div className="relative mb-4 flex flex-wrap gap-2">
-                  <span
-                    className={`inline-flex items-center gap-1 rounded-[15px] border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide ${getStatusColor(project.status)}`}
-                  >
-                    {getStatusIcon(project.status)}
-                    {project.status.replace("_", " ")}
-                  </span>
-                  <span
-                    className={`inline-flex items-center rounded-[15px] border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide ${getPriorityColor(project.priority)}`}
-                  >
-                    {project.priority}
-                  </span>
-                </div>
 
-                
-                <div className="relative mb-4">
-                  <div className="mb-1.5 flex justify-between text-xs font-medium text-gray-500 dark:text-gray-400">
-                    <span>Progress</span>
-                    <span className="text-gray-900 dark:text-white">
-                      {project.progress}%
-                    </span>
-                  </div>
-                  <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-r from-[#FF914B] to-[#ff6a3d] transition-[width] duration-500"
-                      style={{ width: `${project.progress}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                
-                
-
-                
-                
-
-                
-                {project.tags && project.tags.length > 0 && (
-                  <div className="relative mb-4 flex flex-wrap items-center gap-2">
-                    {project.tags.slice(0, 3).map((tag, index) => (
-                      <span
-                        key={index}
-                        className="inline-flex items-center rounded-[15px] bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700 dark:bg-white/5 dark:text-gray-300"
-                      >
-                        <Tag className="w-3 h-3 icon mr-1 icon" />
-                        {tag}
-                      </span>
-                    ))}
-                    {project.tags.length > 3 && (
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        +{project.tags.length - 3} more
-                      </span>
-                    )}
+            <div className="relative mb-4 flex items-start justify-between gap-2">
+              <div className="flex min-w-0 flex-1 items-center gap-3">
+                {project.logo ? (
+                  <img
+                    src={
+                      project.logo.startsWith("http")
+                        ? project.logo
+                        : `${import.meta.env.VITE_API_URL || "http://localhost:4000"}${project.logo}`
+                    }
+                    alt={project.name}
+                    className="h-12 w-12 shrink-0 rounded-[15px] border border-gray-200 bg-gray-100 object-cover p-1 dark:border-gray-700"
+                  />
+                ) : (
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[15px] bg-gradient-to-br from-[#FF914B] to-[#ff6a3d] text-lg font-bold text-white shadow-md">
+                    {(project.name?.charAt(0) || "P").toUpperCase()}
                   </div>
                 )}
-
-                
-                <div className="relative mt-auto flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
-                  <AvatarGroup
-                    users={project.members}
-                    max={3}
-                    size="lg"
-                    emptyLabel="No members yet"
-                    onUserClick={(id) => id && handleUserAvatarClick(id)}
-                  />
-                  <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
-                    <Calendar className="h-3.5 w-3.5" />
-                    {new Date(project.createdAt).toLocaleDateString()}
-                  </div>
-                </div>
-              </m.div>
-            ))
-          )}
-        </m.div>
-  </>
-);
-
-const ProjectsPaginationSection = ({
-  loading,
-  pagination,
-  handlePageChange,
-  getPageNumbers,
-}) => (
-  <>
-    
-        <div className="sticky bottom-0  border-gray-200 dark:border-gray-700 p-4">
-          <m.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-end gap-4"
-          >
-            
-
-            
-            {pagination.pages > 1 && (
-              <div className="flex items-center gap-2">
-                
+                <h3 className="line-clamp-2 min-w-0 text-lg font-bold text-gray-900 dark:text-white">
+                  {project.name}
+                </h3>
+              </div>
+              <div className="flex shrink-0 items-center gap-0.5">
                 <Button
-                  variant="outline"
+                  variant="ghost"
                   size="sm"
-                  onClick={() => handlePageChange(pagination.page - 1)}
-                  disabled={pagination.page === 1 || loading}
-                  className="flex items-center gap-1 h-8 px-3  w-[120px] h-[50px]"
+                  onClick={() => handleViewProject(project)}
+                  className="w-12 p-2 text-gray-400 hover:text-[#FF914B] dark:hover:text-[#FF914B]"
                 >
-                  <ArrowUp className="w-4 h-4 icon icon rotate-[-90deg]" />
-                  Previous
+                  <Eye className="w-4 h-4 icon icon icon" />
                 </Button>
-
-                
-                <div className="flex items-center gap-1">
-                  {getPageNumbers().map((pageNum, index) => (
-                    <div key={index}>
-                      {pageNum === "..." ? (
-                        <span className="px-3 py-1 text-gray-500">...</span>
-                      ) : (
-                        <Button
-                          variant={
-                            pagination.page === pageNum ? "default" : "outline"
-                          }
-                          size="sm"
-                          onClick={() => handlePageChange(pageNum)}
-                          disabled={loading}
-                          className={`h-12 w-12 p-0 ${
-                            pagination.page === pageNum
-                              ? "bg-gray-600 text-white hover:bg-gray-700"
-                              : "hover:bg-gray-100 dark:hover:bg-gray-800"
-                          }`}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setSelectedProject(project);
+                    setProjectProgress(project.progress || 0);
+                    setShowProgressModal(true);
+                  }}
+                  className="w-12 p-2 text-gray-400 hover:text-[#FF914B] dark:hover:text-[#FF914B]"
+                >
+                  <TrendingUp className="w-4 h-4 icon icon icon" />
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="w-12 p-2">
+                      <MoreVertical className="w-4 h-4 icon icon icon" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      className="h-11 px-5 pr-8 cursor-pointer"
+                      onClick={() => handleViewProject(project)}
+                    >
+                      <Eye className="w-4 h-4 icon icon mr-2 icon" />
+                      View Details
+                    </DropdownMenuItem>
+                    {isProjectOwner(project) && (
+                      <>
+                        <DropdownMenuItem className="h-11 px-5 pr-8 cursor-pointer">
+                          <Edit className="w-4 h-4 icon icon mr-2 icon" />
+                          Edit Project
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="h-11 px-5 pr-8 cursor-pointer"
+                          onClick={() => {
+                            setSelectedProject(project);
+                            setShowMembersModal(true);
+                          }}
                         >
-                          {pageNum}
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                          <Settings className="w-4 h-4 icon icon mr-2 icon" />
+                          Edit Members
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          className="h-11 px-5 pr-8 cursor-pointer"
+                          onClick={() => handleDeleteProject(project.id)}
+                        >
+                          <Trash2 className="w-4 h-4 text-red-600 icon icon mr-2" />
+                          <span className="text-red-600 hover:text-red-600">Delete</span>
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            </div>
 
-                
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handlePageChange(pagination.page + 1)}
-                  disabled={pagination.page === pagination.pages || loading}
-                  className="flex items-center gap-1 h-8 w-[120px] h-[50px]"
-                >
-                  Next
-                  <ArrowDown className="w-4 h-4 icon icon rotate-[-90deg]" />
-                </Button>
+
+            <div className="relative mb-4 flex flex-wrap gap-2">
+              <span
+                className={`inline-flex items-center gap-1 rounded-[10px] border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide ${getStatusColor(project.status)}`}
+              >
+                {getStatusIcon(project.status)}
+                {project.status.replace("_", " ")}
+              </span>
+              <span
+                className={`inline-flex items-center rounded-[10px] border px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wide ${getPriorityColor(project.priority)}`}
+              >
+                {project.priority}
+              </span>
+            </div>
+
+
+            <div className="relative mb-4">
+              <div className="mb-1.5 flex justify-end text-xs font-medium text-gray-500 dark:text-gray-400">
+                <span className="text-gray-900 dark:text-white">
+                  {project.progress}%
+                </span>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100 dark:bg-white/10">
+                <div
+                  className="h-full rounded-full bg-gradient-to-r from-[#FF914B] to-[#ff6a3d] transition-[width] duration-500"
+                  style={{ width: `${project.progress}%` }}
+                ></div>
+              </div>
+            </div>
+
+
+
+
+
+
+
+
+            {project.tags && project.tags.length > 0 && (
+              <div className="relative mb-4 flex flex-wrap items-center gap-2">
+                {project.tags.slice(0, 3).map((tag, index) => (
+                  <span
+                    key={index}
+                    className="inline-flex items-center rounded-[7px] bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-700 dark:bg-white/5 dark:text-gray-300"
+                  >
+                    <Tag className="w-3 h-3 icon mr-1 icon" />
+                    {tag}
+                  </span>
+                ))}
+                {project.tags.length > 3 && (
+                  <span className="text-xs text-gray-500 dark:text-gray-400">
+                    +{project.tags.length - 3} more
+                  </span>
+                )}
               </div>
             )}
-          </m.div>
-        </div>
 
-        
+
+            <div className="relative mt-auto flex items-center justify-between border-t border-gray-200 pt-4 dark:border-gray-700">
+              <AvatarGroup
+                users={project.members}
+                max={3}
+                size="lg"
+                emptyLabel="No members yet"
+                onUserClick={(id) => id && handleUserAvatarClick(id)}
+              />
+              <div className="flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500">
+                <Calendar className="h-3.5 w-3.5" />
+                {new Date(project.createdAt).toLocaleDateString()}
+              </div>
+            </div>
+          </m.div>
+        ))
+      )}
+    </m.div>
   </>
 );
+
+const ProjectsPaginationSection = ({ pagination, setPagination }) => {
+  if (!pagination || pagination.pages <= 1) return null;
+
+  return (
+    <div className="flex items-center absolute right-5 -bottom-0 justify-end w-full col-span-3 gap-2 mt-8 mb-10">
+      <Button
+        className="w-10 h-10 bg-white hover:bg-white text-black"
+        onClick={() =>
+          setPagination((prev) => ({ ...prev, page: prev.page - 1 }))
+        }
+        disabled={pagination.page === 1}
+      >
+        <ChevronLeft className="w-4 h-4" />
+      </Button>
+
+      <div className="flex items-center gap-1">
+        {Array.from({ length: pagination.pages }, (_, i) => i + 1)
+          .filter((page) => {
+            if (pagination.pages <= 9) return true;
+            return (
+              page === 1 ||
+              page === pagination.pages ||
+              Math.abs(page - pagination.page) <= 1
+            );
+          })
+          .map((page, index, arr) => {
+            const prevPage = arr[index - 1];
+            return (
+              <div key={page} className="flex items-center gap-1">
+                {prevPage && page - prevPage > 1 && (
+                  <span className="px-2 text-muted-foreground">...</span>
+                )}
+                <Button
+                  size="sm"
+                  className={`w-10 h-10 font-bold bg-[#ff914b] hover:bg-[#ff914b] ${pagination.page === page ? "bg-[#ff914b] dark:text-white hover:bg-[#ff914b]" : "bg-white text-black hover:bg-gray-100"}`}
+                  onClick={() => setPagination((prev) => ({ ...prev, page }))}
+                >
+                  {page < 10 ? `0${page}` : page}
+                </Button>
+              </div>
+            );
+          })}
+      </div>
+
+      <Button
+        className="w-10 h-10 bg-white hover:bg-white text-black"
+        onClick={() =>
+          setPagination((prev) => ({ ...prev, page: prev.page + 1 }))
+        }
+        disabled={pagination.page === pagination.pages}
+      >
+        <ChevronRight className="w-4 h-4" />
+      </Button>
+    </div>
+  );
+};
 
 const teamIdFromSelect = (value) => (value === "none" ? "" : value);
 
@@ -670,7 +650,7 @@ const ProjectSelectedTags = ({ tags, onRemove }) => {
       {tags.map((tag, index) => (
         <span
           key={index}
-          className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-[15px] text-sm"
+          className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-[2px text-sm"
         >
           <Tag className="w-3 h-3 icon" />
           {tag}
@@ -776,366 +756,365 @@ const NewProjectPopupSection = ({
 }) => {
   if (!showNewProjectPopup) return null;
   return (
-<m.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm bg-black/50 icon  bg-opacity-50 flex items-center justify-center p-4 z-50"
-            onClick={() => setShowNewProjectPopup(false)}
-          >
-            <m.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
+    <m.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 backdrop-blur-sm bg-black/50 icon  bg-opacity-50 flex items-center justify-center p-4 z-50"
+      onClick={() => setShowNewProjectPopup(false)}
+    >
+      <m.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-2xl w-full p-6 max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <form onSubmit={handleCreateProject} className="space-y-2">
+
+          <div className="grid grid-cols-1 gap-4">
+            <div>
+              <Input
+                value={newProject.name}
+                onChange={(e) =>
+                  setNewProject({ ...newProject, name: e.target.value })
+                }
+                placeholder="Project name *"
+                className="w-full h-12"
+                required
+              />
+            </div>
+            <div>
+              <Textarea
+                value={newProject.description}
+                onChange={(e) =>
+                  setNewProject({
+                    ...newProject,
+                    description: e.target.value,
+                  })
+                }
+                placeholder="Project description *"
+                className="w-full h-12"
+                rows="3"
+                required
+              />
+            </div>
+            <div>
+              <Select
+                value={newProject.teamId || undefined}
+                onValueChange={(value) =>
+                  setNewProject({
+                    ...newProject,
+                    teamId: teamIdFromSelect(value),
+                  })
+                }
+              >
+                <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                  <SelectValue placeholder="Select Workspace (Optional)" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    className={"px-5 h-10 cursor-pointer"}
+                    value="none"
+                  >
+                    No Workspace
+                  </SelectItem>
+                  {teams.map((team) => (
+                    <SelectItem
+                      className={"px-5 h-10 cursor-pointer"}
+                      key={team.id}
+                      value={team.id}
+                    >
+                      {team.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+
+          <div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  setNewProject({ ...newProject, logo: file });
+                }
+                e.target.value = "";
+              }}
+              className="hidden"
+              id="logo-upload"
+            />
+
+            <ProjectLogoField
+              logo={newProject.logo}
+              onClear={() =>
+                setNewProject({ ...newProject, logo: null })
+              }
+            />
+          </div>
+
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <Select
+                value={newProject.status || undefined}
+                onValueChange={(value) =>
+                  setNewProject({ ...newProject, status: value })
+                }
+              >
+                <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                  <SelectValue placeholder="Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    className={"px-5 h-10 cursor-pointer"}
+                    value="planning"
+                  >
+                    Planning
+                  </SelectItem>
+                  <SelectItem
+                    className={"px-5 h-10 cursor-pointer"}
+                    value="active"
+                  >
+                    Active
+                  </SelectItem>
+                  <SelectItem
+                    className={"px-5 h-10 cursor-pointer"}
+                    value="on_hold"
+                  >
+                    On Hold
+                  </SelectItem>
+                  <SelectItem
+                    className={"px-5 h-10 cursor-pointer"}
+                    value="completed"
+                  >
+                    Completed
+                  </SelectItem>
+                  <SelectItem
+                    className={"px-5 h-10 cursor-pointer"}
+                    value="cancelled"
+                  >
+                    Cancelled
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Select
+                value={newProject.priority || undefined}
+                onValueChange={(value) =>
+                  setNewProject({ ...newProject, priority: value })
+                }
+              >
+                <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                  <SelectValue placeholder="Priority" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    className={"px-5 h-10 cursor-pointer"}
+                    value="low"
+                  >
+                    Low
+                  </SelectItem>
+                  <SelectItem
+                    className={"px-5 h-10 cursor-pointer"}
+                    value="medium"
+                  >
+                    Medium
+                  </SelectItem>
+                  <SelectItem
+                    className={"px-5 h-10 cursor-pointer"}
+                    value="high"
+                  >
+                    High
+                  </SelectItem>
+                  <SelectItem
+                    className={"px-5 h-10 cursor-pointer"}
+                    value="urgent"
+                  >
+                    Urgent
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <DatePicker
+                value={newProject.startDate}
+                onChange={(value) =>
+                  setNewProject({ ...newProject, startDate: value })
+                }
+                placeholder="Start date *"
+              />
+            </div>
+            <div>
+              <DatePicker
+                value={newProject.endDate}
+                onChange={(value) =>
+                  setNewProject({ ...newProject, endDate: value })
+                }
+                placeholder="End date"
+              />
+            </div>
+          </div>
+
+
+          <div>
+            <div className="relative mb-3">
+              <Input
+                value={memberSearch}
+                onChange={(e) => handleMemberSearch(e.target.value)}
+                placeholder="Add workspace members"
+                className="w-full h-12"
+              />
+              <ProjectMemberSuggestions
+                show={showMemberSuggestions}
+                suggestions={memberSuggestions}
+                onSelect={handleAddMember}
+              />
+            </div>
+
+            <ProjectSelectedMembers
+              members={newProject.members}
+              onRemove={handleRemoveMember}
+            />
+          </div>
+
+
+          <div>
+            <div className="flex gap-2 mb-3">
+              <Input
+                value={newLink.title}
+                onChange={(e) =>
+                  setNewLink({ ...newLink, title: e.target.value })
+                }
+                placeholder="Link title"
+                className="flex-1 h-12"
+              />
+              <Input
+                value={newLink.url}
+                onChange={(e) =>
+                  setNewLink({ ...newLink, url: e.target.value })
+                }
+                placeholder="URL"
+                className="flex-1 h-12"
+              />
+              <Select
+                value={newLink.type || undefined}
+                onValueChange={(value) =>
+                  setNewLink({ ...newLink, type: value })
+                }
+              >
+                <SelectTrigger className="w-32 h-12 cursor-pointer border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                  <SelectValue placeholder="Type" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem
+                    className={"px-5 h-10 cursor-pointer"}
+                    value="repository"
+                  >
+                    Repository
+                  </SelectItem>
+                  <SelectItem
+                    className={"px-5 h-10 cursor-pointer"}
+                    value="documentation"
+                  >
+                    Documentation
+                  </SelectItem>
+                  <SelectItem
+                    className={"px-5 h-10 cursor-pointer"}
+                    value="design"
+                  >
+                    Design
+                  </SelectItem>
+                  <SelectItem
+                    className={"px-5 h-10 cursor-pointer"}
+                    value="other"
+                  >
+                    Other
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <Button
+                type="button"
+                className={"h-12 w-12"}
+                onClick={handleAddLink}
+                variant="outline"
+              >
+                <BsPlusCircleFill className="w-4 h-4 icon" />
+              </Button>
+            </div>
+
+            <ProjectSelectedLinks
+              links={newProject.links}
+              onRemove={handleRemoveLink}
+            />
+          </div>
+
+
+          <div>
+            <div className="flex gap-2 mb-3">
+              <Input
+                value={newTag}
+                onChange={(e) => setNewTag(e.target.value)}
+                placeholder="Add a tag"
+                className="flex-1 h-12"
+                onKeyPress={(e) =>
+                  e.key === "Enter" &&
+                  (e.preventDefault(), handleAddTag())
+                }
+              />
+              <Button
+                type="button"
+                onClick={handleAddTag}
+                className="border-gray-200 dark:border-gray-700"
+              >
+                Add Tag
+              </Button>
+            </div>
+
+            <ProjectSelectedTags
+              tags={newProject.tags}
+              onRemove={handleRemoveTag}
+            />
+          </div>
+
+
+
+
+          <div className="flex gap-3 pt-4 border-t icon border-gray-200 dark:border-gray-700">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setShowNewProjectPopup(false)}
+              className="flex-1 h-12"
+              disabled={loading}
             >
-              <form onSubmit={handleCreateProject} className="space-y-2">
-                
-                <div className="grid grid-cols-1 gap-4">
-                  <div>
-                    <Input
-                      value={newProject.name}
-                      onChange={(e) =>
-                        setNewProject({ ...newProject, name: e.target.value })
-                      }
-                      placeholder="Project name *"
-                      className="w-full h-12"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Textarea
-                      value={newProject.description}
-                      onChange={(e) =>
-                        setNewProject({
-                          ...newProject,
-                          description: e.target.value,
-                        })
-                      }
-                      placeholder="Project description *"
-                      className="w-full h-12"
-                      rows="3"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <Select
-                      value={newProject.teamId || undefined}
-                      onValueChange={(value) =>
-                        setNewProject({
-                          ...newProject,
-                          teamId: teamIdFromSelect(value),
-                        })
-                      }
-                    >
-                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-                        <SelectValue placeholder="Select Workspace (Optional)" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem
-                          className={"px-5 h-10 cursor-pointer"}
-                          value="none"
-                        >
-                          No Workspace
-                        </SelectItem>
-                        {teams.map((team) => (
-                          <SelectItem
-                            className={"px-5 h-10 cursor-pointer"}
-                            key={team.id}
-                            value={team.id}
-                          >
-                            {team.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                
-                <div>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) {
-                        setNewProject({ ...newProject, logo: file });
-                      }
-                      e.target.value = "";
-                    }}
-                    className="hidden"
-                    id="logo-upload"
-                  />
-
-                  <ProjectLogoField
-                    logo={newProject.logo}
-                    onClear={() =>
-                      setNewProject({ ...newProject, logo: null })
-                    }
-                  />
-                </div>
-
-                
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <Select
-                      value={newProject.status || undefined}
-                      onValueChange={(value) =>
-                        setNewProject({ ...newProject, status: value })
-                      }
-                    >
-                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-                        <SelectValue placeholder="Status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem
-                          className={"px-5 h-10 cursor-pointer"}
-                          value="planning"
-                        >
-                          Planning
-                        </SelectItem>
-                        <SelectItem
-                          className={"px-5 h-10 cursor-pointer"}
-                          value="active"
-                        >
-                          Active
-                        </SelectItem>
-                        <SelectItem
-                          className={"px-5 h-10 cursor-pointer"}
-                          value="on_hold"
-                        >
-                          On Hold
-                        </SelectItem>
-                        <SelectItem
-                          className={"px-5 h-10 cursor-pointer"}
-                          value="completed"
-                        >
-                          Completed
-                        </SelectItem>
-                        <SelectItem
-                          className={"px-5 h-10 cursor-pointer"}
-                          value="cancelled"
-                        >
-                          Cancelled
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Select
-                      value={newProject.priority || undefined}
-                      onValueChange={(value) =>
-                        setNewProject({ ...newProject, priority: value })
-                      }
-                    >
-                      <SelectTrigger className="w-full h-12 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-                        <SelectValue placeholder="Priority" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem
-                          className={"px-5 h-10 cursor-pointer"}
-                          value="low"
-                        >
-                          Low
-                        </SelectItem>
-                        <SelectItem
-                          className={"px-5 h-10 cursor-pointer"}
-                          value="medium"
-                        >
-                          Medium
-                        </SelectItem>
-                        <SelectItem
-                          className={"px-5 h-10 cursor-pointer"}
-                          value="high"
-                        >
-                          High
-                        </SelectItem>
-                        <SelectItem
-                          className={"px-5 h-10 cursor-pointer"}
-                          value="urgent"
-                        >
-                          Urgent
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <DatePicker
-                      value={newProject.startDate}
-                      onChange={(value) =>
-                        setNewProject({ ...newProject, startDate: value })
-                      }
-                      placeholder="Start date *"
-                    />
-                  </div>
-                  <div>
-                    <DatePicker
-                      value={newProject.endDate}
-                      onChange={(value) =>
-                        setNewProject({ ...newProject, endDate: value })
-                      }
-                      placeholder="End date"
-                    />
-                  </div>
-                </div>
-
-                
-                <div>
-                  <div className="relative mb-3">
-                    <Input
-                      value={memberSearch}
-                      onChange={(e) => handleMemberSearch(e.target.value)}
-                      placeholder="Add workspace members"
-                      className="w-full h-12"
-                    />
-                    <ProjectMemberSuggestions
-                      show={showMemberSuggestions}
-                      suggestions={memberSuggestions}
-                      onSelect={handleAddMember}
-                    />
-                  </div>
-
-                  <ProjectSelectedMembers
-                    members={newProject.members}
-                    onRemove={handleRemoveMember}
-                  />
-                </div>
-
-                
-                <div>
-                  <div className="flex gap-2 mb-3">
-                    <Input
-                      value={newLink.title}
-                      onChange={(e) =>
-                        setNewLink({ ...newLink, title: e.target.value })
-                      }
-                      placeholder="Link title"
-                      className="flex-1 h-12"
-                    />
-                    <Input
-                      value={newLink.url}
-                      onChange={(e) =>
-                        setNewLink({ ...newLink, url: e.target.value })
-                      }
-                      placeholder="URL"
-                      className="flex-1 h-12"
-                    />
-                    <Select
-                      value={newLink.type || undefined}
-                      onValueChange={(value) =>
-                        setNewLink({ ...newLink, type: value })
-                      }
-                    >
-                      <SelectTrigger className="w-32 h-12 cursor-pointer border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-                        <SelectValue placeholder="Type" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem
-                          className={"px-5 h-10 cursor-pointer"}
-                          value="repository"
-                        >
-                          Repository
-                        </SelectItem>
-                        <SelectItem
-                          className={"px-5 h-10 cursor-pointer"}
-                          value="documentation"
-                        >
-                          Documentation
-                        </SelectItem>
-                        <SelectItem
-                          className={"px-5 h-10 cursor-pointer"}
-                          value="design"
-                        >
-                          Design
-                        </SelectItem>
-                        <SelectItem
-                          className={"px-5 h-10 cursor-pointer"}
-                          value="other"
-                        >
-                          Other
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      type="button"
-                      className={"h-12 w-12"}
-                      onClick={handleAddLink}
-                      variant="outline"
-                    >
-                      <BsPlusCircleFill className="w-4 h-4 icon" />
-                    </Button>
-                  </div>
-
-                  <ProjectSelectedLinks
-                    links={newProject.links}
-                    onRemove={handleRemoveLink}
-                  />
-                </div>
-
-                
-                <div>
-                  <div className="flex gap-2 mb-3">
-                    <Input
-                      value={newTag}
-                      onChange={(e) => setNewTag(e.target.value)}
-                      placeholder="Add a tag"
-                      className="flex-1 h-12"
-                      onKeyPress={(e) =>
-                        e.key === "Enter" &&
-                        (e.preventDefault(), handleAddTag())
-                      }
-                    />
-                    <Button
-                      type="button"
-                      onClick={handleAddTag}
-                      className="border-gray-200 dark:border-gray-700"
-                    >
-                      Add Tag
-                    </Button>
-                  </div>
-
-                  <ProjectSelectedTags
-                    tags={newProject.tags}
-                    onRemove={handleRemoveTag}
-                  />
-                </div>
-
-                
-
-                
-                <div className="flex gap-3 pt-4 border-t icon border-gray-200 dark:border-gray-700">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => setShowNewProjectPopup(false)}
-                    className="flex-1 h-12"
-                    disabled={loading}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[15px] border-gray-200 dark:border-gray-700"
-                    disabled={loading}
-                  >
-                    <ProjectCreateSubmitLabel loading={loading} />
-                  </Button>
-                </div>
-              </form>
-            </m.div>
-          </m.div>
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              className="flex-1 disabled:opacity-50 h-12 disabled:cursor-not-allowed rounded-[15px] border-gray-200 dark:border-gray-700"
+              disabled={loading}
+            >
+              <ProjectCreateSubmitLabel loading={loading} />
+            </Button>
+          </div>
+        </form>
+      </m.div>
+    </m.div>
   );
 };
 
 
 const orZero = (v) => v || 0;
 const orDesc = (v) => v || "No description provided";
-const hasItems = (arr) => Boolean(arr && arr.length > 0);
 const chevronRotateClass = (open) =>
   open
     ? "w-5 h-5 icon text-gray-500 transition-transform duration-200 rotate-180"
@@ -1143,38 +1122,30 @@ const chevronRotateClass = (open) =>
 
 const ProjectDetailsMembersList = ({
   members,
-  refreshKey,
   handleUserAvatarClick,
 }) => {
-  if (!hasItems(members)) {
-    return (
-      <div className="text-center py-4 text-gray-500 dark:text-gray-400">
-        No members yet
+  const count = members?.length || 0;
+  return (
+    <div className="flex items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-gray-50 px-4 py-3 dark:border-white/10 dark:bg-white/5">
+      <div className="min-w-0">
+        <p className="text-sm font-bold text-gray-900 dark:text-white">
+          Members
+        </p>
+        <p className="text-xs text-gray-500 dark:text-gray-400">
+          {count === 0
+            ? "No one on this project yet"
+            : `${count} ${count === 1 ? "person" : "people"}`}
+        </p>
       </div>
-    );
-  }
-  return members.map((member, index) => (
-    <div
-      key={`${member.user?._id || member.user?.id}-${index}-${refreshKey}`}
-      className="flex items-center justify-between p-2 bg-gray-50 dark:bg-black rounded-[15px]"
-    >
-      <div className="flex items-center gap-2">
-        <UserAvatar
-          user={member}
-          size="md"
-          onClick={(id) => id && handleUserAvatarClick(id)}
-        />
-        <div>
-          <p className="text-sm font-medium text-gray-900 dark:text-white">
-            {member.user?.username}
-          </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">
-            {member.role}
-          </p>
-        </div>
-      </div>
+      <AvatarGroup
+        users={members || []}
+        max={6}
+        size="lg"
+        emptyLabel="No members yet"
+        onUserClick={(id) => id && handleUserAvatarClick(id)}
+      />
     </div>
-  ));
+  );
 };
 
 const ProjectDetailsLinksPanel = ({
@@ -1249,6 +1220,12 @@ const ProjectDetailsLinksPanel = ({
   </div>
 );
 
+const projectTaskStatusLabel = (status) => {
+  if (!status) return "Unknown";
+  if (status === "in_progress") return "Progress";
+  return String(status).replaceAll("_", " ");
+};
+
 const ProjectDetailsTasksPanel = ({
   showTasks,
   setShowTasks,
@@ -1288,42 +1265,33 @@ const ProjectDetailsTasksPanel = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="flex items-center justify-between px-3 py-2 bg-gray-100 dark:bg-black rounded-[15px]"
+                className="flex items-center justify-between gap-3 px-3 py-2 bg-gray-100 dark:bg-black rounded-[15px]"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex min-w-0 flex-1 items-center gap-3">
                   <div
-                    className={`w-3 h-3 rounded-[15px] ${
-                      task.status === "completed"
-                        ? "bg-green-500"
-                        : task.status === "in_progress"
-                          ? "bg-gray-500"
-                          : task.status === "pending"
-                            ? "bg-yellow-500"
-                            : "bg-gray-500"
-                    }`}
+                    className={`h-3 w-3 shrink-0 rounded-[15px] ${task.status === "completed"
+                      ? "bg-green-500"
+                      : task.status === "in_progress"
+                        ? "bg-gray-500"
+                        : task.status === "pending"
+                          ? "bg-yellow-500"
+                          : "bg-gray-500"
+                      }`}
                   ></div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-900 dark:text-white">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-gray-900 dark:text-white">
                       {task.title || "Untitled Task"}
                     </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="truncate text-xs text-gray-500 dark:text-gray-400">
                       Assigned to {task.assignTo?.username || "Unknown"} •{" "}
                       {task.priority || "Unknown"}
                     </p>
                   </div>
                 </div>
                 <span
-                  className={`px-2 py-1 rounded-[15px] text-xs font-medium ${
-                    task.status === "completed"
-                      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                      : task.status === "in_progress"
-                        ? "bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200"
-                        : task.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                          : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
-                  }`}
+                  className={`${tableBadgeClass} ${statusBadgeTone(task.status)} shrink-0`}
                 >
-                  {task.status ? task.status.replace("_", " ") : "Unknown"}
+                  {projectTaskStatusLabel(task.status)}
                 </span>
               </m.div>
             ))
@@ -1382,15 +1350,14 @@ const ProjectDetailsMeetingsPanel = ({
               >
                 <div className="flex items-center gap-3">
                   <div
-                    className={`w-3 h-3 rounded-[15px] ${
-                      meeting.status === "completed"
-                        ? "bg-green-500"
-                        : meeting.status === "scheduled"
-                          ? "bg-gray-500"
-                          : meeting.status === "pending"
-                            ? "bg-yellow-500"
-                            : "bg-gray-500"
-                    }`}
+                    className={`w-3 h-3 rounded-[15px] ${meeting.status === "completed"
+                      ? "bg-green-500"
+                      : meeting.status === "scheduled"
+                        ? "bg-gray-500"
+                        : meeting.status === "pending"
+                          ? "bg-yellow-500"
+                          : "bg-gray-500"
+                      }`}
                   ></div>
                   <div>
                     <p className="text-sm font-medium text-gray-900 dark:text-white">
@@ -1403,15 +1370,14 @@ const ProjectDetailsMeetingsPanel = ({
                   </div>
                 </div>
                 <span
-                  className={`px-2 py-1 rounded-[15px] text-xs font-medium ${
-                    meeting.status === "completed"
-                      ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
-                      : meeting.status === "scheduled"
-                        ? "bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200"
-                        : meeting.status === "pending"
-                          ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
-                          : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
-                  }`}
+                  className={`px-2 py-1 rounded-[15px] text-xs font-medium ${meeting.status === "completed"
+                    ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                    : meeting.status === "scheduled"
+                      ? "bg-gray-100 text-gray-800 dark:bg-black dark:text-gray-200"
+                      : meeting.status === "pending"
+                        ? "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                        : "bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
+                    }`}
                 >
                   {meeting.status || "Unknown"}
                 </span>
@@ -1435,7 +1401,6 @@ const ProjectDetailsModalBody = ({
   getPriorityColor,
   getPriorityIcon,
   handleUserAvatarClick,
-  refreshKey,
   showLinks,
   setShowLinks,
   showTasks,
@@ -1444,78 +1409,61 @@ const ProjectDetailsModalBody = ({
   setShowMeetings,
   formatDate,
 }) => (
-  <>
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <div>
-          <h3 className="text-sm  text-gray-900 dark:text-white mb-2 font-bold">
-            Project Description
-          </h3>
-          <p className="text-gray-600 dark:text-gray-400 text-sm text-justify line-clamp-1">
-            {orDesc(selectedProject.description)}
-          </p>
-        </div>
+  <div className="space-y-4">
+    <ProjectDetailsMembersList
+      members={selectedProject.members}
+      handleUserAvatarClick={handleUserAvatarClick}
+    />
 
-        <div className="flex  gap-4">
-          <div>
-            <span
-              className={`inline-flex items-center gap-1 px-4 py-2 uppercase  rounded-[15px] text-xs font-medium ${getStatusColor(selectedProject.status)}`}
-            >
-              {getStatusIcon(selectedProject.status)}
-              {selectedProject.status}
-            </span>
-          </div>
-          <div>
-            <span
-              className={`inline-flex items-center gap-1 px-4 py-2 uppercase  rounded-[15px] text-xs font-medium ${getPriorityColor(selectedProject.priority)}`}
-            >
-              {getPriorityIcon(selectedProject.priority)}
-              {selectedProject.priority}
-            </span>
-          </div>
-        </div>
+    <div>
+      <h3 className="mb-2 text-sm font-bold text-gray-900 dark:text-white">
+        Project Description
+      </h3>
+      <p className="text-sm leading-relaxed text-gray-600 dark:text-gray-400">
+        {orDesc(selectedProject.description)}
+      </p>
+    </div>
 
-        <div>
-          <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300 mb-2">
-            Project Progress
-          </h4>
-          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-[15px] h-2">
-            <div
-              className="bg-green-500 h-2 rounded-[15px] transition-[width] duration-300"
-              style={{ width: `${orZero(selectedProject.progress)}%` }}
-            ></div>
-          </div>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1 font-bold text-end">
-            {orZero(selectedProject.progress)}% complete
-          </p>
-        </div>
+    <div className="flex flex-wrap gap-2">
+      <span
+        className={`inline-flex items-center gap-1 rounded-[15px] px-4 py-2 text-xs font-medium uppercase ${getStatusColor(selectedProject.status)}`}
+      >
+        {getStatusIcon(selectedProject.status)}
+        {selectedProject.status}
+      </span>
+      <span
+        className={`inline-flex items-center gap-1 rounded-[15px] px-4 py-2 text-xs font-medium uppercase ${getPriorityColor(selectedProject.priority)}`}
+      >
+        {getPriorityIcon(selectedProject.priority)}
+        {selectedProject.priority}
+      </span>
+    </div>
+
+    <div>
+      <div className="mb-2 flex items-center justify-between">
+        <h4 className="text-sm font-bold text-gray-700 dark:text-gray-300">
+          Project Progress
+        </h4>
+        <p className="text-sm font-bold text-gray-600 dark:text-gray-400">
+          {orZero(selectedProject.progress)}%
+        </p>
       </div>
-
-      <div className="space-y-4">
-        <div>
-          <div
-            className="space-y-2 max-h-45overflow-y-auto"
-            key={refreshKey}
-          >
-            <ProjectDetailsMembersList
-              members={selectedProject.members}
-              refreshKey={refreshKey}
-              handleUserAvatarClick={handleUserAvatarClick}
-            />
-          </div>
-        </div>
-
-        <ProjectDetailsLinksPanel
-          showLinks={showLinks}
-          setShowLinks={setShowLinks}
-          setShowTasks={setShowTasks}
-          setShowMeetings={setShowMeetings}
-          links={selectedProject.links}
+      <div className="h-2 w-full rounded-[15px] bg-gray-200 dark:bg-gray-700">
+        <div
+          className="h-2 rounded-[15px] bg-green-500 transition-[width] duration-300"
+          style={{ width: `${orZero(selectedProject.progress)}%` }}
         />
       </div>
     </div>
 
-    <div className="mt-0 grid grid-cols-1 lg:grid-cols-1 gap-6">
+    <div className="space-y-3">
+      <ProjectDetailsLinksPanel
+        showLinks={showLinks}
+        setShowLinks={setShowLinks}
+        setShowTasks={setShowTasks}
+        setShowMeetings={setShowMeetings}
+        links={selectedProject.links}
+      />
       <ProjectDetailsTasksPanel
         showTasks={showTasks}
         setShowTasks={setShowTasks}
@@ -1532,7 +1480,7 @@ const ProjectDetailsModalBody = ({
         formatDate={formatDate}
       />
     </div>
-  </>
+  </div>
 );
 
 const ProjectDetailsModalSection = ({
@@ -1578,7 +1526,7 @@ const ProjectDetailsModalSection = ({
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-4xl w-full max-h-[90vh] overflow-y-auto"
+        className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-xl w-full max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="p-6">
@@ -1599,22 +1547,21 @@ const ProjectDetailsModalSection = ({
               <X className="w-6 h-6 icon" />
             </button>
           </div>
-        <ProjectDetailsModalBody
-          selectedProject={selectedProject}
-          getStatusColor={getStatusColor}
-          getStatusIcon={getStatusIcon}
-          getPriorityColor={getPriorityColor}
-          getPriorityIcon={getPriorityIcon}
-          handleUserAvatarClick={handleUserAvatarClick}
-          refreshKey={refreshKey}
-          showLinks={showLinks}
-          setShowLinks={setShowLinks}
-          showTasks={showTasks}
-          setShowTasks={setShowTasks}
-          showMeetings={showMeetings}
-          setShowMeetings={setShowMeetings}
-          formatDate={formatDate}
-        />
+          <ProjectDetailsModalBody
+            selectedProject={selectedProject}
+            getStatusColor={getStatusColor}
+            getStatusIcon={getStatusIcon}
+            getPriorityColor={getPriorityColor}
+            getPriorityIcon={getPriorityIcon}
+            handleUserAvatarClick={handleUserAvatarClick}
+            showLinks={showLinks}
+            setShowLinks={setShowLinks}
+            showTasks={showTasks}
+            setShowTasks={setShowTasks}
+            showMeetings={showMeetings}
+            setShowMeetings={setShowMeetings}
+            formatDate={formatDate}
+          />
         </div>
       </m.div>
     </m.div>
@@ -1630,70 +1577,70 @@ const ProjectProgressModalSection = ({
   showProgressModal,
 }) => (
   <>
-    
-        {showProgressModal && selectedProject && (
-          <m.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm icon bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50"
-            onClick={() => setShowProgressModal(false)}
-          >
-            <m.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-md w-full p-6"
-              onClick={(e) => e.stopPropagation()}
+
+    {showProgressModal && selectedProject && (
+      <m.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 backdrop-blur-sm icon bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50"
+        onClick={() => setShowProgressModal(false)}
+      >
+        <m.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-md w-full p-6"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl  text-gray-900 dark:text-white font-bold">
+              Update Progress
+            </h2>
+            <button
+              onClick={() => setShowProgressModal(false)}
+              className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500"
             >
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-xl  text-gray-900 dark:text-white font-bold">
-                  Update Progress
-                </h2>
-                <button
-                  onClick={() => setShowProgressModal(false)}
-                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500"
-                >
-                  <X className="w-6 h-6 icon" />
-                </button>
-              </div>
+              <X className="w-6 h-6 icon" />
+            </button>
+          </div>
 
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-muted-foreground mb-2">
-                    Progress: {projectProgress}%
-                  </label>
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={projectProgress}
-                    onChange={(e) =>
-                      setProjectProgress(parseInt(e.target.value))
-                    }
-                    className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-[15px] appearance-none cursor-pointer"
-                  />
-                </div>
+          <div className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-muted-foreground mb-2">
+                Progress: {projectProgress}%
+              </label>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={projectProgress}
+                onChange={(e) =>
+                  setProjectProgress(parseInt(e.target.value))
+                }
+                className="w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-[15px] appearance-none cursor-pointer"
+              />
+            </div>
 
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowProgressModal(false)}
-                    className="flex-1 h-12 rounded-[15px]"
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleUpdateProgress}
-                    className="flex-1 h-12 rounded-[15px]"
-                  >
-                    Update Progress
-                  </Button>
-                </div>
-              </div>
-            </m.div>
-          </m.div>
-        )}
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                onClick={() => setShowProgressModal(false)}
+                className="flex-1 h-12 rounded-[15px]"
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleUpdateProgress}
+                className="flex-1 h-12 rounded-[15px]"
+              >
+                Update Progress
+              </Button>
+            </div>
+          </div>
+        </m.div>
+      </m.div>
+    )}
   </>
 );
 
@@ -1715,160 +1662,160 @@ const ProjectMembersModalSection = ({
   refreshKey,
 }) => (
   <>
-    
-        {showMembersModal && selectedProject && (
-          <m.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm icon bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50"
-            onClick={() => setShowMembersModal(false)}
-          >
-            <m.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl  text-gray-900 dark:text-white font-bold">
-                    Manage Members - {selectedProject.name}
-                  </h2>
-                  <button
-                    onClick={() => setShowMembersModal(false)}
-                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500"
+
+    {showMembersModal && selectedProject && (
+      <m.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 backdrop-blur-sm icon bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50"
+        onClick={() => setShowMembersModal(false)}
+      >
+        <m.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl  text-gray-900 dark:text-white font-bold">
+                Manage Members - {selectedProject.name}
+              </h2>
+              <button
+                onClick={() => setShowMembersModal(false)}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500"
+              >
+                <X className="w-6 h-6 icon" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+
+              <div>
+
+                <div className="flex gap-2">
+                  <Input
+                    value={projectMemberSearch}
+                    onChange={(e) =>
+                      handleProjectMemberSearch(e.target.value)
+                    }
+                    placeholder="Search users..."
+                    className="flex-1 h-12 rounded-[15px]"
+                  />
+                  <Select
+                    value={projectMemberRole || undefined}
+                    onValueChange={setProjectMemberRole}
                   >
-                    <X className="w-6 h-6 icon" />
-                  </button>
+                    <SelectTrigger className="w-32">
+                      <SelectValue placeholder="Role" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem
+                        className={"px-5 h-10 cursor-pointer"}
+                        value="member"
+                      >
+                        Member
+                      </SelectItem>
+                      <SelectItem
+                        className={"px-5 h-10 cursor-pointer"}
+                        value="admin"
+                      >
+                        Admin
+                      </SelectItem>
+                      <SelectItem
+                        className={"px-5 h-10 cursor-pointer"}
+                        value="viewer"
+                      >
+                        Viewer
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                <div className="space-y-4">
-                  
-                  <div>
-                    
-                    <div className="flex gap-2">
-                      <Input
-                        value={projectMemberSearch}
-                        onChange={(e) =>
-                          handleProjectMemberSearch(e.target.value)
-                        }
-                        placeholder="Search users..."
-                        className="flex-1 h-12 rounded-[15px]"
-                      />
-                      <Select
-                        value={projectMemberRole || undefined}
-                        onValueChange={setProjectMemberRole}
-                      >
-                        <SelectTrigger className="w-32">
-                          <SelectValue placeholder="Role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem
-                            className={"px-5 h-10 cursor-pointer"}
-                            value="member"
-                          >
-                            Member
-                          </SelectItem>
-                          <SelectItem
-                            className={"px-5 h-10 cursor-pointer"}
-                            value="admin"
-                          >
-                            Admin
-                          </SelectItem>
-                          <SelectItem
-                            className={"px-5 h-10 cursor-pointer"}
-                            value="viewer"
-                          >
-                            Viewer
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {showProjectMemberSuggestions &&
-                      projectMemberSuggestions.length > 0 && (
-                        <div className="mt-2 border border-gray-200 dark:border-gray-700 rounded-[15px] bg-white dark:bg-black max-h-40 overflow-y-auto">
-                          {projectMemberSuggestions.map((user) => (
-                            <div
-                              key={user.id}
-                              onClick={() => {
-                                handleAddMemberToProject(
-                                  user.id,
-                                  projectMemberRole,
-                                );
-                                setProjectMemberSearch("");
-                                setShowProjectMemberSuggestions(false);
-                              }}
-                              className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
-                            >
-                              <UserAvatar user={user} size="lg" />
-                              <div className="flex flex-col">
-                                <span className="text-sm text-gray-900 dark:text-white ">
-                                  {user.username}
-                                </span>
-                                <span className="text-sm text-gray-900 dark:text-white">
-                                  {user.email}
-                                </span>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                  </div>
-
-                  
-                  <div>
-                    <h3 className="text-lg  text-gray-900 dark:text-white mb-2">
-                      Current Members
-                    </h3>
-                    <div
-                      className="space-y-2 max-h-60 overflow-y-auto"
-                      key={refreshKey}
-                    >
-                      {selectedProject.members?.map((member, index) => (
+                {showProjectMemberSuggestions &&
+                  projectMemberSuggestions.length > 0 && (
+                    <div className="mt-2 border border-gray-200 dark:border-gray-700 rounded-[15px] bg-white dark:bg-black max-h-40 overflow-y-auto">
+                      {projectMemberSuggestions.map((user) => (
                         <div
-                          key={`${member.user?._id || member.user?.id}-${index}-${refreshKey}`}
-                          className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[15px]"
+                          key={user.id}
+                          onClick={() => {
+                            handleAddMemberToProject(
+                              user.id,
+                              projectMemberRole,
+                            );
+                            setProjectMemberSearch("");
+                            setShowProjectMemberSuggestions(false);
+                          }}
+                          className="flex items-center gap-2 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer"
                         >
-                          <div className="flex items-center gap-3">
-                            <UserAvatar
-                              user={member}
-                              size="md"
-                              onClick={(id) => id && handleUserAvatarClick(id)}
-                            />
-                            <div>
-                              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                {member.user?.username}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {member.role == "owner" ? "Created" : "Joined"}{" "}
-                                {new Date(member.joinedAt).toLocaleDateString()}
-                              </p>
-                            </div>
+                          <UserAvatar user={user} size="lg" />
+                          <div className="flex flex-col">
+                            <span className="text-sm text-gray-900 dark:text-white ">
+                              {user.username}
+                            </span>
+                            <span className="text-sm text-gray-900 dark:text-white">
+                              {user.email}
+                            </span>
                           </div>
-                          {member.role !== "owner" && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleRemoveMemberFromProject(member.user?._id)
-                              }
-                              className="text-red-500 hover:text-red-700 w-12 border"
-                            >
-                              <Trash2 className="w-4 h-4 icon icon" />
-                            </Button>
-                          )}
                         </div>
                       ))}
                     </div>
-                  </div>
+                  )}
+              </div>
+
+
+              <div>
+                <h3 className="text-lg  text-gray-900 dark:text-white mb-2">
+                  Current Members
+                </h3>
+                <div
+                  className="space-y-2 max-h-60 overflow-y-auto"
+                  key={refreshKey}
+                >
+                  {selectedProject.members?.map((member, index) => (
+                    <div
+                      key={`${member.user?._id || member.user?.id}-${index}-${refreshKey}`}
+                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[15px]"
+                    >
+                      <div className="flex items-center gap-3">
+                        <UserAvatar
+                          user={member}
+                          size="md"
+                          onClick={(id) => id && handleUserAvatarClick(id)}
+                        />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {member.user?.username}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {member.role == "owner" ? "Created" : "Joined"}{" "}
+                            {new Date(member.joinedAt).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                      {member.role !== "owner" && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            handleRemoveMemberFromProject(member.user?._id)
+                          }
+                          className="text-red-500 hover:text-red-700 w-12 border"
+                        >
+                          <Trash2 className="w-4 h-4 icon icon" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
                 </div>
               </div>
-            </m.div>
-          </m.div>
-        )}
+            </div>
+          </div>
+        </m.div>
+      </m.div>
+    )}
   </>
 );
 
@@ -1882,160 +1829,160 @@ const ProjectLinksModalSection = ({
   handleRemoveLinkFromProject,
 }) => (
   <>
-    
-        {showLinksModal && selectedProject && (
-          <m.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 backdrop-blur-sm icon bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50"
-            onClick={() => setShowLinksModal(false)}
-          >
-            <m.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-xl  text-gray-900 dark:text-white font-bold">
-                    Manage Links
-                  </h2>
-                  <button
-                    onClick={() => setShowLinksModal(false)}
-                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500"
-                  >
-                    <X className="w-6 h-6 icon" />
-                  </button>
+
+    {showLinksModal && selectedProject && (
+      <m.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className="fixed inset-0 backdrop-blur-sm icon bg-black/50 bg-opacity-50 flex items-center justify-center p-4 z-50"
+        onClick={() => setShowLinksModal(false)}
+      >
+        <m.div
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          className="bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10 max-w-2xl w-full max-h-[80vh] overflow-y-auto"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl  text-gray-900 dark:text-white font-bold">
+                Manage Links
+              </h2>
+              <button
+                onClick={() => setShowLinksModal(false)}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-white/10 text-gray-500"
+              >
+                <X className="w-6 h-6 icon" />
+              </button>
+            </div>
+
+            <div className="space-y-4">
+
+              <div>
+                <h3 className="text-lg  text-gray-900 dark:text-white mb-2">
+                  Add Link
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <Input
+                    value={newLink.title}
+                    onChange={(e) =>
+                      setNewLink({ ...newLink, title: e.target.value })
+                    }
+                    placeholder="Link title"
+                  />
+                  <Input
+                    value={newLink.url}
+                    onChange={(e) =>
+                      setNewLink({ ...newLink, url: e.target.value })
+                    }
+                    placeholder="URL"
+                  />
                 </div>
-
-                <div className="space-y-4">
-                  
-                  <div>
-                    <h3 className="text-lg  text-gray-900 dark:text-white mb-2">
-                      Add Link
-                    </h3>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      <Input
-                        value={newLink.title}
-                        onChange={(e) =>
-                          setNewLink({ ...newLink, title: e.target.value })
-                        }
-                        placeholder="Link title"
-                      />
-                      <Input
-                        value={newLink.url}
-                        onChange={(e) =>
-                          setNewLink({ ...newLink, url: e.target.value })
-                        }
-                        placeholder="URL"
-                      />
-                    </div>
-                    <div className="flex gap-2 mt-2">
-                      <Select
-                        value={newLink.type || undefined}
-                        onValueChange={(value) =>
-                          setNewLink({ ...newLink, type: value })
-                        }
+                <div className="flex gap-2 mt-2">
+                  <Select
+                    value={newLink.type || undefined}
+                    onValueChange={(value) =>
+                      setNewLink({ ...newLink, type: value })
+                    }
+                  >
+                    <SelectTrigger className="w-40">
+                      <SelectValue placeholder="Type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem
+                        className={"px-5 h-10 cursor-pointer"}
+                        value="repository"
                       >
-                        <SelectTrigger className="w-40">
-                          <SelectValue placeholder="Type" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem
-                            className={"px-5 h-10 cursor-pointer"}
-                            value="repository"
-                          >
-                            Repository
-                          </SelectItem>
-                          <SelectItem
-                            className={"px-5 h-10 cursor-pointer"}
-                            value="documentation"
-                          >
-                            Documentation
-                          </SelectItem>
-                          <SelectItem
-                            className={"px-5 h-10 cursor-pointer"}
-                            value="design"
-                          >
-                            Design
-                          </SelectItem>
-                          <SelectItem
-                            className={"px-5 h-10 cursor-pointer"}
-                            value="other"
-                          >
-                            Other
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Button
-                        onClick={() => {
-                          if (newLink.title && newLink.url) {
-                            handleAddLinkToProject(newLink);
-                            setNewLink({ title: "", url: "", type: "" });
-                          }
-                        }}
-                        className="flex-1 h-12 rounded-[15px]"
+                        Repository
+                      </SelectItem>
+                      <SelectItem
+                        className={"px-5 h-10 cursor-pointer"}
+                        value="documentation"
                       >
-                        <PiLinkSimpleDuotone className="w-4 h-4 icon icon" />
-                        Add Link
-                      </Button>
-                    </div>
-                  </div>
-
-                  
-                  <div>
-                    <h3 className="text-lg  text-gray-900 dark:text-white mb-2">
-                      Current Links
-                    </h3>
-                    <div className="space-y-2 max-h-60 overflow-y-auto">
-                      {selectedProject.links?.map((link, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[15px]"
-                        >
-                          <div className="flex items-center gap-3">
-                            <Link className="w-4 h-4 icon icon text-gray-500" />
-                            <div>
-                              <p className="text-sm font-medium text-gray-900 dark:text-white">
-                                {link.title}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {link.type} • {link.url}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <a
-                              href={link.url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-gray-500 hover:text-gray-600 text-sm"
-                            >
-                              Open
-                            </a>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() =>
-                                handleRemoveLinkFromProject(link._id)
-                              }
-                              className="text-red-500 hover:text-red-700"
-                            >
-                              <Trash2 className="w-4 h-4 icon icon" />
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
+                        Documentation
+                      </SelectItem>
+                      <SelectItem
+                        className={"px-5 h-10 cursor-pointer"}
+                        value="design"
+                      >
+                        Design
+                      </SelectItem>
+                      <SelectItem
+                        className={"px-5 h-10 cursor-pointer"}
+                        value="other"
+                      >
+                        Other
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    onClick={() => {
+                      if (newLink.title && newLink.url) {
+                        handleAddLinkToProject(newLink);
+                        setNewLink({ title: "", url: "", type: "" });
+                      }
+                    }}
+                    className="flex-1 h-12 rounded-[15px]"
+                  >
+                    <PiLinkSimpleDuotone className="w-4 h-4 icon icon" />
+                    Add Link
+                  </Button>
                 </div>
               </div>
-            </m.div>
-          </m.div>
-        )}
+
+
+              <div>
+                <h3 className="text-lg  text-gray-900 dark:text-white mb-2">
+                  Current Links
+                </h3>
+                <div className="space-y-2 max-h-60 overflow-y-auto">
+                  {selectedProject.links?.map((link, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between p-3 bg-gray-50 dark:bg-black rounded-[15px]"
+                    >
+                      <div className="flex items-center gap-3">
+                        <Link className="w-4 h-4 icon icon text-gray-500" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white">
+                            {link.title}
+                          </p>
+                          <p className="text-xs text-muted-foreground">
+                            {link.type} • {link.url}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={link.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-gray-500 hover:text-gray-600 text-sm"
+                        >
+                          Open
+                        </a>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            handleRemoveLinkFromProject(link._id)
+                          }
+                          className="text-red-500 hover:text-red-700"
+                        >
+                          <Trash2 className="w-4 h-4 icon icon" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </m.div>
+      </m.div>
+    )}
   </>
 );
 const ProjectsUserModalSection = ({
@@ -2044,14 +1991,14 @@ const ProjectsUserModalSection = ({
   setShowUserDetails,
   setSelectedUserId,
 }) => (
-<UserDetailsModal
-          userId={selectedUserId}
-          isOpen={showUserDetails}
-          onClose={() => {
-            setShowUserDetails(false);
-            setSelectedUserId(null);
-          }}
-        />
+  <UserDetailsModal
+    userId={selectedUserId}
+    isOpen={showUserDetails}
+    onClose={() => {
+      setShowUserDetails(false);
+      setSelectedUserId(null);
+    }}
+  />
 );
 
 const ProjectsView = ({
@@ -2079,8 +2026,7 @@ const ProjectsView = ({
   setShowMembersModal,
   handleUserAvatarClick,
   pagination,
-  handlePageChange,
-  getPageNumbers,
+  setPagination,
   showNewProjectPopup,
   newProject,
   setNewProject,
@@ -2141,7 +2087,7 @@ const ProjectsView = ({
   teams,
 
 }) => (
-  <div className="overflow-hidden pb-10 pt-10">
+  <div className="pt-10">
     <m.div className="mx-auto">
       <ProjectsHeaderSection
         itemVariants={itemVariants}
@@ -2173,10 +2119,8 @@ const ProjectsView = ({
         handleUserAvatarClick={handleUserAvatarClick}
       />
       <ProjectsPaginationSection
-        loading={loading}
         pagination={pagination}
-        handlePageChange={handlePageChange}
-        getPageNumbers={getPageNumbers}
+        setPagination={setPagination}
       />
       <NewProjectPopupSection
         setShowNewProjectPopup={setShowNewProjectPopup}
@@ -2870,45 +2814,6 @@ const Projects = () => {
     return matchesSearch && matchesStatus && matchesPriority;
   });
 
-  const handlePageChange = (newPage) => {
-    setPagination((prev) => ({ ...prev, page: newPage }));
-  };
-
-  const handlePageSizeChange = (newLimit) => {
-    setPagination((prev) => ({ ...prev, limit: newLimit, page: 1 }));
-  };
-
-  const getPageNumbers = () => {
-    const { page, pages } = pagination;
-    const delta = 2;
-    const range = [];
-    const rangeWithDots = [];
-
-    for (
-      let i = Math.max(2, page - delta);
-      i <= Math.min(pages - 1, page + delta);
-      i++
-    ) {
-      range.push(i);
-    }
-
-    if (page - delta > 2) {
-      rangeWithDots.push(1, "...");
-    } else {
-      rangeWithDots.push(1);
-    }
-
-    rangeWithDots.push(...range);
-
-    if (page + delta < pages - 1) {
-      rangeWithDots.push("...", pages);
-    } else if (pages > 1) {
-      rangeWithDots.push(pages);
-    }
-
-    return rangeWithDots;
-  };
-
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -2955,8 +2860,7 @@ const Projects = () => {
       setShowMembersModal={setShowMembersModal}
       handleUserAvatarClick={handleUserAvatarClick}
       pagination={pagination}
-      handlePageChange={handlePageChange}
-      getPageNumbers={getPageNumbers}
+      setPagination={setPagination}
       showNewProjectPopup={showNewProjectPopup}
       newProject={newProject}
       setNewProject={setNewProject}

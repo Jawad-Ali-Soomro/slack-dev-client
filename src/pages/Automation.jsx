@@ -32,7 +32,7 @@ const AUTOMATION_TEMPLATES = [
     icon: Bell,
     title: "Overdue reminders",
     description:
-      "Email and notify the assignee and project owner when a task passes its due date.",
+      "Email and notify the assignee and the project owner when a task passes its due date.",
     trigger: "Task overdue",
     action: "Send email + notification",
     color: "text-red-500 bg-red-500/10",
@@ -42,7 +42,7 @@ const AUTOMATION_TEMPLATES = [
     icon: Calendar,
     title: "Meeting follow-ups",
     description:
-      "Create a follow-up task automatically after every completed meeting.",
+      "When a meeting is marked completed, create a follow-up task due the next evening and assign it to the person who owned the meeting.",
     trigger: "Meeting completed",
     action: "Create task",
     color: "text-blue-500 bg-blue-500/10",
@@ -52,7 +52,7 @@ const AUTOMATION_TEMPLATES = [
     icon: GitBranch,
     title: "PR to task sync",
     description:
-      "Move a task to In Progress when a linked pull request is opened.",
+      "Move a pending task to In Progress when an open pull request names that task, or when the task includes the pull request link.",
     trigger: "PR opened",
     action: "Update status",
     color: "text-purple-500 bg-purple-500/10",
@@ -62,7 +62,7 @@ const AUTOMATION_TEMPLATES = [
     icon: TbMessage,
     title: "Daily standup digest",
     description:
-      "Post a summary of yesterday's progress to the workspace chat every morning.",
+      "Every morning at 9:00, post yesterday's finished tasks, new tasks, wrapped meetings, and overdue count into the workspace group chat.",
     trigger: "Every day 9:00",
     action: "Send message",
     color: "text-orange-500 bg-orange-500/10",
@@ -184,7 +184,7 @@ const Automation = () => {
               </h1>
               <p className="mt-0.5 text-sm font-medium text-gray-500 dark:text-gray-400">
                 {canManage
-                  ? "Enable rules for your workspace. Auto-assign, overdue reminders, and welcome emails are live."
+                  ? "Turn a rule on and it runs for this workspace. All six are live."
                   : "Only admin or superadmin can enable these rules"}
               </p>
             </div>

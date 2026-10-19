@@ -47,7 +47,7 @@ const CreateChatModal = ({ isOpen, onClose }) => {
   const loadUsers = async () => {
     try {
       setLoading(true);
-      const response = await userService.getUsers();
+      const response = await userService.getUsers(1, 100);
       const filteredUsers = response.users.filter((u) => u.id !== user?.id);
       setUsers(filteredUsers);
     } catch (err) {
@@ -125,54 +125,50 @@ const CreateChatModal = ({ isOpen, onClose }) => {
       onClick={onClose}
     >
       <Card
-        className="w-full max-w-md mx-4 bg-white dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10"
+        className="w-full max-w-md mx-4 gap-0 bg-white py-0 dark:bg-zinc-900 rounded-2xl shadow-2xl border border-gray-200 dark:border-white/10"
         onClick={(e) => e.stopPropagation()}
       >
-        <CardHeader>
+        <CardHeader className="px-5 pt-5 pb-0">
           <div className="flex items-center justify-between">
             <CardTitle>Create New Chat</CardTitle>
-            <Button variant="ghost" size="sm" onClick={onClose}>
+            <Button variant="ghost" size="sm" onClick={onClose} className="h-8 w-8 p-0">
               <X className="h-4 w-4 icon" />
             </Button>
           </div>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3 px-5 pt-4 pb-5">
           {error && (
             <div className="p-3 bg-destructive/10 text-destructive text-sm rounded">
               {error}
             </div>
           )}
 
-          <div className="space-y-2">
-            <div className="grid grid-cols-2 gap-2 mt-3">
-              <Button
-                type="button"
-                variant={chatType === "direct" ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setChatType("direct");
-                  setSelectedUsers([]);
-                }}
-                className="flex items-center gap-2 w-full"
-              >
-                <PiUserDuotone className="h-4 w-4 icon" />
-                Direct Message
-              </Button>
-              <Button
-                type="button"
-                variant={chatType === "group" ? "default" : "outline"}
-                size="sm"
-                onClick={() => {
-                  setChatType("group");
-                  setSelectedUsers([]);
-                }}
-                className="flex items-center gap-2 w-full"
-              >
-                <PiUsersDuotone className="h-4 w-4 icon" />
-                Group Chat
-              </Button>
-            </div>
+          <div className="flex w-fit items-center gap-1 rounded-[12px] bg-gray-100 p-1 dark:bg-white/5">
+            {[
+              { id: "direct", label: "Direct Message", Icon: PiUserDuotone },
+              { id: "group", label: "Group Chat", Icon: PiUsersDuotone },
+            ].map(({ id, label, Icon }) => {
+              const active = chatType === id;
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => {
+                    setChatType(id);
+                    setSelectedUsers([]);
+                  }}
+                  className={`inline-flex h-9 items-center gap-2 rounded-[10px] px-3 text-sm font-medium ${
+                    active
+                      ? "bg-[#FF914B] text-white"
+                      : "text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                  }`}
+                >
+                  <Icon className="h-4 w-4" />
+                  {label}
+                </button>
+              );
+            })}
           </div>
 
           {chatType === "group" && (
@@ -195,9 +191,9 @@ const CreateChatModal = ({ isOpen, onClose }) => {
                 />
               </div>
             </div>
-          )}  
+          )}
           <div>
-            <div className="relative mt-2">
+            <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 icon text-muted-foreground" />
               <Input
                 placeholder="Search users..."
@@ -280,15 +276,11 @@ const CreateChatModal = ({ isOpen, onClose }) => {
             )}
           </div>
 
-          <div className="flex justify-end gap-2 pt-4">
-            <Button variant="outline" onClick={onClose}>
+          <div className="grid grid-cols-2 gap-2 pt-4">
+            <Button variant="ghost" onClick={onClose} className="col-span-1">
               Cancel
             </Button>
-            <Button
-              onClick={handleCreateChat}
-              disabled={selectedUsers.length === 0 || loading}
-              className={"w-[150px] "}
-            >
+            <Button onClick={handleCreateChat} disabled={selectedUsers.length === 0 || loading} className="col-span-1">
               {loading ? "Creating..." : "Create Chat"}
             </Button>
           </div>

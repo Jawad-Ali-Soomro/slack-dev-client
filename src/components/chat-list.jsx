@@ -5,6 +5,9 @@ import { Input } from "./ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { MessageCircle, Search } from "lucide-react";
 import UserDetailsModal from "./user-details-modal";
+import { Button } from "./ui/button";
+import { PiPlusCircleFill } from "react-icons/pi";
+import CreateChatModal from "./create-chat-modal";
 
 const ChatList = () => {
   const { user } = useAuth();
@@ -30,6 +33,7 @@ const ChatList = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedUserId, setSelectedUserId] = useState(null);
   const [showUserDetails, setShowUserDetails] = useState(false);
+  const [showCreateChat, setShowCreateChat] = useState(false);
 
   const filteredChats = chats.filter((chat) =>
     getChatName(chat).toLowerCase().includes(searchTerm.toLowerCase()),
@@ -78,7 +82,7 @@ const ChatList = () => {
               disabled
             />
           </div>
-          <h2 className="mt-4 text-lg font-bold text-gray-900 dark:text-white">Messages</h2>
+          <h2 className="mt-4 text-lg font-bold text-gray-900 dark:text-white uppercase">Messages</h2>
         </div>
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center">
@@ -93,7 +97,8 @@ const ChatList = () => {
   return (
     <div className="flex flex-col h-full icon m-0 w-full">
       <div className="px-4 pt-4 pb-2">
-        <div className="relative">
+        <div className="flex gap-2">
+        <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 icon text-muted-foreground" />
           <Input
             placeholder="Search"
@@ -102,7 +107,16 @@ const ChatList = () => {
             className="chat-search pl-10 h-11 border-0 bg-[#f4f5f7] dark:bg-white/5 text-black dark:text-white"
           />
         </div>
-        <h2 className="mt-4 text-lg font-bold text-gray-900 dark:text-white">Messages</h2>
+        <Button
+          type="button"
+          aria-label="New conversation"
+          className="h-11 w-11 shrink-0"
+          onClick={() => setShowCreateChat(true)}
+        >
+          <PiPlusCircleFill />
+        </Button>
+        </div>
+        <h2 className="mt-4 text-lg font-bold text-gray-900 dark:text-white">Started Conversations</h2>
       </div>
 
       <div className="flex-1 overflow-y-auto">
@@ -212,6 +226,10 @@ const ChatList = () => {
           setShowUserDetails(false);
           setSelectedUserId(null);
         }}
+      />
+      <CreateChatModal
+        isOpen={showCreateChat}
+        onClose={() => setShowCreateChat(false)}
       />
     </div>
   );

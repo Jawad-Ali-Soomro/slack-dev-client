@@ -22,6 +22,7 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { RxDashboard } from "react-icons/rx";
 import { useAuth } from "../contexts/auth-context";
 import BrandLogo from "../components/brand-logo";
+import ScrollRibbon from "../components/scroll-ribbon";
 import UserAvatar from "../components/user-avatar";
 import {
   DASH_METRICS,
@@ -424,6 +425,7 @@ const Indexing = () => {
 
   return (
     <div className="lp landing-page" onMouseMove={onPointerMove}>
+      <ScrollRibbon />
       <div className="lp-bg" aria-hidden="true">
         <m.div className="landing-grid lp-grid" style={{ y: gridY }} />
         <m.div

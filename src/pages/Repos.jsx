@@ -1,17 +1,12 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { m } from "framer-motion";
 import { BsPlusCircleFill } from "react-icons/bs";
 import {
-  ArrowLeft,
   Search,
-  Star,
-  GitFork,
   CircleDot,
   Lock,
   Globe,
   ExternalLink,
-  ChevronRight,
   Github,
   FolderGit2,
 } from "lucide-react";
@@ -32,8 +27,18 @@ import { usePermissions } from "../hooks/use-permissions";
 import HorizontalLoader from "../components/horizontal-loader";
 import LanguageIcon from "@/components/languages";
 import CreateTaskModal from "../components/create-task-modal";
+import LiveStatChips, {
+  BarcodeSpark,
+  MiniProgress,
+  StreakHeatmap,
+  buildDailySeries,
+} from "../components/live-stat-chips";
 import { TbStarFilled } from "react-icons/tb";
 import { PiGitForkFill } from "react-icons/pi";
+import {
+  TableWindowSpacer,
+  useWindowedRows,
+} from "../components/windowed-table-rows";
 
 const formatNumber = (n) => {
   if (n == null) return "0";
@@ -52,29 +57,6 @@ const formatDate = (value) => {
   });
 };
 
-const VisibilityBadge = ({ isPrivate }) => (
-  <span
-    className={cn(
-      "inline-flex items-center gap-1.5 p-1 rounded-full pr-6 text-xs font-semibold border",
-      isPrivate
-        ? "bg-slate-500/10 text-slate-600 dark:text-slate-300 border-slate-500/20"
-        : "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20",
-    )}
-  >
-    <span
-      className={cn(
-        "flex items-center justify-center w-8 h-8 rounded-full text-white shadow-sm",
-        isPrivate
-          ? "bg-gradient-to-br from-slate-500 to-gray-600"
-          : "bg-gradient-to-br from-emerald-500 to-green-500",
-      )}
-    >
-      {isPrivate ? <Lock className="w-4 h-4" /> : <Globe className="w-4 h-4" />}
-    </span>
-    {isPrivate ? "Private" : "Public"}
-  </span>
-);
-
 const Repos = () => {
   const navigate = useNavigate();
   const { repos, loading, isGithubConnected } = useGithubRepos();
@@ -85,8 +67,27 @@ const Repos = () => {
   const [selectedRepos, setSelectedRepos] = useState([]);
   const [taskRepo, setTaskRepo] = useState(null);
   const [queue, setQueue] = useState([]);
+  const tableScrollRef = useRef(null);
 
   document.title = "Repositories";
+
+  const repoStats = useMemo(() => {
+    const publicCount = repos.filter((repo) => !repo.private).length;
+    const privateCount = repos.filter((repo) => repo.private).length;
+    const issues = repos.reduce(
+      (sum, repo) => sum + (repo.open_issues_count || 0),
+      0,
+    );
+    return {
+      total: repos.length,
+      publicCount,
+      privateCount,
+      issues,
+      series: buildDailySeries(
+        repos.map((repo) => ({ updatedAt: repo.updated_at || repo.pushed_at })),
+      ),
+    };
+  }, [repos]);
 
   const filteredRepos = useMemo(() => {
     const term = searchTerm.trim().toLowerCase();
@@ -109,6 +110,11 @@ const Repos = () => {
     () => filteredRepos.map((r) => String(r.id)),
     [filteredRepos],
   );
+  const repoWindow = useWindowedRows({
+    count: filteredRepos.length,
+    scrollRef: tableScrollRef,
+  });
+  const visibleRepos = filteredRepos.slice(repoWindow.start, repoWindow.end);
 
   const headerChecked =
     allIds.length === 0
@@ -194,7 +200,7 @@ const Repos = () => {
         </p>
         <Button
           onClick={connectGithub}
-          className="rounded-[12px] bg-theme hover:bg-theme text-white"
+          className="h-12 w-[200px] rounded-[15px] font-bold"
         >
           <Github className="w-4 h-4 mr-2" />
           Connect GitHub
@@ -204,142 +210,135 @@ const Repos = () => {
   }
 
   return (
-    <div className="ambient-light">
-      
-      <div className="flex items-center justify-between gap-3 py-6">
-        <div className="flex items-center gap-3">
-          <div className="flex p-2 border-2 items-center gap-2 pr-5 rounded-[15px] fixed z-10 md:top-3 -top-10">
-            <div className="flex p-3 bg-white dark:bg-gray-800 rounded-[15px]">
-              <FolderGit2 size={15} />
-            </div>
-            <h1 className="text-2xl font-bold">
-              Repositories
-              <span className="text-gray-400 font-medium">
-                {" "}
-                ({repos.length})
-              </span>
-            </h1>
-          </div>
-        </div>
-      </div>
-
-      
-      <m.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="mb-4"
-      >
-        <div className="flex flex-col md:flex-row gap-3">
-          <div className="relative flex-1 md:max-w-[500px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4 icon" />
+    <div className="overflow-hidden">
+      <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row">
+          <div className="relative max-w-3xl bg-white rounded-2xl dark:bg-[black]">
+            <Search className="absolute left-3 top-1/2 z-10 h-5 w-5 -translate-y-1/2 text-gray-400" />
             <Input
               placeholder="Search repositories..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-full bg-white dark:bg-[black] text-black dark:text-white border border-gray-200 dark:border-gray-700 rounded-[15px]"
+              className="h-13 w-full pl-10 pr-4 md:w-[500px] dark:bg-[black]"
             />
           </div>
           <Select value={visibility} onValueChange={setVisibility}>
-            <SelectTrigger className="md:w-[200px] w-full px-5 text-gray-600 dark:text-white cursor-pointer bg-white dark:bg-[black] h-12 rounded-[15px]">
+            <SelectTrigger className="h-13 w-full cursor-pointer bg-white px-5 dark:bg-black dark:text-white md:w-[180px]">
               <SelectValue placeholder="Visibility" />
             </SelectTrigger>
-            <SelectContent>
-              <SelectItem className="px-5 cursor-pointer h-10" value="all">
+            <SelectContent className="bg-white dark:bg-[black]">
+              <SelectItem className="h-10 cursor-pointer px-5" value="all">
                 All Repositories
               </SelectItem>
-              <SelectItem className="px-5 cursor-pointer h-10" value="public">
+              <SelectItem className="h-10 cursor-pointer px-5" value="public">
                 Public
               </SelectItem>
-              <SelectItem className="px-5 cursor-pointer h-10" value="private">
+              <SelectItem className="h-10 cursor-pointer px-5" value="private">
                 Private
               </SelectItem>
             </SelectContent>
           </Select>
         </div>
-      </m.div>
+        {selectedRepos.length > 0 && (
+          <Button
+            onClick={handleBulkCreateTasks}
+            className="h-12 w-full rounded-[15px] font-bold md:w-[200px]"
+          >
+            <BsPlusCircleFill className="mr-2 h-4 w-4" />
+            Create Tasks ({selectedRepos.length})
+          </Button>
+        )}
+      </div>
 
-      
-      {selectedRepos.length > 0 && (
-        <m.div
-          initial={{ opacity: 0, y: -8 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between gap-3 mb-3 px-4 py-3 rounded-[15px] border border-theme-subtle bg-theme-subtle"
+      <div className="mb-6">
+        <LiveStatChips
+          items={[
+            {
+              id: "total",
+              label: "Total Repos",
+              value: repoStats.total,
+              onClick: () => setVisibility("all"),
+              visual: <BarcodeSpark series={repoStats.series.slice(-28)} />,
+            },
+            {
+              id: "public",
+              label: "Public Repos",
+              value: repoStats.publicCount,
+              onClick: () => setVisibility("public"),
+              visual: <StreakHeatmap series={repoStats.series} />,
+            },
+            {
+              id: "private",
+              label: "Private Repos",
+              value: repoStats.privateCount,
+              onClick: () => setVisibility("private"),
+              visual: <MiniProgress value={repoStats.total ? Math.round((repoStats.privateCount / repoStats.total) * 100) : 0} />,
+            },
+            {
+              id: "issues",
+              label: "Open Issues",
+              value: repoStats.issues,
+              visual: (
+                <MiniProgress
+                  value={Math.min(100, repoStats.issues)}
+                  fillClassName="bg-rose-300 dark:bg-rose-500"
+                />
+              ),
+            },
+          ]}
+        />
+      </div>
+
+      <div className="overflow-hidden rounded-[15px] bg-white shadow-xl dark:bg-transparent">
+        <div
+          ref={tableScrollRef}
+          className="max-h-[630px] overflow-x-auto overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 dark:scrollbar-thumb-gray-600 dark:scrollbar-track-gray-800"
         >
-          <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-            {selectedRepos.length} repositor
-            {selectedRepos.length > 1 ? "ies" : "y"} selected
-          </span>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-[12px] w-[120px]"
-              onClick={() => setSelectedRepos([])}
-            >
-              Clear
-            </Button>
-            <Button
-            variant={'ghost'}
-              className="rounded-[12px] bg-theme w-[200px] hover:bg-theme text-white"
-              onClick={handleBulkCreateTasks}
-            >
-              <BsPlusCircleFill className="w-4 h-4 icon mr-2" />
-              Create Tasks ({selectedRepos.length})
-            </Button>
-          </div>
-        </m.div>
-      )}
-
-      
-      <m.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-      >
-        <div className="overflow-x-auto max-h-[700px] overflow-y-auto rounded-[15px] border border-gray-100 dark:border-white/10 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-gray-100 dark:scrollbar-track-gray-800">
-          <table className="w-full border-collapse">
-            <thead className="bg-gray-50 dark:bg-white/5 backdrop-blur-sm sticky top-0 z-10">
+          <table className="w-full border-separate border-spacing-0">
+            <thead>
               <tr>
-                <th className="px-5 py-4 text-left w-12">
+                <th className="sticky top-0 z-10 w-12 border-b bg-white py-4 pl-6 text-left dark:border-gray-700">
                   <Checkbox
                     checked={headerChecked}
                     onCheckedChange={handleSelectAll}
                     aria-label="Select all repositories"
                   />
                 </th>
-                <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="sticky top-0 z-10 border-b bg-white px-6 py-4 text-left text-xs uppercase tracking-wider text-black dark:border-gray-700">
                   Repository
                 </th>
-                <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="sticky top-0 z-10 border-b bg-white px-6 py-4 text-left text-xs uppercase tracking-wider text-black dark:border-gray-700">
                   Visibility
                 </th>
-                <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="sticky top-0 z-10 border-b bg-white px-6 py-4 text-left text-xs uppercase tracking-wider text-black dark:border-gray-700">
                   Language
                 </th>
-                <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="sticky top-0 z-10 border-b bg-white px-6 py-4 text-left text-xs uppercase tracking-wider text-black dark:border-gray-700">
                   Stats
                 </th>
-                <th className="px-5 py-4 text-left text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <th className="sticky top-0 z-10 border-b bg-white px-6 py-4 text-left text-xs uppercase tracking-wider text-black dark:border-gray-700">
                   Updated
                 </th>
-                <th className="px-5 py-4 text-right text-[11px] font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
-                  Actions
-                </th>
+                <th className="sticky top-0 z-10 border-b bg-white px-6 py-4 text-left dark:border-gray-700" />
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-100 dark:divide-white/5">
+            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {filteredRepos.length === 0 ? (
                 <tr>
                   <td
                     colSpan={7}
-                    className="px-5 py-10 text-center text-sm text-gray-500 dark:text-gray-400 bg-white dark:bg-black"
+                    className="px-6 py-8 text-center text-gray-500 dark:text-gray-400"
                   >
                     No repositories found
                   </td>
                 </tr>
               ) : (
-                filteredRepos.map((repo) => {
+                <>
+                  <TableWindowSpacer
+                    height={repoWindow.paddingTop}
+                    colSpan={7}
+                  />
+                  {visibleRepos.map((repo) => {
                   const id = String(repo.id);
                   const selected = selectedRepos.includes(id);
                   return (
@@ -347,12 +346,12 @@ const Repos = () => {
                       key={id}
                       onClick={() => navigate(`/dashboard/repos/${id}`)}
                       className={cn(
-                        "bg-white dark:bg-black hover:bg-gray-50 dark:hover:bg-white/5 transition-colors cursor-pointer group",
-                        selected && "bg-theme-subtle dark:bg-white/5",
+                        "cursor-pointer bg-white transition-colors hover:bg-gray-50 dark:bg-black dark:hover:bg-transparent",
+                        selected && "bg-gray-100 dark:bg-transparent",
                       )}
                     >
                       <td
-                        className="px-5 py-3 w-12"
+                        className="w-12 py-4 pl-6"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <Checkbox
@@ -361,25 +360,32 @@ const Repos = () => {
                           aria-label={`Select ${repo.name}`}
                         />
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4">
                         <div className="flex items-center gap-3">
-                          <div className="flex-shrink-0 w-9 h-9 rounded-[12px] bg-gray-100 dark:bg-white/10 flex items-center justify-center ring-1 ring-gray-100 dark:ring-white/10">
-                            <FolderGit2 className="w-4 h-4 text-gray-600 dark:text-gray-300" />
+                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[10px] bg-gray-100 dark:bg-white/10">
+                            <FolderGit2 className="h-4 w-4 text-gray-600 dark:text-gray-300" />
                           </div>
                           <div className="min-w-0">
-                            <div className="text-sm font-semibold text-gray-900 dark:text-white truncate group-hover:text-theme">
+                            <div className="truncate text-sm font-semibold text-gray-900 dark:text-white">
                               {repo.name}
                             </div>
-                            <div className="text-xs text-gray-500 dark:text-gray-400 truncate max-w-[320px]">
+                            <div className="max-w-[320px] truncate text-xs text-gray-500 dark:text-gray-400">
                               {repo.description || repo.full_name}
                             </div>
                           </div>
                         </div>
                       </td>
-                      <td className="px-5 py-3">
-                        <VisibilityBadge isPrivate={repo.private} />
+                      <td className="px-6 py-4">
+                        <span className="inline-flex items-center gap-1.5 text-sm text-gray-700 dark:text-gray-300">
+                          {repo.private ? (
+                            <Lock className="h-3.5 w-3.5" />
+                          ) : (
+                            <Globe className="h-3.5 w-3.5" />
+                          )}
+                          {repo.private ? "Private" : "Public"}
+                        </span>
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4">
                         {repo.language ? (
                           <span className="inline-flex items-center gap-1.5 text-sm text-gray-700 dark:text-gray-300">
                             <LanguageIcon language={repo.language} />
@@ -389,49 +395,40 @@ const Repos = () => {
                           <span className="text-sm text-gray-400">—</span>
                         )}
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4">
                         <div className="flex items-center gap-3 text-xs text-gray-500 dark:text-gray-400">
-                          <span
-                            className="inline-flex items-center gap-1"
-                            title="Stars"
-                          >
-                            <TbStarFilled className="w-3.5 h-3.5" />
+                          <span className="inline-flex items-center gap-1" title="Stars">
+                            <TbStarFilled className="h-3.5 w-3.5" />
                             {formatNumber(repo.stargazers_count)}
                           </span>
-                          <span
-                            className="inline-flex items-center gap-1"
-                            title="Forks"
-                          >
-                            <PiGitForkFill className="w-3.5 h-3.5" />
+                          <span className="inline-flex items-center gap-1" title="Forks">
+                            <PiGitForkFill className="h-3.5 w-3.5" />
                             {formatNumber(repo.forks_count)}
                           </span>
-                          <span
-                            className="inline-flex items-center gap-1"
-                            title="Open issues"
-                          >
-                            <CircleDot className="w-3.5 h-3.5" />
+                          <span className="inline-flex items-center gap-1" title="Open issues">
+                            <CircleDot className="h-3.5 w-3.5" />
                             {formatNumber(repo.open_issues_count)}
                           </span>
                         </div>
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-6 py-4">
                         <span className="text-sm text-gray-600 dark:text-gray-400">
                           {formatDate(repo.updated_at || repo.pushed_at)}
                         </span>
                       </td>
                       <td
-                        className="px-5 py-3"
+                        className="px-6 py-4"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <div className="flex items-center justify-end gap-1.5">
                           <Button
                             size="sm"
                             variant="ghost"
-                            className="w-9 h-9 justify-center rounded-[12px]"
+                            className="h-9 w-9 justify-center rounded-[10px] p-0"
                             title={`Create task for ${repo.name}`}
                             onClick={() => openTaskForRepo(repo)}
                           >
-                            <BsPlusCircleFill className="w-4 h-4 icon" />
+                            <BsPlusCircleFill className="h-4 w-4" />
                           </Button>
                           {repo.html_url && (
                             <a
@@ -439,22 +436,26 @@ const Repos = () => {
                               target="_blank"
                               rel="noreferrer"
                               title="Open on GitHub"
-                              className="inline-flex items-center justify-center w-9 h-9 rounded-[12px] border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5"
+                              className="inline-flex h-9 w-9 items-center justify-center rounded-[10px] border border-gray-200 text-gray-600 hover:bg-gray-50 dark:border-white/10 dark:text-gray-300 dark:hover:bg-white/5"
                             >
-                              <ExternalLink className="w-4 h-4" />
+                              <ExternalLink className="h-4 w-4" />
                             </a>
                           )}
-                          <ChevronRight className="w-4 h-4 text-gray-300 dark:text-gray-600 group-hover:text-theme transition-colors" />
                         </div>
                       </td>
                     </tr>
                   );
-                })
+                })}
+                  <TableWindowSpacer
+                    height={repoWindow.paddingBottom}
+                    colSpan={7}
+                  />
+                </>
               )}
             </tbody>
           </table>
         </div>
-      </m.div>
+      </div>
 
       <CreateTaskModal
         open={!!taskRepo}

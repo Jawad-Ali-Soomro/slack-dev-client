@@ -621,7 +621,7 @@ const VoiceAssistantFab = () => {
     startListening();
   };
 
-  if (!isAuthenticated || !isTeamAdmin) return null;
+  if (!isAuthenticated) return null;
 
   const energy =
     levels.reduce((sum, value) => sum + value, 0) / Math.max(levels.length, 1);
