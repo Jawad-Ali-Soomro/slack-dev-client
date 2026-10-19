@@ -1,7 +1,12 @@
-import { motion, AnimatePresence } from "framer-motion";
-import { PiGithubLogo, PiGithubLogoDuotone, PiInstagramLogo, PiLinkedinLogo } from "react-icons/pi";
+import { AnimatePresence, LazyMotion, domAnimation, m } from "framer-motion";
+import {
+  PiGithubLogo,
+  PiGithubLogoDuotone,
+  PiInstagramLogo,
+  PiLinkedinLogo,
+} from "react-icons/pi";
 import { Button } from "./ui/button";
-import { connectGithub } from "@/hooks/useGithubRepos";
+import { connectGithub } from "@/hooks/use-github-repos";
 
 const backdropVariants = {
   hidden: { opacity: 0 },
@@ -31,54 +36,51 @@ const modalVariants = {
 
 const Connections = ({ onClose, isOpen }) => {
   return (
+    <LazyMotion features={domAnimation}>
     <AnimatePresence>
       {isOpen && (
-        <motion.div
+        <m.div
           variants={backdropVariants}
           initial="hidden"
           animate="visible"
           exit="exit"
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 backdrop-blur-sm"
         >
-          <motion.div
+          <m.div
             variants={modalVariants}
             initial="hidden"
             animate="visible"
             exit="exit"
             onClick={(e) => e.stopPropagation()}
-            className="rounded-2xl p-8 bg-white dark:bg-gray-800 border border-gray-700 shadow-2xl max-w-md w-full mx-4"
+            className="rounded-2xl p-8 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-white/10 shadow-2xl max-w-md w-full mx-4"
           >
             <h2 className="text-2xl font-bold mb-2 text-center text-gray-900 dark:text-white">
               Connect GitHub
             </h2>
 
-            <p className="text-gray-500 dark:text-gray-400 text-sm mb-6 text-center">
-              Link your GitHub account to view repositories and create tasks from
-              your repos.
+            <p className="text-muted-foreground text-sm mb-6 text-center">
+              Link your GitHub account to view repositories and create tasks
+              from your repos.
             </p>
 
             <div className="flex gap-3 items-center justify-center">
               <button
                 type="button"
                 onClick={connectGithub}
-                className="w-full h-20 rounded-[20px] gap-5 flex items-center cursor-pointer justify-center bg-black text-white font-semibold hover:opacity-90 transition-all"
+                className="w-full h-13 rounded-[15px] gap-5 flex items-center cursor-pointer justify-center bg-black text-white font-semibold hover:opacity-90 transition-opacity"
                 title="Connect GitHub"
               >
-                <PiGithubLogoDuotone size={30} />
                 Let's Connect
               </button>
             </div>
-            <Button
-              variant="outline"
-              className="w-full mt-5"
-              onClick={onClose}
-            >
-              Maybe later
+            <Button variant="outline" className="w-full mt-5 font-bold" onClick={onClose}>
+              Maybe Later!
             </Button>
-          </motion.div>
-        </motion.div>
+          </m.div>
+        </m.div>
       )}
     </AnimatePresence>
+    </LazyMotion>
   );
 };
 

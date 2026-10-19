@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import {
   Upload,
   FileText,
@@ -22,10 +22,10 @@ import {
   SelectValue,
 } from "../components/ui/select";
 import { toast } from "sonner";
-import noteService from "../services/noteService";
-import { useAuth } from "../contexts/AuthContext";
+import noteService from "../services/note-service";
+import { useAuth } from "../contexts/auth-context";
 
-// Import edit-pdf components
+
 import { PdfEditor } from "edit-pdf";
 
 const Notes = () => {
@@ -33,7 +33,7 @@ const Notes = () => {
   const location = useLocation();
   const { user } = useAuth();
 
-  // Get note data from navigation state (if coming from LearnPoint)
+
   const noteFromState = location.state?.note || null;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -41,7 +41,7 @@ const Notes = () => {
   const [savedFile, setSavedFile] = useState(null);
   const pdfEditorRef = useRef(null);
 
-  // Note details form - exactly like LearnPoint component
+
   const [newNote, setNewNote] = useState({
     title: "",
     description: "",
@@ -50,7 +50,7 @@ const Notes = () => {
     tags: "",
   });
 
-  // Predefined departments - same as LearnPoint
+
   const PREDEFINED_DEPARTMENTS = [
     "Computer Science",
     "BBA (Business Administration)",
@@ -84,7 +84,7 @@ const Notes = () => {
     "Music",
   ];
 
-  // Initialize form if note data is passed from LearnPoint
+
   useEffect(() => {
     if (noteFromState) {
       setNewNote({
@@ -97,7 +97,7 @@ const Notes = () => {
     }
   }, [noteFromState]);
 
-  // Automatically set default values
+
   useEffect(() => {
     if (!newNote.title) {
       setNewNote((prev) => ({
@@ -111,24 +111,24 @@ const Notes = () => {
     toast.success("Sample PDF loaded. Start editing!");
   }, []);
 
-  // This function will be called by PdfEditor when export is complete
+
   const handleSave = (editedFile) => {
-    // Store the file for later use
+
     setSavedFile(editedFile);
     toast.success("PDF editing complete! Fill in details and click Save Note.");
   };
 
-  // Handle export trigger
+
   const handleExport = () => {
     setShouldExport(true);
   };
 
-  // Called when PdfEditor finishes exporting
+
   const handleExportComplete = () => {
     setShouldExport(false);
   };
 
-  // Create note with the saved file - exactly like LearnPoint's handleCreateNote
+
   const handleCreateNote = async () => {
     if (!newNote.title || !newNote.department || !newNote.subject) {
       toast.error("Please fill in all required fields");
@@ -143,19 +143,19 @@ const Notes = () => {
     try {
       setIsLoading(true);
 
-      // Create noteData exactly like LearnPoint
+
       const noteData = {
         ...newNote,
         tags: newNote.tags ? newNote.tags.split(",").map((t) => t.trim()) : [],
-        pdf: savedFile, // Use the saved file from PdfEditor
+        pdf: savedFile,
       };
 
-      // Create note - same as LearnPoint
+
       await noteService.createNote(noteData);
 
       toast.success("Note created successfully!");
 
-      // Navigate back to LearnPoint
+
       setTimeout(() => {
         navigate("/learn-point");
       }, 1500);
@@ -167,7 +167,7 @@ const Notes = () => {
     }
   };
 
-  // Handle input changes - same as LearnPoint
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewNote((prev) => ({
@@ -176,12 +176,12 @@ const Notes = () => {
     }));
   };
 
-  // Handle department change using Select component
+
   const handleDepartmentChange = (value) => {
     setNewNote((prev) => ({
       ...prev,
       department: value,
-      // Reset subject if department changes
+
       subject: value === "Other" ? "" : prev.subject,
     }));
   };
@@ -189,8 +189,7 @@ const Notes = () => {
   return (
     <div className="h-[90vh] p-4 md:p-6">
       <div className="">
-
-        {/* Mobile Header */}
+        
         <div className="md:hidden mb-6">
           <div className="flex items-center gap-2 mb-2">
             <Book className="w-6 h-6 text-blue-600" />
@@ -204,15 +203,15 @@ const Notes = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Panel - Form */}
-          <motion.div
+          
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="lg:col-span-1"
           >
             <div className="rounded-[15px] shadow-xl p-6 sticky top-6">
               <div className="space-y-6">
-                {/* File Info Section */}
+                
                 <div>
                   {!savedFile && (
                     <Button
@@ -225,11 +224,9 @@ const Notes = () => {
                   )}
                 </div>
 
-                {/* Note Details Form - Same structure as LearnPoint */}
+                
                 <div className="space-y-4">
-    
                   <div>
-                 
                     <Input
                       type="text"
                       value={newNote.title}
@@ -243,7 +240,6 @@ const Notes = () => {
                   </div>
 
                   <div>
-                    
                     <Textarea
                       value={newNote.description}
                       onChange={(e) =>
@@ -256,7 +252,6 @@ const Notes = () => {
                   </div>
 
                   <div>
-                   
                     <Select
                       value={newNote.department}
                       onValueChange={handleDepartmentChange}
@@ -297,7 +292,7 @@ const Notes = () => {
                         className="w-full mt-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                       />
                     )}
-                    
+
                     {newNote.department &&
                       !PREDEFINED_DEPARTMENTS.includes(newNote.department) &&
                       newNote.department !== "Other" && (
@@ -308,7 +303,6 @@ const Notes = () => {
                   </div>
 
                   <div>
-                    
                     <Input
                       type="text"
                       name="subject"
@@ -321,7 +315,6 @@ const Notes = () => {
                   </div>
 
                   <div>
-                    
                     <Input
                       type="text"
                       name="tags"
@@ -330,41 +323,37 @@ const Notes = () => {
                       placeholder="Tags (comma separated)"
                       className="w-full border-gray-200 dark:border-gray-700 bg-white dark:bg-[black] text-black dark:text-white"
                     />
-                    
                   </div>
                 </div>
               </div>
             </div>
-          </motion.div>
+          </m.div>
 
-          {/* Right Panel - PDF Editor/Preview */}
-          <motion.div
+          
+          <m.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
             className="col-span-2 bg-white dark:bg-black rounded-[15px]"
           >
             <div className="rounded-[15px] shadow-xl h-full min-h-[600px] overflow-hidden">
-              {/* PDF Editor */}
+              
               <div className="h-full flex flex-col">
-                {/* Editor Header */}
-                <div className="flex items-center justify-end p-4 border-b border-gray-200 dark:border-gray-700">
                 
-
+                <div className="flex items-center justify-end p-4 border-b border-gray-200 dark:border-gray-700">
                   <div className="flex items-center gap-2">
-                  
-                      <Button
-              onClick={handleCreateNote}
-              disabled={isLoading || !savedFile}
-              className="bg-green-600 hover:bg-green-700 w-[200px]"
-            >
-              <Save className="w-4 h-4 icon mr-2" />
-              {isLoading ? "Saving..." : "Create Note"}
-            </Button>
+                    <Button
+                      onClick={handleCreateNote}
+                      disabled={isLoading || !savedFile}
+                      className="bg-green-600 hover:bg-green-700 w-[200px]"
+                    >
+                      <Save className="w-4 h-4 icon mr-2" />
+                      {isLoading ? "Saving..." : "Create Note"}
+                    </Button>
                   </div>
                 </div>
 
-                {/* PDF Editor */}
+                
                 <div className="flex-1 overflow-hidden">
                   <PdfEditor
                     ref={pdfEditorRef}
@@ -385,7 +374,7 @@ const Notes = () => {
                   />
                 </div>
 
-                {/* Editor Footer */}
+                
                 <div className="p-4 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
                   <div className="flex items-center justify-between">
                     <div className="text-sm text-gray-600 dark:text-gray-400">
@@ -398,7 +387,9 @@ const Notes = () => {
                     <div className="flex gap-2">
                       {savedFile ? (
                         <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                          <span className="text-sm font-medium">✓ PDF Ready</span>
+                          <span className="text-sm font-medium">
+                            ✓ PDF Ready
+                          </span>
                         </div>
                       ) : (
                         <Button
@@ -414,7 +405,7 @@ const Notes = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
     </div>

@@ -1,25 +1,16 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "allowJs": true,
     // "checkJs": true,
     "noEmit": true,
     "jsx": "react-jsx",
-    "moduleResolution": "node",
+    "moduleResolution": "node10",
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "src",
-    "src/**/*",
-    "types/**/*.d.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "build"
-  ]
+  "include": ["src", "src/**/*", "types/**/*.d.ts"],
+  "exclude": ["node_modules", "dist", "build"]
 }

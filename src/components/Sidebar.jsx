@@ -1,136 +1,103 @@
-import { useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useCallback, useRef, useState } from "react";
+import { m } from "framer-motion";
 import {
-  LayoutDashboard,
   LogOut,
-  ChevronDown,
+  AudioLines,
   Compass,
-  Package,
-  CheckCircle,
+  ShoppingBag,
+  ListChecks,
+  CalendarDays,
+  FolderKanban,
+  Workflow,
+  KeyRound,
+  MessageSquareQuote,
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { useSidebar } from "../contexts/SidebarContext";
-import { useAuth } from "../contexts/AuthContext";
-import { useNotifications } from "../contexts/NotificationContext";
-import { GoCalendar } from "react-icons/go";
-import { IoFolderOpenOutline } from "react-icons/io5";
-import { PiUsersDuotone, PiUserCheck } from "react-icons/pi";
-import { BiMessageSquareDetail } from "react-icons/bi";
+import { useSidebar } from "../contexts/sidebar-context";
+import { useAuth } from "../contexts/auth-context";
+import BrandLogo from "./brand-logo";
+import { TbSmartHome } from "react-icons/tb";
+import { PiUser, PiUserCheck, PiUsers } from "react-icons/pi";
 
-const EXPANDED_WIDTH = 240;
-const COLLAPSED_WIDTH = 72;
 
-const Sidebar = () => {
-  const { isOpen, isMobile, closeSidebar } = useSidebar();
-  const { isAuthenticated, logout } = useAuth();
-  const { unreadCounts } = useNotifications();
-  const location = useLocation();
-  const [adminDropdownOpen, setAdminDropdownOpen] = useState(false);
+const RAIL_WIDTH = 72;
 
-  const isActive = (path) => location.pathname === path;
-  const collapsed = !isOpen && !isMobile;
+function pathIsActive(pathname, path) {
+  return (
+    pathname === path ||
+    (path !== "/dashboard" && pathname.startsWith(path))
+  );
+}
 
-  const sidebarItems = [
-    { title: "Dashboard", icon: LayoutDashboard, path: "/dashboard" },
-    { title: "Explore", icon: Compass, path: "/dashboard/explore" },
-    { title: "Purchased", icon: Package, path: "/dashboard/my-bought-projects" },
-    { title: "Tasks", icon: CheckCircle, path: "/dashboard/tasks", badgeCount: unreadCounts.tasks },
-    { title: "Meetings", icon: GoCalendar, path: "/dashboard/meetings", badgeCount: unreadCounts.meetings },
-    { title: "Projects", icon: IoFolderOpenOutline, path: "/dashboard/projects", badgeCount: unreadCounts.projects },
-    { title: "Teams", icon: PiUsersDuotone, path: "/dashboard/teams", badgeCount: unreadCounts.teams },
-    { title: "Friends", icon: PiUserCheck, path: "/dashboard/friends" },
-    { title: "Messages", icon: BiMessageSquareDetail, path: "/dashboard/chat", badgeCount: unreadCounts.messages },
-  ];
+function NavItem({ item, pathname, isMobile, onNavigate }) {
+  const Icon = item.icon;
+  const active = pathIsActive(pathname, item.path);
 
-  if (!isAuthenticated) return null;
-
-  const sidebarWidth = isMobile ? EXPANDED_WIDTH : isOpen ? EXPANDED_WIDTH : COLLAPSED_WIDTH;
-  const showOnScreen = isMobile ? isOpen : true;
-
-  const NavItem = ({ item }) => {
-    const Icon = item.icon;
-    const active =
-      isActive(item.path) ||
-      (item.hasDropdown && item.dropdownItems?.some((sub) => isActive(sub.path)));
-    const badge = item.badgeCount > 0 ? item.badgeCount : null;
-
-    if (item.hasDropdown) {
-      return (
-        <div className="w-full">
-          <button
-            type="button"
-            onClick={() => item.title === "Admin" && setAdminDropdownOpen((p) => !p)}
-            title={item.title}
-            className={`sidebar-nav-item w-full ${collapsed ? "sidebar-nav-item--collapsed" : ""} ${
-              active ? "sidebar-nav-item--active" : ""
-            }`}
-          >
-            <span className={`sidebar-icon-wrap ${active ? "sidebar-icon-wrap--active" : ""}`}>
-              <Icon className="w-5 h-5 shrink-0" />
-            </span>
-            {!collapsed && (
-              <>
-                <span className="sidebar-label">{item.title}</span>
-                <ChevronDown className="w-4 h-4 ml-auto shrink-0 opacity-60" />
-              </>
-            )}
-          </button>
-          <AnimatePresence>
-            {!collapsed && item.title === "Admin" && adminDropdownOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                className="overflow-hidden pl-3 mt-1 space-y-1"
-              >
-                {item.dropdownItems?.map((sub) => {
-                  const SubIcon = sub.icon;
-                  const subActive = isActive(sub.path);
-                  return (
-                    <Link
-                      key={sub.path}
-                      to={sub.path}
-                      title={sub.title}
-                      className={`sidebar-nav-item sidebar-nav-item--sub ${subActive ? "sidebar-nav-item--active" : ""}`}
-                    >
-                      <span className={`sidebar-icon-wrap sidebar-icon-wrap--sm ${subActive ? "sidebar-icon-wrap--active" : ""}`}>
-                        <SubIcon className="w-4 h-4 shrink-0" />
-                      </span>
-                      <span className="sidebar-label text-sm">{sub.title}</span>
-                    </Link>
-                  );
-                })}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      );
-    }
-
-    return (
-      <Link
-        to={item.path}
-        title={item.title}
-        onClick={() => isMobile && closeSidebar()}
-        className={`sidebar-nav-item ${collapsed ? "sidebar-nav-item--collapsed" : ""} ${
-          active ? "sidebar-nav-item--active" : ""
-        }`}
+  return (
+    <Link
+      to={item.path}
+      aria-label={item.title}
+      onClick={() => isMobile && onNavigate()}
+      data-nav-item
+      data-active={active ? "true" : "false"}
+      className={`sidebar-nav-item sidebar-nav-item--collapsed ${
+        active ? "sidebar-nav-item--active" : ""
+      }`}
+    >
+      <span
+        className={`sidebar-icon-wrap relative ${active ? "sidebar-icon-wrap--active" : ""}`}
       >
-        <span className={`sidebar-icon-wrap relative ${active ? "sidebar-icon-wrap--active" : ""}`}>
-          <Icon className="w-5 h-5 shrink-0" />
-          {badge && collapsed && (
-            <span className="sidebar-badge sidebar-badge--dot" aria-label={`${badge} unread`} />
-          )}
-        </span>
-        {!collapsed && (
-          <span className="sidebar-label flex-1 truncate">{item.title}</span>
-        )}
-        {!collapsed && badge && (
-          <span className="sidebar-badge sidebar-badge--inline">{badge > 99 ? "99+" : badge}</span>
-        )}
-      </Link>
-    );
-  };
+        <Icon className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
+      </span>
+      <span className="sidebar-tip">{item.title}</span>
+    </Link>
+  );
+}
+
+function SidebarPanel({
+  isMobile,
+  isOpen,
+  closeSidebar,
+  showOnScreen,
+  items,
+  pathname,
+  logout,
+}) {
+  const navRef = useRef(null);
+  const [pill, setPill] = useState({
+    top: 0,
+    height: 44,
+    visible: false,
+  });
+
+  const placeOn = useCallback((item) => {
+    const nav = navRef.current;
+    if (!nav || !item) return;
+    const navBox = nav.getBoundingClientRect();
+    const box = item.getBoundingClientRect();
+    setPill({
+      top: box.top - navBox.top + nav.scrollTop,
+      height: box.height,
+      visible: true,
+    });
+  }, []);
+
+  const hidePill = useCallback(() => {
+    setPill((current) => ({ ...current, visible: false }));
+  }, []);
+
+  function onAsideMove(event) {
+    const aside = event.currentTarget;
+    const box = aside.getBoundingClientRect();
+    aside.style.setProperty("--ink-x", `${event.clientX - box.left}px`);
+    aside.style.setProperty("--ink-y", `${event.clientY - box.top}px`);
+    const item = event.target.closest?.("[data-nav-item]");
+    if (!item || !navRef.current?.contains(item) || item.dataset.active === "true") {
+      hidePill();
+      return;
+    }
+    placeOn(item);
+  }
 
   return (
     <>
@@ -143,46 +110,117 @@ const Sidebar = () => {
         />
       )}
 
-      <motion.aside
+      <m.aside
         initial={false}
         animate={{
-          width: sidebarWidth,
-          x: showOnScreen ? 0 : -EXPANDED_WIDTH,
+          width: RAIL_WIDTH,
+          x: showOnScreen ? 0 : -RAIL_WIDTH,
         }}
         transition={{ type: "spring", stiffness: 380, damping: 38 }}
-        className={`app-sidebar fixed left-0 top-0 h-[91.5vh] mt-[8.5vh] z-50 flex flex-col border-r border-gray-200 dark:border-white/10 bg-[#eee] dark:bg-black ${
-          collapsed ? "app-sidebar--collapsed" : ""
-        }`}
+        onMouseMove={onAsideMove}
+        onMouseLeave={hidePill}
+        className="ink-aside app-sidebar app-sidebar--icons app-sidebar--collapsed fixed left-0 top-0 h-screen z-50 flex flex-col"
       >
-        {/* Logo strip */}
-        <div className={`sidebar-brand ${collapsed ? "sidebar-brand--collapsed" : ""}`}>
-          <img src="/logo.png" alt="logo" className="w-8 h-8 shrink-0" />
-          {!collapsed && (
-            <span className="text-[10px] font-black uppercase tracking-widest truncate">
-              Slack Dev
-            </span>
-          )}
+        <div className="sidebar-cluster sidebar-cluster--logo">
+          <BrandLogo size={32} />
         </div>
 
-        <nav className="flex-1 overflow-y-auto overflow-x-hidden px-2 py-3 space-y-1">
-          {sidebarItems.map((item) => (
-            <NavItem key={item.path} item={item} />
+        <nav
+          ref={navRef}
+          className="ink-nav sidebar-cluster sidebar-cluster--nav sidebar-icon-list"
+        >
+          <span
+            aria-hidden
+            className={`ink-nav-pill ${pill.visible ? "is-on" : ""}`}
+            style={{
+              transform: `translateY(${pill.top}px)`,
+              height: pill.height,
+            }}
+          />
+          {items.map((item) => (
+            <NavItem
+              key={item.path}
+              item={item}
+              pathname={pathname}
+              isMobile={isMobile}
+              onNavigate={closeSidebar}
+            />
           ))}
         </nav>
 
-        <div className="p-2 border-t border-gray-200 dark:border-white/10">
+        <div className="sidebar-cluster sidebar-cluster--foot">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event("voice-assistant:open"))}
+            aria-label="Voice assistant"
+            className="sidebar-nav-item sidebar-nav-item--collapsed"
+          >
+            <span className="sidebar-icon-wrap">
+              <AudioLines className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
+            </span>
+            <span className="sidebar-tip">Voice assistant</span>
+          </button>
           <button
             type="button"
             onClick={logout}
-            title="Logout"
-            className={`sidebar-logout ${collapsed ? "sidebar-logout--collapsed" : ""}`}
+            aria-label="Logout"
+            className="sidebar-nav-item sidebar-nav-item--collapsed"
           >
-            <LogOut className="w-5 h-5 shrink-0" />
-            {!collapsed && <span>Logout</span>}
+            <span className="sidebar-icon-wrap">
+              <LogOut className="h-[18px] w-[18px] shrink-0" strokeWidth={1.75} />
+            </span>
+            <span className="sidebar-tip">Logout</span>
           </button>
         </div>
-      </motion.aside>
+      </m.aside>
     </>
+  );
+}
+
+const Sidebar = () => {
+  const { isOpen, isMobile, closeSidebar } = useSidebar();
+  const { isAuthenticated, logout, isSuperadmin } = useAuth();
+  const location = useLocation();
+
+  const items = [
+    { title: "Dashboard", icon: TbSmartHome , path: "/dashboard" },
+    { title: "Explore", icon: Compass, path: "/dashboard/explore" },
+    { title: "Purchased", icon: ShoppingBag, path: "/dashboard/my-bought-projects" },
+    { title: "Tasks", icon: ListChecks, path: "/dashboard/tasks" },
+    { title: "Meetings", icon: CalendarDays, path: "/dashboard/meetings" },
+    { title: "Projects", icon: FolderKanban, path: "/dashboard/projects" },
+    { title: "Workspace", icon: PiUsers, path: "/dashboard/teams" },
+    { title: "Automation", icon: Workflow, path: "/dashboard/automation" },
+    { title: "Friends", icon: PiUser, path: "/dashboard/friends" },
+    { title: "Messages", icon: MessageSquareQuote, path: "/dashboard/chat" },
+    ...(isSuperadmin
+      ? [
+          {
+            title: "User Management",
+            icon: PiUserCheck,
+            path: "/dashboard/admin/users",
+          },
+          {
+            title: "Permission Manage",
+            icon: KeyRound,
+            path: "/dashboard/admin/permissions",
+          },
+        ]
+      : []),
+  ];
+
+  if (!isAuthenticated) return null;
+
+  return (
+    <SidebarPanel
+      isMobile={isMobile}
+      isOpen={isOpen}
+      closeSidebar={closeSidebar}
+      showOnScreen={isMobile ? isOpen : true}
+      items={items}
+      pathname={location.pathname}
+      logout={logout}
+    />
   );
 };
 
